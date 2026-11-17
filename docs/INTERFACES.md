@@ -21,12 +21,15 @@ The OpenAPI document is the transport contract: `apps/web/openapi.json` (generat
 | Object | Identity | Notes |
 |---|---|---|
 | Snapshot | uuid5(dataset, input manifest, config hash, graph version) | Includes transactions with `ingest_seq ≤ max_ingest_seq` |
-| Formation | uuid5(snapshot, kind, currency, canonical members) | funnel: centre + sorted feeders; chain: ordered path |
+| Formation | uuid5(snapshot, kind, currency, canonical members) | funnel: centre + sorted feeders; fan_out: distributor + sorted recipients; chain: ordered path; cycle: loop from its earliest edge |
 | Evidence | uuid5(formation, role) | `transaction_ids` resolve via FK table |
 | Alert | fingerprint sha256(dataset, kind, currency, members, family group, detector) | Snapshot-independent: reruns update, never duplicate |
 
 Evidence kinds used: `graph_fact` (structure, `total_minor` recomputable), `temporal_fact`,
-`counterevidence` (contradicted chronology), `coverage_fact`.
+`statistical_fact` (peer statistics: `window_minor` recomputes from the cited transactions and
+`burst_share_bp = window_minor·10000 // turnover_minor`), `counterevidence` (contradicted chronology,
+or turnover typical of peers), `coverage_fact`. Consumers must pair evidence with reasons by
+`reason_code` prefix (`STRUCT_`, `TEMPORAL_`, `PEER_`), never by kind alone.
 
 Temporal observations: `entry_minor ≥ possible_compatible_minor ≥ strict_compatible_minor ≥ 0`,
 `compatible_fraction_bp` (integer basis points), `lag_days_*` always, `lag_seconds_*` only
@@ -38,6 +41,16 @@ when every linked pair has source timestamps.
 `null` iff `insufficient_evidence`. Reason codes are `{code, params}`; the UI renders text
 from params only (`reasonText` in `lib/i18n.ts`). Alerts open for band ≥ `medium` and for
 `insufficient_evidence`.
+
+`BAND_CAPPED_BY_EVIDENCE` carries `gates` (risk-policy-v2): `temporal_unavailable`,
+`temporal_ambiguous`, `temporal_contradicted`, `peer_contradicted`.
+
+## Evaluation
+
+`GET /api/v1/evaluation` returns the committed artifact of the last executed benchmark run
+(`EvaluationReport`, `synthetic: true`, schema version 1) with per-dataset manifests removed.
+`404 BENCHMARK_NOT_FOUND` when no run exists; `500 BENCHMARK_ARTIFACT_INVALID` for an unreadable
+or unsupported artifact. The endpoint never computes metrics.
 
 ## Cases
 

@@ -26,7 +26,7 @@ FastAPI ──► PostgreSQL ◄── analysis_jobs (lease, heartbeat, bounded 
 | `nexora.domain` | Money, transfers, chronology, ids, typed result contracts | stdlib only |
 | `nexora.ingest` | CSV adapter, row validation, in-batch dedup | domain |
 | `nexora.analytics` | Graph snapshot, structural + temporal detectors, coverage, risk, evidence checks, pipeline | domain, networkx, yaml |
-| `nexora.evaluation` | Synthetic scenario generator (labels returned separately) | domain |
+| `nexora.evaluation` | Synthetic scenario generator (labels returned separately) and benchmark harness | domain, ingest, analytics |
 | `nexora.persistence` | SQLAlchemy models, engine/session | sqlalchemy |
 | `nexora.application` | Use cases: ingest, analysis jobs/publish, cases, read models | all of the above |
 | `nexora.api` | HTTP DTOs, routes, error envelope | application |
@@ -39,20 +39,41 @@ FastAPI ──► PostgreSQL ◄── analysis_jobs (lease, heartbeat, bounded 
 1. **Snapshot** (`graph_builder`): one aggregate edge per ordered pair+currency from
    `posted` transfers only; self-transfers counted per node, never edges.
    Input manifest hash is order-independent.
-2. **Structural** detectors: `funnel` (≥3 feeders each routing ≥50 % of observed outflow to
-   one centre) and `chain` (bounded path enumeration through low-degree pass-through
-   intermediaries with consistent hop volumes; fails closed with `path_budget_exceeded`).
+2. **Structural** detectors (`detectors-v2`):
+   * `funnel` — ≥3 independent feeders each routing ≥50 % of observed outflow to one centre;
+     feeders first paid by the centre are *returning* funds and do not count (funnel-v2);
+   * `fan_out` — ≥5 recipients each obtaining ≥50 % of observed inflow from one distributor;
+     recipients that later pay the distributor back do not count;
+   * `cycle` — bounded simple loops (3–5) of low-degree pass-through accounts, canonical rotation
+     from the earliest edge; partial snapshot on `cycle_budget_exceeded`;
+   * `chain` — bounded path enumeration through low-degree pass-through intermediaries with
+     consistent hop volumes; paths fully inside a detected loop are deduplicated; fails closed
+     with `path_budget_exceeded`.
 3. **Temporal** engine (`temporal/flow`): node-split max-flow over transfer layers with exact
    integer capacities. *Strict* links require provable order at the pair's precision;
    *possible* links add same-day/identical-instant pairs. Status: supported /
    possible_ambiguous / contradicted / unavailable.
-4. **Coverage**: co-occurring limitations (day precision, boundary, downstream unobserved,
+4. **Peer statistics** (`statistical/peer.py`, hub-type formations only): largest 3-day share of
+   the subject's turnover vs. a cohort with similar transfer counts (widened ×2 → ×4 → ×8, then all
+   active accounts, each step recorded); Tukey fence Q3 + 1.5·IQR. Outlier → supported; at or below
+   the cohort median → counter-evidence; otherwise inconclusive. Window transactions are cited and
+   the share recomputes from them.
+5. **Coverage**: co-occurring limitations (day precision, boundary, downstream unobserved,
    upstream unknown, missing context) and next-best-data requests.
-5. **Evidence** validation: every id resolves, sums recompute, no NaN — failures are
+6. **Evidence** validation: every id resolves, sums recompute, no NaN — failures are
    quarantined, never published.
-6. **Risk** (`risk-policy-v1`): ≤1 credited signal per family; missing families count zero
-   (no renormalisation); evidence caps; subject at boundary ⇒ `insufficient_evidence`
-   with no numeric priority.
+7. **Risk** (`risk-policy-v2`): ≤1 credited signal per family; missing families count zero
+   (no renormalisation); named evidence gates cap the band (temporal unavailable/ambiguous/
+   contradicted, peer counter-evidence → `medium`); subject at boundary ⇒ `insufficient_evidence`
+   with no numeric priority. A policy change changes the config hash, so it produces a new
+   snapshot and never rewrites published assessments.
+
+## Evaluation
+
+`scripts/run_benchmark.py` runs the pure pipeline (plus baselines and configuration variants) on
+generated datasets, matches review items to planted scenarios *after* detection, and writes a
+JSON artifact recording code commit, config hash and dataset hashes. The API serves that file
+read-only (`GET /api/v1/evaluation`); nothing is computed in the request or in the browser.
 
 All ids (snapshot, formation, evidence, signal, risk) are UUIDv5 of content, so reruns are
 idempotent and row order never changes results.

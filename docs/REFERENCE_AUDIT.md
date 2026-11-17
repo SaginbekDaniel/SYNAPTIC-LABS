@@ -1,3 +1,7 @@
+> **Superseded (2026-11-17, later session):** the reference repositories *were* reachable via `git clone`
+> and have been audited at exact commits — see `docs/research/`. This file is kept as the record of the first
+> session.
+
 # Reference audit (Stage 0)
 
 **Date:** 2026-11-17 · **Auditor:** Claude Code session on branch `claude/brave-dirac-c80nwq`

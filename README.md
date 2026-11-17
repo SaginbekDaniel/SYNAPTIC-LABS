@@ -14,14 +14,30 @@ claiming that a graph anomaly proves a crime.
 * Synthetic scenario lab (suspicious formations, legitimate lookalikes, hard negatives) and CSV import
   with row-level quarantine and idempotent re-import.
 * Directed graph snapshots with exact integer money and string account ids (incl. ids > 2^53).
-* Two independent detector families: **structural** (collection funnel, layering chain) and
-  **temporal** (capacity-constrained max-flow; same-day records are *ambiguous*, reversed dates *contradicted*).
+* Three signal families: **structural** (collection funnel, coordinated distribution / fan-out, layering
+  chain, time-checked circular flow), **temporal** (capacity-constrained max-flow; same-day records are
+  *ambiguous*, reversed dates *contradicted*) and **peer statistics** (turnover concentration vs. an
+  activity-matched cohort, used as corroboration *or* counter-evidence).
 * Coverage-aware abstention (`insufficient_evidence` at collection boundaries) and next-data requests.
-* Versioned risk policy with correlation guard and evidence caps.
+* Versioned risk policy (`risk-policy-v2`) with correlation guard and named evidence gates; legitimate-looking
+  hubs are capped, never silently cleared.
+* **Reproducible synthetic benchmark** (`scripts/run_benchmark.py`): dev / validation / holdout seeds,
+  baselines, ablations, robustness — rendered on the **Evaluation** screen and in `docs/EVALUATION.md`.
 * Investigation UI: alert queue → hypothesis → reasons → highlighted source transfers → formation graph
   → case decision with optimistic concurrency and append-only audit.
 
-See `docs/LIMITATIONS.md` for what does **not** work yet (notably: no benchmark metrics exist).
+### Measured on the synthetic holdout split (30 datasets, evaluated once after the configuration was frozen)
+
+| | NEXORA v1 (before) | NEXORA v2 | Best simple baseline |
+|---|---:|---:|---|
+| Suspicious networks flagged (scenario recall) | 60.9 % | **79.4 %** | rules: 95.7 % at 42.6 alerts/dataset |
+| Legitimate networks reaching *high* priority | 43.8 % | **6.3 %** | — (baselines have no priority bands) |
+| Share of top-5 alerts that are planted fraud (P@5) | 31.3 % | **48.3 %** | turnover ranking: 34.0 % |
+| Planted networks found in the first 5 alerts (Recall@5) | 45.8 % | **73.6 %** | rules: 43.6 % |
+
+Synthetic data written by the same team that wrote the detectors: these numbers show behaviour on our scenarios,
+not accuracy on real bank data. Full tables, negative results and error examples: `docs/EVALUATION.md`.
+See `docs/LIMITATIONS.md` for what does **not** work.
 
 ## Run with Docker
 
@@ -62,6 +78,15 @@ cd apps/web && npm ci && npm run dev
 
 The dev UI is served at http://127.0.0.1:5173 and proxies `/api` to port 8000.
 
+## Benchmark
+
+```bash
+uv run python scripts/run_benchmark.py
+```
+
+Writes `benchmarks/results/bench-v1.json` (served by `GET /api/v1/evaluation`) and `docs/EVALUATION.md`.
+About one minute on one CPU core; deterministic except wall-clock latency.
+
 ## Tests
 
 ```bash
@@ -85,4 +110,7 @@ API + worker against `NEXORA_E2E_DATABASE_URL` (default `…/nexora_e2e`) and re
 | `src/nexora/api` · `worker` | FastAPI app · lease-based job worker |
 | `configs/` | Versioned detector and risk-policy configuration (hashed into every snapshot) |
 | `apps/web` | React + TypeScript + Cytoscape UI |
-| `docs/` | Architecture, interfaces, audit/provenance, limitations, plan, test report |
+| `src/nexora/evaluation` | Synthetic generator and benchmark harness (labels never reach detectors) |
+| `benchmarks/results` | Committed benchmark artifact of an executed run |
+| `docs/` | Architecture, interfaces, evaluation, limitations, plan, test report |
+| `docs/research` | GitHub landscape, deep audit, scorecard, licence matrix, adoption and rejection decisions |
