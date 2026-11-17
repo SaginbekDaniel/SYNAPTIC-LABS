@@ -649,9 +649,8 @@ def _boundary(ds: GeneratedDataset, rng: random.Random) -> tuple[list[dict[str, 
 def _background(factor: int) -> RowsTransform:
     def transform(ds: GeneratedDataset, rng: random.Random) -> tuple[list[dict[str, str]], dict[str, Any]]:
         truth = _truth_accounts(ds)
-        background = sorted(
-            {r["sender_account_id"] for r in ds.rows} | {r["receiver_account_id"] for r in ds.rows} - truth
-        )
+        everyone = {r["sender_account_id"] for r in ds.rows} | {r["receiver_account_id"] for r in ds.rows}
+        background = sorted(everyone - truth)  # planted scenario accounts are never touched
         bg_rows = [r for r in ds.rows if r["sender_account_id"] not in truth and r["receiver_account_id"] not in truth]
         rows = list(ds.rows)
         dates = sorted({r["observed_date"] for r in ds.rows})

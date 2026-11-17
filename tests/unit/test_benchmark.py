@@ -117,3 +117,15 @@ def test_order_and_exact_duplicates_do_not_change_results(pid):
     base = b.run_experiments(ds, exp)["full"]
     perturbed = b.run_experiments(ds, exp, transform=b.PERTURBATIONS[pid][0])["full"]
     assert b.identical_items(base, perturbed)
+
+
+def test_background_perturbation_never_touches_planted_accounts():
+    import random
+
+    ds = generate("bench-v1", 2000)
+    truth = {a for t in ds.truth for a in t.accounts}
+    rows, _ = b.PERTURBATIONS["background_x4"][0](ds, random.Random(1))
+    original = {r["source_transaction_id"] for r in ds.rows}
+    added = [r for r in rows if r["source_transaction_id"] not in original]
+    assert len(added) > 0
+    assert not any(r["sender_account_id"] in truth or r["receiver_account_id"] in truth for r in added)
