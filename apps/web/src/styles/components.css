@@ -341,6 +341,13 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
+/* Metric tables: let long column headers wrap so every column fits without scrolling on desktop. */
+.table--wrap-head thead th {
+  white-space: normal;
+  vertical-align: bottom;
+  font-size: var(--fs-sm);
+  min-width: 4.5rem;
+}
 /* Row headers and group rows sit in the body: not sticky, full-contrast, allowed to wrap. */
 .table tbody th {
   position: static;

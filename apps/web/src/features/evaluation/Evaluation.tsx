@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Empty, ErrorState, Loading, Panel, SimulationBadge } from "../../components/ui";
+import { Empty, ErrorState, Loading, Panel } from "../../components/ui";
 import { api } from "../../lib/api";
 import { formatDateTime, shortId } from "../../lib/format";
 import { t, tDynamic, type MessageKey } from "../../lib/i18n";
 import type { EvaluationReport, MethodSummary } from "../../lib/types";
 import { useApi } from "../../lib/useApi";
-import { defaultSplit, familyRows, num, pct, SPLIT_ORDER, type FamilyRow } from "./evaluationView";
+import { defaultSplit, familyRows, groupExamples, num, pct, SPLIT_ORDER, type FamilyRow } from "./evaluationView";
 
 const PRIMARY = "nexora_v2";
 const REFERENCE = "nexora_v1";
@@ -20,7 +20,6 @@ export function Evaluation() {
           <h1>{t("eval.title")}</h1>
           <p>{t("eval.subtitle")}</p>
         </div>
-        <SimulationBadge />
       </div>
       <div className="callout callout--warn" role="note">
         {t("eval.synthetic")}
@@ -172,7 +171,7 @@ function MethodTable({ report, results }: { report: EvaluationReport; results: R
   const methods = report.methods.filter((m) => m.id in results);
   return (
     <div className="table-wrap">
-      <table className="table" data-testid="eval-methods-table">
+      <table className="table table--wrap-head" data-testid="eval-methods-table">
         <caption className="visually-hidden">{t("eval.methods")}</caption>
         <thead>
           <tr>
@@ -236,7 +235,7 @@ function FamilyTable({ results }: { results: Record<string, MethodSummary> }) {
   );
   return (
     <div className="table-wrap">
-      <table className="table" data-testid="eval-families-table">
+      <table className="table table--wrap-head" data-testid="eval-families-table">
         <caption className="visually-hidden">{t("eval.families")}</caption>
         <thead>
           <tr>
@@ -269,7 +268,7 @@ function VariantTable({
 }) {
   return (
     <div className="table-wrap">
-      <table className="table">
+      <table className="table table--wrap-head">
         <thead>
           <tr>
             <th scope="col">{t("eval.col.variant")}</th>
@@ -311,41 +310,50 @@ function VariantTable({
 
 function Examples({ report }: { report: EvaluationReport }) {
   const ex = report.examples!;
-  const list = (title: string, rows: typeof ex.false_positives, testId: string) => (
-    <div className="stack stack--sm">
-      <h3>{title}</h3>
-      {rows.length === 0 ? (
-        <p className="muted">{t("eval.noExamples")}</p>
-      ) : (
-        <div className="table-wrap">
-          <table className="table" data-testid={testId}>
-            <thead>
-              <tr>
-                <th scope="col">{t("eval.col.family")}</th>
-                <th scope="col">{t("eval.col.explanation")}</th>
-                <th scope="col">{t("eval.col.band")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r) => (
-                <tr key={r.scenario_id}>
-                  <th scope="row">
-                    {tDynamic("family.", r.family)}
-                    {r.kind && <div className="subtle">{tDynamic("kind.", r.kind)}</div>}
+  const list = (title: string, rows: typeof ex.false_positives, testId: string) => {
+    const groups = groupExamples(rows);
+    return (
+      <div className="stack stack--sm">
+        <h3>{title}</h3>
+        {groups.length === 0 ? (
+          <p className="muted">{t("eval.noExamples")}</p>
+        ) : (
+          <div className="table-wrap">
+            <table className="table table--wrap-head" data-testid={testId}>
+              <thead>
+                <tr>
+                  <th scope="col">{t("eval.col.family")}</th>
+                  <th scope="col">{t("eval.col.explanation")}</th>
+                  <th scope="col">{t("eval.col.band")}</th>
+                  <th scope="col" className="right">
+                    {t("eval.col.cases")}
                   </th>
-                  <td>{tDynamic("eval.expl.", r.explanation)}</td>
-                  <td>
-                    {r.band ? tDynamic("band.", r.band) : "—"}
-                    {r.priority !== null && <span className="subtle num"> · {r.priority}</span>}
-                  </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
-  );
+              </thead>
+              <tbody>
+                {groups.map((g) => (
+                  <tr key={g.key}>
+                    <th scope="row">
+                      {tDynamic("family.", g.family)}
+                      {g.kind && <div className="subtle">{tDynamic("kind.", g.kind)}</div>}
+                    </th>
+                    <td>{tDynamic("eval.expl.", g.explanation)}</td>
+                    <td>
+                      {g.bands.map((b) => tDynamic("band.", b)).join(", ") || "—"}
+                      {g.priorities.length > 0 && (
+                        <span className="subtle num"> · {Math.min(...g.priorities) === Math.max(...g.priorities) ? g.priorities[0] : `${Math.min(...g.priorities)}–${Math.max(...g.priorities)}`}</span>
+                      )}
+                    </td>
+                    <td className="right num">{g.count}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    );
+  };
   return (
     <Panel title={t("eval.examples")} hint={t("eval.examplesHint")} id="eval-examples">
       <div className="grid-2">

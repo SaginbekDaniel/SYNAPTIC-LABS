@@ -1,5 +1,7 @@
 import type { EvaluationReport, MethodSummary } from "../../lib/types";
 
+type ErrorExample = NonNullable<EvaluationReport["examples"]>["false_positives"][number];
+
 export const SPLIT_ORDER = ["holdout", "validation", "dev"] as const;
 
 /** Metric in [0, 1] (or null when undefined for a method) → "53,3 %" / "—". */
@@ -43,4 +45,28 @@ export function familyRows(results: Record<string, MethodSummary>, methods: read
     suspicious: rows.filter((r) => !isLegitimateFamily(r.family)),
     legitimate: rows.filter((r) => isLegitimateFamily(r.family)),
   };
+}
+
+export interface ExampleGroup {
+  key: string;
+  family: string;
+  kind: string | null | undefined;
+  explanation: ErrorExample["explanation"];
+  count: number;
+  bands: string[];
+  priorities: number[];
+}
+
+/** Collapse repeated error cases (same family, formation kind and explanation) into one row with a count. */
+export function groupExamples(rows: readonly ErrorExample[]): ExampleGroup[] {
+  const groups = new Map<string, ExampleGroup>();
+  for (const r of rows) {
+    const key = `${r.family}|${r.kind ?? ""}|${r.explanation}`;
+    const g = groups.get(key) ?? { key, family: r.family, kind: r.kind, explanation: r.explanation, count: 0, bands: [], priorities: [] };
+    g.count += 1;
+    if (r.band && !g.bands.includes(r.band)) g.bands.push(r.band);
+    if (r.priority !== null && r.priority !== undefined) g.priorities.push(r.priority);
+    groups.set(key, g);
+  }
+  return [...groups.values()].sort((a, b) => b.count - a.count || a.family.localeCompare(b.family));
 }

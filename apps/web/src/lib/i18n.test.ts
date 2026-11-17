@@ -33,4 +33,9 @@ describe("i18n plurals", () => {
     const fan = reasonText({ code: "STRUCT_FAN_OUT_RECIPIENTS", params: { count: 6, total_minor: "900719925474099301", currency: "KZT" } });
     expect(fan.replace(/\s/g, " ")).toContain("9 007 199 254 740 993,01 ₸"); // beyond 2^53, no float rounding
   });
+  it("explains which evidence gate capped the band", () => {
+    const v2 = reasonText({ code: "BAND_CAPPED_BY_EVIDENCE", params: { from: "high", to: "medium", gates: ["peer_contradicted"] } });
+    expect(v2).toBe("Приоритет ограничен: «Высокий» → «Средний», потому что оборот счёта типичен для группы сравнения.");
+    expect(reasonText({ code: "BAND_CAPPED_BY_EVIDENCE", params: { from: "high", to: "medium" } })).toContain("качества доказательств");
+  });
 });

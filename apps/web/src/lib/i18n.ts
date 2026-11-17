@@ -300,6 +300,7 @@ const ru = {
   "eval.col.scenarios": "Сетей",
   "eval.col.explanation": "Причина",
   "eval.col.band": "Приоритет",
+  "eval.col.cases": "Случаев",
   "eval.method.nexora_v2": "NEXORA v2",
   "eval.method.nexora_v1": "NEXORA v1 (до бенчмарка)",
   "eval.method.B4_structure_temporal": "B4 · Структура + хронология",
@@ -332,7 +333,7 @@ const ru = {
   "eval.pert.background_x4": "Фоновой активности в 4 раза больше",
   "eval.sensitivity": "Чувствительность к порогам",
   "eval.examples": "Разбор ошибок (отложенная выборка)",
-  "eval.examplesHint": "Сценарии, на которых NEXORA v2 ошибается. Показаны честно, без исключений.",
+  "eval.examplesHint": "Первые ошибки NEXORA v2 в отложенной выборке, одинаковые случаи объединены.",
   "eval.fp": "Ложные тревоги: легитимные сети с алертом",
   "eval.fn": "Пропуски: подозрительные сети без алерта",
   "eval.noExamples": "Нет примеров.",
@@ -437,6 +438,11 @@ const ru = {
   "reason.NO_SUPPORTED_SIGNAL": "Нет подтверждённых сигналов для приоритизации.",
   "reason.NO_INDEPENDENT_CORROBORATION": "Нет независимого подтверждения из другого семейства сигналов.",
   "reason.BAND_CAPPED_BY_EVIDENCE": "Приоритет ограничен: «{from}» → «{to}» из-за качества доказательств.",
+  "reason.BAND_CAPPED_BY_GATES": "Приоритет ограничен: «{from}» → «{to}», потому что {gates}.",
+  "gate.temporal_unavailable": "хронологическая проверка недоступна",
+  "gate.temporal_ambiguous": "порядок переводов внутри дня не установлен",
+  "gate.temporal_contradicted": "даты переводов противоречат гипотезе",
+  "gate.peer_contradicted": "оборот счёта типичен для группы сравнения",
   "reason.unknown": "Основание {code}",
   "family.STRUCTURE": "структура",
   "family.TEMPORAL": "хронология",
@@ -529,11 +535,14 @@ export function reasonText(rc: ReasonCode, currency = "KZT"): string {
       return t("reason.TEMPORAL_UNAVAILABLE", { reason: tDynamic("lim.", String(p.reason)) });
     case "COVERAGE_BOUNDARY":
       return t("reason.COVERAGE_BOUNDARY", { count: Array.isArray(p.accounts) ? p.accounts.length : 0 });
-    case "BAND_CAPPED_BY_EVIDENCE":
-      return t("reason.BAND_CAPPED_BY_EVIDENCE", {
-        from: tDynamic("band.", String(p.from)),
-        to: tDynamic("band.", String(p.to)),
-      });
+    case "BAND_CAPPED_BY_EVIDENCE": {
+      const bands = { from: tDynamic("band.", String(p.from)), to: tDynamic("band.", String(p.to)) };
+      // risk-policy-v2 names the gates that applied; v1 assessments carry no gates.
+      const gates = Array.isArray(p.gates) ? p.gates.map((g) => tDynamic("gate.", String(g))) : [];
+      return gates.length
+        ? t("reason.BAND_CAPPED_BY_GATES", { ...bands, gates: gates.join("; ") })
+        : t("reason.BAND_CAPPED_BY_EVIDENCE", bands);
+    }
     default:
       return hasKey(`reason.${rc.code}`) ? t(`reason.${rc.code}` as MessageKey) : t("reason.unknown", { code: rc.code });
   }

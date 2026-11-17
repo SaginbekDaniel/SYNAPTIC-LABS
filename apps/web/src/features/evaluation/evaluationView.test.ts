@@ -31,3 +31,15 @@ describe("evaluation view helpers", () => {
     expect(rows.legitimate[0]?.flagged).toEqual({ a: 8, b: 0 });
   });
 });
+
+describe("error example grouping", () => {
+  it("collapses identical cases and keeps the priority range", async () => {
+    const { groupExamples } = await import("./evaluationView");
+    const row = (family: string, priority: number | null, explanation: "alerted" | "abstained" = "alerted") => ({
+      dataset: "d", scenario_id: `${family}-${priority}`, family, difficulty: "hard", notes: "", kind: "funnel", band: "medium", priority, reasons: [], explanation,
+    });
+    const groups = groupExamples([row("N2", 62), row("N2", 65), row("N7", 58), row("N2", null, "abstained")]);
+    expect(groups[0]).toMatchObject({ family: "N2", count: 2, priorities: [62, 65], bands: ["medium"] });
+    expect(groups).toHaveLength(3);
+  });
+});
