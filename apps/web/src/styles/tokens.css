@@ -1,83 +1,103 @@
-/* NEXORA design tokens. Feature CSS must reference these variables only. */
+/*
+ * NEXORA Dark Intelligence — design tokens.
+ * Feature CSS references these variables only; no raw colours outside this file.
+ *
+ * Theme: dark is the art-directed default (`:root`). Light is applied with
+ * `<html data-theme="light">`, set before first paint by the inline script in index.html.
+ * Breakpoints (CSS custom properties cannot be used in media queries, so they are documented here
+ * and used literally): sm 600px · md 768px · lg 1100px · xl 1280px.
+ */
 :root {
-  /* Neutrals (slate) */
-  --n-0: #ffffff;
-  --n-25: #f8fafc;
-  --n-50: #f1f5f9;
-  --n-100: #e2e8f0;
-  --n-200: #cbd5e1;
-  --n-400: #94a3b8;
-  --n-500: #64748b;
-  --n-600: #475569;
-  --n-700: #334155;
-  --n-800: #1e293b;
-  --n-900: #0f172a;
-  --n-950: #0a0f1c;
+  color-scheme: dark;
 
-  /* Surfaces & text (light) */
-  --bg: var(--n-25);
-  --surface: var(--n-0);
-  --surface-2: var(--n-50);
-  --border: var(--n-100);
-  --border-strong: var(--n-200);
-  --text: var(--n-900);
-  --text-2: var(--n-600);
-  --text-3: var(--n-500);
+  /* ---- Surfaces (dark) ---- */
+  --canvas: #08090d;
+  --surface: #10111a;
+  --surface-2: #171925;
+  --surface-3: #20223a;
+  --stage: #0b0c13;
+  --stage-dot: rgb(255 255 255 / 0.05);
+  --line: rgb(255 255 255 / 0.07);
+  --line-strong: rgb(255 255 255 / 0.13);
+  --scrim: rgb(4 5 9 / 0.72);
 
-  /* Single accent (actions, focus, selection) */
-  --accent: #2753c9;
-  --accent-hover: #1f45ab;
-  --accent-soft: #e8eefc;
-  --accent-text: #ffffff;
-  --focus-ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+  /* ---- Text ---- */
+  --text: #f5f5f9;
+  --text-2: #a3a7bc;
+  --text-3: #80859b;
+  --text-on-fill: #ffffff;
 
-  /* Semantic: risk bands (triage priority, not guilt) */
-  --band-critical: #9f1239;
-  --band-critical-bg: #ffe4e6;
-  --band-high: #b42318;
-  --band-high-bg: #fee4e2;
-  --band-medium: #a15c07;
-  --band-medium-bg: #fef0c7;
-  --band-low: #475569;
-  --band-low-bg: #eef2f6;
-  --band-unresolved: #5b4bb7;
-  --band-unresolved-bg: #ece9fb;
+  /* ---- Brand & data series ---- */
+  --accent: #a58bf5;
+  --accent-strong: #c2b0ff;
+  --accent-fill: #7c5ce6;
+  --accent-fill-hover: #8a6cf0;
+  --accent-soft: rgb(154 123 242 / 0.14);
+  --accent-glow: rgb(154 123 242 / 0.35);
+  --cyan: #62d3db;
+  --cyan-soft: rgb(98 211 219 / 0.14);
+  --pink: #da7fd0;
+  --pink-soft: rgb(218 127 208 / 0.14);
+  --neutral-series: #5d6280;
 
-  /* Semantic: evidence status */
-  --ev-supported: #067647;
-  --ev-supported-bg: #dcfae6;
-  --ev-ambiguous: #a15c07;
-  --ev-ambiguous-bg: #fef0c7;
-  --ev-contradicted: #b42318;
-  --ev-contradicted-bg: #fee4e2;
-  --ev-unavailable: #475569;
-  --ev-unavailable-bg: #eef2f6;
+  /* ---- Risk bands (triage priority, never guilt). Always paired with an icon + label. ---- */
+  --band-critical: #ff6b86;
+  --band-critical-bg: rgb(255 92 122 / 0.14);
+  --band-high: #ff9a5c;
+  --band-high-bg: rgb(255 138 76 / 0.14);
+  --band-medium: #f4c152;
+  --band-medium-bg: rgb(244 193 82 / 0.13);
+  --band-low: #9aa0bc;
+  --band-low-bg: rgb(154 160 188 / 0.12);
+  --band-unresolved: #b3a7e6;
+  --band-unresolved-bg: rgb(179 167 230 / 0.12);
 
-  /* Graph roles */
-  --g-node: #94a3b8;
-  --g-subject: #b42318;
-  --g-entry: #2753c9;
-  --g-exit: #a15c07;
-  --g-boundary: #5b4bb7;
-  --g-edge: #94a3b8;
-  --g-edge-strong: #334155;
+  /* ---- Evidence / workflow status ---- */
+  --ev-supported: #56d49e;
+  --ev-supported-bg: rgb(86 212 158 / 0.13);
+  --ev-ambiguous: #f4c152;
+  --ev-ambiguous-bg: rgb(244 193 82 / 0.13);
+  --ev-contradicted: #ff8080;
+  --ev-contradicted-bg: rgb(255 128 128 / 0.13);
+  --ev-unavailable: #9aa0bc;
+  --ev-unavailable-bg: rgb(154 160 188 / 0.12);
+  --st-pending: var(--cyan);
+  --st-pending-bg: var(--cyan-soft);
+  --st-confirmed: var(--ev-supported);
+  --st-confirmed-bg: var(--ev-supported-bg);
 
-  /* Typography */
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", Menlo, Consolas, monospace;
-  --fs-xs: 0.75rem;
-  --fs-sm: 0.8125rem;
-  --fs-md: 0.875rem;
-  --fs-lg: 1rem;
-  --fs-xl: 1.25rem;
-  --fs-2xl: 1.5rem;
-  --lh-tight: 1.25;
+  /* ---- Graph roles ---- */
+  --g-node: #6d7290;
+  --g-subject: #a58bf5;
+  --g-entry: #62d3db;
+  --g-exit: #da7fd0;
+  --g-boundary: #f4c152;
+  --g-edge: rgb(163 167 200 / 0.38);
+  --g-edge-strong: #e6e7f2;
+  --g-highlight: #c2b0ff;
+  --g-label: #c9cbd9;
+  --g-label-bg: #0b0c13;
+
+  /* ---- Typography ---- */
+  --font-sans: "Onest Variable", "Onest", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --fs-2xs: 0.6875rem; /* 11 — chart axis ticks only */
+  --fs-xs: 0.75rem; /* 12 */
+  --fs-sm: 0.8125rem; /* 13 */
+  --fs-md: 0.875rem; /* 14 — body */
+  --fs-lg: 1rem; /* 16 */
+  --fs-xl: 1.25rem; /* 20 */
+  --fs-2xl: 1.625rem; /* 26 — page title */
+  --fs-3xl: 2.125rem; /* 34 — key figures */
+  --lh-tight: 1.2;
   --lh: 1.5;
   --fw-regular: 400;
   --fw-medium: 500;
   --fw-semibold: 600;
+  --tracking-tight: -0.015em;
+  --tracking-display: -0.025em;
 
-  /* Spacing (4px grid) */
+  /* ---- Spacing (4px grid) ---- */
   --s-1: 0.25rem;
   --s-2: 0.5rem;
   --s-3: 0.75rem;
@@ -86,73 +106,110 @@
   --s-6: 1.5rem;
   --s-8: 2rem;
   --s-10: 2.5rem;
+  --s-12: 3rem;
 
-  /* Radii, borders, elevation */
-  --r-sm: 4px;
-  --r-md: 6px;
-  --r-lg: 8px;
+  /* ---- Radii: hierarchy, not one value everywhere ---- */
+  --r-xs: 6px; /* chips inside controls, table highlights */
+  --r-sm: 8px; /* inputs, small buttons */
+  --r-md: 12px; /* buttons, inner tiles */
+  --r-lg: 16px; /* nested panels, popovers */
+  --r-xl: 22px; /* top-level panels */
   --r-pill: 999px;
-  --shadow-1: 0 1px 2px rgb(15 23 42 / 0.06);
-  --shadow-pop: 0 8px 24px rgb(15 23 42 / 0.14);
 
-  /* Layout */
-  --rail-w: 220px;
-  --topbar-h: 52px;
-  --content-max: 1440px;
-  --control-h: 32px;
-  --control-h-sm: 28px;
+  /* ---- Elevation: dark relies on surface steps; shadows only for floating layers ---- */
+  --shadow-panel: none;
+  --shadow-pop: 0 18px 48px rgb(0 0 0 / 0.55), 0 0 0 1px var(--line-strong);
+  --focus-ring: 0 0 0 2px var(--canvas), 0 0 0 4px var(--accent);
 
-  /* Motion */
-  --dur-fast: 120ms;
-  --ease: cubic-bezier(0.2, 0, 0, 1);
+  /* ---- Components & layout ---- */
+  --control-h: 36px;
+  --control-h-sm: 30px;
+  --touch-min: 44px;
+  --rail-w: 232px;
+  --rail-w-compact: 76px;
+  --header-h: 64px;
+  --tabbar-h: 64px;
+  --content-max: 1520px;
+  --side-panel-w: 384px;
+  --stage-h: 580px;
+
+  /* ---- Motion ---- */
+  --dur-1: 120ms;
+  --dur-2: 200ms;
+  --dur-3: 320ms;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: var(--n-950);
-    --surface: var(--n-900);
-    --surface-2: #131c2e;
-    --border: #1f2a3d;
-    --border-strong: var(--n-700);
-    --text: #e6ebf3;
-    --text-2: var(--n-400);
-    --text-3: #7c8aa0;
-    --accent: #7ea2ff;
-    --accent-hover: #9db7ff;
-    --accent-soft: #1b2847;
-    --accent-text: #0a0f1c;
-    --band-critical: #fda4af;
-    --band-critical-bg: #3f0d1d;
-    --band-high: #fda29b;
-    --band-high-bg: #3d1410;
-    --band-medium: #fdd38a;
-    --band-medium-bg: #3a2606;
-    --band-low: #b3bfcf;
-    --band-low-bg: #1c2638;
-    --band-unresolved: #c4b8ff;
-    --band-unresolved-bg: #251f4a;
-    --ev-supported: #75e0a7;
-    --ev-supported-bg: #0b2e1f;
-    --ev-ambiguous: #fdd38a;
-    --ev-ambiguous-bg: #3a2606;
-    --ev-contradicted: #fda29b;
-    --ev-contradicted-bg: #3d1410;
-    --ev-unavailable: #b3bfcf;
-    --ev-unavailable-bg: #1c2638;
-    --g-node: #64748b;
-    --g-subject: #f97066;
-    --g-entry: #7ea2ff;
-    --g-exit: #fdb022;
-    --g-boundary: #a99bff;
-    --g-edge: #475569;
-    --g-edge-strong: #cbd5e1;
-    --shadow-1: none;
-    --shadow-pop: 0 8px 24px rgb(0 0 0 / 0.5);
-  }
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --canvas: #f3f3f7;
+  --surface: #ffffff;
+  --surface-2: #f6f6fa;
+  --surface-3: #ebe9f6;
+  --stage: #fafafd;
+  --stage-dot: rgb(20 21 31 / 0.07);
+  --line: rgb(17 18 40 / 0.08);
+  --line-strong: rgb(17 18 40 / 0.15);
+  --scrim: rgb(20 21 31 / 0.4);
+
+  --text: #14151f;
+  --text-2: #545972;
+  --text-3: #686d86;
+  --text-on-fill: #ffffff;
+
+  --accent: #5b3fd0;
+  --accent-strong: #4a2fbd;
+  --accent-fill: #6447d8;
+  --accent-fill-hover: #5638ca;
+  --accent-soft: rgb(100 71 216 / 0.1);
+  --accent-glow: rgb(100 71 216 / 0.22);
+  --cyan: #0b8790;
+  --cyan-soft: rgb(11 135 144 / 0.1);
+  --pink: #a8418f;
+  --pink-soft: rgb(168 65 143 / 0.1);
+  --neutral-series: #b9bdd0;
+
+  --band-critical: #c3173c;
+  --band-critical-bg: rgb(195 23 60 / 0.09);
+  --band-high: #b7470b;
+  --band-high-bg: rgb(194 65 12 / 0.09);
+  --band-medium: #875c00;
+  --band-medium-bg: rgb(176 120 0 / 0.11);
+  --band-low: #575d75;
+  --band-low-bg: rgb(87 93 117 / 0.09);
+  --band-unresolved: #5a49a8;
+  --band-unresolved-bg: rgb(90 73 168 / 0.09);
+
+  --ev-supported: #0d7a4c;
+  --ev-supported-bg: rgb(13 122 76 / 0.09);
+  --ev-ambiguous: #875c00;
+  --ev-ambiguous-bg: rgb(176 120 0 / 0.11);
+  --ev-contradicted: #be2a2a;
+  --ev-contradicted-bg: rgb(190 42 42 / 0.09);
+  --ev-unavailable: #575d75;
+  --ev-unavailable-bg: rgb(87 93 117 / 0.09);
+
+  --g-node: #9a9fb6;
+  --g-subject: #6447d8;
+  --g-entry: #0b8790;
+  --g-exit: #a8418f;
+  --g-boundary: #a77200;
+  --g-edge: rgb(84 89 114 / 0.42);
+  --g-edge-strong: #14151f;
+  --g-highlight: #5b3fd0;
+  --g-label: #3d4157;
+  --g-label-bg: #fafafd;
+
+  --shadow-panel: 0 1px 2px rgb(17 18 40 / 0.04), 0 0 0 1px var(--line);
+  --shadow-pop: 0 16px 40px rgb(17 18 40 / 0.16), 0 0 0 1px var(--line);
 }
 
 @media (prefers-reduced-motion: reduce) {
   :root {
-    --dur-fast: 0ms;
+    --dur-1: 0ms;
+    --dur-2: 0ms;
+    --dur-3: 0ms;
   }
 }

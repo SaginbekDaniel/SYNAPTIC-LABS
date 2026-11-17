@@ -3,8 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="color-scheme" content="light dark" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#08090d" />
     <title>NEXORA AI — расследование сетей</title>
+    <script>
+      // Apply the stored colour theme before first paint (mirrors src/app/theme.ts).
+      (function () {
+        try {
+          var c = localStorage.getItem("nexora.theme");
+          var light = c === "light" || (c === "system" && matchMedia("(prefers-color-scheme: light)").matches);
+          if (light) document.documentElement.dataset.theme = "light";
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

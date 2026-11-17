@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useDataset } from "../../app/dataset";
 import { GraphCanvas, GraphLegend, type GraphEdgeSpec, type GraphNodeSpec } from "../../components/graph/GraphCanvas";
-import { AccountId, BandBadge, Empty, ErrorState, EvidenceBadge, Loading, Money, NoDataset, Panel, TxTable } from "../../components/ui";
+import { AccountId, BandBadge, Empty, ErrorState, EvidenceBadge, Icon, Loading, Money, NoDataset, PageHeader, Panel, TxTable } from "../../components/ui";
 import { api } from "../../lib/api";
 import { shortId } from "../../lib/format";
 import { t, tDynamic, type MessageKey } from "../../lib/i18n";
@@ -56,13 +56,8 @@ export function NetworkExplorer() {
   }
 
   return (
-    <div className="stack">
-      <div className="page-head">
-        <div>
-          <h1>{t("network.title")}</h1>
-          <p>{t("network.subtitle")}</p>
-        </div>
-      </div>
+    <div className="page">
+      <PageHeader title={t("network.title")} description={t("network.subtitle")} />
       {!active && (
         <Panel>
           <NoDataset />
@@ -77,14 +72,13 @@ export function NetworkExplorer() {
         <>
           <Panel>
             <form
-              className="row"
-              style={{ alignItems: "flex-end" }}
+              className="network-search"
               onSubmit={(e) => {
                 e.preventDefault();
                 search(draft);
               }}
             >
-              <label className="field" style={{ flex: "1 1 260px" }}>
+              <label className="field network-search__id">
                 {t("network.search")}
                 <input className="input mono" value={draft} onChange={(e) => setDraft(e.target.value)} spellCheck={false} autoComplete="off" name="account" />
               </label>
@@ -96,11 +90,16 @@ export function NetworkExplorer() {
                 </select>
               </label>
               <button type="submit" className="btn btn--primary" disabled={!draft.trim()}>
+                <Icon name="search" size={16} />
                 {t("network.go")}
               </button>
             </form>
           </Panel>
-          {!account && <Empty title={t("network.hint")} />}
+          {!account && (
+            <Panel>
+              <Empty title={t("network.hint")} icon="network" />
+            </Panel>
+          )}
           {account && (summary.loading || hood.loading) && !summary.data && <Loading />}
           {summary.error && <ErrorState error={summary.error} onRetry={summary.reload} />}
           {summary.data && !summary.data.found && (
@@ -109,12 +108,12 @@ export function NetworkExplorer() {
             </Panel>
           )}
           {summary.data?.found && (
-            <div className="investigation">
-              <div className="stack">
-                <Panel title={t("network.title")} id="neighborhood">
+            <div className="network-layout">
+              <div className="network-layout__main">
+                <Panel title={t("network.graph")} id="neighborhood">
                   {hood.error && <ErrorState error={hood.error} onRetry={hood.reload} />}
                   {graph && (
-                    <div className="stack stack--sm">
+                    <div className="network-graph">
                       {hood.data?.truncated && (
                         <div className="callout callout--warn">
                           {t("network.truncated", { nodes: hood.data.limits.max_nodes ?? 0, edges: hood.data.limits.max_edges ?? 0 })}
@@ -124,25 +123,29 @@ export function NetworkExplorer() {
                         nodes={graph.nodes}
                         edges={graph.edges}
                         layout="cose"
-                        tall
+                        edgeLabels={false}
+                        className="graph-stage--tall"
                         selectedNode={account}
+                        selectedEdge={edge?.id ?? null}
                         onSelectNode={(id) => {
+                          if (!id) return;
                           setDraft(id);
                           search(id);
                         }}
                         onSelectEdge={setEdge}
+                        overlay={<GraphLegend roles={["subject", "member", "context", "boundary"]} />}
                       />
-                      <GraphLegend roles={["subject", "member", "boundary"]} />
                     </div>
                   )}
                 </Panel>
                 <Panel title={edge ? t("network.edgeTx", { from: shortId(edge.source, 6), to: shortId(edge.target, 6) }) : t("network.edges")}>
                   {!edge && hood.data && <EdgeTable hood={hood.data} onSelect={setEdge} />}
                   {edge && (
-                    <div className="stack stack--sm">
+                    <div className="network-edge">
                       <div>
-                        <button type="button" className="btn btn--sm btn--ghost" onClick={() => setEdge(null)}>
-                          ← {t("network.edges")}
+                        <button type="button" className="link-btn" onClick={() => setEdge(null)}>
+                          <Icon name="arrowLeft" size={16} />
+                          {t("network.edges")}
                         </button>
                       </div>
                       {edgeTx.error && <ErrorState error={edgeTx.error} onRetry={edgeTx.reload} />}
@@ -217,8 +220,8 @@ function EdgeTable({ hood, onSelect }: { hood: Neighborhood; onSelect: (e: Graph
 function AccountPanel({ summary }: { summary: AccountSummary }) {
   return (
     <Panel title={t("network.summary")} id="account-summary">
-      <div className="stack">
-        <div className="stack stack--sm">
+      <div className="ctx">
+        <div className="ctx__section">
           <AccountId id={summary.account_id} link={false} />
           {summary.is_boundary && <span className="badge badge--insufficient_evidence">{t("network.boundary")}</span>}
         </div>
@@ -232,16 +235,16 @@ function AccountPanel({ summary }: { summary: AccountSummary }) {
             <Money minor={summary.outgoing_minor} /> · {summary.outgoing_count} · {t("network.counterparties", { count: summary.distinct_receivers })}
           </dd>
         </dl>
-        <div className="stack stack--sm">
-          <h3>{t("network.formations")}</h3>
-          {summary.formations.length === 0 && <p className="muted">{t("network.noFormations")}</p>}
+        <div className="ctx__section">
+          <h3 className="ctx__label">{t("network.formations")}</h3>
+          {summary.formations.length === 0 && <p className="ctx__note">{t("network.noFormations")}</p>}
           <ul className="reason-list">
             {summary.formations.map((f) => (
-              <li key={f.formation_id} className="row" style={{ justifyContent: "space-between" }}>
+              <li key={f.formation_id} className="formation-item">
                 <span>
                   {tDynamic("kind.", `${f.kind}Short`)} · {t(`network.role.${f.role}` as MessageKey)}
                 </span>
-                <span className="row">
+                <span className="formation-item__badges">
                   <EvidenceBadge status={f.temporal_status} />
                   <BandBadge band={f.band} />
                   {f.alert_id && (

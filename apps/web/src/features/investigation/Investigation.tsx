@@ -1,227 +1,233 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { GraphCanvas, GraphLegend } from "../../components/graph/GraphCanvas";
-import { AccountId, BandBadge, ErrorState, EvidenceBadge, Loading, Money, Panel, TxTable } from "../../components/ui";
+import { SegmentedMeter } from "../../components/charts/Progress";
+import { GraphCanvas, GraphLegend, type GraphEdgeSpec, type NodeRole } from "../../components/graph/GraphCanvas";
+import { AccountId, BandBadge, CaseStatusBadge, Disclosure, ErrorState, EvidenceBadge, Icon, Loading, Panel, TxTable } from "../../components/ui";
 import { api } from "../../lib/api";
-import { formatBp, formatDate, shortId } from "../../lib/format";
-import { precisionLabel, reasonFamily, reasonPolarity, reasonText, t, tDynamic } from "../../lib/i18n";
-import type { AlertDetail, EvidenceChain, EvidenceItem, ReasonCode } from "../../lib/types";
+import { formatDate, shortId } from "../../lib/format";
+import { t } from "../../lib/i18n";
+import type { AlertDetail, EvidenceChain, ReasonCode } from "../../lib/types";
 import { useApi } from "../../lib/useApi";
-import { CasePanel } from "./CasePanel";
+import { alertTitle } from "../alerts/alertText";
+import { CasePanel, useOpenCase } from "./CasePanel";
+import { AccountView, EdgeView, SummaryView, type Highlight, type Selection } from "./ContextPanel";
+import { evidenceForReason, evidenceOfFamily } from "./evidence";
+import { EvidenceTimeline } from "./EvidenceTimeline";
 import { buildFormationGraph } from "./formationGraph";
-
-/**
- * Evidence is paired with reasons by signal family (reason-code prefix), never by evidence
- * kind alone: both temporal and peer findings can be `counterevidence`.
- */
-function evidenceOfFamily(family: ReturnType<typeof reasonFamily>, evidence: EvidenceItem[]): EvidenceItem | undefined {
-  if (family === "other") return undefined;
-  return evidence.find((e) => e.kind !== "coverage_fact" && reasonFamily(e.reason_code) === family);
-}
-
-function evidenceForReason(code: string, evidence: EvidenceItem[]): EvidenceItem | undefined {
-  return evidenceOfFamily(reasonFamily(code), evidence);
-}
-
-function Hypothesis({ alert }: { alert: AlertDetail }) {
-  const f = alert.formation;
-  if (f.kind === "fan_out") {
-    const onward = Number(f.features.onward_count ?? 0);
-    return (
-      <p>
-        {t("alert.hypothesis.fanOut", {
-          center: f.subject_account_id,
-          count: f.exit_ids.length,
-          onward: onward > 0 ? t("alert.hypothesis.fanOutOnward", { count: onward }) : t("alert.hypothesis.fanOutTerminal"),
-        })}
-      </p>
-    );
-  }
-  if (f.kind === "cycle") {
-    return <p>{t("alert.hypothesis.cycle", { count: f.member_ids.length, start: f.subject_account_id })}</p>;
-  }
-  if (f.kind === "funnel") {
-    const downstream = f.exit_ids.length
-      ? t("alert.hypothesis.funnelDown", { count: f.exit_ids.length })
-      : t("alert.hypothesis.funnelNoDown");
-    return (
-      <p>
-        {t("alert.hypothesis.funnel", { feeders: f.entry_ids.length, center: f.subject_account_id, downstream })}
-      </p>
-    );
-  }
-  return (
-    <p>
-      {t("alert.hypothesis.chain", {
-        hops: Number(f.features.hops ?? f.member_ids.length - 1),
-        from: f.member_ids[0] ?? "",
-        to: f.member_ids[f.member_ids.length - 1] ?? "",
-      })}
-    </p>
-  );
-}
+import { PeerCard, TemporalCard } from "./SignalCards";
 
 export function Investigation() {
   const { alertId = "" } = useParams();
   const alert = useApi(`alert:${alertId}`, (s) => api.get<AlertDetail>(`/api/v1/alerts/${alertId}`, undefined, s));
   const chain = useApi(`chain:${alertId}`, (s) => api.get<EvidenceChain>(`/api/v1/alerts/${alertId}/evidence`, undefined, s));
-  const [highlight, setHighlight] = useState<{ code: string; ids: Set<string> } | null>(null);
-  const [openedCase, setOpenedCase] = useState<string | null>(null);
-
-  const graph = useMemo(
-    () => (alert.data && chain.data ? buildFormationGraph(alert.data, chain.data.transactions, highlight?.ids ?? new Set()) : null),
-    [alert.data, chain.data, highlight],
-  );
 
   if (alert.error) return <ErrorState error={alert.error} onRetry={alert.reload} />;
-  if (!alert.data) return <Loading rows={6} />;
-  const a = alert.data;
+  if (!alert.data)
+    return (
+      <div className="page">
+        <Loading rows={8} label={t("alert.loading")} />
+      </div>
+    );
+  return <Workspace key={alert.data.id} alert={alert.data} chain={chain.data} chainError={chain.error} reloadChain={chain.reload} reloadAlert={alert.reload} />;
+}
+
+function Workspace({
+  alert: a,
+  chain,
+  chainError,
+  reloadChain,
+  reloadAlert,
+}: {
+  alert: AlertDetail;
+  chain: EvidenceChain | null;
+  chainError: ReturnType<typeof useApi>["error"];
+  reloadChain: () => void;
+  reloadAlert: () => void;
+}) {
   const f = a.formation;
+  const [highlight, setHighlight] = useState<Highlight | null>(null);
+  const [selection, setSelection] = useState<Selection>(null);
+  const [openedCase, setOpenedCase] = useState<string | null>(null);
+  const caseId = a.case_id ?? openedCase;
+  const opener = useOpenCase(a.id, (id) => {
+    setOpenedCase(id);
+    reloadAlert();
+  });
+  const txs = chain?.transactions ?? [];
+
+  // The graph depends only on the evidence; highlight and selection are applied as styles.
+  const graph = useMemo(() => (chain ? buildFormationGraph(a, chain.transactions, new Set()) : null), [a, chain]);
+  const roles = useMemo(() => new Map<string, NodeRole>(graph?.nodes.map((n) => [n.id, n.role]) ?? []), [graph]);
+  const highlightEdges = useMemo(() => {
+    if (!highlight || !graph) return undefined;
+    return new Set(graph.edges.filter((e) => e.txIds?.some((id) => highlight.ids.has(id))).map((e) => e.id));
+  }, [highlight, graph]);
+
+  const toggleHighlight = useCallback(
+    (rc: ReasonCode) => {
+      const ev = evidenceForReason(rc.code, a.evidence);
+      if (!ev) return;
+      setHighlight((h) => (h?.code === rc.code ? null : { code: rc.code, ids: new Set(ev.transaction_ids) }));
+    },
+    [a.evidence],
+  );
+  const selectAccount = useCallback((id: string | null) => setSelection(id ? { type: "account", id } : null), []);
+  const selectEdge = useCallback((e: GraphEdgeSpec | null) => setSelection(e ? { type: "edge", edge: e } : null), []);
+
   const temporal = evidenceOfFamily("temporal", a.evidence);
   const structural = evidenceOfFamily("structure", a.evidence);
   const peer = evidenceOfFamily("peer", a.evidence);
-  const limitations = [...new Set([...a.coverage.limitations, ...(temporal?.limitations ?? []), ...(peer?.limitations ?? [])])];
-  const caseId = a.case_id ?? openedCase;
-
-  function toggleHighlight(rc: ReasonCode) {
-    const ev = evidenceForReason(rc.code, a.evidence);
-    if (!ev) return;
-    setHighlight((h) => (h?.code === rc.code ? null : { code: rc.code, ids: new Set(ev.transaction_ids) }));
-  }
+  const priority = a.risk.priority;
 
   return (
-    <div className="stack">
-      <div className="page-head">
-        <div className="stack stack--sm">
-          <Link to="/alerts" className="subtle">
-            ← {t("alerts.title")}
-          </Link>
-          <h1>
-            {tDynamic("kind.", f.kind)} · <AccountId id={f.subject_account_id} />
-          </h1>
-          <div className="row">
-            <BandBadge band={a.risk.band} />
-            <EvidenceBadge status={a.temporal_status} />
-            <span className="subtle">
-              {a.risk.priority !== null ? `${t("alert.priority")}: ${a.risk.priority}/100` : `${t("alert.priority")}: —`} ·{" "}
-              {t("alert.priorityHint")}
-            </span>
+    <div className="page page--investigation">
+      <header className="inv-head">
+        <Link to="/alerts" className="page-head__back">
+          <Icon name="arrowLeft" size={16} />
+          {t("alerts.title")}
+        </Link>
+        <div className="inv-head__row">
+          <div className="inv-head__main">
+            <h1>{alertTitle(a)}</h1>
+            <div className="inv-head__badges">
+              <BandBadge band={a.risk.band} />
+              <EvidenceBadge status={a.temporal_status} />
+              {a.case_status && <CaseStatusBadge status={a.case_status} />}
+              {!a.in_latest_snapshot && <span className="badge">{t("alerts.notInLatest")}</span>}
+            </div>
+            <dl className="inv-head__facts">
+              <div>
+                <dt>{t("alert.center")}</dt>
+                <dd>
+                  <AccountId id={f.subject_account_id} />
+                </dd>
+              </div>
+              <div>
+                <dt>{t("alert.scope")}</dt>
+                <dd className="num">
+                  {t("alerts.accounts", { count: f.member_count })} · {t("alerts.transactions", { count: a.transaction_count })}
+                </dd>
+              </div>
+              <div>
+                <dt>{t("command.window")}</dt>
+                <dd className="num">
+                  {formatDate(f.window_start)} — {formatDate(f.window_end)}
+                </dd>
+              </div>
+            </dl>
+          </div>
+          <div className="inv-head__side">
+            <div className="inv-head__priority">
+              <div className="inv-head__priority-top">
+                <span>{t("alert.priority")}</span>
+                <strong className="num">{priority !== null ? t("alert.priorityValue", { n: priority }) : "—"}</strong>
+              </div>
+              <SegmentedMeter
+                value={priority}
+                max={100}
+                label={t("alert.priority")}
+                valueText={priority !== null ? t("alert.priorityValue", { n: priority }) : t("alert.priorityNone")}
+                tone={a.risk.band}
+              />
+              <span className="inv-head__priority-hint">{t("alert.priorityHint")}</span>
+            </div>
+            {caseId ? (
+              <a className="btn" href="#case">
+                <Icon name="cases" size={16} />
+                {t("case.toDecision")}
+              </a>
+            ) : (
+              <button type="button" className="btn btn--primary" disabled={opener.opening} data-testid="open-case" onClick={() => void opener.open()}>
+                <Icon name="cases" size={16} />
+                {opener.opening ? t("case.opening") : t("case.open")}
+              </button>
+            )}
           </div>
         </div>
-      </div>
+        {opener.error && <ErrorState error={opener.error} />}
+      </header>
 
-      <div className="investigation">
-        <div className="investigation__col">
-          <Panel title={t("alert.hypothesis")} id="hypothesis">
-            <div className="stack">
-              <Hypothesis alert={a} />
-              <div className="stack stack--sm">
-                <h3>{t("alert.reasons")}</h3>
-                <p className="subtle">{t("alert.reasonsHint")}</p>
-                <ul className="reason-list" data-testid="reasons">
-                  {a.risk.reason_codes.map((rc) => {
-                    const ev = evidenceForReason(rc.code, a.evidence);
-                    const active = highlight?.code === rc.code;
-                    return (
-                      <li key={rc.code} className="reason">
-                        <span className={`reason__mark reason__mark--${reasonPolarity(rc.code)}`} aria-hidden="true" />
-                        <div className="reason__body">
-                          <span>{reasonText(rc, f.currency)}</span>
-                          {ev && ev.transaction_ids.length > 0 && (
-                            <button type="button" className="btn btn--sm btn--ghost" aria-pressed={active} onClick={() => toggleHighlight(rc)}>
-                              {active ? t("alert.clearHighlight") : t("alert.highlightTx")}
-                            </button>
-                          )}
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-                <p className="subtle">
-                  {t("alert.families")}: {a.risk.supported_families.map((x) => tDynamic("family.", x)).join(", ") || "—"}.{" "}
-                  {a.risk.missing_families.length > 0 &&
-                    t("alert.missingFamilies", { list: a.risk.missing_families.map((x) => tDynamic("family.", x)).join(", ") })}
-                </p>
-              </div>
+      <div className="workspace">
+        <section className="workspace__stage" id="formation-graph" aria-labelledby="graph-title">
+          <div className="stage-head">
+            <div>
+              <h2 id="graph-title">{t("alert.graph")}</h2>
+              <p className="panel__hint">{t("alert.graphHint")}</p>
             </div>
-          </Panel>
+            {highlight && (
+              <button type="button" className="chip chip--active" onClick={() => setHighlight(null)}>
+                {t("alert.highlighted", { count: highlight.ids.size })}
+                <Icon name="close" size={14} />
+              </button>
+            )}
+          </div>
+          {chainError && <ErrorState error={chainError} onRetry={reloadChain} />}
+          {!graph && !chainError && <div className="graph-stage graph-stage--loading" aria-busy="true" />}
+          {graph && (
+            <GraphCanvas
+              nodes={graph.nodes}
+              edges={graph.edges}
+              layout="preset"
+              highlightEdges={highlightEdges}
+              selectedNode={selection?.type === "account" ? selection.id : null}
+              selectedEdge={selection?.type === "edge" ? selection.edge.id : null}
+              onSelectNode={selectAccount}
+              onSelectEdge={selectEdge}
+              overlay={<GraphLegend roles={graph.roles} highlighted={!!highlight} />}
+            />
+          )}
+          <p className="stage-hint">{t("alert.stageHint")}</p>
+        </section>
 
-          <Panel title={t("alert.graph")} hint={t("alert.graphHint")} id="formation-graph">
-            {chain.error && <ErrorState error={chain.error} onRetry={chain.reload} />}
-            {!graph && !chain.error && <Loading rows={3} />}
-            {graph && (
-              <div className="stack stack--sm">
-                <GraphCanvas nodes={graph.nodes} edges={graph.edges} layout={f.kind === "chain" ? "breadthfirst" : "preset"} selectedNode={f.subject_account_id} />
-                <GraphLegend roles={graph.roles} />
-              </div>
+        <aside className="workspace__side panel" aria-label={t("ctx.label")} aria-live="polite">
+          {selection?.type === "account" ? (
+            <AccountView key={selection.id} alert={a} id={selection.id} role={roles.get(selection.id)} txs={txs} onBack={() => setSelection(null)} />
+          ) : selection?.type === "edge" ? (
+            <EdgeView key={selection.edge.id} alert={a} edge={selection.edge} txs={txs} onBack={() => setSelection(null)} />
+          ) : (
+            <SummaryView alert={a} highlight={highlight} onHighlight={toggleHighlight} roles={roles} onSelectAccount={selectAccount} />
+          )}
+        </aside>
+
+        <div className="workspace__evidence">
+          <Panel title={t("timeline.title")} hint={t("timeline.hint")} id="timeline">
+            {chain ? (
+              <EvidenceTimeline txs={txs} center={f.subject_account_id} windowStart={f.window_start} windowEnd={f.window_end} highlight={highlight?.ids} />
+            ) : (
+              <Loading rows={3} />
             )}
           </Panel>
-
-          {temporal && <TemporalPanel ev={temporal} currency={f.currency} />}
-          {peer && <PeerPanel ev={peer} currency={f.currency} />}
 
           <Panel
             title={t("alert.evidenceTx")}
             hint={t("alert.evidenceTxHint")}
             id="evidence-tx"
-            actions={highlight ? <span className="badge">{t("alert.highlighted", { count: highlight.ids.size })}</span> : undefined}
+            flush
+            actions={highlight ? <span className="badge badge--accent">{t("alert.highlighted", { count: highlight.ids.size })}</span> : undefined}
           >
-            {chain.data ? (
-              <TxTable rows={chain.data.transactions} highlight={highlight?.ids} caption={t("alert.evidenceTx")} limit={15} />
+            {chain ? (
+              <TxTable
+                rows={txs}
+                highlight={highlight?.ids}
+                caption={t("alert.evidenceTx")}
+                limit={15}
+                selectedPair={selection?.type === "edge" ? { source: selection.edge.source, target: selection.edge.target } : null}
+              />
             ) : (
-              <Loading rows={4} />
-            )}
-          </Panel>
-        </div>
-
-        <div className="investigation__col">
-          <CasePanel alertId={a.id} caseId={caseId} onCaseOpened={(id) => setOpenedCase(id)} />
-
-          <Panel title={t("alert.counter")} hint={t("alert.counterHint")} id="limitations">
-            <ul className="reason-list" data-testid="limitations">
-              {limitations.map((l) => (
-                <li key={l} className="reason">
-                  <span className="reason__mark reason__mark--limit" aria-hidden="true" />
-                  <span>{tDynamic("lim.", l)}</span>
-                </li>
-              ))}
-            </ul>
-            {a.coverage.boundary_accounts.length > 0 && (
-              <div className="callout" style={{ marginTop: "var(--s-3)" }}>
-                {t("network.boundary")}:{" "}
-                {a.coverage.boundary_accounts.map((acc) => (
-                  <span key={acc}>
-                    <AccountId id={acc} />{" "}
-                  </span>
-                ))}
+              <div className="panel__body">
+                <Loading rows={4} />
               </div>
             )}
           </Panel>
 
-          <Panel title={t("alert.dataRequests")} hint={t("alert.dataRequestsHint")} id="data-requests">
-            {a.coverage.data_requests.length === 0 ? (
-              <p className="muted">{t("alert.noDataRequests")}</p>
-            ) : (
-              <ol className="steps">
-                {a.coverage.data_requests.map((r, i) => (
-                  <li key={`${r.type}-${i}`} className="step">
-                    <span className="step__n" aria-hidden="true">
-                      {i + 1}
-                    </span>
-                    <div>
-                      <strong>{tDynamic("nbdr.", r.type)}</strong>
-                      <div className="subtle">
-                        {tDynamic("nbdr.res.", r.expected_resolution)} · {t("nbdr.subjects", { count: r.subject_ids.length })}
-                        {r.proposed_window && ` · ${t("nbdr.window", { from: formatDate(r.proposed_window[0]!), to: formatDate(r.proposed_window[1]!) })}`}
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            )}
-          </Panel>
+          {(temporal || peer) && (
+            <div className="signal-grid">
+              {temporal && <TemporalCard ev={temporal} currency={f.currency} />}
+              {peer && <PeerCard ev={peer} currency={f.currency} />}
+            </div>
+          )}
 
-          <Panel title={t("alert.provenance")} id="provenance">
+          <Disclosure summary={t("alert.provenance")} id="provenance">
             <dl className="kv">
               <dt>{t("alert.detector")}</dt>
               <dd>
@@ -239,101 +245,28 @@ export function Investigation() {
                   {shortId(a.snapshot.id)}
                 </code>
               </dd>
-              <dt>{t("command.window")}</dt>
-              <dd>
-                {formatDate(f.window_start)} — {formatDate(f.window_end)}
-              </dd>
+              <dt>{t("alert.revision")}</dt>
+              <dd className="num">{a.revision}</dd>
               {structural && (
                 <>
                   <dt>{t("alert.thresholds")}</dt>
                   <dd>
-                    <code className="mono">{Object.entries(structural.thresholds).map(([k, v]) => `${k}=${String(v)}`).join(", ")}</code>
+                    <code className="mono">
+                      {Object.entries(structural.thresholds)
+                        .map(([k, v]) => `${k}=${String(v)}`)
+                        .join(", ")}
+                    </code>
                   </dd>
                 </>
               )}
             </dl>
-          </Panel>
+          </Disclosure>
+        </div>
+
+        <div className="workspace__decision">
+          <CasePanel caseId={caseId} onOpen={() => void opener.open()} opening={opener.opening} onChanged={reloadAlert} />
         </div>
       </div>
     </div>
-  );
-}
-
-function TemporalPanel({ ev, currency }: { ev: EvidenceItem; currency: string }) {
-  const o = ev.observations as Record<string, unknown>;
-  const lagDays = typeof o.lag_days_min === "number" ? t("temporal.lagDays", { min: Number(o.lag_days_min), max: Number(o.lag_days_max) }) : t("temporal.noLag");
-  const lagSec = typeof o.lag_seconds_min === "number" ? t("temporal.lagSeconds", { min: Number(o.lag_seconds_min), max: Number(o.lag_seconds_max) }) : null;
-  return (
-    <Panel title={t("alert.temporal")} hint={t("alert.temporalHint")} id="temporal" actions={<EvidenceBadge status={String(o.status)} />}>
-      <dl className="kv" data-testid="temporal-facts">
-        <dt>{t("temporal.entry")}</dt>
-        <dd>
-          <Money minor={String(o.entry_minor)} currency={currency} />
-        </dd>
-        <dt>{t("temporal.strict")}</dt>
-        <dd>
-          <Money minor={String(o.strict_compatible_minor)} currency={currency} />
-        </dd>
-        <dt>{t("temporal.possible")}</dt>
-        <dd>
-          <Money minor={String(o.possible_compatible_minor)} currency={currency} />
-        </dd>
-        <dt>{t("temporal.share")}</dt>
-        <dd>{formatBp(Number(o.compatible_fraction_bp))}</dd>
-        <dt>{t("temporal.lag")}</dt>
-        <dd>{lagSec ?? lagDays}</dd>
-        <dt>{t("temporal.uncertain")}</dt>
-        <dd>{String(o.uncertain_transition_count)}</dd>
-        <dt>{t("temporal.precision")}</dt>
-        <dd>{precisionLabel(String(o.time_precision))}</dd>
-      </dl>
-    </Panel>
-  );
-}
-
-function PeerPanel({ ev, currency }: { ev: EvidenceItem; currency: string }) {
-  const o = ev.observations as Record<string, unknown>;
-  const th = ev.thresholds as Record<string, unknown>;
-  const status = String(o.status);
-  const days = Number(th.window_days);
-  const bp = (v: unknown) => (typeof v === "number" ? formatBp(v) : "—");
-  const factor = Number(o.cohort_count_factor);
-  return (
-    <Panel
-      title={t("peer.title")}
-      hint={t("peer.hint")}
-      id="peer"
-      actions={<span className={`badge badge--${status}`}>{tDynamic("peer.status.", status)}</span>}
-    >
-      <dl className="kv" data-testid="peer-facts">
-        <dt>{t("peer.burst", { days })}</dt>
-        <dd className="num">{bp(o.burst_share_bp)}</dd>
-        <dt>{t("peer.median")}</dt>
-        <dd className="num">{bp(o.cohort_median_bp)}</dd>
-        <dt>{t("peer.fence")}</dt>
-        <dd className="num">{bp(o.fence_bp)}</dd>
-        <dt>{t("peer.cohort")}</dt>
-        <dd>
-          {t("peer.cohortSize", { count: Number(o.cohort_size) })}
-          {Number.isFinite(factor) && (
-            <span className="subtle"> · {factor === 0 ? t("peer.cohortAll") : t("peer.cohortFactor", { factor })}</span>
-          )}
-        </dd>
-        {typeof o.turnover_minor === "string" && (
-          <>
-            <dt>{t("peer.turnover")}</dt>
-            <dd>
-              <Money minor={o.turnover_minor} currency={currency} />
-            </dd>
-          </>
-        )}
-        {typeof o.window_start === "string" && (
-          <>
-            <dt>{t("peer.window")}</dt>
-            <dd>{formatDate(o.window_start)}</dd>
-          </>
-        )}
-      </dl>
-    </Panel>
   );
 }

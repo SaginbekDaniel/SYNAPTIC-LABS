@@ -17,7 +17,11 @@ test("transaction → alert → evidence → case decision → audit survives re
   await expect(page.locator('[data-testid="alert-row"][data-band="low"]')).toHaveCount(0);
   await expect(page.locator('[data-testid="alert-row"][data-band="insufficient_evidence"]')).toHaveCount(1);
 
+  // Desktop: a row opens a preview first; the investigation is one explicit step away.
   await page.locator('[data-testid="alert-row"][data-band="high"]').first().click();
+  await expect(page.getByTestId("alert-preview")).toBeVisible();
+  await expect(page).toHaveURL(/[?&]sel=/);
+  await page.getByTestId("open-investigation").click();
   await expect(page.getByTestId("reasons")).toBeVisible();
   await expect(page.getByTestId("temporal-facts")).toContainText("только дата");
 
@@ -26,11 +30,11 @@ test("transaction → alert → evidence → case decision → audit survives re
   await expect(page.locator('#evidence-tx tr[data-highlight="true"]').first()).toBeVisible();
 
   await page.getByTestId("open-case").click();
-  await page.getByTestId("case-action").selectOption("investigating");
+  await page.getByTestId("case-action").getByRole("radio", { name: /Взять в работу/ }).check();
   await page.getByTestId("case-submit").click();
   await expect(page.getByTestId("audit-log").locator("li")).toHaveCount(2);
 
-  await page.getByTestId("case-action").selectOption("escalated");
+  await page.getByTestId("case-action").getByRole("radio", { name: /Эскалировать/ }).check();
   await expect(page.getByTestId("case-submit")).toBeDisabled(); // reason required
   await page.getByTestId("case-reason").fill("Хронология и суммы подтверждены, нужна проверка владельцев");
   await page.getByTestId("case-submit").click();
@@ -62,13 +66,7 @@ test("arbitrary account lookup is exact or honestly empty (UI-002)", async ({ pa
 });
 
 test("legitimate lookalikes are not escalated by default", async ({ page }) => {
-  await page.goto("/lab");
-  await page.locator('select[name="suite"]').selectOption("lookalikes-v1");
-  await page.locator('input[name="seed"]').fill("5");
-  await page.getByRole("button", { name: "Сгенерировать набор" }).click();
-  await expect(page.getByTestId("import-report")).toBeVisible();
-  await page.getByRole("button", { name: "Запустить анализ" }).click();
-  await expect(page.getByTestId("job-status")).toContainText("готово", { timeout: 30_000 });
+  await seedAndAnalyse(page, "5", "lookalikes-v1");
   await page.goto("/alerts");
   // Reverse-chronology paths and payroll never reach the queue. A merchant-settlement hub
   // may (known hard negative, reported in docs/LIMITATIONS.md); nothing reaches "critical".

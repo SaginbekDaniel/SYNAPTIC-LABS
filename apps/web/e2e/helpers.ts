@@ -1,8 +1,11 @@
 import { expect, type Page } from "@playwright/test";
 
 /** Generate a synthetic suite through the UI and wait for the real worker to publish it. */
-export async function seedAndAnalyse(page: Page, seed: string) {
+export async function seedAndAnalyse(page: Page, seed: string, suite = "demo-v1") {
   await page.goto("/lab");
+  await page.locator(`input[name="suite"][value="${suite}"]`).check();
+  // Seed and precision live behind the "advanced settings" disclosure.
+  await page.getByText("Параметры генерации").click();
   await page.locator('input[name="seed"]').fill(seed);
   await page.getByRole("button", { name: "Сгенерировать набор" }).click();
   await expect(page.getByTestId("import-report")).toBeVisible();

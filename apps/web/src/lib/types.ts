@@ -27,3 +27,4 @@ export type FormationKind = S["FormationSummary"]["kind"];
 export const FORMATION_KINDS: readonly FormationKind[] = ["funnel", "fan_out", "chain", "cycle"];
 export type EvaluationReport = S["EvaluationReport"];
 export type MethodSummary = S["MethodSummary"];
+export type Activity = S["Activity"];
