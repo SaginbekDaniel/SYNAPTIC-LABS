@@ -295,6 +295,17 @@ class Neighborhood(Model):
     edges: list[GraphEdge]
 
 
+class ActivityDay(Model):
+    date: dt.date
+    transactions: int
+    in_alerts: int
+
+
+class Activity(Model):
+    snapshot_id: str
+    days: list[ActivityDay]
+
+
 class AccountFormation(Model):
     formation_id: str
     kind: FormationKind

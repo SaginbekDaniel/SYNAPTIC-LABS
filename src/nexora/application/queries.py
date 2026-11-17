@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import datetime as dt
 import uuid
 from collections import deque
 from typing import Any
@@ -331,6 +332,42 @@ def _eligible_in_snapshot(snap: orm.GraphSnapshot) -> list[Any]:
         orm.Transaction.status == "posted",
         orm.Transaction.sender_account_id != orm.Transaction.receiver_account_id,
     ]
+
+
+def activity(session: Session, snapshot_id: uuid.UUID) -> dict[str, Any]:
+    """Daily transfer counts over the snapshot window, by source calendar date (never a clock time).
+
+    `transactions` counts the transfers that entered the graph; `in_alerts` counts the distinct
+    ones among them that are cited as evidence by a formation in this snapshot that raised an
+    alert. Counts only: a per-day money sum could silently mix currencies.
+    """
+    snap = get_snapshot(session, snapshot_id)
+    day = orm.Transaction.observed_date
+    totals = dict(
+        session.execute(select(day, func.count()).where(*_eligible_in_snapshot(snap)).group_by(day)).all()
+    )
+    alerted = (
+        select(orm.EvidenceTransaction.transaction_id)
+        .join(orm.Evidence, orm.Evidence.id == orm.EvidenceTransaction.evidence_id)
+        .join(orm.Alert, orm.Alert.formation_id == orm.Evidence.formation_id)
+        .where(orm.Evidence.snapshot_id == snap.id)
+    )
+    flagged = dict(
+        session.execute(
+            select(day, func.count(func.distinct(orm.Transaction.id)))
+            .where(*_eligible_in_snapshot(snap), orm.Transaction.id.in_(alerted))
+            .group_by(day)
+        ).all()
+    )
+    start = snap.window_start or (min(totals) if totals else None)
+    end = snap.window_end or (max(totals) if totals else None)
+    days: list[dict[str, Any]] = []
+    if start is not None and end is not None:
+        d = start
+        while d <= end:
+            days.append({"date": d, "transactions": int(totals.get(d, 0)), "in_alerts": int(flagged.get(d, 0))})
+            d += dt.timedelta(days=1)
+    return {"snapshot_id": str(snap.id), "days": days}
 
 
 def account_summary(session: Session, snapshot_id: uuid.UUID, account_id: str) -> dict[str, Any]:

@@ -69,6 +69,11 @@ def neighborhood(
     )
 
 
+@router.get("/snapshots/{snapshot_id}/activity", response_model=schemas.Activity, tags=["graph"])
+def activity(snapshot_id: str, session: SessionDep) -> Any:
+    return queries.activity(session, parse_uuid(snapshot_id, "snapshot_id"))
+
+
 @router.get("/snapshots/{snapshot_id}/accounts/{account_id}", response_model=schemas.AccountSummary, tags=["graph"])
 def account(snapshot_id: str, account_id: str, session: SessionDep) -> Any:
     return queries.account_summary(session, parse_uuid(snapshot_id, "snapshot_id"), account_id)

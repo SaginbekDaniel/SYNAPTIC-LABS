@@ -122,3 +122,28 @@ def test_error_envelope(client):
     r = client.post("/api/v1/lab/datasets", json={"suite": "nope", "seed": 1})
     assert r.status_code == 422 and r.json()["error"]["code"] == "UNKNOWN_SUITE"
     assert client.get("/health/ready").json()["status"] == "ok"
+
+
+def test_activity_counts_match_source_transfers(client, settings):
+    ds_id, job = _create_and_analyse(client, settings, seed=4242)
+    snap_id = job["snapshot_id"]
+    snap = client.get(f"/api/v1/analysis/snapshots/{snap_id}").json()
+    act = client.get(f"/api/v1/snapshots/{snap_id}/activity")
+    assert act.status_code == 200, act.text
+    days = act.json()["days"]
+    # Contiguous calendar days spanning exactly the snapshot window, zero-filled.
+    assert days[0]["date"] == snap["window_start"] and days[-1]["date"] == snap["window_end"]
+    assert len({d["date"] for d in days}) == len(days)
+    assert sum(d["transactions"] for d in days) == snap["transactions_count"]
+    # Evidence transfers of alerted formations, recomputed from the per-alert evidence chains.
+    cited: dict[str, str] = {}
+    alerts = client.get("/api/v1/alerts", params={"dataset_id": ds_id, "limit": 200}).json()["items"]
+    for a in alerts:
+        for t in client.get(f"/api/v1/alerts/{a['id']}/evidence").json()["transactions"]:
+            cited[t["id"]] = t["observed_date"]
+    by_day: dict[str, int] = {}
+    for date in cited.values():
+        by_day[date] = by_day.get(date, 0) + 1
+    assert {d["date"]: d["in_alerts"] for d in days if d["in_alerts"]} == by_day
+    assert all(0 <= d["in_alerts"] <= d["transactions"] for d in days)
+    assert client.get("/api/v1/snapshots/not-a-uuid/activity").status_code == 422

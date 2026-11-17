@@ -331,6 +331,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/snapshots/{snapshot_id}/activity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Activity */
+        get: operations["activity_api_v1_snapshots__snapshot_id__activity_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/snapshots/{snapshot_id}/neighborhood": {
         parameters: {
             query?: never;
@@ -470,6 +487,25 @@ export interface components {
             outgoing_minor: string;
             /** Snapshot Id */
             snapshot_id: string;
+        };
+        /** Activity */
+        Activity: {
+            /** Days */
+            days: components["schemas"]["ActivityDay"][];
+            /** Snapshot Id */
+            snapshot_id: string;
+        };
+        /** ActivityDay */
+        ActivityDay: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** In Alerts */
+            in_alerts: number;
+            /** Transactions */
+            transactions: number;
         };
         /** AlertDetail */
         AlertDetail: {
@@ -2214,6 +2250,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AccountSummary"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    activity_api_v1_snapshots__snapshot_id__activity_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                snapshot_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Activity"];
                 };
             };
             /** @description Validation Error */

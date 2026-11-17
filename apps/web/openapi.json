@@ -151,6 +151,53 @@
         "title": "AccountSummary",
         "type": "object"
       },
+      "Activity": {
+        "additionalProperties": false,
+        "properties": {
+          "days": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityDay"
+            },
+            "title": "Days",
+            "type": "array"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "snapshot_id",
+          "days"
+        ],
+        "title": "Activity",
+        "type": "object"
+      },
+      "ActivityDay": {
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "in_alerts": {
+            "title": "In Alerts",
+            "type": "integer"
+          },
+          "transactions": {
+            "title": "Transactions",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "date",
+          "transactions",
+          "in_alerts"
+        ],
+        "title": "ActivityDay",
+        "type": "object"
+      },
       "AlertDetail": {
         "additionalProperties": false,
         "properties": {
@@ -4392,6 +4439,49 @@
           }
         },
         "summary": "Account",
+        "tags": [
+          "analysis",
+          "graph"
+        ]
+      }
+    },
+    "/api/v1/snapshots/{snapshot_id}/activity": {
+      "get": {
+        "operationId": "activity_api_v1_snapshots__snapshot_id__activity_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "snapshot_id",
+            "required": true,
+            "schema": {
+              "title": "Snapshot Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Activity"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Activity",
         "tags": [
           "analysis",
           "graph"
