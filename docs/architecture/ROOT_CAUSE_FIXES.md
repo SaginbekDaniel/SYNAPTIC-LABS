@@ -55,6 +55,20 @@ Each entry: reproduction → root cause → fix → regression test → measured
 * **Test**: `e2e/hypotheses.spec.ts › a dataset created in the lab stays selected after navigation`
   (fails on the old code, passes on the new).
 
+## RC-06 Commit after response (F-14)
+
+* **Reproduce**: CI E2E runs failed intermittently with `DATASET_NOT_FOUND` right after the Lab created
+  a dataset, and the dataset list refreshed without the new dataset. Locally (faster) never.
+  Deterministic reproduction: `tests/integration/test_commit_before_response.py` drives the ASGI app
+  and, when `http.response.start` is sent, counts datasets on an independent connection → 0.
+* **Root cause**: `get_session` commits after `yield`; with FastAPI's default request scope that code
+  runs after the response has been sent, so the client can observe a write before it is committed
+  (and a failed commit would never reach the client).
+* **Fix**: one `SessionDep` with `Depends(get_session, scope="function")` in `api/deps.py`, used by
+  every route module (four duplicated definitions removed).
+* **Diagnosis aid kept**: the E2E seed helper reports the API error text instead of a bare timeout;
+  CI uploads Playwright results on failure.
+
 ## RC-05 Evaluation metrics and protocol (L-01, L-02, L-03, F-08, F-13)
 
 * Distinct-network P@K, alerts per flagged network, abstention share, partial-analysis rate and

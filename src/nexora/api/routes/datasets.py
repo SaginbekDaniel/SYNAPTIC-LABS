@@ -2,18 +2,16 @@ from __future__ import annotations
 
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, File, Form, Query, Request, UploadFile
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, File, Form, Query, Request, UploadFile
 
 from nexora.api import schemas
-from nexora.api.deps import get_session, parse_uuid
+from nexora.api.deps import SessionDep, parse_uuid
 from nexora.application import ingest_service, queries
 from nexora.application.errors import Invalid, PayloadTooLarge
 from nexora.evaluation.generator import SUITES, suite_families
 from nexora.ingest.csv_adapter import CsvSchemaError, read_csv_rows
 
 router = APIRouter(prefix="/api/v1", tags=["datasets"])
-SessionDep = Annotated[Session, Depends(get_session)]
 
 
 @router.get("/datasets", response_model=schemas.DatasetPage)

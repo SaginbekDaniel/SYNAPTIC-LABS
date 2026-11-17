@@ -3,16 +3,14 @@ from __future__ import annotations
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Query, Request, Response
-from sqlalchemy.orm import Session
 
 from nexora.api import schemas
-from nexora.api.deps import actor, get_session, parse_uuid
+from nexora.api.deps import SessionDep, actor, parse_uuid
 from nexora.application import analysis_service, queries
 from nexora.application.errors import NotFound
 from nexora.persistence import orm
 
 router = APIRouter(prefix="/api/v1", tags=["analysis"])
-SessionDep = Annotated[Session, Depends(get_session)]
 
 
 @router.post("/analysis/jobs", response_model=schemas.Job, status_code=202)

@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import uuid
 from collections.abc import Iterator
+from typing import Annotated
 
-from fastapi import Request
+from fastapi import Depends, Request
 from sqlalchemy.orm import Session
 
 from nexora.application.errors import Invalid
@@ -20,6 +21,12 @@ def get_session(request: Request) -> Iterator[Session]:
         raise
     finally:
         session.close()
+
+
+# scope="function": the code after ``yield`` (the commit) runs before the response is sent. With the
+# default request scope FastAPI commits *after* responding, so a client's immediate follow-up request
+# could miss the write it was just told about (audit F-14, seen as DATASET_NOT_FOUND on CI).
+SessionDep = Annotated[Session, Depends(get_session, scope="function")]
 
 
 def actor(request: Request) -> str:
