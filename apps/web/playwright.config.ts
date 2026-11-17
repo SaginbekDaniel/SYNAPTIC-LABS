@@ -1,0 +1,35 @@
+import { defineConfig, devices } from "@playwright/test";
+
+const API_PORT = 8100;
+const WEB_PORT = 5180;
+const DB = process.env.NEXORA_E2E_DATABASE_URL ?? "postgresql+psycopg://nexora:nexora@localhost:5432/nexora_e2e";
+
+export default defineConfig({
+  testDir: "e2e",
+  fullyParallel: false,
+  workers: 1,
+  retries: 0,
+  timeout: 60_000,
+  reporter: [["list"]],
+  use: { baseURL: `http://127.0.0.1:${WEB_PORT}`, trace: "off", locale: "ru-RU" },
+  projects: [
+    { name: "desktop", use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } }, testIgnore: /mobile\.spec\.ts/ },
+    { name: "mobile", use: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }, testMatch: /mobile\.spec\.ts/ },
+  ],
+  webServer: [
+    {
+      command: `../../scripts/e2e_stack.sh ${API_PORT}`,
+      url: `http://127.0.0.1:${API_PORT}/health/ready`,
+      env: { NEXORA_DATABASE_URL: DB, NEXORA_CORS_ORIGINS: `http://127.0.0.1:${WEB_PORT}` },
+      reuseExistingServer: false,
+      timeout: 60_000,
+    },
+    {
+      command: `npx vite --port ${WEB_PORT} --strictPort`,
+      url: `http://127.0.0.1:${WEB_PORT}`,
+      env: { NEXORA_API_URL: `http://127.0.0.1:${API_PORT}` },
+      reuseExistingServer: false,
+      timeout: 60_000,
+    },
+  ],
+});

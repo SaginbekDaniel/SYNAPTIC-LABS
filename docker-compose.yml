@@ -1,0 +1,58 @@
+# Local demo stack. Ports bind to 127.0.0.1 only: this is not a public deployment.
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: nexora
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-nexora}
+      POSTGRES_DB: nexora
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nexora -d nexora"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    ports: ["127.0.0.1:5433:5432"]
+
+  migrate:
+    image: nexora/app:local
+    build: .
+    command: ["alembic", "upgrade", "head"]
+    environment: &app_env
+      NEXORA_DATABASE_URL: postgresql+psycopg://nexora:${POSTGRES_PASSWORD:-nexora}@postgres:5432/nexora
+      NEXORA_CORS_ORIGINS: http://127.0.0.1:8080,http://localhost:8080
+      NEXORA_DEMO_ANALYST: ${NEXORA_DEMO_ANALYST:-demo-analyst}
+    depends_on:
+      postgres: {condition: service_healthy}
+
+  api:
+    image: nexora/app:local
+    build: .
+    environment: *app_env
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready')"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    ports: ["127.0.0.1:8000:8000"]
+
+  worker:
+    image: nexora/app:local
+    build: .
+    command: ["python", "-m", "nexora.worker.runner"]
+    environment: *app_env
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    restart: unless-stopped
+
+  web:
+    image: nexora/web:local
+    build: ./apps/web
+    depends_on:
+      api: {condition: service_healthy}
+    ports: ["127.0.0.1:8080:8080"]
+
+volumes:
+  pgdata:

@@ -1,0 +1,56 @@
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: nexora
+          POSTGRES_PASSWORD: nexora
+          POSTGRES_DB: nexora_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U nexora" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      NEXORA_DATABASE_URL: postgresql+psycopg://nexora:nexora@localhost:5432/nexora_test
+      NEXORA_TEST_DATABASE_URL: postgresql+psycopg://nexora:nexora@localhost:5432/nexora_test
+      NEXORA_E2E_DATABASE_URL: postgresql+psycopg://nexora:nexora@localhost:5432/nexora_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-node@v4
+        with: {node-version: 22, cache: npm, cache-dependency-path: apps/web/package-lock.json}
+      - run: uv sync --frozen
+      - name: Lint and types (Python)
+        run: |
+          uv run ruff check src tests migrations
+          uv run ruff format --check src tests migrations
+          uv run mypy
+      - name: Migrations apply and match ORM
+        run: |
+          uv run alembic upgrade head
+          uv run alembic check
+      - name: Python unit + integration tests
+        run: uv run pytest
+      - name: Web install, types, unit tests, build
+        working-directory: apps/web
+        run: |
+          npm ci
+          npx tsc -b
+          npx vitest run
+          npx vite build
+      - name: OpenAPI client is in sync with the API
+        working-directory: apps/web
+        run: |
+          npm run gen:api
+          git diff --exit-code -- openapi.json src/lib/api-types.ts
+      - name: Browser E2E
+        working-directory: apps/web
+        run: |
+          npx playwright install --with-deps chromium
+          npx playwright test
