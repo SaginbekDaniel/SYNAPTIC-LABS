@@ -3,14 +3,14 @@
  "disclaimer": "SYNTHETIC BENCHMARK. All networks, labels and metrics come from the NEXORA synthetic scenario generator, not from bank data. Results describe behaviour on this synthetic distribution only and are not estimates of real-world fraud detection accuracy.",
  "run": {
   "label": "baseline-v1",
-  "created_at": "2026-11-17T06:15:30+00:00",
-  "duration_s": 37.9,
+  "created_at": "2026-11-17T06:16:18+00:00",
+  "duration_s": 38.4,
   "splits_evaluated": [
    "dev",
    "val"
   ],
-  "code_commit": "19c852159d762766d4691c7df05c368d489ac277",
-  "code_dirty": true,
+  "code_commit": "8430dcfadae8094ab65a2992c25204574941db31",
+  "code_dirty": false,
   "python": "3.13.18",
   "networkx": "3.7",
   "platform": "Linux-6.18.44-fc-v553-x86_64-with-glibc2.39",
@@ -581,10 +581,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 2.35,
-     "p95": 4.73,
-     "max": 6.89,
-     "per_1000_transactions": 9.52
+     "median": 1.66,
+     "p95": 3.05,
+     "max": 5.56,
+     "per_1000_transactions": 6.74
     },
     "partial_networks": 0,
     "networks": 204,
@@ -965,10 +965,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 4.58,
-     "p95": 7.78,
-     "max": 10.11,
-     "per_1000_transactions": 17.57
+     "median": 3.38,
+     "p95": 5.67,
+     "max": 10.91,
+     "per_1000_transactions": 13.45
     },
     "partial_networks": 0,
     "networks": 204,
@@ -1351,10 +1351,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 3.11,
-     "p95": 6.8,
-     "max": 35.87,
-     "per_1000_transactions": 14.3
+     "median": 2.66,
+     "p95": 5.72,
+     "max": 30.38,
+     "per_1000_transactions": 12.19
     },
     "partial_networks": 0,
     "networks": 204,
@@ -1745,10 +1745,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 9.33,
-     "p95": 21.63,
-     "max": 328.05,
-     "per_1000_transactions": 51.41
+     "median": 8.79,
+     "p95": 26.04,
+     "max": 358.36,
+     "per_1000_transactions": 52.32
     },
     "partial_networks": 0,
     "networks": 204,
@@ -2136,10 +2136,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 9.52,
-     "p95": 32.06,
-     "max": 270.42,
-     "per_1000_transactions": 51.09
+     "median": 9.46,
+     "p95": 38.92,
+     "max": 342.26,
+     "per_1000_transactions": 55.14
     },
     "partial_networks": 0,
     "networks": 204,
@@ -2518,10 +2518,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 1.75,
-     "p95": 3.06,
-     "max": 6.79,
-     "per_1000_transactions": 7.11
+     "median": 2.16,
+     "p95": 4.18,
+     "max": 7.36,
+     "per_1000_transactions": 8.9
     },
     "partial_networks": 0,
     "networks": 136,
@@ -2898,10 +2898,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 3.35,
-     "p95": 6.25,
-     "max": 10.47,
-     "per_1000_transactions": 13.73
+     "median": 3.96,
+     "p95": 7.21,
+     "max": 12.28,
+     "per_1000_transactions": 16.41
     },
     "partial_networks": 0,
     "networks": 136,
@@ -3280,10 +3280,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 2.88,
-     "p95": 5.76,
-     "max": 18.99,
-     "per_1000_transactions": 12.44
+     "median": 2.95,
+     "p95": 8.05,
+     "max": 18.43,
+     "per_1000_transactions": 13.77
     },
     "partial_networks": 0,
     "networks": 136,
@@ -3673,10 +3673,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 9.21,
-     "p95": 33.82,
-     "max": 146.85,
-     "per_1000_transactions": 52.38
+     "median": 8.75,
+     "p95": 34.9,
+     "max": 117.67,
+     "per_1000_transactions": 52.04
     },
     "partial_networks": 0,
     "networks": 136,
@@ -4064,10 +4064,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 8.94,
-     "p95": 31.53,
-     "max": 158.63,
-     "per_1000_transactions": 52.13
+     "median": 9.36,
+     "p95": 33.62,
+     "max": 146.16,
+     "per_1000_transactions": 54.84
     },
     "partial_networks": 0,
     "networks": 136,
