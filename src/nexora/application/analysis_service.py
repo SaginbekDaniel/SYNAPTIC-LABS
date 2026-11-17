@@ -104,14 +104,14 @@ def compute(
 
 
 def alert_fingerprint(dataset_id: uuid.UUID, formation: Formation) -> str:
-    members = (
-        list(formation.member_ids)
-        if formation.kind == "chain"
-        else [
-            formation.subject_account_id,
-            *sorted(formation.entry_ids),
-        ]
-    )
+    # Identity of the *pattern*, stable across reruns: ordered path or canonical ring for chains and
+    # cycles; subject plus its counterparties for hub-shaped formations.
+    if formation.kind in ("chain", "cycle"):
+        members = list(formation.member_ids)
+    elif formation.kind == "fanout":
+        members = [formation.subject_account_id, *sorted(formation.exit_ids)]
+    else:
+        members = [formation.subject_account_id, *sorted(formation.entry_ids)]
     return sha256_hex(
         canonical_json(
             {

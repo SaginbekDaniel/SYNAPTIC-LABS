@@ -77,3 +77,19 @@ def funnel_strength(n_feeders: int, min_feeders: int) -> float:
     """Documented heuristic: 0.6 at the threshold, rising linearly to 1.0 at 2x threshold."""
     excess = max(0, n_feeders - min_feeders)
     return round(0.6 + 0.4 * min(1.0, excess / max(1, min_feeders)), 4)
+
+
+def dedication_strength(shares_bp: list[int], min_share: str) -> float:
+    """Strength from how *dedicated* the counterparties are, not how many there are.
+
+    0.6 when the median counterparty routes exactly ``min_share`` of its observed flow through
+    the subject, rising linearly to 1.0 when it routes all of it. Feeder count measures scale,
+    which legitimate processors, billers and employers have more of than mule collectors.
+    """
+    from statistics import median
+
+    lo = Fraction(min_share)
+    med = Fraction(int(median(shares_bp)), 10_000) if shares_bp else lo
+    if lo >= 1:
+        return 1.0
+    return round(float(Fraction(6, 10) + Fraction(4, 10) * max(Fraction(0), (med - lo) / (1 - lo))), 4)

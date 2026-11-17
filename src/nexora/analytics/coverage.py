@@ -26,6 +26,7 @@ def assess_coverage(
     flow: FlowResult | None,
     contract: dict[str, Any],
     window: tuple[date, date],
+    claim_dependents: tuple[str, ...] = (),
 ) -> CoverageAssessment:
     boundary = set(contract.get("boundary_account_ids") or [])
     limitations: list[str] = ["missing_context"]  # no ownership / purpose / business category data
@@ -51,6 +52,23 @@ def assess_coverage(
                     priority_heuristic=1,
                 )
             )
+    # A claim that depends on several accounts' onward movement (fan-out) cannot be assessed
+    # when most of them sit at the collection boundary: the subject's claim is boundary-limited.
+    dependents_at_boundary = tuple(sorted(d for d in claim_dependents if d in boundary))
+    if claim_dependents and 2 * len(dependents_at_boundary) >= len(claim_dependents):
+        if "boundary_limited" not in limitations:
+            limitations.append("boundary_limited")
+        subject_limitations.append("boundary_limited")
+        requests.append(
+            DataRequest(
+                type="outgoing_history_beyond_boundary",
+                subject_ids=dependents_at_boundary,
+                proposed_window=follow_window,
+                missing_dependency="boundary_limited",
+                expected_resolution="determine_onward_movement",
+                priority_heuristic=1,
+            )
+        )
     if contract.get("upstream_observed") is False:
         limitations.append("upstream_unknown")
         requests.append(

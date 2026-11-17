@@ -6,16 +6,21 @@ from content so the same input and configuration always produce the same outputs
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any
 
+from nexora.analytics import attribution
 from nexora.analytics import risk as risk_engine
 from nexora.analytics.config import AnalysisConfig
+from nexora.analytics.context import ContextIndicator, hub_context
 from nexora.analytics.coverage import assess_coverage
 from nexora.analytics.evidence_validation import EvidenceIntegrityError, validate_evidence
 from nexora.analytics.graph_builder import GRAPH_VERSION, CurrencyGraph, GraphSnapshotData, build_snapshot
 from nexora.analytics.structural import chain as chain_mod
+from nexora.analytics.structural import cycle as cycle_mod
+from nexora.analytics.structural import fanout as fanout_mod
 from nexora.analytics.structural import funnel as funnel_mod
+from nexora.analytics.temporal import episodes as episodes_mod
 from nexora.analytics.temporal import flow as flow_mod
 from nexora.domain.analysis import (
     CoverageAssessment,
@@ -129,6 +134,7 @@ class _Builder:
                 "lag_seconds_min": result.lag_seconds_min,
                 "lag_seconds_max": result.lag_seconds_max,
                 "time_precision": result.precision,
+                **({} if result.pro_rata_minor is None else {"pro_rata_minor": _money(result.pro_rata_minor)}),
             },
             thresholds={
                 "max_hop_lag_days": int(tcfg["max_hop_lag_days"]),
@@ -138,7 +144,13 @@ class _Builder:
             detector_version=str(tcfg["detector_version"]),
         )
 
-    def _temporal_signal(self, formation_id: str, result: flow_mod.FlowResult, evidence_id: str) -> Signal:
+    def _temporal_signal(
+        self,
+        formation_id: str,
+        result: flow_mod.FlowResult,
+        evidence_id: str,
+        detector_id: str = flow_mod.DETECTOR_ID,
+    ) -> Signal:
         tcfg = self.config.detectors["temporal"]
         strength: float | None
         if result.status == "supported":
@@ -150,16 +162,16 @@ class _Builder:
         else:
             strength = None
         return Signal(
-            id=stable_uuid("signal", formation_id, flow_mod.DETECTOR_ID),
+            id=stable_uuid("signal", formation_id, detector_id),
             formation_id=formation_id,
             family="TEMPORAL",
-            detector_id=flow_mod.DETECTOR_ID,
+            detector_id=detector_id,
             detector_version=str(tcfg["detector_version"]),
             status=result.status,
             strength=strength,
             evidence_ids=(evidence_id,),
             limitations=result.limitations,
-            dependency_tags=("temporal.flow",),
+            dependency_tags=(detector_id,),
         )
 
     def _coverage_evidence(self, formation_id: str, coverage: CoverageAssessment, detector_version: str) -> Evidence:
@@ -201,6 +213,7 @@ class _Builder:
         signals: list[Signal],
         coverage: CoverageAssessment,
         reasons: list[ReasonCode],
+        counterevidence: tuple[str, ...] = (),
     ) -> None:
         try:
             for ev in evidence:
@@ -215,6 +228,7 @@ class _Builder:
             reasons=reasons,
             policy=self.config.risk_policy,
             policy_sha256=self.config.policy_sha256,
+            counterevidence=counterevidence,
         )
         self.out.formations.append(formation)
         self.out.evidence.extend(evidence)
@@ -223,6 +237,130 @@ class _Builder:
 
     def _transfers(self, ids: tuple[str, ...] | list[str]) -> list[ObservedTransfer]:
         return [self.snapshot.transfers[i] for i in ids]
+
+    # -- v2 refinements (each enabled only by its configuration key) ----------------
+    def _attributed(self, flow: flow_mod.FlowResult, pro_rata: int) -> flow_mod.FlowResult:
+        """Apply fungibility-aware attribution when ``temporal.attribution: pro_rata``."""
+        tcfg = self.config.detectors["temporal"]
+        if tcfg.get("attribution") != "pro_rata":
+            return flow
+        return flow_mod.apply_attribution(flow, pro_rata, min_compatible_fraction=str(tcfg["min_compatible_fraction"]))
+
+    def _structure_strength(self, cfg: dict[str, Any], count: int, min_count: int, shares_bp: list[int]) -> float:
+        if cfg.get("strength_model") == "dedication":
+            return funnel_mod.dedication_strength(shares_bp, str(cfg["min_feeder_share"]))
+        return funnel_mod.funnel_strength(count, min_count)
+
+    def _context(
+        self, cg: CurrencyGraph, subject: str, counterparties: tuple[str, ...], direction: str
+    ) -> list[ContextIndicator]:
+        ccfg = self.config.detectors.get("context")
+        if not ccfg:
+            return []
+        return hub_context(
+            cg, self.snapshot.transfers, subject=subject, counterparties=counterparties, direction=direction, cfg=ccfg
+        )
+
+    def _context_evidence(self, formation_id: str, indicators: list[ContextIndicator]) -> list[Evidence]:
+        version = str(self.config.detectors.get("context", {}).get("detector_version", "context"))
+        return [
+            Evidence(
+                id=stable_uuid("evidence", formation_id, "context", ind.code),
+                kind="counterevidence",
+                reason_code=ind.code,
+                subject_id=formation_id,
+                transaction_ids=ind.transaction_ids,
+                account_ids=(),
+                observations=ind.observations,
+                thresholds=ind.thresholds,
+                limitations=("benign_explanation_not_verified",),
+                detector_version=version,
+            )
+            for ind in indicators
+        ]
+
+    def _emit(
+        self,
+        *,
+        cg: CurrencyGraph,
+        kind: str,
+        fid: str,
+        detector_id: str,
+        detector_version: str,
+        subject: str,
+        members: tuple[str, ...],
+        entry_ids: tuple[str, ...],
+        exit_ids: tuple[str, ...],
+        struct_ev: Evidence,
+        struct_strength: float,
+        struct_tags: tuple[str, ...],
+        struct_reason: ReasonCode,
+        flow: flow_mod.FlowResult,
+        temporal_detector: str,
+        temporal_code: str,
+        temporal_accounts: tuple[str, ...],
+        coverage_members: tuple[str, ...],
+        has_downstream: bool,
+        features: dict[str, Any],
+        indicators: list[ContextIndicator],
+        claim_dependents: tuple[str, ...] = (),
+    ) -> None:
+        temporal_ev = self._temporal_evidence(fid, flow, temporal_accounts, temporal_code)
+        if temporal_detector != flow_mod.DETECTOR_ID:
+            temporal_ev = replace(temporal_ev, detector_version=str(self.config.detectors[kind]["detector_version"]))
+        all_tx = sorted(set(struct_ev.transaction_ids) | set(temporal_ev.transaction_ids))
+        dates = [self.snapshot.transfers[t].observed_date for t in all_tx]
+        coverage = assess_coverage(
+            kind=kind,
+            subject_account_id=subject,
+            member_ids=coverage_members,
+            entry_ids=entry_ids,
+            has_downstream=has_downstream,
+            transfers=self._transfers(all_tx),
+            flow=flow,
+            contract=self.contract,
+            window=(min(dates), max(dates)),
+            claim_dependents=claim_dependents,
+        )
+        cov_ev = self._coverage_evidence(fid, coverage, detector_version)
+        struct_sig = Signal(
+            id=stable_uuid("signal", fid, detector_id),
+            formation_id=fid,
+            family="STRUCTURE",
+            detector_id=detector_id,
+            detector_version=detector_version,
+            status="supported",
+            strength=struct_strength,
+            evidence_ids=(struct_ev.id,),
+            limitations=("structural_only",),
+            dependency_tags=struct_tags,
+        )
+        temporal_sig = self._temporal_signal(fid, flow, temporal_ev.id, temporal_detector)
+        formation = Formation(
+            id=fid,
+            kind=kind,  # type: ignore[arg-type]
+            currency=cg.currency,
+            subject_account_id=subject,
+            member_ids=members,
+            entry_ids=entry_ids,
+            exit_ids=exit_ids,
+            features=features,
+            limitations=coverage.limitations,
+            detector_id=detector_id,
+            detector_version=detector_version,
+            window_start=min(dates),
+            window_end=max(dates),
+            transaction_ids=tuple(all_tx),
+        )
+        reasons = [struct_reason, _flow_reason(flow, temporal_code), *self._coverage_reasons(coverage, subject)]
+        self._publish(
+            formation,
+            [struct_ev, temporal_ev, cov_ev, *self._context_evidence(fid, indicators)],
+            [struct_sig, temporal_sig],
+            coverage,
+            reasons,
+            tuple(i.code for i in indicators),
+        )
 
     # -- detectors ---------------------------------------------------------------
     def funnels(self, cg: CurrencyGraph) -> None:
@@ -244,6 +382,9 @@ class _Builder:
                 max_lag_days=int(tcfg["max_hop_lag_days"]),
                 min_compatible_fraction=str(tcfg["min_compatible_fraction"]),
                 max_transfers=int(tcfg["max_transfers"]),
+            )
+            flow = self._attributed(
+                flow, attribution.consolidation_pro_rata(cg, cand.center, cand.total_incoming_minor)
             )
             struct_ev = Evidence(
                 id=stable_uuid("evidence", fid, "structure"),
@@ -277,59 +418,22 @@ class _Builder:
                 limitations=("structural_only",),
                 detector_version=str(fcfg["detector_version"]),
             )
-            temporal_ev = self._temporal_evidence(
-                fid, flow, (cand.center, *cand.downstream), "TEMPORAL_PASS_THROUGH_SUPPORTED"
-            )
-            all_tx = sorted(set(struct_ev.transaction_ids) | set(temporal_ev.transaction_ids))
-            dates = [self.snapshot.transfers[t].observed_date for t in all_tx]
-            coverage = assess_coverage(
+            self._emit(
+                cg=cg,
                 kind="funnel",
-                subject_account_id=cand.center,
-                member_ids=(*members, *cand.downstream),
-                entry_ids=feeders,
-                has_downstream=bool(cand.downstream),
-                transfers=self._transfers(all_tx),
-                flow=flow,
-                contract=self.contract,
-                window=(min(dates), max(dates)),
-            )
-            cov_ev = self._coverage_evidence(fid, coverage, str(fcfg["detector_version"]))
-            struct_sig = Signal(
-                id=stable_uuid("signal", fid, funnel_mod.DETECTOR_ID),
-                formation_id=fid,
-                family="STRUCTURE",
+                fid=fid,
                 detector_id=funnel_mod.DETECTOR_ID,
                 detector_version=str(fcfg["detector_version"]),
-                status="supported",
-                strength=funnel_mod.funnel_strength(len(cand.feeders), int(fcfg["min_feeders"])),
-                evidence_ids=(struct_ev.id,),
-                limitations=("structural_only",),
-                dependency_tags=("graph.in_degree", "graph.edge_share"),
-            )
-            temporal_sig = self._temporal_signal(fid, flow, temporal_ev.id)
-            formation = Formation(
-                id=fid,
-                kind="funnel",
-                currency=cg.currency,
-                subject_account_id=cand.center,
-                member_ids=members,
+                subject=cand.center,
+                members=members,
                 entry_ids=feeders,
                 exit_ids=cand.downstream,
-                features={
-                    "feeder_count": len(cand.feeders),
-                    "incoming_minor": _money(cand.total_incoming_minor),
-                    "downstream_count": len(cand.downstream),
-                    "temporal_status": flow.status,
-                },
-                limitations=coverage.limitations,
-                detector_id=funnel_mod.DETECTOR_ID,
-                detector_version=str(fcfg["detector_version"]),
-                window_start=min(dates),
-                window_end=max(dates),
-                transaction_ids=tuple(all_tx),
-            )
-            reasons = [
-                ReasonCode(
+                struct_ev=struct_ev,
+                struct_strength=self._structure_strength(
+                    fcfg, len(cand.feeders), int(fcfg["min_feeders"]), [f.share_bp for f in cand.feeders]
+                ),
+                struct_tags=("graph.in_degree", "graph.edge_share"),
+                struct_reason=ReasonCode(
                     "STRUCT_FUNNEL_FEEDERS",
                     {
                         "count": len(cand.feeders),
@@ -337,10 +441,20 @@ class _Builder:
                         "currency": cg.currency,
                     },
                 ),
-                _flow_reason(flow, "TEMPORAL_PASS_THROUGH_SUPPORTED"),
-                *self._coverage_reasons(coverage, cand.center),
-            ]
-            self._publish(formation, [struct_ev, temporal_ev, cov_ev], [struct_sig, temporal_sig], coverage, reasons)
+                flow=flow,
+                temporal_detector=flow_mod.DETECTOR_ID,
+                temporal_code="TEMPORAL_PASS_THROUGH_SUPPORTED",
+                temporal_accounts=(cand.center, *cand.downstream),
+                coverage_members=(*members, *cand.downstream),
+                has_downstream=bool(cand.downstream),
+                features={
+                    "feeder_count": len(cand.feeders),
+                    "incoming_minor": _money(cand.total_incoming_minor),
+                    "downstream_count": len(cand.downstream),
+                    "temporal_status": flow.status,
+                },
+                indicators=self._context(cg, cand.center, feeders, "in"),
+            )
 
     def chains(self, cg: CurrencyGraph) -> None:
         ccfg = self.config.detectors["chain"]
@@ -358,6 +472,7 @@ class _Builder:
                 min_compatible_fraction=str(tcfg["min_compatible_fraction"]),
                 max_transfers=int(tcfg["max_transfers"]),
             )
+            flow = self._attributed(flow, attribution.path_pro_rata(cg, path))
             struct_tx = sorted(t for h in hop_tx for t in h)
             struct_ev = Evidence(
                 id=stable_uuid("evidence", fid, "structure"),
@@ -390,60 +505,195 @@ class _Builder:
                 limitations=("structural_only", "path_does_not_prove_same_funds"),
                 detector_version=str(ccfg["detector_version"]),
             )
-            temporal_ev = self._temporal_evidence(fid, flow, path, "TEMPORAL_PATH_SUPPORTED")
-            all_tx = sorted(set(struct_tx))
-            dates = [self.snapshot.transfers[t].observed_date for t in all_tx]
-            coverage = assess_coverage(
+            self._emit(
+                cg=cg,
                 kind="chain",
-                subject_account_id=path[-1],
-                member_ids=path,
-                entry_ids=(path[0],),
-                has_downstream=True,
-                transfers=self._transfers(all_tx),
-                flow=flow,
-                contract=self.contract,
-                window=(min(dates), max(dates)),
-            )
-            cov_ev = self._coverage_evidence(fid, coverage, str(ccfg["detector_version"]))
-            struct_sig = Signal(
-                id=stable_uuid("signal", fid, chain_mod.DETECTOR_ID),
-                formation_id=fid,
-                family="STRUCTURE",
+                fid=fid,
                 detector_id=chain_mod.DETECTOR_ID,
                 detector_version=str(ccfg["detector_version"]),
-                status="supported",
-                strength=chain_mod.chain_strength(cand.hops, int(ccfg["min_hops"])),
-                evidence_ids=(struct_ev.id,),
-                limitations=("structural_only",),
-                dependency_tags=("graph.path",),
-            )
-            temporal_sig = self._temporal_signal(fid, flow, temporal_ev.id)
-            formation = Formation(
-                id=fid,
-                kind="chain",
-                currency=cg.currency,
-                subject_account_id=path[-1],
-                member_ids=path,
+                subject=path[-1],
+                members=path,
                 entry_ids=(path[0],),
                 exit_ids=(path[-1],),
+                struct_ev=struct_ev,
+                struct_strength=chain_mod.chain_strength(cand.hops, int(ccfg["min_hops"])),
+                struct_tags=("graph.path",),
+                struct_reason=ReasonCode("STRUCT_CHAIN_PATH", {"hops": cand.hops, "currency": cg.currency}),
+                flow=flow,
+                temporal_detector=flow_mod.DETECTOR_ID,
+                temporal_code="TEMPORAL_PATH_SUPPORTED",
+                temporal_accounts=path,
+                coverage_members=path,
+                has_downstream=True,
+                features={"hops": cand.hops, "entry_minor": _money(flow.entry_minor), "temporal_status": flow.status},
+                indicators=[],
+            )
+
+    def fanouts(self, cg: CurrencyGraph) -> None:
+        fcfg = self.config.detectors["fanout"]
+        tcfg = self.config.detectors["temporal"]
+        for cand in fanout_mod.detect_fanouts(cg, fcfg):
+            recipients = tuple(r.account_id for r in cand.recipients)
+            members = (cand.source, *recipients)
+            fid = stable_uuid("formation", self.snapshot_id, "fanout", cg.currency, cand.source, *sorted(recipients))
+            out_tx = [t for r in cand.recipients for t in r.transaction_ids]
+            onward_tx = [
+                tid
+                for r in recipients
+                for (snd, rcv), e in sorted(cg.edges.items())
+                if snd == r and rcv not in (r, cand.source)
+                for tid in e.transaction_ids
+            ]
+            flow = flow_mod.layered_flow(
+                [self._transfers(out_tx), self._transfers(onward_tx)],
+                max_lag_days=int(tcfg["max_hop_lag_days"]),
+                min_compatible_fraction=str(tcfg["min_compatible_fraction"]),
+                max_transfers=int(tcfg["max_transfers"]),
+            )
+            flow = self._attributed(flow, attribution.distribution_pro_rata(cg, cand.source, recipients))
+            struct_ev = Evidence(
+                id=stable_uuid("evidence", fid, "structure"),
+                kind="graph_fact",
+                reason_code="STRUCT_FANOUT_RECIPIENTS",
+                subject_id=fid,
+                transaction_ids=tuple(sorted(out_tx)),
+                account_ids=members,
+                observations={
+                    "source": cand.source,
+                    "recipient_count": len(recipients),
+                    "total_minor": _money(cand.total_outgoing_minor),
+                    "currency": cg.currency,
+                    "recipients": [
+                        {
+                            "account_id": r.account_id,
+                            "edge_minor": _money(r.edge_minor),
+                            "recipient_incoming_minor": _money(r.recipient_incoming_minor),
+                            "share_bp": r.share_bp,
+                            "transaction_count": len(r.transaction_ids),
+                        }
+                        for r in cand.recipients
+                    ],
+                    "upstream_accounts": list(cand.upstream),
+                },
+                thresholds={
+                    "min_recipients": int(fcfg["min_recipients"]),
+                    "min_recipient_share": str(fcfg["min_recipient_share"]),
+                    "min_outgoing_minor": str(fcfg["min_outgoing_minor"]),
+                },
+                limitations=("structural_only",),
+                detector_version=str(fcfg["detector_version"]),
+            )
+            strength_cfg = {**fcfg, "min_feeder_share": fcfg["min_recipient_share"]}
+            self._emit(
+                cg=cg,
+                kind="fanout",
+                fid=fid,
+                detector_id=fanout_mod.DETECTOR_ID,
+                detector_version=str(fcfg["detector_version"]),
+                subject=cand.source,
+                members=members,
+                entry_ids=(cand.source,),
+                exit_ids=recipients,
+                struct_ev=struct_ev,
+                struct_strength=self._structure_strength(
+                    strength_cfg, len(recipients), int(fcfg["min_recipients"]), [r.share_bp for r in cand.recipients]
+                ),
+                struct_tags=("graph.out_degree", "graph.edge_share"),
+                struct_reason=ReasonCode(
+                    "STRUCT_FANOUT_RECIPIENTS",
+                    {
+                        "count": len(recipients),
+                        "total_minor": _money(cand.total_outgoing_minor),
+                        "currency": cg.currency,
+                    },
+                ),
+                flow=flow,
+                temporal_detector=flow_mod.DETECTOR_ID,
+                temporal_code="TEMPORAL_ONWARD_SUPPORTED",
+                temporal_accounts=recipients,
+                coverage_members=members,
+                has_downstream=True,
                 features={
-                    "hops": cand.hops,
-                    "entry_minor": _money(flow.entry_minor),
+                    "recipient_count": len(recipients),
+                    "outgoing_minor": _money(cand.total_outgoing_minor),
                     "temporal_status": flow.status,
                 },
-                limitations=coverage.limitations,
-                detector_id=chain_mod.DETECTOR_ID,
-                detector_version=str(ccfg["detector_version"]),
-                window_start=min(dates),
-                window_end=max(dates),
-                transaction_ids=tuple(all_tx),
+                indicators=self._context(cg, cand.source, recipients, "out"),
+                claim_dependents=recipients,
             )
-            reasons = [
-                ReasonCode("STRUCT_CHAIN_PATH", {"hops": cand.hops, "currency": cg.currency}),
-                _flow_reason(flow, "TEMPORAL_PATH_SUPPORTED"),
-                *self._coverage_reasons(coverage, path[-1]),
-            ]
-            self._publish(formation, [struct_ev, temporal_ev, cov_ev], [struct_sig, temporal_sig], coverage, reasons)
+
+    def cycles(self, cg: CurrencyGraph) -> None:
+        ycfg = self.config.detectors["cycle"]
+        tcfg = self.config.detectors["temporal"]
+        detection = cycle_mod.detect_cycles(cg, ycfg)
+        if detection.budget_exceeded:
+            self.out.partial_reasons.append(f"cycle_budget_exceeded:{cg.currency}")
+        for cycle in detection.cycles:
+            k = len(cycle)
+            fid = stable_uuid("formation", self.snapshot_id, "cycle", cg.currency, *cycle)
+            leg_tx = [list(cg.edges[(cycle[i], cycle[(i + 1) % k])].transaction_ids) for i in range(k)]
+            flow = episodes_mod.cycle_episodes(
+                [self._transfers(h) for h in leg_tx],
+                max_lag_days=int(tcfg["max_hop_lag_days"]),
+                leg_amount_min_ratio=str(ycfg["leg_amount_min_ratio"]),
+                leg_amount_max_ratio=str(ycfg["leg_amount_max_ratio"]),
+                min_episodes=int(ycfg["min_episodes"]),
+            )
+            struct_tx = sorted(t for h in leg_tx for t in h)
+            n_episodes = len(flow.supporting_transaction_ids) // k
+            struct_ev = Evidence(
+                id=stable_uuid("evidence", fid, "structure"),
+                kind="graph_fact",
+                reason_code="STRUCT_CYCLE",
+                subject_id=fid,
+                transaction_ids=tuple(struct_tx),
+                account_ids=cycle,
+                observations={
+                    "cycle": list(cycle),
+                    "length": k,
+                    "currency": cg.currency,
+                    "total_minor": _money(sum(self.snapshot.transfers[t].amount_minor for t in struct_tx)),
+                    "leg_edges": [
+                        {
+                            "sender": cycle[i],
+                            "receiver": cycle[(i + 1) % k],
+                            "edge_minor": _money(cg.edges[(cycle[i], cycle[(i + 1) % k])].amount_minor),
+                            "transaction_count": len(leg_tx[i]),
+                        }
+                        for i in range(k)
+                    ],
+                },
+                thresholds={
+                    "min_length": int(ycfg["min_length"]),
+                    "max_length": int(ycfg["max_length"]),
+                    "min_edge_minor": str(ycfg["min_edge_minor"]),
+                },
+                limitations=("structural_only", "cycle_does_not_prove_round_trip"),
+                detector_version=str(ycfg["detector_version"]),
+            )
+            self._emit(
+                cg=cg,
+                kind="cycle",
+                fid=fid,
+                detector_id=cycle_mod.DETECTOR_ID,
+                detector_version=str(ycfg["detector_version"]),
+                subject=cycle[0],
+                members=cycle,
+                entry_ids=(cycle[0],),
+                exit_ids=(cycle[0],),
+                struct_ev=struct_ev,
+                struct_strength=0.6,
+                struct_tags=("graph.cycle",),
+                struct_reason=ReasonCode("STRUCT_CYCLE", {"length": k, "currency": cg.currency}),
+                flow=flow,
+                temporal_detector=episodes_mod.DETECTOR_ID,
+                temporal_code="TEMPORAL_ROUND_TRIPS_SUPPORTED",
+                temporal_accounts=cycle,
+                coverage_members=cycle,
+                has_downstream=True,
+                features={"length": k, "episodes": n_episodes, "temporal_status": flow.status},
+                indicators=[],
+            )
 
 
 def run_analysis(
@@ -455,6 +705,10 @@ def run_analysis(
         cg = snapshot.by_currency[currency]
         builder.funnels(cg)
         builder.chains(cg)
+        if "fanout" in config.detectors:
+            builder.fanouts(cg)
+        if "cycle" in config.detectors:
+            builder.cycles(cg)
     out = builder.out
     out.formations.sort(key=lambda f: f.id)
     out.evidence.sort(key=lambda e: e.id)

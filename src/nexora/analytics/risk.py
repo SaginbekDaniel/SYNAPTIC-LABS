@@ -6,10 +6,13 @@
 * Evidence gates cap the band (contradicted / ambiguous / unavailable chronology).
 * Subject coverage limitations (e.g. collection boundary) force abstention:
   ``insufficient_evidence`` with no numeric priority.
+* Observed benign-context counter-evidence (policy ``counterevidence_caps``) can only lower the
+  band ceiling, with an explicit ``BENIGN_CONTEXT`` reason.
 """
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import Any
 
 from nexora.domain.analysis import BAND_ORDER, Band, CoverageAssessment, ReasonCode, RiskAssessment, Signal
@@ -28,6 +31,7 @@ def assess(
     reasons: list[ReasonCode],
     policy: dict[str, Any],
     policy_sha256: str,
+    counterevidence: Sequence[str] = (),
 ) -> RiskAssessment:
     weights: dict[str, float] = {k: float(v) for k, v in policy["family_weights"].items()}
     # Evaluation/ablation switch: families listed here are kept for provenance but never credited.
@@ -88,6 +92,15 @@ def assess(
         capped = _cap(band, caps["temporal_ambiguous"])
     else:
         capped = band
+    counter = sorted(set(counterevidence))
+    if counter:
+        # Observed benign-context indicators (analytics.context). The policy maps their count to
+        # a band ceiling; they never raise a band and never delete the assessment.
+        reason_list.append(ReasonCode("BENIGN_CONTEXT", {"indicators": counter}))
+        caps_by_count = {int(k): str(v) for k, v in (policy.get("counterevidence_caps") or {}).items()}
+        applicable = [c for n, c in caps_by_count.items() if len(counter) >= n]
+        for c in applicable:
+            capped = _cap(capped, c)
     if capped != band:
         reason_list.append(ReasonCode("BAND_CAPPED_BY_EVIDENCE", {"from": band, "to": capped}))
     if len(supported) < 2:

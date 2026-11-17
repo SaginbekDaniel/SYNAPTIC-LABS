@@ -20,7 +20,7 @@ It does not identify the source of funds: intermediary balances are unobserved.
 from __future__ import annotations
 
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from fractions import Fraction
 from typing import Literal
 
@@ -49,10 +49,13 @@ class FlowResult:
     precision: Literal["day", "timestamp", "mixed"]
     limitations: tuple[str, ...]
     method: str = METHOD
+    #: Pro-rata (fungibility-aware) attribution bound; ``None`` when attribution is not applied.
+    pro_rata_minor: int | None = None
 
     @property
     def chosen_compatible_minor(self) -> int:
-        return self.strict_compatible_minor if self.status == "supported" else self.possible_compatible_minor
+        chosen = self.strict_compatible_minor if self.status == "supported" else self.possible_compatible_minor
+        return chosen if self.pro_rata_minor is None else min(chosen, self.pro_rata_minor)
 
     @property
     def compatible_fraction_bp(self) -> int:
@@ -195,3 +198,53 @@ def layered_flow(
         precision=precision,
         limitations=tuple(limitations),
     )
+
+
+def apply_attribution(
+    result: FlowResult, pro_rata_minor: int, *, min_compatible_fraction: Fraction | str | float
+) -> FlowResult:
+    """Tighten a flow result with a fungibility-aware attribution bound.
+
+    Max flow answers "could the entry funds have moved on, given chronology and amounts?" and
+    attributes every compatible outflow to the formation's entry funds, even when the pass-through
+    account also received other money. Funds inside an account are fungible, so without balance
+    data the defensible attribution is pro rata to the account's funding (``pro_rata_minor``,
+    computed by the caller). Both are bounds on what can be attributed; the result keeps the
+    smaller one and re-derives the status from it. The temporal claim itself is unchanged.
+    """
+    if result.status == "unavailable":
+        return replace(result, pro_rata_minor=pro_rata_minor)
+    fraction = Fraction(str(min_compatible_fraction))
+    entry = result.entry_minor
+
+    def meets(v: int) -> bool:
+        return entry > 0 and Fraction(min(v, pro_rata_minor), entry) >= fraction
+
+    limitations = [
+        lim
+        for lim in result.limitations
+        if lim
+        not in {
+            "same_day_order_unresolved",
+            "identical_timestamps",
+            "chronology_rules_out_flow",
+            "insufficient_compatible_amount",
+        }
+    ]
+    if meets(result.strict_compatible_minor):
+        status: FlowStatus = "supported"
+    elif meets(result.possible_compatible_minor):
+        status = "possible_ambiguous"
+        limitations.insert(
+            0, "same_day_order_unresolved" if result.precision != "timestamp" else "identical_timestamps"
+        )
+    else:
+        status = "contradicted"
+        chronology_allows = entry > 0 and Fraction(result.possible_compatible_minor, entry) >= fraction
+        if chronology_allows:
+            limitations.insert(0, "funds_diluted_by_other_activity")
+        elif result.possible_compatible_minor == 0:
+            limitations.insert(0, "chronology_rules_out_flow")
+        else:
+            limitations.insert(0, "insufficient_compatible_amount")
+    return replace(result, status=status, limitations=tuple(dict.fromkeys(limitations)), pro_rata_minor=pro_rata_minor)

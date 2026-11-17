@@ -1,24 +1,28 @@
-# Triage priority policy. Priority ranks analyst work; it is NOT a probability of fraud
-# (ADR-005). Missing families contribute zero and are listed explicitly — weights are
-# never silently renormalised.
-version: risk-policy-v1
+# Triage priority policy v2. Priority ranks analyst work; it is NOT a probability of fraud
+# (ADR-005). Missing families contribute zero and are listed explicitly — weights are never
+# silently renormalised. v2 only adds counter-evidence ceilings; weights and bands are unchanged
+# from risk-policy-v1 so differences in the benchmark are attributable to detector evidence.
+version: risk-policy-v2
 family_weights:
   STRUCTURE: 0.35
   TEMPORAL: 0.30
   PEER_STATISTICS: 0.20
   NETWORK_CONTEXT: 0.15
 temporal_strength:
-  supported: compatible_fraction   # strength = strictly chronology-compatible share of entry amount
+  supported: compatible_fraction   # strength = attributable share of the entry amount
   possible_ambiguous: 0.4
   contradicted: 0.0
-bands:                       # evaluated top-down on the 0-100 priority
+bands:
   critical: {min_priority: 80, min_supported_families: 3}
   high: {min_priority: 45, min_supported_families: 2}
   medium: {min_priority: 30, min_supported_families: 1}
   low: {min_priority: 0, min_supported_families: 1}
-caps:                        # evidence gates applied after scoring
+caps:
   temporal_contradicted: low
   temporal_ambiguous: medium
   temporal_unavailable: medium
+counterevidence_caps:        # number of independent benign-context indicators -> band ceiling
+  1: medium                  # one indicator: still reviewed, but below corroborated formations
+  2: low                     # two independent indicators: explained as an operating account, no alert
 abstain_on_subject_limitations: [boundary_limited]
-alert_min_band: medium       # bands below this are stored as assessments but do not open alerts
+alert_min_band: medium

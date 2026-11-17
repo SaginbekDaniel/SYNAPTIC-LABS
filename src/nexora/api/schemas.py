@@ -153,7 +153,7 @@ class ReasonCode(Model):
 
 class FormationSummary(Model):
     id: str
-    kind: Literal["funnel", "chain"]
+    kind: Literal["funnel", "chain", "fanout", "cycle"]
     currency: str
     subject_account_id: str
     member_count: int
