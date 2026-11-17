@@ -122,3 +122,80 @@ def test_error_envelope(client):
     r = client.post("/api/v1/lab/datasets", json={"suite": "nope", "seed": 1})
     assert r.status_code == 422 and r.json()["error"]["code"] == "UNKNOWN_SUITE"
     assert client.get("/health/ready").json()["status"] == "ok"
+
+
+def test_activity_counts_match_source_transfers(client, settings):
+    ds_id, job = _create_and_analyse(client, settings, seed=4242)
+    snap_id = job["snapshot_id"]
+    snap = client.get(f"/api/v1/analysis/snapshots/{snap_id}").json()
+    act = client.get(f"/api/v1/snapshots/{snap_id}/activity")
+    assert act.status_code == 200, act.text
+    days = act.json()["days"]
+    # Contiguous calendar days spanning exactly the snapshot window, zero-filled.
+    assert days[0]["date"] == snap["window_start"] and days[-1]["date"] == snap["window_end"]
+    assert len({d["date"] for d in days}) == len(days)
+    assert sum(d["transactions"] for d in days) == snap["transactions_count"]
+    # Evidence transfers of alerted formations, recomputed from the per-alert evidence chains.
+    cited: dict[str, str] = {}
+    alerts = client.get("/api/v1/alerts", params={"dataset_id": ds_id, "limit": 200}).json()["items"]
+    for a in alerts:
+        for t in client.get(f"/api/v1/alerts/{a['id']}/evidence").json()["transactions"]:
+            cited[t["id"]] = t["observed_date"]
+    by_day: dict[str, int] = {}
+    for date in cited.values():
+        by_day[date] = by_day.get(date, 0) + 1
+    assert {d["date"]: d["in_alerts"] for d in days if d["in_alerts"]} == by_day
+    assert all(0 <= d["in_alerts"] <= d["transactions"] for d in days)
+    assert client.get("/api/v1/snapshots/not-a-uuid/activity").status_code == 422
+
+
+def test_alert_list_pages_searches_sorts_and_counts_on_the_server(client, settings):
+    """The queue must not depend on loading every alert: totals, facets, search and sort are server-side."""
+    ds_id, _ = _create_and_analyse(client, settings)
+    everything = client.get("/api/v1/alerts", params={"dataset_id": ds_id, "limit": 200}).json()
+    items = everything["items"]
+    total = everything["total"]
+    assert total == len(items) > 2
+
+    # Facets cover the whole filtered set and agree with the items.
+    bands: dict[str, int] = {}
+    kinds: dict[str, int] = {}
+    for a in items:
+        bands[a["risk"]["band"]] = bands.get(a["risk"]["band"], 0) + 1
+        kinds[a["formation"]["kind"]] = kinds.get(a["formation"]["kind"], 0) + 1
+    assert everything["band_counts"] == bands and everything["kind_counts"] == kinds
+
+    # Paging: limit 1 still reports the full total and full facets; pages concatenate to the full order.
+    pages = [
+        client.get("/api/v1/alerts", params={"dataset_id": ds_id, "limit": 2, "offset": o}).json()
+        for o in range(0, total, 2)
+    ]
+    assert all(p["total"] == total and p["band_counts"] == bands for p in pages)
+    assert [a["id"] for p in pages for a in p["items"]] == [a["id"] for a in items]
+
+    # Band filter narrows items but band facet stays unfiltered by band.
+    some_band = items[0]["risk"]["band"]
+    by_band = client.get("/api/v1/alerts", params={"dataset_id": ds_id, "band": some_band, "limit": 200}).json()
+    assert by_band["total"] == bands[some_band] and by_band["band_counts"] == bands
+    assert {a["risk"]["band"] for a in by_band["items"]} == {some_band}
+
+    # Search matches any member account (case-insensitive) and escapes LIKE wildcards.
+    member = items[-1]["formation"]["subject_account_id"]
+    hits = client.get("/api/v1/alerts", params={"dataset_id": ds_id, "q": member.lower(), "limit": 200}).json()
+    assert items[-1]["id"] in {a["id"] for a in hits["items"]}
+    assert sum(hits["band_counts"].values()) == hits["total"]
+    assert client.get("/api/v1/alerts", params={"dataset_id": ds_id, "q": "%"}).json()["total"] == 0
+    assert client.get("/api/v1/alerts", params={"dataset_id": ds_id, "q": "_"}).json()["total"] == 0
+
+    # Sorts are applied before paging.
+    for sort, key in (
+        ("accounts", lambda a: a["formation"]["member_count"]),
+        ("transfers", lambda a: a["transaction_count"]),
+        ("recent", lambda a: a["formation"]["window_end"]),
+    ):
+        got = client.get("/api/v1/alerts", params={"dataset_id": ds_id, "sort": sort, "limit": 200}).json()["items"]
+        values = [key(a) for a in got]
+        assert values == sorted(values, reverse=True), sort
+        first = client.get("/api/v1/alerts", params={"dataset_id": ds_id, "sort": sort, "limit": 1}).json()
+        assert first["items"][0]["id"] == got[0]["id"]
+    assert client.get("/api/v1/alerts", params={"sort": "bogus"}).status_code == 422

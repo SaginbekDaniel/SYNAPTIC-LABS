@@ -331,6 +331,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/snapshots/{snapshot_id}/activity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Activity */
+        get: operations["activity_api_v1_snapshots__snapshot_id__activity_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/snapshots/{snapshot_id}/neighborhood": {
         parameters: {
             query?: never;
@@ -471,6 +488,25 @@ export interface components {
             /** Snapshot Id */
             snapshot_id: string;
         };
+        /** Activity */
+        Activity: {
+            /** Days */
+            days: components["schemas"]["ActivityDay"][];
+            /** Snapshot Id */
+            snapshot_id: string;
+        };
+        /** ActivityDay */
+        ActivityDay: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** In Alerts */
+            in_alerts: number;
+            /** Transactions */
+            transactions: number;
+        };
         /** AlertDetail */
         AlertDetail: {
             /** Case Id */
@@ -532,8 +568,22 @@ export interface components {
         };
         /** AlertPage */
         AlertPage: {
+            /**
+             * Band Counts
+             * @description Alerts per risk band under every filter except band
+             */
+            band_counts?: {
+                [key: string]: number;
+            };
             /** Items */
             items: components["schemas"]["AlertSummary"][];
+            /**
+             * Kind Counts
+             * @description Alerts per formation kind under every filter except kind
+             */
+            kind_counts?: {
+                [key: string]: number;
+            };
             /** Limit */
             limit: number;
             /** Offset */
@@ -1585,6 +1635,9 @@ export interface operations {
                 kind?: string | null;
                 limit?: number;
                 offset?: number;
+                /** @description Case-insensitive substring of a member account id */
+                q?: string | null;
+                sort?: string;
             };
             header?: never;
             path?: never;
@@ -2214,6 +2267,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AccountSummary"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    activity_api_v1_snapshots__snapshot_id__activity_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                snapshot_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Activity"];
                 };
             };
             /** @description Validation Error */

@@ -211,6 +211,12 @@ class AlertSummary(Model):
 
 class AlertPage(Page):
     items: list[AlertSummary]
+    band_counts: dict[str, int] = Field(
+        default_factory=dict, description="Alerts per risk band under every filter except band"
+    )
+    kind_counts: dict[str, int] = Field(
+        default_factory=dict, description="Alerts per formation kind under every filter except kind"
+    )
 
 
 class EvidenceItem(Model):
@@ -293,6 +299,17 @@ class Neighborhood(Model):
     limits: dict[str, int]
     nodes: list[GraphNode]
     edges: list[GraphEdge]
+
+
+class ActivityDay(Model):
+    date: dt.date
+    transactions: int
+    in_alerts: int
+
+
+class Activity(Model):
+    snapshot_id: str
+    days: list[ActivityDay]
 
 
 class AccountFormation(Model):

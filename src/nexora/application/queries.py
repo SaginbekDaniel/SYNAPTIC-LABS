@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import datetime as dt
 import uuid
 from collections import deque
 from typing import Any
@@ -188,6 +189,13 @@ def _alert_summary(
     }
 
 
+ALERT_SORTS = ("priority", "accounts", "transfers", "recent")
+
+
+def _like_escape(text: str) -> str:
+    return text.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+
+
 def list_alerts(
     session: Session,
     *,
@@ -197,27 +205,66 @@ def list_alerts(
     kind: str | None,
     limit: int,
     offset: int,
+    q: str | None = None,
+    sort: str = "priority",
 ) -> dict[str, Any]:
-    q = (
+    """One page of alerts plus facet counts over the whole filtered set.
+
+    ``band_counts`` ignores the band filter and ``kind_counts`` ignores the kind filter, so a client
+    can show how many alerts each chip/option would yield without loading every alert.
+    """
+    base = (
         select(orm.Alert, orm.Formation, orm.RiskAssessmentRow)
         .join(orm.Formation, orm.Formation.id == orm.Alert.formation_id)
         .join(orm.RiskAssessmentRow, orm.RiskAssessmentRow.id == orm.Alert.risk_assessment_id)
     )
     if dataset_id is not None:
-        q = q.where(orm.Alert.dataset_id == dataset_id)
-    if bands:
-        q = q.where(orm.RiskAssessmentRow.band.in_(bands))
+        base = base.where(orm.Alert.dataset_id == dataset_id)
     if status:
-        q = q.where(orm.Alert.status == status)
-    if kind:
-        q = q.where(orm.Formation.kind == kind)
-    total = session.execute(select(func.count()).select_from(q.subquery())).scalar_one()
+        base = base.where(orm.Alert.status == status)
+    needle = (q or "").strip()
+    if needle:
+        # Account ids are opaque strings: case-insensitive substring match on the subject or any member.
+        pattern = f"%{_like_escape(needle)}%"
+        members = func.jsonb_array_elements_text(orm.Formation.member_ids).table_valued("value").alias("m")
+        base = base.where(
+            or_(
+                orm.Formation.subject_account_id.ilike(pattern, escape="\\"),
+                select(1).select_from(members).where(members.c.value.ilike(pattern, escape="\\")).exists(),
+            )
+        )
+    band_scope = base.where(orm.Formation.kind == kind) if kind else base
+    kind_scope = base.where(orm.RiskAssessmentRow.band.in_(bands)) if bands else base
+    q_all = band_scope.where(orm.RiskAssessmentRow.band.in_(bands)) if bands else band_scope
+
+    def facet(scope: Any, column: Any) -> dict[str, int]:
+        sub = scope.with_only_columns(column.label("facet")).subquery()
+        rows = session.execute(select(sub.c.facet, func.count()).group_by(sub.c.facet)).all()
+        return {str(k): int(n) for k, n in rows}
+
+    band_counts = facet(band_scope, orm.RiskAssessmentRow.band)
+    kind_counts = facet(kind_scope, orm.Formation.kind)
+    total = session.execute(select(func.count()).select_from(q_all.subquery())).scalar_one()
+
     rank = sql_case(BAND_RANK, value=orm.RiskAssessmentRow.band, else_=9)
-    rows = session.execute(
-        q.order_by(rank, orm.RiskAssessmentRow.priority.desc().nulls_last(), orm.Alert.first_seen, orm.Alert.id)
-        .limit(limit)
-        .offset(offset)
-    ).all()
+    priority_order = (rank, orm.RiskAssessmentRow.priority.desc().nulls_last())
+    tie_break = (orm.Alert.first_seen, orm.Alert.id)
+    if sort == "accounts":
+        order: tuple[Any, ...] = (func.jsonb_array_length(orm.Formation.member_ids).desc(), *priority_order)
+    elif sort == "transfers":
+        tx_count = (
+            select(func.count(func.distinct(orm.EvidenceTransaction.transaction_id)))
+            .join(orm.Evidence, orm.Evidence.id == orm.EvidenceTransaction.evidence_id)
+            .where(orm.Evidence.formation_id == orm.Formation.id)
+            .correlate(orm.Formation)
+            .scalar_subquery()
+        )
+        order = (tx_count.desc(), *priority_order)
+    elif sort == "recent":
+        order = (orm.Formation.window_end.desc(), *priority_order)
+    else:
+        order = priority_order
+    rows = session.execute(q_all.order_by(*order, *tie_break).limit(limit).offset(offset)).all()
     latest_by_ds: dict[uuid.UUID, uuid.UUID | None] = {}
     items = []
     for a, f, r in rows:
@@ -225,7 +272,14 @@ def list_alerts(
             snap = latest_snapshot(session, a.dataset_id)
             latest_by_ds[a.dataset_id] = snap.id if snap else None
         items.append(_alert_summary(session, a, f, r, latest_by_ds[a.dataset_id]))
-    return {"items": items, "total": int(total), "limit": limit, "offset": offset}
+    return {
+        "items": items,
+        "total": int(total),
+        "limit": limit,
+        "offset": offset,
+        "band_counts": band_counts,
+        "kind_counts": kind_counts,
+    }
 
 
 def _alert_rows(session: Session, alert_id: uuid.UUID) -> tuple[orm.Alert, orm.Formation, orm.RiskAssessmentRow]:
@@ -331,6 +385,40 @@ def _eligible_in_snapshot(snap: orm.GraphSnapshot) -> list[Any]:
         orm.Transaction.status == "posted",
         orm.Transaction.sender_account_id != orm.Transaction.receiver_account_id,
     ]
+
+
+def activity(session: Session, snapshot_id: uuid.UUID) -> dict[str, Any]:
+    """Daily transfer counts over the snapshot window, by source calendar date (never a clock time).
+
+    `transactions` counts the transfers that entered the graph; `in_alerts` counts the distinct
+    ones among them that are cited as evidence by a formation in this snapshot that raised an
+    alert. Counts only: a per-day money sum could silently mix currencies.
+    """
+    snap = get_snapshot(session, snapshot_id)
+    day = orm.Transaction.observed_date
+    totals = dict(session.execute(select(day, func.count()).where(*_eligible_in_snapshot(snap)).group_by(day)).all())
+    alerted = (
+        select(orm.EvidenceTransaction.transaction_id)
+        .join(orm.Evidence, orm.Evidence.id == orm.EvidenceTransaction.evidence_id)
+        .join(orm.Alert, orm.Alert.formation_id == orm.Evidence.formation_id)
+        .where(orm.Evidence.snapshot_id == snap.id)
+    )
+    flagged = dict(
+        session.execute(
+            select(day, func.count(func.distinct(orm.Transaction.id)))
+            .where(*_eligible_in_snapshot(snap), orm.Transaction.id.in_(alerted))
+            .group_by(day)
+        ).all()
+    )
+    start = snap.window_start or (min(totals) if totals else None)
+    end = snap.window_end or (max(totals) if totals else None)
+    days: list[dict[str, Any]] = []
+    if start is not None and end is not None:
+        d = start
+        while d <= end:
+            days.append({"date": d, "transactions": int(totals.get(d, 0)), "in_alerts": int(flagged.get(d, 0))})
+            d += dt.timedelta(days=1)
+    return {"snapshot_id": str(snap.id), "days": days}
 
 
 def account_summary(session: Session, snapshot_id: uuid.UUID, account_id: str) -> dict[str, Any]:

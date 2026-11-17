@@ -1,0 +1,452 @@
+/* ================================================================ shared */
+.chart {
+  position: relative;
+}
+.chart__frame {
+  position: relative;
+  width: 100%;
+  border-radius: var(--r-md);
+  touch-action: pan-y;
+}
+.chart__frame svg {
+  display: block;
+  overflow: visible;
+}
+.chart__grid {
+  stroke: var(--line);
+  stroke-dasharray: 3 5;
+}
+.chart__tick {
+  fill: var(--text-3);
+  font-size: var(--fs-2xs);
+  font-family: var(--font-sans);
+}
+.chart__cursor {
+  stroke: var(--text-3);
+  stroke-dasharray: 3 3;
+}
+.chart__tooltip {
+  position: absolute;
+  top: var(--s-2);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  min-width: 190px;
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-md);
+  background: var(--surface-3);
+  box-shadow: var(--shadow-pop);
+  font-size: var(--fs-xs);
+  pointer-events: none;
+  animation: fade-in var(--dur-1) var(--ease);
+}
+.chart__tooltip-title {
+  color: var(--text-2);
+  font-weight: var(--fw-medium);
+}
+.chart__tooltip-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  color: var(--text-2);
+}
+.chart__tooltip-row strong {
+  margin-left: auto;
+  color: var(--text);
+  font-size: var(--fs-sm);
+}
+.series-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1) var(--s-4);
+  list-style: none;
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+}
+.series-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+.series-legend__note {
+  color: var(--text-3);
+}
+.legend-swatch {
+  display: inline-block;
+  flex: none;
+}
+.legend-swatch--area {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: currentColor;
+}
+.legend-swatch--line {
+  width: 16px;
+  height: 0;
+  border-top: 2px dashed currentColor;
+}
+
+/* ================================================================ donut */
+.donut {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--s-6);
+}
+.donut__figure {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.donut__arc {
+  cursor: pointer;
+  transition: opacity var(--dur-2) var(--ease);
+}
+.donut__arc[data-dim="true"] {
+  opacity: 0.3;
+}
+.donut__center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.donut__value {
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-semibold);
+  line-height: 1;
+  letter-spacing: var(--tracking-display);
+}
+.donut__label {
+  margin-top: var(--s-1);
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+.donut__legend {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  list-style: none;
+  min-width: 0;
+}
+.donut__row {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) auto 3.2rem;
+  align-items: center;
+  gap: var(--s-2);
+  width: 100%;
+  min-height: 36px;
+  padding: 0 var(--s-2);
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text);
+  font-size: var(--fs-sm);
+  text-align: left;
+}
+button.donut__row:hover {
+  background: var(--surface-2);
+}
+button.donut__row[aria-pressed="true"] {
+  background: var(--surface-3);
+}
+.donut__key {
+  display: grid;
+  place-items: center;
+}
+.donut__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: currentColor;
+}
+/* Legend names wrap rather than truncate: in narrow cards an ellipsis hid which status a row meant. */
+.donut__name {
+  min-width: 0;
+  padding-block: var(--s-1);
+  line-height: var(--lh-tight);
+  overflow-wrap: break-word;
+}
+.donut__count {
+  font-weight: var(--fw-semibold);
+}
+.donut__pct {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  text-align: right;
+}
+
+/* ================================================================ ring */
+.ring {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-3);
+  min-width: 0;
+  text-align: center;
+}
+.ring__figure {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.ring__figure svg {
+  position: absolute;
+  inset: 0;
+}
+.ring__arc {
+  transition: stroke-dasharray var(--dur-3) var(--ease);
+}
+.ring__value {
+  position: relative;
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tracking-tight);
+}
+.ring figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ring__label {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+}
+.ring__detail {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+/* ================================================================ segmented meter */
+.meter {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+}
+.meter__seg {
+  height: 8px;
+  border-radius: var(--r-pill);
+  background: var(--surface-3);
+}
+.meter__seg[data-on="true"] {
+  background: var(--accent);
+}
+.meter--critical .meter__seg[data-on="true"] { background: var(--band-critical); }
+.meter--high .meter__seg[data-on="true"] { background: var(--band-high); }
+.meter--medium .meter__seg[data-on="true"] { background: var(--band-medium); }
+.meter--insufficient_evidence .meter__seg[data-on="true"] { background: var(--band-unresolved); }
+
+/* ================================================================ bar list */
+.barlist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+.barlist ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  list-style: none;
+}
+.barlist__scale {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+.barlist__row {
+  display: grid;
+  grid-template-columns: minmax(10rem, 1.1fr) minmax(0, 2fr) minmax(4.5rem, auto);
+  align-items: center;
+  gap: var(--s-4);
+  font-size: var(--fs-sm);
+}
+.barlist__label {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.barlist__note {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+.barlist__track {
+  position: relative;
+  height: 10px;
+  border-radius: var(--r-pill);
+  background: var(--surface-3);
+}
+.barlist__bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  min-width: 2px;
+  border-radius: var(--r-pill);
+  transition: width var(--dur-3) var(--ease);
+}
+.barlist__ref {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 2px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: var(--text);
+  opacity: 0.7;
+}
+.barlist__value {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-weight: var(--fw-semibold);
+}
+.barlist__refval {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+}
+
+/* ================================================================ columns */
+.columns__plot {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  gap: var(--s-4);
+  height: 200px;
+  list-style: none;
+}
+.columns__col {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: var(--s-2);
+  min-width: 0;
+}
+.columns__area {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--s-1);
+  min-height: 0;
+  border-bottom: 1px solid var(--line-strong);
+}
+.columns__value {
+  font-weight: var(--fw-semibold);
+}
+.columns__bar {
+  width: min(56px, 70%);
+  min-height: 2px;
+  border-radius: var(--r-sm) var(--r-sm) 2px 2px;
+  transition: height var(--dur-3) var(--ease);
+}
+.columns__label {
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-tight);
+  text-align: center;
+  /* Single long words ("Критический") must not spill into the neighbouring column. */
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+.column-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1) var(--s-4);
+  margin-top: var(--s-4);
+}
+
+/* ================================================================ evidence timeline */
+.tl {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.tl__plot {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 150px;
+  padding-bottom: 1px;
+  border-bottom: 1px solid var(--line-strong);
+}
+.tl--compact .tl__plot {
+  height: 56px;
+}
+.tl__col {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  flex: 1;
+  height: 100%;
+  min-width: 2px;
+  border-radius: 3px;
+  transition: opacity var(--dur-2) var(--ease), background var(--dur-1) var(--ease);
+}
+.tl__col:hover {
+  background: var(--surface-2);
+}
+.tl__col[data-empty="true"]::after {
+  content: "";
+  position: absolute;
+  inset: auto 25% 0;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--surface-3);
+}
+.tl__col[data-dim="true"] {
+  opacity: 0.25;
+}
+.tl__col[data-hl="true"] .tl__stack {
+  box-shadow: 0 0 0 2px var(--canvas), 0 0 0 3px var(--g-highlight);
+}
+.tl__stack {
+  display: flex;
+  flex-direction: column-reverse;
+  width: 100%;
+  min-height: 3px;
+  overflow: hidden;
+  border-radius: 3px 3px 1px 1px;
+}
+.tl__seg {
+  flex-basis: 0;
+  min-height: 2px;
+}
+.tl__axis {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-3);
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+.tl__max {
+  text-align: center;
+}
+.tl__note {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+.tl__tooltip {
+  top: 0;
+  min-width: 220px;
+}
+
+@media (max-width: 599px) {
+  .donut {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+  }
+  .donut__legend {
+    width: 100%;
+  }
+  .barlist__row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--s-1) var(--s-3);
+  }
+  .barlist__track {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}

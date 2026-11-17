@@ -22,6 +22,8 @@ def list_alerts(
     kind: str | None = Query(None, pattern="^(funnel|chain|fan_out|cycle)$"),
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
+    q: str | None = Query(None, max_length=64, description="Case-insensitive substring of a member account id"),
+    sort: str = Query("priority", pattern="^(priority|accounts|transfers|recent)$"),
 ) -> Any:
     return queries.list_alerts(
         session,
@@ -31,6 +33,8 @@ def list_alerts(
         kind=kind,
         limit=limit,
         offset=offset,
+        q=q,
+        sort=sort,
     )
 
 
