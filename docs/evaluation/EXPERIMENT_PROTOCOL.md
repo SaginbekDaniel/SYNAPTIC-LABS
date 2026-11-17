@@ -83,3 +83,18 @@ Per-family regressions are reported regardless of the aggregate outcome.
   written before the engine, different mechanisms), not organisational. Results describe behaviour
   on synthetic data only and say nothing about accuracy on real bank data.
 * 60 datasets give wide intervals for rare families; per-family numbers are descriptive.
+
+## Amendment A1 — before the sealed run (no sealed results had been computed)
+
+* **Harness fix**: the `v1_shipped` variant did not remove the new `hypotheses` configuration, so
+  "v1" would silently have included the engine. It now also removes it and restores funnel-v2's
+  returning ratio. Metric code and the `v2_shipped` baseline are unchanged. New harness sha256:
+  `23fb169195986fb37412775d70b8e278a3ed95e021eb262ebb92b97a9209e41c`.
+* **Runner**: `scripts/run_sealed_evaluation.py` (sha256 `8f526412edc3bbb469e93779b78af9a7e5f5d88a804ebf9c3023ecbfa732ab54`) implements the decision rule above
+  mechanically (paired bootstrap, 2 000 draws, seed 20261117). It was dry-run on `bench-v1` dev only.
+* **Frozen candidate**: `detectors-v3` / `risk-policy-v3` (engine `hypotheses-v1`, gate
+  `benign_explanation_favoured: low`), config sha256 `1f9e2a64aaa1d563ebe71efc9d5aa8207bbac7dc2405b450b8b19bcf460f1055`.
+  The dev-only variant "inconclusive → medium" changed nothing and was not adopted. A dev ablation
+  without peer statistics looked better; it was **not** adopted (selection on an exposed split) and is
+  reported as an open question.
+* Sealed generator unchanged since the lock (sha256 `558e3595239fc4e929fed5c34546044efcf88f0e015f2842c21350446e073e9f`).
