@@ -1,0 +1,3180 @@
+{
+ "schema_version": 1,
+ "protocol": "docs/evaluation/EXPERIMENT_PROTOCOL.md",
+ "split": "sealed",
+ "seeds": [
+  9000,
+  9059
+ ],
+ "datasets": 60,
+ "split_sha256": "be51b04b3dc8a665ddb8824c61305f988754eaaef94dfb801f332afd5be932ff",
+ "generated_at": "2026-11-17T19:36:07+00:00",
+ "synthetic": true,
+ "code": {
+  "commit": "686f4cedea0bc5fc30708eb2dbfaa81f1a5a006c",
+  "dirty_paths": []
+ },
+ "hashes": {
+  "sealed_generator": "558e3595239fc4e929fed5c34546044efcf88f0e015f2842c21350446e073e9f",
+  "harness": "23fb169195986fb37412775d70b8e278a3ed95e021eb262ebb92b97a9209e41c",
+  "candidate_config_sha256": "1f9e2a64aaa1d563ebe71efc9d5aa8207bbac7dc2405b450b8b19bcf460f1055",
+  "baseline_config_sha256": "489b477a3da5ac1bac8ae3a7e3c1f5f22d9aac2a826e966d04d700347f194153"
+ },
+ "environment": {
+  "python": "3.13.18"
+ },
+ "results": {
+  "candidate": {
+   "datasets": 60,
+   "scenario": {
+    "suspicious": 206,
+    "legitimate": 276,
+    "tp": 154,
+    "fp": 44,
+    "fn": 52,
+    "tn": 232,
+    "precision": 0.7778,
+    "recall": 0.7476,
+    "f1": 0.7624,
+    "fpr": 0.1594,
+    "fnr": 0.2524,
+    "surfaced_recall": 0.8738,
+    "high_band_recall": 0.6262,
+    "high_band_fpr": 0.0978
+   },
+   "alerts": {
+    "flagged": 271,
+    "per_dataset": 4.52,
+    "precision": 0.7306,
+    "unmatched": 27,
+    "per_flagged_network": 1.2323,
+    "networks_with_duplicates": 0.1869
+   },
+   "abstention": {
+    "rate": 0.2735,
+    "suspicious_share": 0.3137
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.52,
+    "distinct_p_at_5": 0.5931,
+    "p_at_10": 0.6434,
+    "p_at_5": 0.7125,
+    "recall_at_10": 0.8831,
+    "recall_at_5": 0.8033
+   },
+   "by_family": {
+    "LX1_rent_collection": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 5
+    },
+    "LX2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 0,
+     "surfaced": 1
+    },
+    "LX3_payroll_with_spending": {
+     "total": 43,
+     "flagged": 4,
+     "surfaced": 10
+    },
+    "LX4_family_remittance": {
+     "total": 20,
+     "flagged": 5,
+     "surfaced": 5
+    },
+    "LX5_cash_pooling": {
+     "total": 28,
+     "flagged": 0,
+     "surfaced": 5
+    },
+    "LX6_lending": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LX7_event_ticketing": {
+     "total": 23,
+     "flagged": 22,
+     "surfaced": 23
+    },
+    "LX8_charity_campaign": {
+     "total": 36,
+     "flagged": 13,
+     "surfaced": 16
+    },
+    "LX9_wholesale_supplier": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 5
+    },
+    "SX10_round_trip": {
+     "total": 25,
+     "flagged": 22,
+     "surfaced": 23
+    },
+    "SX11_low_value_coordination": {
+     "total": 9,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SX1_mule_collection": {
+     "total": 48,
+     "flagged": 38,
+     "surfaced": 43
+    },
+    "SX2_activation_collection": {
+     "total": 10,
+     "flagged": 9,
+     "surfaced": 10
+    },
+    "SX3_boundary_collection": {
+     "total": 16,
+     "flagged": 0,
+     "surfaced": 16
+    },
+    "SX4_recurring_mule_collection": {
+     "total": 8,
+     "flagged": 1,
+     "surfaced": 2
+    },
+    "SX5_slow_collection": {
+     "total": 12,
+     "flagged": 9,
+     "surfaced": 9
+    },
+    "SX6_layering_chain": {
+     "total": 26,
+     "flagged": 24,
+     "surfaced": 26
+    },
+    "SX7_partially_observed_chain": {
+     "total": 13,
+     "flagged": 12,
+     "surfaced": 12
+    },
+    "SX8_mule_distribution": {
+     "total": 27,
+     "flagged": 27,
+     "surfaced": 27
+    },
+    "SX9_distribution_terminal": {
+     "total": 12,
+     "flagged": 12,
+     "surfaced": 12
+    }
+   },
+   "latency_ms": {
+    "median": 83.2,
+    "p95": 217.0,
+    "max": 284.1
+   }
+  },
+  "baseline_v2": {
+   "datasets": 60,
+   "scenario": {
+    "suspicious": 206,
+    "legitimate": 276,
+    "tp": 151,
+    "fp": 140,
+    "fn": 55,
+    "tn": 136,
+    "precision": 0.5189,
+    "recall": 0.733,
+    "f1": 0.6076,
+    "fpr": 0.5072,
+    "fnr": 0.267,
+    "surfaced_recall": 0.8592,
+    "high_band_recall": 0.6117,
+    "high_band_fpr": 0.1775
+   },
+   "alerts": {
+    "flagged": 511,
+    "per_dataset": 8.52,
+    "precision": 0.3816,
+    "unmatched": 26,
+    "per_flagged_network": 1.6667,
+    "networks_with_duplicates": 0.4158
+   },
+   "abstention": {
+    "rate": 0.1664,
+    "suspicious_share": 0.3137
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.343,
+    "distinct_p_at_5": 0.4653,
+    "p_at_10": 0.4174,
+    "p_at_5": 0.5453,
+    "recall_at_10": 0.8422,
+    "recall_at_5": 0.7003
+   },
+   "by_family": {
+    "LX1_rent_collection": {
+     "total": 32,
+     "flagged": 18,
+     "surfaced": 23
+    },
+    "LX2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 29,
+     "surfaced": 30
+    },
+    "LX3_payroll_with_spending": {
+     "total": 43,
+     "flagged": 9,
+     "surfaced": 15
+    },
+    "LX4_family_remittance": {
+     "total": 20,
+     "flagged": 5,
+     "surfaced": 5
+    },
+    "LX5_cash_pooling": {
+     "total": 28,
+     "flagged": 28,
+     "surfaced": 28
+    },
+    "LX6_lending": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LX7_event_ticketing": {
+     "total": 23,
+     "flagged": 22,
+     "surfaced": 23
+    },
+    "LX8_charity_campaign": {
+     "total": 36,
+     "flagged": 13,
+     "surfaced": 16
+    },
+    "LX9_wholesale_supplier": {
+     "total": 32,
+     "flagged": 16,
+     "surfaced": 21
+    },
+    "SX10_round_trip": {
+     "total": 25,
+     "flagged": 22,
+     "surfaced": 23
+    },
+    "SX11_low_value_coordination": {
+     "total": 9,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SX1_mule_collection": {
+     "total": 48,
+     "flagged": 38,
+     "surfaced": 43
+    },
+    "SX2_activation_collection": {
+     "total": 10,
+     "flagged": 6,
+     "surfaced": 7
+    },
+    "SX3_boundary_collection": {
+     "total": 16,
+     "flagged": 0,
+     "surfaced": 16
+    },
+    "SX4_recurring_mule_collection": {
+     "total": 8,
+     "flagged": 1,
+     "surfaced": 2
+    },
+    "SX5_slow_collection": {
+     "total": 12,
+     "flagged": 9,
+     "surfaced": 9
+    },
+    "SX6_layering_chain": {
+     "total": 26,
+     "flagged": 24,
+     "surfaced": 26
+    },
+    "SX7_partially_observed_chain": {
+     "total": 13,
+     "flagged": 12,
+     "surfaced": 12
+    },
+    "SX8_mule_distribution": {
+     "total": 27,
+     "flagged": 27,
+     "surfaced": 27
+    },
+    "SX9_distribution_terminal": {
+     "total": 12,
+     "flagged": 12,
+     "surfaced": 12
+    }
+   },
+   "latency_ms": {
+    "median": 73.5,
+    "p95": 240.8,
+    "max": 305.4
+   }
+  },
+  "ablation_engine_without_gate": {
+   "datasets": 60,
+   "scenario": {
+    "suspicious": 206,
+    "legitimate": 276,
+    "tp": 154,
+    "fp": 140,
+    "fn": 52,
+    "tn": 136,
+    "precision": 0.5238,
+    "recall": 0.7476,
+    "f1": 0.616,
+    "fpr": 0.5072,
+    "fnr": 0.2524,
+    "surfaced_recall": 0.8738,
+    "high_band_recall": 0.6262,
+    "high_band_fpr": 0.1775
+   },
+   "alerts": {
+    "flagged": 515,
+    "per_dataset": 8.58,
+    "precision": 0.3845,
+    "unmatched": 27,
+    "per_flagged_network": 1.6599,
+    "networks_with_duplicates": 0.4116
+   },
+   "abstention": {
+    "rate": 0.1653,
+    "suspicious_share": 0.3137
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.3456,
+    "distinct_p_at_5": 0.4694,
+    "p_at_10": 0.4184,
+    "p_at_5": 0.5461,
+    "recall_at_10": 0.8531,
+    "recall_at_5": 0.7078
+   },
+   "by_family": {
+    "LX1_rent_collection": {
+     "total": 32,
+     "flagged": 18,
+     "surfaced": 23
+    },
+    "LX2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 29,
+     "surfaced": 30
+    },
+    "LX3_payroll_with_spending": {
+     "total": 43,
+     "flagged": 9,
+     "surfaced": 15
+    },
+    "LX4_family_remittance": {
+     "total": 20,
+     "flagged": 5,
+     "surfaced": 5
+    },
+    "LX5_cash_pooling": {
+     "total": 28,
+     "flagged": 28,
+     "surfaced": 28
+    },
+    "LX6_lending": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LX7_event_ticketing": {
+     "total": 23,
+     "flagged": 22,
+     "surfaced": 23
+    },
+    "LX8_charity_campaign": {
+     "total": 36,
+     "flagged": 13,
+     "surfaced": 16
+    },
+    "LX9_wholesale_supplier": {
+     "total": 32,
+     "flagged": 16,
+     "surfaced": 21
+    },
+    "SX10_round_trip": {
+     "total": 25,
+     "flagged": 22,
+     "surfaced": 23
+    },
+    "SX11_low_value_coordination": {
+     "total": 9,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SX1_mule_collection": {
+     "total": 48,
+     "flagged": 38,
+     "surfaced": 43
+    },
+    "SX2_activation_collection": {
+     "total": 10,
+     "flagged": 9,
+     "surfaced": 10
+    },
+    "SX3_boundary_collection": {
+     "total": 16,
+     "flagged": 0,
+     "surfaced": 16
+    },
+    "SX4_recurring_mule_collection": {
+     "total": 8,
+     "flagged": 1,
+     "surfaced": 2
+    },
+    "SX5_slow_collection": {
+     "total": 12,
+     "flagged": 9,
+     "surfaced": 9
+    },
+    "SX6_layering_chain": {
+     "total": 26,
+     "flagged": 24,
+     "surfaced": 26
+    },
+    "SX7_partially_observed_chain": {
+     "total": 13,
+     "flagged": 12,
+     "surfaced": 12
+    },
+    "SX8_mule_distribution": {
+     "total": 27,
+     "flagged": 27,
+     "surfaced": 27
+    },
+    "SX9_distribution_terminal": {
+     "total": 12,
+     "flagged": 12,
+     "surfaced": 12
+    }
+   },
+   "latency_ms": {
+    "median": 89.4,
+    "p95": 204.8,
+    "max": 344.5
+   }
+  },
+  "ablation_without_hypotheses": {
+   "datasets": 60,
+   "scenario": {
+    "suspicious": 206,
+    "legitimate": 276,
+    "tp": 154,
+    "fp": 140,
+    "fn": 52,
+    "tn": 136,
+    "precision": 0.5238,
+    "recall": 0.7476,
+    "f1": 0.616,
+    "fpr": 0.5072,
+    "fnr": 0.2524,
+    "surfaced_recall": 0.8738,
+    "high_band_recall": 0.6262,
+    "high_band_fpr": 0.1775
+   },
+   "alerts": {
+    "flagged": 515,
+    "per_dataset": 8.58,
+    "precision": 0.3845,
+    "unmatched": 27,
+    "per_flagged_network": 1.6599,
+    "networks_with_duplicates": 0.4116
+   },
+   "abstention": {
+    "rate": 0.1653,
+    "suspicious_share": 0.3137
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.3423,
+    "distinct_p_at_5": 0.4661,
+    "p_at_10": 0.4168,
+    "p_at_5": 0.5428,
+    "recall_at_10": 0.8442,
+    "recall_at_5": 0.7036
+   },
+   "by_family": {
+    "LX1_rent_collection": {
+     "total": 32,
+     "flagged": 18,
+     "surfaced": 23
+    },
+    "LX2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 29,
+     "surfaced": 30
+    },
+    "LX3_payroll_with_spending": {
+     "total": 43,
+     "flagged": 9,
+     "surfaced": 15
+    },
+    "LX4_family_remittance": {
+     "total": 20,
+     "flagged": 5,
+     "surfaced": 5
+    },
+    "LX5_cash_pooling": {
+     "total": 28,
+     "flagged": 28,
+     "surfaced": 28
+    },
+    "LX6_lending": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LX7_event_ticketing": {
+     "total": 23,
+     "flagged": 22,
+     "surfaced": 23
+    },
+    "LX8_charity_campaign": {
+     "total": 36,
+     "flagged": 13,
+     "surfaced": 16
+    },
+    "LX9_wholesale_supplier": {
+     "total": 32,
+     "flagged": 16,
+     "surfaced": 21
+    },
+    "SX10_round_trip": {
+     "total": 25,
+     "flagged": 22,
+     "surfaced": 23
+    },
+    "SX11_low_value_coordination": {
+     "total": 9,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SX1_mule_collection": {
+     "total": 48,
+     "flagged": 38,
+     "surfaced": 43
+    },
+    "SX2_activation_collection": {
+     "total": 10,
+     "flagged": 9,
+     "surfaced": 10
+    },
+    "SX3_boundary_collection": {
+     "total": 16,
+     "flagged": 0,
+     "surfaced": 16
+    },
+    "SX4_recurring_mule_collection": {
+     "total": 8,
+     "flagged": 1,
+     "surfaced": 2
+    },
+    "SX5_slow_collection": {
+     "total": 12,
+     "flagged": 9,
+     "surfaced": 9
+    },
+    "SX6_layering_chain": {
+     "total": 26,
+     "flagged": 24,
+     "surfaced": 26
+    },
+    "SX7_partially_observed_chain": {
+     "total": 13,
+     "flagged": 12,
+     "surfaced": 12
+    },
+    "SX8_mule_distribution": {
+     "total": 27,
+     "flagged": 27,
+     "surfaced": 27
+    },
+    "SX9_distribution_terminal": {
+     "total": 12,
+     "flagged": 12,
+     "surfaced": 12
+    }
+   },
+   "latency_ms": {
+    "median": 79.8,
+    "p95": 213.3,
+    "max": 334.5
+   }
+  },
+  "ablation_minus_peer": {
+   "datasets": 60,
+   "scenario": {
+    "suspicious": 206,
+    "legitimate": 276,
+    "tp": 154,
+    "fp": 44,
+    "fn": 52,
+    "tn": 232,
+    "precision": 0.7778,
+    "recall": 0.7476,
+    "f1": 0.7624,
+    "fpr": 0.1594,
+    "fnr": 0.2524,
+    "surfaced_recall": 0.8738,
+    "high_band_recall": 0.6893,
+    "high_band_fpr": 0.1268
+   },
+   "alerts": {
+    "flagged": 270,
+    "per_dataset": 4.5,
+    "precision": 0.7296,
+    "unmatched": 27,
+    "per_flagged_network": 1.2273,
+    "networks_with_duplicates": 0.1869
+   },
+   "abstention": {
+    "rate": 0.2742,
+    "suspicious_share": 0.3137
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.5209,
+    "distinct_p_at_5": 0.5931,
+    "p_at_10": 0.6427,
+    "p_at_5": 0.7058,
+    "recall_at_10": 0.8831,
+    "recall_at_5": 0.8083
+   },
+   "by_family": {
+    "LX1_rent_collection": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 5
+    },
+    "LX2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 0,
+     "surfaced": 1
+    },
+    "LX3_payroll_with_spending": {
+     "total": 43,
+     "flagged": 4,
+     "surfaced": 10
+    },
+    "LX4_family_remittance": {
+     "total": 20,
+     "flagged": 5,
+     "surfaced": 5
+    },
+    "LX5_cash_pooling": {
+     "total": 28,
+     "flagged": 0,
+     "surfaced": 5
+    },
+    "LX6_lending": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LX7_event_ticketing": {
+     "total": 23,
+     "flagged": 22,
+     "surfaced": 23
+    },
+    "LX8_charity_campaign": {
+     "total": 36,
+     "flagged": 13,
+     "surfaced": 16
+    },
+    "LX9_wholesale_supplier": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 5
+    },
+    "SX10_round_trip": {
+     "total": 25,
+     "flagged": 22,
+     "surfaced": 23
+    },
+    "SX11_low_value_coordination": {
+     "total": 9,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SX1_mule_collection": {
+     "total": 48,
+     "flagged": 38,
+     "surfaced": 43
+    },
+    "SX2_activation_collection": {
+     "total": 10,
+     "flagged": 9,
+     "surfaced": 10
+    },
+    "SX3_boundary_collection": {
+     "total": 16,
+     "flagged": 0,
+     "surfaced": 16
+    },
+    "SX4_recurring_mule_collection": {
+     "total": 8,
+     "flagged": 1,
+     "surfaced": 2
+    },
+    "SX5_slow_collection": {
+     "total": 12,
+     "flagged": 9,
+     "surfaced": 9
+    },
+    "SX6_layering_chain": {
+     "total": 26,
+     "flagged": 24,
+     "surfaced": 26
+    },
+    "SX7_partially_observed_chain": {
+     "total": 13,
+     "flagged": 12,
+     "surfaced": 12
+    },
+    "SX8_mule_distribution": {
+     "total": 27,
+     "flagged": 27,
+     "surfaced": 27
+    },
+    "SX9_distribution_terminal": {
+     "total": 12,
+     "flagged": 12,
+     "surfaced": 12
+    }
+   },
+   "latency_ms": {
+    "median": 71.0,
+    "p95": 228.4,
+    "max": 326.3
+   }
+  },
+  "ablation_minus_temporal": {
+   "datasets": 60,
+   "scenario": {
+    "suspicious": 206,
+    "legitimate": 276,
+    "tp": 110,
+    "fp": 71,
+    "fn": 96,
+    "tn": 205,
+    "precision": 0.6077,
+    "recall": 0.534,
+    "f1": 0.5685,
+    "fpr": 0.2572,
+    "fnr": 0.466,
+    "surfaced_recall": 0.6553,
+    "high_band_recall": 0.0728,
+    "high_band_fpr": 0.0217
+   },
+   "alerts": {
+    "flagged": 271,
+    "per_dataset": 4.52,
+    "precision": 0.6716,
+    "unmatched": 17,
+    "per_flagged_network": 1.4033,
+    "networks_with_duplicates": 0.1602
+   },
+   "abstention": {
+    "rate": 0.2735,
+    "suspicious_share": 0.3137
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.4008,
+    "distinct_p_at_5": 0.4387,
+    "p_at_10": 0.5666,
+    "p_at_5": 0.6011,
+    "recall_at_10": 0.6367,
+    "recall_at_5": 0.5714
+   },
+   "by_family": {
+    "LX1_rent_collection": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 5
+    },
+    "LX2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 0,
+     "surfaced": 1
+    },
+    "LX3_payroll_with_spending": {
+     "total": 43,
+     "flagged": 4,
+     "surfaced": 10
+    },
+    "LX4_family_remittance": {
+     "total": 20,
+     "flagged": 12,
+     "surfaced": 12
+    },
+    "LX5_cash_pooling": {
+     "total": 28,
+     "flagged": 0,
+     "surfaced": 5
+    },
+    "LX6_lending": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LX7_event_ticketing": {
+     "total": 23,
+     "flagged": 22,
+     "surfaced": 23
+    },
+    "LX8_charity_campaign": {
+     "total": 36,
+     "flagged": 33,
+     "surfaced": 36
+    },
+    "LX9_wholesale_supplier": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 5
+    },
+    "SX10_round_trip": {
+     "total": 25,
+     "flagged": 11,
+     "surfaced": 11
+    },
+    "SX11_low_value_coordination": {
+     "total": 9,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SX1_mule_collection": {
+     "total": 48,
+     "flagged": 29,
+     "surfaced": 34
+    },
+    "SX2_activation_collection": {
+     "total": 10,
+     "flagged": 8,
+     "surfaced": 9
+    },
+    "SX3_boundary_collection": {
+     "total": 16,
+     "flagged": 0,
+     "surfaced": 16
+    },
+    "SX4_recurring_mule_collection": {
+     "total": 8,
+     "flagged": 7,
+     "surfaced": 8
+    },
+    "SX5_slow_collection": {
+     "total": 12,
+     "flagged": 12,
+     "surfaced": 12
+    },
+    "SX6_layering_chain": {
+     "total": 26,
+     "flagged": 14,
+     "surfaced": 16
+    },
+    "SX7_partially_observed_chain": {
+     "total": 13,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SX8_mule_distribution": {
+     "total": 27,
+     "flagged": 21,
+     "surfaced": 21
+    },
+    "SX9_distribution_terminal": {
+     "total": 12,
+     "flagged": 8,
+     "surfaced": 8
+    }
+   },
+   "latency_ms": {
+    "median": 76.7,
+    "p95": 224.2,
+    "max": 318.1
+   }
+  },
+  "ablation_minus_abstention": {
+   "datasets": 60,
+   "scenario": {
+    "suspicious": 206,
+    "legitimate": 276,
+    "tp": 174,
+    "fp": 50,
+    "fn": 32,
+    "tn": 226,
+    "precision": 0.7768,
+    "recall": 0.8447,
+    "f1": 0.8093,
+    "fpr": 0.1812,
+    "fnr": 0.1553,
+    "surfaced_recall": 0.8447,
+    "high_band_recall": 0.665,
+    "high_band_fpr": 0.1123
+   },
+   "alerts": {
+    "flagged": 302,
+    "per_dataset": 5.03,
+    "precision": 0.7351,
+    "unmatched": 28,
+    "per_flagged_network": 1.2232,
+    "networks_with_duplicates": 0.183
+   },
+   "abstention": {
+    "rate": 0.0,
+    "suspicious_share": null
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.6279,
+    "distinct_p_at_5": 0.6672,
+    "p_at_10": 0.7672,
+    "p_at_5": 0.7847,
+    "recall_at_10": 0.8575,
+    "recall_at_5": 0.8006
+   },
+   "by_family": {
+    "LX1_rent_collection": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LX2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LX3_payroll_with_spending": {
+     "total": 43,
+     "flagged": 6,
+     "surfaced": 6
+    },
+    "LX4_family_remittance": {
+     "total": 20,
+     "flagged": 5,
+     "surfaced": 5
+    },
+    "LX5_cash_pooling": {
+     "total": 28,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LX6_lending": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LX7_event_ticketing": {
+     "total": 23,
+     "flagged": 23,
+     "surfaced": 23
+    },
+    "LX8_charity_campaign": {
+     "total": 36,
+     "flagged": 16,
+     "surfaced": 16
+    },
+    "LX9_wholesale_supplier": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SX10_round_trip": {
+     "total": 25,
+     "flagged": 23,
+     "surfaced": 23
+    },
+    "SX11_low_value_coordination": {
+     "total": 9,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SX1_mule_collection": {
+     "total": 48,
+     "flagged": 43,
+     "surfaced": 43
+    },
+    "SX2_activation_collection": {
+     "total": 10,
+     "flagged": 10,
+     "surfaced": 10
+    },
+    "SX3_boundary_collection": {
+     "total": 16,
+     "flagged": 11,
+     "surfaced": 11
+    },
+    "SX4_recurring_mule_collection": {
+     "total": 8,
+     "flagged": 1,
+     "surfaced": 1
+    },
+    "SX5_slow_collection": {
+     "total": 12,
+     "flagged": 9,
+     "surfaced": 9
+    },
+    "SX6_layering_chain": {
+     "total": 26,
+     "flagged": 26,
+     "surfaced": 26
+    },
+    "SX7_partially_observed_chain": {
+     "total": 13,
+     "flagged": 12,
+     "surfaced": 12
+    },
+    "SX8_mule_distribution": {
+     "total": 27,
+     "flagged": 27,
+     "surfaced": 27
+    },
+    "SX9_distribution_terminal": {
+     "total": 12,
+     "flagged": 12,
+     "surfaced": 12
+    }
+   },
+   "latency_ms": {
+    "median": 70.8,
+    "p95": 251.1,
+    "max": 370.3
+   }
+  },
+  "v1_shipped": {
+   "datasets": 60,
+   "scenario": {
+    "suspicious": 206,
+    "legitimate": 276,
+    "tp": 134,
+    "fp": 135,
+    "fn": 72,
+    "tn": 141,
+    "precision": 0.4981,
+    "recall": 0.6505,
+    "f1": 0.5642,
+    "fpr": 0.4891,
+    "fnr": 0.3495,
+    "surfaced_recall": 0.7816,
+    "high_band_recall": 0.5631,
+    "high_band_fpr": 0.4457
+   },
+   "alerts": {
+    "flagged": 419,
+    "per_dataset": 6.98,
+    "precision": 0.3914,
+    "unmatched": 27,
+    "per_flagged_network": 1.4572,
+    "networks_with_duplicates": 0.2082
+   },
+   "abstention": {
+    "rate": 0.188,
+    "suspicious_share": 0.3711
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.3518,
+    "distinct_p_at_5": 0.3861,
+    "p_at_10": 0.4181,
+    "p_at_5": 0.4494,
+    "recall_at_10": 0.7628,
+    "recall_at_5": 0.5758
+   },
+   "by_family": {
+    "LX1_rent_collection": {
+     "total": 32,
+     "flagged": 18,
+     "surfaced": 23
+    },
+    "LX2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 29,
+     "surfaced": 30
+    },
+    "LX3_payroll_with_spending": {
+     "total": 43,
+     "flagged": 9,
+     "surfaced": 15
+    },
+    "LX4_family_remittance": {
+     "total": 20,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LX5_cash_pooling": {
+     "total": 28,
+     "flagged": 28,
+     "surfaced": 28
+    },
+    "LX6_lending": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 1
+    },
+    "LX7_event_ticketing": {
+     "total": 23,
+     "flagged": 22,
+     "surfaced": 23
+    },
+    "LX8_charity_campaign": {
+     "total": 36,
+     "flagged": 13,
+     "surfaced": 16
+    },
+    "LX9_wholesale_supplier": {
+     "total": 32,
+     "flagged": 16,
+     "surfaced": 21
+    },
+    "SX10_round_trip": {
+     "total": 25,
+     "flagged": 20,
+     "surfaced": 21
+    },
+    "SX11_low_value_coordination": {
+     "total": 9,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SX1_mule_collection": {
+     "total": 48,
+     "flagged": 38,
+     "surfaced": 43
+    },
+    "SX2_activation_collection": {
+     "total": 10,
+     "flagged": 9,
+     "surfaced": 10
+    },
+    "SX3_boundary_collection": {
+     "total": 16,
+     "flagged": 0,
+     "surfaced": 16
+    },
+    "SX4_recurring_mule_collection": {
+     "total": 8,
+     "flagged": 1,
+     "surfaced": 2
+    },
+    "SX5_slow_collection": {
+     "total": 12,
+     "flagged": 9,
+     "surfaced": 9
+    },
+    "SX6_layering_chain": {
+     "total": 26,
+     "flagged": 24,
+     "surfaced": 26
+    },
+    "SX7_partially_observed_chain": {
+     "total": 13,
+     "flagged": 12,
+     "surfaced": 12
+    },
+    "SX8_mule_distribution": {
+     "total": 27,
+     "flagged": 17,
+     "surfaced": 18
+    },
+    "SX9_distribution_terminal": {
+     "total": 12,
+     "flagged": 4,
+     "surfaced": 4
+    }
+   },
+   "latency_ms": {
+    "median": 49.1,
+    "p95": 139.6,
+    "max": 165.2
+   }
+  },
+  "B3_structure_only": {
+   "datasets": 60,
+   "scenario": {
+    "suspicious": 206,
+    "legitimate": 276,
+    "tp": 197,
+    "fp": 240,
+    "fn": 9,
+    "tn": 36,
+    "precision": 0.4508,
+    "recall": 0.9563,
+    "f1": 0.6127,
+    "fpr": 0.8696,
+    "fnr": 0.0437,
+    "surfaced_recall": 0.9563,
+    "high_band_recall": null,
+    "high_band_fpr": null
+   },
+   "alerts": {
+    "flagged": 1398,
+    "per_dataset": 23.3,
+    "precision": 0.2146,
+    "unmatched": 580,
+    "per_flagged_network": 1.8719,
+    "networks_with_duplicates": 0.4348
+   },
+   "abstention": {
+    "rate": 0.0,
+    "suspicious_share": null
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.2409,
+    "distinct_p_at_5": 0.29,
+    "p_at_10": 0.3443,
+    "p_at_5": 0.37,
+    "recall_at_10": 0.7142,
+    "recall_at_5": 0.4375
+   },
+   "by_family": {
+    "LX1_rent_collection": {
+     "total": 32,
+     "flagged": 32,
+     "surfaced": 32
+    },
+    "LX2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 30,
+     "surfaced": 30
+    },
+    "LX3_payroll_with_spending": {
+     "total": 43,
+     "flagged": 43,
+     "surfaced": 43
+    },
+    "LX4_family_remittance": {
+     "total": 20,
+     "flagged": 16,
+     "surfaced": 16
+    },
+    "LX5_cash_pooling": {
+     "total": 28,
+     "flagged": 28,
+     "surfaced": 28
+    },
+    "LX6_lending": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LX7_event_ticketing": {
+     "total": 23,
+     "flagged": 23,
+     "surfaced": 23
+    },
+    "LX8_charity_campaign": {
+     "total": 36,
+     "flagged": 36,
+     "surfaced": 36
+    },
+    "LX9_wholesale_supplier": {
+     "total": 32,
+     "flagged": 32,
+     "surfaced": 32
+    },
+    "SX10_round_trip": {
+     "total": 25,
+     "flagged": 25,
+     "surfaced": 25
+    },
+    "SX11_low_value_coordination": {
+     "total": 9,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SX1_mule_collection": {
+     "total": 48,
+     "flagged": 48,
+     "surfaced": 48
+    },
+    "SX2_activation_collection": {
+     "total": 10,
+     "flagged": 10,
+     "surfaced": 10
+    },
+    "SX3_boundary_collection": {
+     "total": 16,
+     "flagged": 16,
+     "surfaced": 16
+    },
+    "SX4_recurring_mule_collection": {
+     "total": 8,
+     "flagged": 8,
+     "surfaced": 8
+    },
+    "SX5_slow_collection": {
+     "total": 12,
+     "flagged": 12,
+     "surfaced": 12
+    },
+    "SX6_layering_chain": {
+     "total": 26,
+     "flagged": 26,
+     "surfaced": 26
+    },
+    "SX7_partially_observed_chain": {
+     "total": 13,
+     "flagged": 13,
+     "surfaced": 13
+    },
+    "SX8_mule_distribution": {
+     "total": 27,
+     "flagged": 27,
+     "surfaced": 27
+    },
+    "SX9_distribution_terminal": {
+     "total": 12,
+     "flagged": 12,
+     "surfaced": 12
+    }
+   },
+   "latency_ms": {
+    "median": 84.3,
+    "p95": 214.4,
+    "max": 312.1
+   }
+  },
+  "B1_rules": {
+   "datasets": 60,
+   "scenario": {
+    "suspicious": 206,
+    "legitimate": 276,
+    "tp": 193,
+    "fp": 276,
+    "fn": 13,
+    "tn": 0,
+    "precision": 0.4115,
+    "recall": 0.9369,
+    "f1": 0.5718,
+    "fpr": 1.0,
+    "fnr": 0.0631,
+    "surfaced_recall": 0.9369,
+    "high_band_recall": null,
+    "high_band_fpr": null
+   },
+   "alerts": {
+    "flagged": 3387,
+    "per_dataset": 56.45,
+    "precision": 0.1804,
+    "unmatched": 1974,
+    "per_flagged_network": 3.0128,
+    "networks_with_duplicates": 0.5501
+   },
+   "abstention": {
+    "rate": 0.0,
+    "suspicious_share": null
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.1817,
+    "distinct_p_at_5": 0.25,
+    "p_at_10": 0.28,
+    "p_at_5": 0.2767,
+    "recall_at_10": 0.545,
+    "recall_at_5": 0.3792
+   },
+   "by_family": {
+    "LX1_rent_collection": {
+     "total": 32,
+     "flagged": 32,
+     "surfaced": 32
+    },
+    "LX2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 30,
+     "surfaced": 30
+    },
+    "LX3_payroll_with_spending": {
+     "total": 43,
+     "flagged": 43,
+     "surfaced": 43
+    },
+    "LX4_family_remittance": {
+     "total": 20,
+     "flagged": 20,
+     "surfaced": 20
+    },
+    "LX5_cash_pooling": {
+     "total": 28,
+     "flagged": 28,
+     "surfaced": 28
+    },
+    "LX6_lending": {
+     "total": 32,
+     "flagged": 32,
+     "surfaced": 32
+    },
+    "LX7_event_ticketing": {
+     "total": 23,
+     "flagged": 23,
+     "surfaced": 23
+    },
+    "LX8_charity_campaign": {
+     "total": 36,
+     "flagged": 36,
+     "surfaced": 36
+    },
+    "LX9_wholesale_supplier": {
+     "total": 32,
+     "flagged": 32,
+     "surfaced": 32
+    },
+    "SX10_round_trip": {
+     "total": 25,
+     "flagged": 25,
+     "surfaced": 25
+    },
+    "SX11_low_value_coordination": {
+     "total": 9,
+     "flagged": 9,
+     "surfaced": 9
+    },
+    "SX1_mule_collection": {
+     "total": 48,
+     "flagged": 42,
+     "surfaced": 42
+    },
+    "SX2_activation_collection": {
+     "total": 10,
+     "flagged": 10,
+     "surfaced": 10
+    },
+    "SX3_boundary_collection": {
+     "total": 16,
+     "flagged": 12,
+     "surfaced": 12
+    },
+    "SX4_recurring_mule_collection": {
+     "total": 8,
+     "flagged": 8,
+     "surfaced": 8
+    },
+    "SX5_slow_collection": {
+     "total": 12,
+     "flagged": 10,
+     "surfaced": 10
+    },
+    "SX6_layering_chain": {
+     "total": 26,
+     "flagged": 25,
+     "surfaced": 25
+    },
+    "SX7_partially_observed_chain": {
+     "total": 13,
+     "flagged": 13,
+     "surfaced": 13
+    },
+    "SX8_mule_distribution": {
+     "total": 27,
+     "flagged": 27,
+     "surfaced": 27
+    },
+    "SX9_distribution_terminal": {
+     "total": 12,
+     "flagged": 12,
+     "surfaced": 12
+    }
+   },
+   "latency_ms": {
+    "median": 2.5,
+    "p95": 3.4,
+    "max": 4.0
+   }
+  },
+  "B0_volume": {
+   "datasets": 60,
+   "scenario": {
+    "suspicious": 206,
+    "legitimate": 276,
+    "tp": 36,
+    "fp": 121,
+    "fn": 170,
+    "tn": 155,
+    "precision": 0.2293,
+    "recall": 0.1748,
+    "f1": 0.1984,
+    "fpr": 0.4384,
+    "fnr": 0.8252,
+    "surfaced_recall": 1.0,
+    "high_band_recall": null,
+    "high_band_fpr": null
+   },
+   "alerts": {
+    "flagged": 271,
+    "per_dataset": 4.52,
+    "precision": 0.1882,
+    "unmatched": 0,
+    "per_flagged_network": 1.7261,
+    "networks_with_duplicates": 0.4076
+   },
+   "abstention": {
+    "rate": 0.0,
+    "suspicious_share": null
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.125,
+    "distinct_p_at_5": 0.13,
+    "p_at_10": 0.2333,
+    "p_at_5": 0.1567,
+    "recall_at_10": 0.3831,
+    "recall_at_5": 0.2139
+   },
+   "by_family": {
+    "LX1_rent_collection": {
+     "total": 32,
+     "flagged": 10,
+     "surfaced": 32
+    },
+    "LX2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 0,
+     "surfaced": 30
+    },
+    "LX3_payroll_with_spending": {
+     "total": 43,
+     "flagged": 38,
+     "surfaced": 43
+    },
+    "LX4_family_remittance": {
+     "total": 20,
+     "flagged": 0,
+     "surfaced": 20
+    },
+    "LX5_cash_pooling": {
+     "total": 28,
+     "flagged": 28,
+     "surfaced": 28
+    },
+    "LX6_lending": {
+     "total": 32,
+     "flagged": 24,
+     "surfaced": 32
+    },
+    "LX7_event_ticketing": {
+     "total": 23,
+     "flagged": 0,
+     "surfaced": 23
+    },
+    "LX8_charity_campaign": {
+     "total": 36,
+     "flagged": 0,
+     "surfaced": 36
+    },
+    "LX9_wholesale_supplier": {
+     "total": 32,
+     "flagged": 21,
+     "surfaced": 32
+    },
+    "SX10_round_trip": {
+     "total": 25,
+     "flagged": 2,
+     "surfaced": 25
+    },
+    "SX11_low_value_coordination": {
+     "total": 9,
+     "flagged": 0,
+     "surfaced": 9
+    },
+    "SX1_mule_collection": {
+     "total": 48,
+     "flagged": 6,
+     "surfaced": 48
+    },
+    "SX2_activation_collection": {
+     "total": 10,
+     "flagged": 0,
+     "surfaced": 10
+    },
+    "SX3_boundary_collection": {
+     "total": 16,
+     "flagged": 0,
+     "surfaced": 16
+    },
+    "SX4_recurring_mule_collection": {
+     "total": 8,
+     "flagged": 1,
+     "surfaced": 8
+    },
+    "SX5_slow_collection": {
+     "total": 12,
+     "flagged": 4,
+     "surfaced": 12
+    },
+    "SX6_layering_chain": {
+     "total": 26,
+     "flagged": 1,
+     "surfaced": 26
+    },
+    "SX7_partially_observed_chain": {
+     "total": 13,
+     "flagged": 0,
+     "surfaced": 13
+    },
+    "SX8_mule_distribution": {
+     "total": 27,
+     "flagged": 14,
+     "surfaced": 27
+    },
+    "SX9_distribution_terminal": {
+     "total": 12,
+     "flagged": 8,
+     "surfaced": 12
+    }
+   },
+   "latency_ms": {
+    "median": 5.7,
+    "p95": 8.4,
+    "max": 9.9
+   }
+  }
+ },
+ "bootstrap": {
+  "draws": 2000,
+  "seed": 20261117,
+  "fpr": {
+   "baseline": 0.5072,
+   "candidate": 0.1594,
+   "difference": -0.3478,
+   "ci95": [
+    -0.4021,
+    -0.2911
+   ],
+   "draws": 2000
+  },
+  "recall": {
+   "baseline": 0.733,
+   "candidate": 0.7476,
+   "difference": 0.0146,
+   "ci95": [
+    0.0,
+    0.0323
+   ],
+   "draws": 2000
+  },
+  "high_band_fpr": {
+   "baseline": 0.1775,
+   "candidate": 0.0978,
+   "difference": -0.0797,
+   "ci95": [
+    -0.1232,
+    -0.0425
+   ],
+   "draws": 2000
+  },
+  "distinct_p_at_5": {
+   "baseline": 0.4653,
+   "candidate": 0.5931,
+   "difference": 0.1278,
+   "ci95": [
+    0.0856,
+    0.1755
+   ],
+   "draws": 2000
+  }
+ },
+ "decision": {
+  "checks": {
+   "recall_drop_at_most_2pp": true,
+   "high_band_fpr_not_increased": true,
+   "fpr_improved_ci_excludes_zero": true,
+   "distinct_p5_improved_ci_excludes_zero": true
+  },
+  "outcome": "improvement"
+ },
+ "examples": {
+  "false_positives": [
+   {
+    "dataset": "bench:sealed-v1:9000:timestamp",
+    "scenario_id": "sealed-v1-9000-03-LX3_payroll_with_spending",
+    "family": "LX3_payroll_with_spending",
+    "difficulty": "hard",
+    "notes": "payroll whose recipients spend at shops",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 30,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "HYPOTHESIS_VERDICT",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9006:timestamp",
+    "scenario_id": "sealed-v1-9006-01-LX3_payroll_with_spending",
+    "family": "LX3_payroll_with_spending",
+    "difficulty": "hard",
+    "notes": "payroll whose recipients spend at shops",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 30,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "HYPOTHESIS_VERDICT",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9008:day",
+    "scenario_id": "sealed-v1-9008-03-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 58,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_TYPICAL_TURNOVER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9010:day",
+    "scenario_id": "sealed-v1-9010-01-LX4_family_remittance",
+    "family": "LX4_family_remittance",
+    "difficulty": "hard",
+    "notes": "worker sends part of salary to many relatives",
+    "kind": "fan_out",
+    "band": "medium",
+    "priority": 56,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_SAME_DAY_AMBIGUOUS",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9010:day",
+    "scenario_id": "sealed-v1-9010-04-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 58,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9014:day",
+    "scenario_id": "sealed-v1-9014-07-LX4_family_remittance",
+    "family": "LX4_family_remittance",
+    "difficulty": "hard",
+    "notes": "worker sends part of salary to many relatives",
+    "kind": "fan_out",
+    "band": "medium",
+    "priority": 39,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_SAME_DAY_AMBIGUOUS",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9017:day",
+    "scenario_id": "sealed-v1-9017-04-LX8_charity_campaign",
+    "family": "LX8_charity_campaign",
+    "difficulty": "adversarial",
+    "notes": "one-off donors, transfer to beneficiary",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 52,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9017:day",
+    "scenario_id": "sealed-v1-9017-06-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 57,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9019:timestamp",
+    "scenario_id": "sealed-v1-9019-00-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 57,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9020:timestamp",
+    "scenario_id": "sealed-v1-9020-01-LX8_charity_campaign",
+    "family": "LX8_charity_campaign",
+    "difficulty": "adversarial",
+    "notes": "one-off donors, transfer to beneficiary",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 54,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9021:day",
+    "scenario_id": "sealed-v1-9021-00-LX8_charity_campaign",
+    "family": "LX8_charity_campaign",
+    "difficulty": "adversarial",
+    "notes": "one-off donors, transfer to beneficiary",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 55,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9023:timestamp",
+    "scenario_id": "sealed-v1-9023-01-LX8_charity_campaign",
+    "family": "LX8_charity_campaign",
+    "difficulty": "adversarial",
+    "notes": "one-off donors, transfer to beneficiary",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 56,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9023:timestamp",
+    "scenario_id": "sealed-v1-9023-08-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 70,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9025:timestamp",
+    "scenario_id": "sealed-v1-9025-02-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 55,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9025:timestamp",
+    "scenario_id": "sealed-v1-9025-03-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 56,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9025:timestamp",
+    "scenario_id": "sealed-v1-9025-05-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 56,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9026:timestamp",
+    "scenario_id": "sealed-v1-9026-05-LX3_payroll_with_spending",
+    "family": "LX3_payroll_with_spending",
+    "difficulty": "hard",
+    "notes": "payroll whose recipients spend at shops",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 30,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "HYPOTHESIS_VERDICT",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9029:timestamp",
+    "scenario_id": "sealed-v1-9029-00-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 57,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9029:timestamp",
+    "scenario_id": "sealed-v1-9029-02-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 57,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9030:day",
+    "scenario_id": "sealed-v1-9030-03-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 55,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9034:timestamp",
+    "scenario_id": "sealed-v1-9034-05-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 58,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9036:day",
+    "scenario_id": "sealed-v1-9036-05-LX8_charity_campaign",
+    "family": "LX8_charity_campaign",
+    "difficulty": "adversarial",
+    "notes": "one-off donors, transfer to beneficiary",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 53,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_TYPICAL_TURNOVER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9036:day",
+    "scenario_id": "sealed-v1-9036-06-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 54,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_TYPICAL_TURNOVER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9037:day",
+    "scenario_id": "sealed-v1-9037-02-LX3_payroll_with_spending",
+    "family": "LX3_payroll_with_spending",
+    "difficulty": "hard",
+    "notes": "payroll whose recipients spend at shops",
+    "kind": "fan_out",
+    "band": "medium",
+    "priority": 47,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_SAME_DAY_AMBIGUOUS",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9037:day",
+    "scenario_id": "sealed-v1-9037-07-LX4_family_remittance",
+    "family": "LX4_family_remittance",
+    "difficulty": "hard",
+    "notes": "worker sends part of salary to many relatives",
+    "kind": "fan_out",
+    "band": "medium",
+    "priority": 61,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_SAME_DAY_AMBIGUOUS",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9040:timestamp",
+    "scenario_id": "sealed-v1-9040-00-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 56,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9042:day",
+    "scenario_id": "sealed-v1-9042-04-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 57,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_TYPICAL_TURNOVER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9043:day",
+    "scenario_id": "sealed-v1-9043-05-LX8_charity_campaign",
+    "family": "LX8_charity_campaign",
+    "difficulty": "adversarial",
+    "notes": "one-off donors, transfer to beneficiary",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 58,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9044:day",
+    "scenario_id": "sealed-v1-9044-04-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 57,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_TYPICAL_TURNOVER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9044:day",
+    "scenario_id": "sealed-v1-9044-08-LX8_charity_campaign",
+    "family": "LX8_charity_campaign",
+    "difficulty": "adversarial",
+    "notes": "one-off donors, transfer to beneficiary",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 56,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9046:day",
+    "scenario_id": "sealed-v1-9046-05-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 60,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_TYPICAL_TURNOVER",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9047:day",
+    "scenario_id": "sealed-v1-9047-03-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 54,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9051:timestamp",
+    "scenario_id": "sealed-v1-9051-02-LX8_charity_campaign",
+    "family": "LX8_charity_campaign",
+    "difficulty": "adversarial",
+    "notes": "one-off donors, transfer to beneficiary",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 52,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9052:timestamp",
+    "scenario_id": "sealed-v1-9052-00-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 58,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9052:timestamp",
+    "scenario_id": "sealed-v1-9052-07-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 55,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9053:day",
+    "scenario_id": "sealed-v1-9053-00-LX8_charity_campaign",
+    "family": "LX8_charity_campaign",
+    "difficulty": "adversarial",
+    "notes": "one-off donors, transfer to beneficiary",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 55,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9053:day",
+    "scenario_id": "sealed-v1-9053-07-LX8_charity_campaign",
+    "family": "LX8_charity_campaign",
+    "difficulty": "adversarial",
+    "notes": "one-off donors, transfer to beneficiary",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 58,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9054:day",
+    "scenario_id": "sealed-v1-9054-00-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 55,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9055:day",
+    "scenario_id": "sealed-v1-9055-01-LX4_family_remittance",
+    "family": "LX4_family_remittance",
+    "difficulty": "hard",
+    "notes": "worker sends part of salary to many relatives",
+    "kind": "fan_out",
+    "band": "medium",
+    "priority": 61,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_SAME_DAY_AMBIGUOUS",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v1:9056:timestamp",
+    "scenario_id": "sealed-v1-9056-01-LX7_event_ticketing",
+    "family": "LX7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, fast payout to venue",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 60,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   }
+  ],
+  "false_negatives": [
+   {
+    "dataset": "bench:sealed-v1:9000:timestamp",
+    "scenario_id": "sealed-v1-9000-10-SX3_boundary_collection",
+    "family": "SX3_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v1:9002:timestamp",
+    "scenario_id": "sealed-v1-9002-03-SX11_low_value_coordination",
+    "family": "SX11_low_value_coordination",
+    "difficulty": "adversarial",
+    "notes": "many small one-off deposits, then onward",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v1:9003:timestamp",
+    "scenario_id": "sealed-v1-9003-00-SX4_recurring_mule_collection",
+    "family": "SX4_recurring_mule_collection",
+    "difficulty": "adversarial",
+    "notes": "mules imitate recurring customers",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 35,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_INCONCLUSIVE",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v1:9004:day",
+    "scenario_id": "sealed-v1-9004-01-SX11_low_value_coordination",
+    "family": "SX11_low_value_coordination",
+    "difficulty": "adversarial",
+    "notes": "many small one-off deposits, then onward",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v1:9006:timestamp",
+    "scenario_id": "sealed-v1-9006-00-SX7_partially_observed_chain",
+    "family": "SX7_partially_observed_chain",
+    "difficulty": "hard",
+    "notes": "one hop of a 5-6 hop chain is not in the data",
+    "kind": "chain",
+    "band": "low",
+    "priority": 21,
+    "reasons": [
+     "STRUCT_CHAIN_PATH",
+     "TEMPORAL_CONTRADICTED",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v1:9007:day",
+    "scenario_id": "sealed-v1-9007-01-SX3_boundary_collection",
+    "family": "SX3_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v1:9008:day",
+    "scenario_id": "sealed-v1-9008-01-SX11_low_value_coordination",
+    "family": "SX11_low_value_coordination",
+    "difficulty": "adversarial",
+    "notes": "many small one-off deposits, then onward",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v1:9009:timestamp",
+    "scenario_id": "sealed-v1-9009-05-SX1_mule_collection",
+    "family": "SX1_mule_collection",
+    "difficulty": "easy",
+    "notes": "one-off mule deposits consolidated and moved on",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 35,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_INCONCLUSIVE",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v1:9011:day",
+    "scenario_id": "sealed-v1-9011-04-SX3_boundary_collection",
+    "family": "SX3_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v1:9013:timestamp",
+    "scenario_id": "sealed-v1-9013-00-SX10_round_trip",
+    "family": "SX10_round_trip",
+    "difficulty": "medium",
+    "notes": "funds return to the origin through 5 accounts",
+    "kind": "cycle",
+    "band": "low",
+    "priority": 28,
+    "reasons": [
+     "STRUCT_CYCLE_LOOP",
+     "TEMPORAL_CONTRADICTED",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v1:9017:day",
+    "scenario_id": "sealed-v1-9017-02-SX3_boundary_collection",
+    "family": "SX3_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v1:9019:timestamp",
+    "scenario_id": "sealed-v1-9019-02-SX6_layering_chain",
+    "family": "SX6_layering_chain",
+    "difficulty": "medium",
+    "notes": "3-hop pass-through with fees and jitter",
+    "kind": "chain",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_CHAIN_PATH",
+     "TEMPORAL_PATH_SUPPORTED",
+     "COVERAGE_BOUNDARY"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v1:9019:timestamp",
+    "scenario_id": "sealed-v1-9019-04-SX4_recurring_mule_collection",
+    "family": "SX4_recurring_mule_collection",
+    "difficulty": "adversarial",
+    "notes": "mules imitate recurring customers",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 30,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v1:9019:timestamp",
+    "scenario_id": "sealed-v1-9019-09-SX11_low_value_coordination",
+    "family": "SX11_low_value_coordination",
+    "difficulty": "adversarial",
+    "notes": "many small one-off deposits, then onward",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v1:9022:timestamp",
+    "scenario_id": "sealed-v1-9022-02-SX3_boundary_collection",
+    "family": "SX3_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v1:9024:day",
+    "scenario_id": "sealed-v1-9024-01-SX1_mule_collection",
+    "family": "SX1_mule_collection",
+    "difficulty": "easy",
+    "notes": "one-off mule deposits consolidated and moved on",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v1:9024:day",
+    "scenario_id": "sealed-v1-9024-02-SX11_low_value_coordination",
+    "family": "SX11_low_value_coordination",
+    "difficulty": "adversarial",
+    "notes": "many small one-off deposits, then onward",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v1:9026:timestamp",
+    "scenario_id": "sealed-v1-9026-00-SX1_mule_collection",
+    "family": "SX1_mule_collection",
+    "difficulty": "easy",
+    "notes": "one-off mule deposits consolidated and moved on",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 35,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_INCONCLUSIVE",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v1:9026:timestamp",
+    "scenario_id": "sealed-v1-9026-03-SX3_boundary_collection",
+    "family": "SX3_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v1:9027:timestamp",
+    "scenario_id": "sealed-v1-9027-00-SX11_low_value_coordination",
+    "family": "SX11_low_value_coordination",
+    "difficulty": "adversarial",
+    "notes": "many small one-off deposits, then onward",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v1:9027:timestamp",
+    "scenario_id": "sealed-v1-9027-01-SX6_layering_chain",
+    "family": "SX6_layering_chain",
+    "difficulty": "medium",
+    "notes": "5-hop pass-through with fees and jitter",
+    "kind": "chain",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_CHAIN_PATH",
+     "TEMPORAL_PATH_SUPPORTED",
+     "COVERAGE_BOUNDARY"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v1:9031:day",
+    "scenario_id": "sealed-v1-9031-02-SX3_boundary_collection",
+    "family": "SX3_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v1:9032:day",
+    "scenario_id": "sealed-v1-9032-02-SX1_mule_collection",
+    "family": "SX1_mule_collection",
+    "difficulty": "easy",
+    "notes": "one-off mule deposits consolidated and moved on",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 21,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_TYPICAL_TURNOVER",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v1:9034:timestamp",
+    "scenario_id": "sealed-v1-9034-01-SX3_boundary_collection",
+    "family": "SX3_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v1:9035:day",
+    "scenario_id": "sealed-v1-9035-00-SX1_mule_collection",
+    "family": "SX1_mule_collection",
+    "difficulty": "easy",
+    "notes": "one-off mule deposits consolidated and moved on",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v1:9035:day",
+    "scenario_id": "sealed-v1-9035-03-SX3_boundary_collection",
+    "family": "SX3_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v1:9037:day",
+    "scenario_id": "sealed-v1-9037-08-SX1_mule_collection",
+    "family": "SX1_mule_collection",
+    "difficulty": "easy",
+    "notes": "one-off mule deposits consolidated and moved on",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v1:9039:timestamp",
+    "scenario_id": "sealed-v1-9039-04-SX3_boundary_collection",
+    "family": "SX3_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v1:9040:timestamp",
+    "scenario_id": "sealed-v1-9040-02-SX4_recurring_mule_collection",
+    "family": "SX4_recurring_mule_collection",
+    "difficulty": "adversarial",
+    "notes": "mules imitate recurring customers",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 35,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_INCONCLUSIVE",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v1:9040:timestamp",
+    "scenario_id": "sealed-v1-9040-04-SX5_slow_collection",
+    "family": "SX5_slow_collection",
+    "difficulty": "hard",
+    "notes": "deposits spread over weeks, forwarded in tranches",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 30,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v1:9041:timestamp",
+    "scenario_id": "sealed-v1-9041-04-SX4_recurring_mule_collection",
+    "family": "SX4_recurring_mule_collection",
+    "difficulty": "adversarial",
+    "notes": "mules imitate recurring customers",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 35,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v1:9042:day",
+    "scenario_id": "sealed-v1-9042-00-SX4_recurring_mule_collection",
+    "family": "SX4_recurring_mule_collection",
+    "difficulty": "adversarial",
+    "notes": "mules imitate recurring customers",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 30,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v1:9042:day",
+    "scenario_id": "sealed-v1-9042-01-SX11_low_value_coordination",
+    "family": "SX11_low_value_coordination",
+    "difficulty": "adversarial",
+    "notes": "many small one-off deposits, then onward",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v1:9044:day",
+    "scenario_id": "sealed-v1-9044-00-SX1_mule_collection",
+    "family": "SX1_mule_collection",
+    "difficulty": "easy",
+    "notes": "one-off mule deposits consolidated and moved on",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 30,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_TYPICAL_TURNOVER",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v1:9044:day",
+    "scenario_id": "sealed-v1-9044-07-SX1_mule_collection",
+    "family": "SX1_mule_collection",
+    "difficulty": "easy",
+    "notes": "one-off mule deposits consolidated and moved on",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 35,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v1:9044:day",
+    "scenario_id": "sealed-v1-9044-09-SX3_boundary_collection",
+    "family": "SX3_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v1:9047:day",
+    "scenario_id": "sealed-v1-9047-04-SX5_slow_collection",
+    "family": "SX5_slow_collection",
+    "difficulty": "hard",
+    "notes": "deposits spread over weeks, forwarded in tranches",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 30,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v1:9048:timestamp",
+    "scenario_id": "sealed-v1-9048-00-SX1_mule_collection",
+    "family": "SX1_mule_collection",
+    "difficulty": "easy",
+    "notes": "one-off mule deposits consolidated and moved on",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v1:9048:timestamp",
+    "scenario_id": "sealed-v1-9048-03-SX3_boundary_collection",
+    "family": "SX3_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v1:9049:timestamp",
+    "scenario_id": "sealed-v1-9049-00-SX2_activation_collection",
+    "family": "SX2_activation_collection",
+    "difficulty": "adversarial",
+    "notes": "hub pays mules 5-15% first, then collects",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY"
+    ],
+    "explanation": "abstained"
+   }
+  ]
+ },
+ "runtime_seconds": 70.3
+}
