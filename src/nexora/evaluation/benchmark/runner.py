@@ -128,7 +128,7 @@ def provenance() -> dict[str, Any]:
         except (OSError, subprocess.CalledProcessError):
             return None
 
-    status = git("status", "--porcelain")
+    status = git("status", "--porcelain", "--", ".", ":(exclude)benchmarks/results")
     cpu = platform.processor() or platform.machine()
     try:
         for line in Path("/proc/cpuinfo").read_text().splitlines():
