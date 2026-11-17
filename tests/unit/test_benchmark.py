@@ -128,3 +128,22 @@ def test_baseline_refuses_to_run_unfitted() -> None:
     method = AccountBaseline("b", "volume", volume_scorer)
     with pytest.raises(RuntimeError):
         method.run(small_suite().networks[0].input)
+
+
+def test_ingest_invariant_perturbations_change_nothing() -> None:
+    from nexora.evaluation.benchmark.experiments import exact_duplicates, reverse_order
+    from nexora.evaluation.benchmark.methods import NexoraMethod, load_engine
+
+    method = NexoraMethod("v2", "", load_engine("v2"))
+    for net in small_suite().split("val")[:8]:
+        base = method.run(net.input).predictions
+        for perturb in (exact_duplicates, reverse_order):
+            assert method.run(perturb(net.input)).predictions == base
+
+
+def test_perturbations_are_deterministic() -> None:
+    from nexora.evaluation.benchmark.experiments import PERTURBATIONS
+
+    net = small_suite().split("val")[0]
+    for _, fn in PERTURBATIONS.values():
+        assert fn(net.input).manifest_sha256 == fn(net.input).manifest_sha256

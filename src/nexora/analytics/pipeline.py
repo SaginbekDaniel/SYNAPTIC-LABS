@@ -703,12 +703,16 @@ def run_analysis(
     builder = _Builder(dataset_id, snapshot, config, contract)
     for currency in snapshot.currencies:
         cg = snapshot.by_currency[currency]
-        builder.funnels(cg)
-        builder.chains(cg)
-        if "fanout" in config.detectors:
-            builder.fanouts(cg)
-        if "cycle" in config.detectors:
-            builder.cycles(cg)
+        # A detector runs when its section exists and is not switched off (ablation experiments).
+        for name, run in (
+            ("funnel", builder.funnels),
+            ("chain", builder.chains),
+            ("fanout", builder.fanouts),
+            ("cycle", builder.cycles),
+        ):
+            section = config.detectors.get(name)
+            if section is not None and section.get("enabled", True):
+                run(cg)
     out = builder.out
     out.formations.sort(key=lambda f: f.id)
     out.evidence.sort(key=lambda e: e.id)

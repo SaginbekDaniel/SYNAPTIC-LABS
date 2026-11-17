@@ -104,18 +104,32 @@ def render_markdown(report: dict[str, Any]) -> str:
         if report.get(section):
             lines += ["", f"## {section.capitalize()}", ""]
             lines += [
-                "| Experiment | Split | Precision | Recall | F1 | FPR | Alerts/network | Changed outcomes |",
-                "|---|---|---|---|---|---|---|---|",
+                "| Experiment | Split | Precision | Recall | F1 | FPR | Alerts/network | Changed outcomes "
+                "| Outcome transitions | Band changes |",
+                "|---|---|---|---|---|---|---|---|---|---|",
             ]
             for e in report[section]:
                 s = e["metrics"]["unit_scenario"]
+                moves = ", ".join(f"{k} x{v}" for k, v in (e.get("transitions") or {}).items()) or "—"
+                bands = ", ".join(f"{k} x{v}" for k, v in (e.get("band_changes") or {}).items() if v) or "—"
                 lines.append(
                     f"| {e['name']} | {e['split']} | {_f(s['precision'])} | {_f(s['recall'])} | {_f(s['f1'])} "
                     f"| {_f(s['fpr'])} | {_f(e['metrics']['unit_alert']['alerts_per_network'])} "
-                    f"| {e.get('changed', 'n/a')} |"
+                    f"| {e.get('changed', 'n/a')} | {moves} | {bands} |"
                 )
     if report.get("scale"):
-        sc = report["scale"]
-        lines += ["", "## Scale test", "", f"{sc}"]
+        lines += [
+            "",
+            "## Scale test (all networks of the split merged into one dataset)",
+            "",
+            "| Method | Transactions | Accounts | Formations | Wall time s | Partial |",
+            "|---|---|---|---|---|---|",
+        ]
+        for sc in report["scale"]:
+            partial = ", ".join(sc["partial_reasons"]) or "no"
+            lines.append(
+                f"| {sc['method']} | {sc['transactions']} | {sc['accounts']} | {sc['formations']} "
+                f"| {sc['wall_seconds']} | {partial} |"
+            )
     lines.append("")
     return "\n".join(lines)
