@@ -57,12 +57,11 @@ def git_state() -> dict[str, Any]:
     def run(*args: str) -> str:
         return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, check=False).stdout.strip()
 
-    dirty = [
-        line
-        for line in run("status", "--porcelain").splitlines()
-        if not any(line.endswith(out) or f" {out}" in line for out in OUTPUTS)
-    ]
-    return {"commit": run("rev-parse", "HEAD"), "dirty": bool(dirty), "dirty_paths": [d[3:] for d in dirty][:20]}
+    def is_output(path: str) -> bool:  # porcelain may report an untracked output directory
+        return any(out == path or out.startswith(path.rstrip("/") + "/") for out in OUTPUTS)
+
+    dirty = [line[3:] for line in run("status", "--porcelain").splitlines() if not is_output(line[3:])]
+    return {"commit": run("rev-parse", "HEAD"), "dirty": bool(dirty), "dirty_paths": dirty[:20]}
 
 
 def experiments(cfg: Any) -> list[b.Experiment]:
