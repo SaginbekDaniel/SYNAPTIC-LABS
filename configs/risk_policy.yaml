@@ -1,0 +1,24 @@
+# Triage priority policy. Priority ranks analyst work; it is NOT a probability of fraud
+# (ADR-005). Missing families contribute zero and are listed explicitly — weights are
+# never silently renormalised.
+version: risk-policy-v1
+family_weights:
+  STRUCTURE: 0.35
+  TEMPORAL: 0.30
+  PEER_STATISTICS: 0.20
+  NETWORK_CONTEXT: 0.15
+temporal_strength:
+  supported: compatible_fraction   # strength = strictly chronology-compatible share of entry amount
+  possible_ambiguous: 0.4
+  contradicted: 0.0
+bands:                       # evaluated top-down on the 0-100 priority
+  critical: {min_priority: 80, min_supported_families: 3}
+  high: {min_priority: 45, min_supported_families: 2}
+  medium: {min_priority: 30, min_supported_families: 1}
+  low: {min_priority: 0, min_supported_families: 1}
+caps:                        # evidence gates applied after scoring
+  temporal_contradicted: low
+  temporal_ambiguous: medium
+  temporal_unavailable: medium
+abstain_on_subject_limitations: [boundary_limited]
+alert_min_band: medium       # bands below this are stored as assessments but do not open alerts
