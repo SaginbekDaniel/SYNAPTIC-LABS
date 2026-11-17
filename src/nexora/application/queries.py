@@ -343,9 +343,7 @@ def activity(session: Session, snapshot_id: uuid.UUID) -> dict[str, Any]:
     """
     snap = get_snapshot(session, snapshot_id)
     day = orm.Transaction.observed_date
-    totals = dict(
-        session.execute(select(day, func.count()).where(*_eligible_in_snapshot(snap)).group_by(day)).all()
-    )
+    totals = dict(session.execute(select(day, func.count()).where(*_eligible_in_snapshot(snap)).group_by(day)).all())
     alerted = (
         select(orm.EvidenceTransaction.transaction_id)
         .join(orm.Evidence, orm.Evidence.id == orm.EvidenceTransaction.evidence_id)
