@@ -11,6 +11,11 @@ earlier — at least ``returning_min_ratio`` of what the sender later returns, w
 centre's first payment no later than the sender's last transfer back — is *returning*
 funds (loan instalments, reimbursements), not consolidating an independent source. Such
 senders are reported as ``returning_feeders`` but do not count towards ``min_feeders``.
+
+``funnel-v3`` keeps the rule but requires the centre's payment to be commensurate with
+what comes back (``returning_min_ratio`` 0.5: repayment at most twice the disbursement).
+A repayment cannot exceed the loan it repays many times over; with 0.1, a token payment
+of 10% to each mule erased the whole funnel (audit RC-02, fail-open evasion).
 """
 
 from __future__ import annotations
@@ -53,7 +58,7 @@ def detect_funnels(cg: CurrencyGraph, cfg: dict[str, Any]) -> list[FunnelCandida
     min_share = Fraction(str(cfg["min_feeder_share"]))
     min_incoming = int(cfg["min_incoming_minor"])
     exclude_returning = bool(cfg.get("exclude_returning_feeders", False))
-    returning_ratio = Fraction(str(cfg.get("returning_min_ratio", "0.1")))
+    returning_ratio = Fraction(str(cfg.get("returning_min_ratio", "0.5")))
     out: list[FunnelCandidate] = []
     for center in sorted(cg.graph.nodes):
         feeders: list[FeederEdge] = []

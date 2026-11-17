@@ -3,12 +3,15 @@
 # changes the config hash and therefore produces a new snapshot identity.
 version: detectors-v2
 funnel:
-  detector_version: funnel-v2
+  detector_version: funnel-v3
   min_feeders: 3              # distinct senders that route most of their observed outflow to the centre
   min_feeder_share: 0.5       # volume(s->c) / observed outgoing volume of s, same currency
   min_incoming_minor: "5000000"   # 50 000.00 KZT in tiyn; decimal string to keep money exact
   exclude_returning_feeders: true  # v2: senders first paid by the centre are returning funds, not independent feeders
-  returning_min_ratio: 0.1         # centre->sender volume / sender->centre volume that counts as "funded by the centre"
+  # v3: centre->sender volume / sender->centre volume that counts as "funded by the centre". 0.5 = what the sender
+  # returns is at most twice what it received (principal plus interest). v2 used 0.1, which let token "activation"
+  # payments of 10% erase every feeder of a collection funnel (audit RC-02).
+  returning_min_ratio: 0.5
 chain:
   detector_version: chain-v1
   min_hops: 3                 # A->B->C->D: at least two pass-through intermediaries
