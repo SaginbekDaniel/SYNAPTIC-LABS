@@ -11,6 +11,7 @@ COPY configs ./configs
 COPY migrations ./migrations
 COPY alembic.ini ./
 COPY scripts ./scripts
+COPY benchmarks/results ./benchmarks/results
 RUN uv sync --frozen --no-dev && useradd --system --uid 10001 nexora
 USER nexora
 ENV PATH="/app/.venv/bin:$PATH"

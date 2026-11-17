@@ -10,6 +10,7 @@ import { DatasetProvider } from "./dataset";
 
 // Graph screens pull in Cytoscape; load them only when visited.
 const Investigation = lazy(() => import("../features/investigation/Investigation").then((m) => ({ default: m.Investigation })));
+const Evaluation = lazy(() => import("../features/evaluation/Evaluation").then((m) => ({ default: m.Evaluation })));
 const NetworkExplorer = lazy(() => import("../features/network/NetworkExplorer").then((m) => ({ default: m.NetworkExplorer })));
 
 export function App() {
@@ -25,6 +26,7 @@ export function App() {
               <Route path="cases" element={<CasesList />} />
               <Route path="network" element={<NetworkExplorer />} />
               <Route path="lab" element={<FraudLab />} />
+              <Route path="evaluation" element={<Evaluation />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           </Routes>

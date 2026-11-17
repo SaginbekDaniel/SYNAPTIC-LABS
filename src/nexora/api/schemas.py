@@ -394,3 +394,222 @@ class Health(Model):
     queue: dict[str, int]
     demo_mode: bool
     actor: str
+
+
+# -- Evaluation (recorded synthetic benchmark runs; read-only) ------------------------------
+# Metric values are ratios in [0, 1] or counts; ``None`` means undefined (zero denominator).
+
+
+class BenchmarkRunRef(Model):
+    label: str
+    created_at: str
+    code_commit: str | None
+    splits: list[str]
+
+
+class BenchmarkRunList(Model):
+    latest: str | None
+    runs: list[BenchmarkRunRef]
+
+
+class Ci95(Model):
+    precision: list[float] | None
+    recall: list[float] | None
+    f1: list[float] | None
+    fpr: list[float] | None
+
+
+class ScenarioMetrics(Model):
+    tp: int
+    fp: int
+    fn: int
+    tn: int
+    precision: float | None
+    recall: float | None
+    f1: float | None
+    fpr: float | None
+    fnr: float | None
+    ci95: Ci95
+
+
+class AlertMetrics(Model):
+    raised: int
+    precision: float | None
+    alerts_per_network: float | None
+    background_alerts_per_network: float | None
+    alerts_per_1000_transactions: float | None
+    on_benign_scenarios: int
+    on_background: int
+    duplicates_of_detected_scenario: int
+
+
+class QueuePoint(Model):
+    k: int
+    precision: float | None
+    recall: float | None
+
+
+class AccountMetrics(Model):
+    precision: float | None
+    recall: float | None
+    fpr: float | None
+
+
+class LatencyMetrics(Model):
+    median: float | None
+    p95: float | None
+    max: float | None
+    per_1000_transactions: float | None
+
+
+class Abstentions(Model):
+    on_suspicious: int
+    on_benign: int
+
+
+class FamilyRate(Model):
+    family: str
+    label: Literal["suspicious", "benign"]
+    networks: int
+    rate: float | None
+    rate_kind: Literal["detection_rate", "false_positive_rate"]
+    alerts_per_network: float
+
+
+class MethodSplitResult(Model):
+    split: str
+    method: str
+    scenario: ScenarioMetrics
+    alerts: AlertMetrics
+    queue: list[QueuePoint]
+    accounts: AccountMetrics
+    latency_ms: LatencyMetrics
+    abstentions: Abstentions
+    networks: int
+    transactions: int
+    by_family: list[FamilyRate]
+
+
+class BenchmarkFamily(Model):
+    name: str
+    label: Literal["suspicious", "benign"]
+    group: Literal["suspicious", "benign", "hard_negative"]
+    description: str
+
+
+class BenchmarkSplit(Model):
+    split: str
+    networks: int
+    transactions: int
+    suspicious: int
+    benign: int
+    data_manifest_sha256: str
+    truth_sha256: str
+
+
+class BenchmarkSuite(Model):
+    benchmark_version: str
+    master_seed: int
+    networks_per_family: dict[str, int]
+    families: list[BenchmarkFamily]
+    splits: list[BenchmarkSplit]
+
+
+class BenchmarkRunInfo(Model):
+    created_at: str
+    duration_s: float
+    code_commit: str | None
+    code_dirty: bool | None
+    python: str | None
+    networkx: str | None
+    cpu: str | None
+    cpu_count: int | None
+    splits_evaluated: list[str]
+
+
+class BenchmarkMethod(Model):
+    name: str
+    group: Literal["baseline", "nexora"]
+    description: str
+    config_sha256: str | None
+    threshold: float | None
+
+
+class TimeToDetection(Model):
+    split: str
+    method: str
+    median_days: int | None
+    max_days: int | None
+    detected_networks: int
+    undetected_networks: int
+    transient_detections: int
+
+
+class ExampleAlert(Model):
+    kind: str
+    band: str | None
+    score: float | None
+    reasons: list[str]
+
+
+class ExampleNetwork(Model):
+    network_id: str
+    family: str
+    variant: str
+    difficulty: str
+    expected: str
+    reason: str
+    alerts: list[ExampleAlert]
+
+
+class ErrorExamples(Model):
+    split: str
+    method: str
+    false_positive_count: int
+    false_negative_count: int
+    false_positives: list[ExampleNetwork]
+    false_negatives: list[ExampleNetwork]
+    false_positives_by_family: dict[str, int]
+    false_negatives_by_family: dict[str, int]
+
+
+class Experiment(Model):
+    kind: Literal["ablation", "robustness"]
+    name: str
+    method: str
+    description: str
+    split: str
+    scenario: ScenarioMetrics
+    alerts_per_network: float | None
+    precision_at_10: float | None
+    changed: int
+    transitions: dict[str, int]
+    band_changes: dict[str, int]
+
+
+class ScaleResult(Model):
+    method: str
+    networks_merged: int
+    transactions: int
+    accounts: int
+    edges: int
+    formations: int
+    partial_reasons: list[str]
+    wall_seconds: float
+    note: str
+
+
+class BenchmarkReport(Model):
+    label: str
+    disclaimer: str
+    run: BenchmarkRunInfo
+    suite: BenchmarkSuite
+    evaluation_units: dict[str, str]
+    matching_rule: str
+    operating_points: dict[str, str]
+    methods: list[BenchmarkMethod]
+    results: list[MethodSplitResult]
+    time_to_detection: list[TimeToDetection]
+    examples: list[ErrorExamples]
+    experiments: list[Experiment]
+    scale: list[ScaleResult]

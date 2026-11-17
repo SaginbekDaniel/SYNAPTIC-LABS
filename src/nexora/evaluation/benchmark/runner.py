@@ -14,6 +14,7 @@ import os
 import platform
 import subprocess
 import time
+from collections import Counter
 from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import date
@@ -220,13 +221,27 @@ def _examples(outcomes: Sequence[NetworkOutcome], limit: int = 12) -> dict[str, 
             "alerts": o.scenario_alerts,
         }
 
+    def spread(items: list[NetworkOutcome]) -> list[dict[str, Any]]:
+        """Round-robin across families so one dominant family cannot hide the others."""
+        by_family: dict[str, list[NetworkOutcome]] = {}
+        for o in sorted(items, key=lambda o: (o.family, o.network_id)):
+            by_family.setdefault(o.family, []).append(o)
+        picked: list[NetworkOutcome] = []
+        while len(picked) < limit and any(by_family.values()):
+            for fam in sorted(by_family):
+                if by_family[fam] and len(picked) < limit:
+                    picked.append(by_family[fam].pop(0))
+        return [row(o) for o in picked]
+
     fps = [o for o in outcomes if o.outcome == "FP"]
     fns = [o for o in outcomes if o.outcome == "FN"]
     return {
-        "false_positives": [row(o) for o in sorted(fps, key=lambda o: (o.family, o.network_id))[:limit]],
-        "false_negatives": [row(o) for o in sorted(fns, key=lambda o: (o.family, o.network_id))[:limit]],
+        "false_positives": spread(fps),
+        "false_negatives": spread(fns),
         "false_positive_count": len(fps),
         "false_negative_count": len(fns),
+        "false_positives_by_family": dict(sorted(Counter(o.family for o in fps).items())),
+        "false_negatives_by_family": dict(sorted(Counter(o.family for o in fns).items())),
     }
 
 

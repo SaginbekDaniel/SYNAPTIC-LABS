@@ -260,6 +260,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/evaluation/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Runs */
+        get: operations["list_runs_api_v1_evaluation_runs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/evaluation/runs/{label}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Run */
+        get: operations["get_run_api_v1_evaluation_runs__label__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/lab/datasets": {
         parameters: {
             query?: never;
@@ -400,6 +434,13 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** Abstentions */
+        Abstentions: {
+            /** On Benign */
+            on_benign: number;
+            /** On Suspicious */
+            on_suspicious: number;
+        };
         /** AccountFormation */
         AccountFormation: {
             /** Alert Id */
@@ -422,6 +463,15 @@ export interface components {
             role: "subject" | "member" | "exit";
             /** Temporal Status */
             temporal_status: string | null;
+        };
+        /** AccountMetrics */
+        AccountMetrics: {
+            /** Fpr */
+            fpr: number | null;
+            /** Precision */
+            precision: number | null;
+            /** Recall */
+            recall: number | null;
         };
         /** AccountSummary */
         AccountSummary: {
@@ -495,6 +545,25 @@ export interface components {
             temporal_status: string | null;
             /** Transaction Count */
             transaction_count: number;
+        };
+        /** AlertMetrics */
+        AlertMetrics: {
+            /** Alerts Per 1000 Transactions */
+            alerts_per_1000_transactions: number | null;
+            /** Alerts Per Network */
+            alerts_per_network: number | null;
+            /** Background Alerts Per Network */
+            background_alerts_per_network: number | null;
+            /** Duplicates Of Detected Scenario */
+            duplicates_of_detected_scenario: number;
+            /** On Background */
+            on_background: number;
+            /** On Benign Scenarios */
+            on_benign_scenarios: number;
+            /** Precision */
+            precision: number | null;
+            /** Raised */
+            raised: number;
         };
         /** AlertPage */
         AlertPage: {
@@ -581,6 +650,141 @@ export interface components {
             reason: string | null;
             /** Request Id */
             request_id: string | null;
+        };
+        /** BenchmarkFamily */
+        BenchmarkFamily: {
+            /** Description */
+            description: string;
+            /**
+             * Group
+             * @enum {string}
+             */
+            group: "suspicious" | "benign" | "hard_negative";
+            /**
+             * Label
+             * @enum {string}
+             */
+            label: "suspicious" | "benign";
+            /** Name */
+            name: string;
+        };
+        /** BenchmarkMethod */
+        BenchmarkMethod: {
+            /** Config Sha256 */
+            config_sha256: string | null;
+            /** Description */
+            description: string;
+            /**
+             * Group
+             * @enum {string}
+             */
+            group: "baseline" | "nexora";
+            /** Name */
+            name: string;
+            /** Threshold */
+            threshold: number | null;
+        };
+        /** BenchmarkReport */
+        BenchmarkReport: {
+            /** Disclaimer */
+            disclaimer: string;
+            /** Evaluation Units */
+            evaluation_units: {
+                [key: string]: string;
+            };
+            /** Examples */
+            examples: components["schemas"]["ErrorExamples"][];
+            /** Experiments */
+            experiments: components["schemas"]["Experiment"][];
+            /** Label */
+            label: string;
+            /** Matching Rule */
+            matching_rule: string;
+            /** Methods */
+            methods: components["schemas"]["BenchmarkMethod"][];
+            /** Operating Points */
+            operating_points: {
+                [key: string]: string;
+            };
+            /** Results */
+            results: components["schemas"]["MethodSplitResult"][];
+            run: components["schemas"]["BenchmarkRunInfo"];
+            /** Scale */
+            scale: components["schemas"]["ScaleResult"][];
+            suite: components["schemas"]["BenchmarkSuite"];
+            /** Time To Detection */
+            time_to_detection: components["schemas"]["TimeToDetection"][];
+        };
+        /** BenchmarkRunInfo */
+        BenchmarkRunInfo: {
+            /** Code Commit */
+            code_commit: string | null;
+            /** Code Dirty */
+            code_dirty: boolean | null;
+            /** Cpu */
+            cpu: string | null;
+            /** Cpu Count */
+            cpu_count: number | null;
+            /** Created At */
+            created_at: string;
+            /** Duration S */
+            duration_s: number;
+            /** Networkx */
+            networkx: string | null;
+            /** Python */
+            python: string | null;
+            /** Splits Evaluated */
+            splits_evaluated: string[];
+        };
+        /** BenchmarkRunList */
+        BenchmarkRunList: {
+            /** Latest */
+            latest: string | null;
+            /** Runs */
+            runs: components["schemas"]["BenchmarkRunRef"][];
+        };
+        /** BenchmarkRunRef */
+        BenchmarkRunRef: {
+            /** Code Commit */
+            code_commit: string | null;
+            /** Created At */
+            created_at: string;
+            /** Label */
+            label: string;
+            /** Splits */
+            splits: string[];
+        };
+        /** BenchmarkSplit */
+        BenchmarkSplit: {
+            /** Benign */
+            benign: number;
+            /** Data Manifest Sha256 */
+            data_manifest_sha256: string;
+            /** Networks */
+            networks: number;
+            /** Split */
+            split: string;
+            /** Suspicious */
+            suspicious: number;
+            /** Transactions */
+            transactions: number;
+            /** Truth Sha256 */
+            truth_sha256: string;
+        };
+        /** BenchmarkSuite */
+        BenchmarkSuite: {
+            /** Benchmark Version */
+            benchmark_version: string;
+            /** Families */
+            families: components["schemas"]["BenchmarkFamily"][];
+            /** Master Seed */
+            master_seed: number;
+            /** Networks Per Family */
+            networks_per_family: {
+                [key: string]: number;
+            };
+            /** Splits */
+            splits: components["schemas"]["BenchmarkSplit"][];
         };
         /** Body_import_csv_api_v1_datasets_import_post */
         Body_import_csv_api_v1_datasets_import_post: {
@@ -692,6 +896,17 @@ export interface components {
             /** Total */
             total: number;
         };
+        /** Ci95 */
+        Ci95: {
+            /** F1 */
+            f1: number[] | null;
+            /** Fpr */
+            fpr: number[] | null;
+            /** Precision */
+            precision: number[] | null;
+            /** Recall */
+            recall: number[] | null;
+        };
         /** Coverage */
         Coverage: {
             /** Boundary Accounts */
@@ -777,6 +992,29 @@ export interface components {
              */
             to_status: "new" | "investigating" | "escalated" | "dismissed" | "closed" | "reopened";
         };
+        /** ErrorExamples */
+        ErrorExamples: {
+            /** False Negative Count */
+            false_negative_count: number;
+            /** False Negatives */
+            false_negatives: components["schemas"]["ExampleNetwork"][];
+            /** False Negatives By Family */
+            false_negatives_by_family: {
+                [key: string]: number;
+            };
+            /** False Positive Count */
+            false_positive_count: number;
+            /** False Positives */
+            false_positives: components["schemas"]["ExampleNetwork"][];
+            /** False Positives By Family */
+            false_positives_by_family: {
+                [key: string]: number;
+            };
+            /** Method */
+            method: string;
+            /** Split */
+            split: string;
+        };
         /** EvidenceChain */
         EvidenceChain: {
             /** Evidence */
@@ -813,6 +1051,86 @@ export interface components {
             /** Transaction Ids */
             transaction_ids: string[];
         };
+        /** ExampleAlert */
+        ExampleAlert: {
+            /** Band */
+            band: string | null;
+            /** Kind */
+            kind: string;
+            /** Reasons */
+            reasons: string[];
+            /** Score */
+            score: number | null;
+        };
+        /** ExampleNetwork */
+        ExampleNetwork: {
+            /** Alerts */
+            alerts: components["schemas"]["ExampleAlert"][];
+            /** Difficulty */
+            difficulty: string;
+            /** Expected */
+            expected: string;
+            /** Family */
+            family: string;
+            /** Network Id */
+            network_id: string;
+            /** Reason */
+            reason: string;
+            /** Variant */
+            variant: string;
+        };
+        /** Experiment */
+        Experiment: {
+            /** Alerts Per Network */
+            alerts_per_network: number | null;
+            /** Band Changes */
+            band_changes: {
+                [key: string]: number;
+            };
+            /** Changed */
+            changed: number;
+            /** Description */
+            description: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "ablation" | "robustness";
+            /** Method */
+            method: string;
+            /** Name */
+            name: string;
+            /** Precision At 10 */
+            precision_at_10: number | null;
+            scenario: components["schemas"]["ScenarioMetrics"];
+            /** Split */
+            split: string;
+            /** Transitions */
+            transitions: {
+                [key: string]: number;
+            };
+        };
+        /** FamilyRate */
+        FamilyRate: {
+            /** Alerts Per Network */
+            alerts_per_network: number;
+            /** Family */
+            family: string;
+            /**
+             * Label
+             * @enum {string}
+             */
+            label: "suspicious" | "benign";
+            /** Networks */
+            networks: number;
+            /** Rate */
+            rate: number | null;
+            /**
+             * Rate Kind
+             * @enum {string}
+             */
+            rate_kind: "detection_rate" | "false_positive_rate";
+        };
         /** FormationDetail */
         FormationDetail: {
             /** Currency */
@@ -835,7 +1153,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "funnel" | "chain";
+            kind: "funnel" | "chain" | "fanout" | "cycle";
             /** Limitations */
             limitations: string[];
             /** Member Count */
@@ -869,7 +1187,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "funnel" | "chain";
+            kind: "funnel" | "chain" | "fanout" | "cycle";
             /** Member Count */
             member_count: number;
             /** Subject Account Id */
@@ -1028,6 +1346,37 @@ export interface components {
             /** Scenario Families */
             scenario_families: string[];
         };
+        /** LatencyMetrics */
+        LatencyMetrics: {
+            /** Max */
+            max: number | null;
+            /** Median */
+            median: number | null;
+            /** P95 */
+            p95: number | null;
+            /** Per 1000 Transactions */
+            per_1000_transactions: number | null;
+        };
+        /** MethodSplitResult */
+        MethodSplitResult: {
+            abstentions: components["schemas"]["Abstentions"];
+            accounts: components["schemas"]["AccountMetrics"];
+            alerts: components["schemas"]["AlertMetrics"];
+            /** By Family */
+            by_family: components["schemas"]["FamilyRate"][];
+            latency_ms: components["schemas"]["LatencyMetrics"];
+            /** Method */
+            method: string;
+            /** Networks */
+            networks: number;
+            /** Queue */
+            queue: components["schemas"]["QueuePoint"][];
+            scenario: components["schemas"]["ScenarioMetrics"];
+            /** Split */
+            split: string;
+            /** Transactions */
+            transactions: number;
+        };
         /** Neighborhood */
         Neighborhood: {
             /** Center */
@@ -1079,6 +1428,15 @@ export interface components {
                 [key: string]: number;
             };
         };
+        /** QueuePoint */
+        QueuePoint: {
+            /** K */
+            k: number;
+            /** Precision */
+            precision: number | null;
+            /** Recall */
+            recall: number | null;
+        };
         /** ReasonCode */
         ReasonCode: {
             /** Code */
@@ -1125,6 +1483,49 @@ export interface components {
             reason_codes: components["schemas"]["ReasonCode"][];
             /** Supported Families */
             supported_families: string[];
+        };
+        /** ScaleResult */
+        ScaleResult: {
+            /** Accounts */
+            accounts: number;
+            /** Edges */
+            edges: number;
+            /** Formations */
+            formations: number;
+            /** Method */
+            method: string;
+            /** Networks Merged */
+            networks_merged: number;
+            /** Note */
+            note: string;
+            /** Partial Reasons */
+            partial_reasons: string[];
+            /** Transactions */
+            transactions: number;
+            /** Wall Seconds */
+            wall_seconds: number;
+        };
+        /** ScenarioMetrics */
+        ScenarioMetrics: {
+            ci95: components["schemas"]["Ci95"];
+            /** F1 */
+            f1: number | null;
+            /** Fn */
+            fn: number;
+            /** Fnr */
+            fnr: number | null;
+            /** Fp */
+            fp: number;
+            /** Fpr */
+            fpr: number | null;
+            /** Precision */
+            precision: number | null;
+            /** Recall */
+            recall: number | null;
+            /** Tn */
+            tn: number;
+            /** Tp */
+            tp: number;
         };
         /** SignalItem */
         SignalItem: {
@@ -1202,6 +1603,23 @@ export interface components {
             seed: number;
             /** Suite */
             suite: string;
+        };
+        /** TimeToDetection */
+        TimeToDetection: {
+            /** Detected Networks */
+            detected_networks: number;
+            /** Max Days */
+            max_days: number | null;
+            /** Median Days */
+            median_days: number | null;
+            /** Method */
+            method: string;
+            /** Split */
+            split: string;
+            /** Transient Detections */
+            transient_detections: number;
+            /** Undetected Networks */
+            undetected_networks: number;
         };
         /** Transaction */
         Transaction: {
@@ -1790,6 +2208,57 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Overview"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_runs_api_v1_evaluation_runs_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkRunList"];
+                };
+            };
+        };
+    };
+    get_run_api_v1_evaluation_runs__label__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                label: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkReport"];
                 };
             };
             /** @description Validation Error */

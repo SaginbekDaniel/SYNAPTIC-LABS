@@ -60,3 +60,9 @@ export function formatEventTime(observedDate: string, occurredAt: string | null 
 export function shortId(id: string, keep = 8): string {
   return id.length <= keep * 2 + 1 ? id : `${id.slice(0, keep)}…${id.slice(-4)}`;
 }
+
+/** Ratio in [0, 1] as a percentage; `null` (undefined metric, zero denominator) stays visible. */
+export function formatRatio(value: number | null | undefined, digits = 1): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "н/д";
+  return `${(value * 100).toLocaleString("ru-RU", { minimumFractionDigits: digits, maximumFractionDigits: digits })} %`;
+}

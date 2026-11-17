@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatBp, formatDate, formatEventTime, formatMoney, sumMinor } from "./format";
+import { formatBp, formatDate, formatEventTime, formatMoney, formatRatio, sumMinor } from "./format";
 
 describe("money", () => {
   it("formats integer minor units exactly, beyond 2^53", () => {
@@ -26,5 +26,16 @@ describe("time", () => {
   });
   it("basis points", () => {
     expect(formatBp(9350)).toBe("93,5 %");
+  });
+});
+
+describe("formatRatio", () => {
+  it("keeps undefined metrics visible instead of showing 0 %", () => {
+    expect(formatRatio(null)).toBe("н/д");
+    expect(formatRatio(undefined)).toBe("н/д");
+  });
+  it("formats ratios as percentages", () => {
+    expect(formatRatio(0.5632).replace(/\s/g, " ")).toBe("56,3 %");
+    expect(formatRatio(1, 0).replace(/\s/g, " ")).toBe("100 %");
   });
 });

@@ -1,6 +1,25 @@
 {
   "components": {
     "schemas": {
+      "Abstentions": {
+        "additionalProperties": false,
+        "properties": {
+          "on_benign": {
+            "title": "On Benign",
+            "type": "integer"
+          },
+          "on_suspicious": {
+            "title": "On Suspicious",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "on_suspicious",
+          "on_benign"
+        ],
+        "title": "Abstentions",
+        "type": "object"
+      },
       "AccountFormation": {
         "additionalProperties": false,
         "properties": {
@@ -76,6 +95,51 @@
           "alert_id"
         ],
         "title": "AccountFormation",
+        "type": "object"
+      },
+      "AccountMetrics": {
+        "additionalProperties": false,
+        "properties": {
+          "fpr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fpr"
+          },
+          "precision": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Precision"
+          },
+          "recall": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recall"
+          }
+        },
+        "required": [
+          "precision",
+          "recall",
+          "fpr"
+        ],
+        "title": "AccountMetrics",
         "type": "object"
       },
       "AccountSummary": {
@@ -285,6 +349,83 @@
           "snapshot"
         ],
         "title": "AlertDetail",
+        "type": "object"
+      },
+      "AlertMetrics": {
+        "additionalProperties": false,
+        "properties": {
+          "alerts_per_1000_transactions": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alerts Per 1000 Transactions"
+          },
+          "alerts_per_network": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alerts Per Network"
+          },
+          "background_alerts_per_network": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Background Alerts Per Network"
+          },
+          "duplicates_of_detected_scenario": {
+            "title": "Duplicates Of Detected Scenario",
+            "type": "integer"
+          },
+          "on_background": {
+            "title": "On Background",
+            "type": "integer"
+          },
+          "on_benign_scenarios": {
+            "title": "On Benign Scenarios",
+            "type": "integer"
+          },
+          "precision": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Precision"
+          },
+          "raised": {
+            "title": "Raised",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "raised",
+          "precision",
+          "alerts_per_network",
+          "background_alerts_per_network",
+          "alerts_per_1000_transactions",
+          "on_benign_scenarios",
+          "on_background",
+          "duplicates_of_detected_scenario"
+        ],
+        "title": "AlertMetrics",
         "type": "object"
       },
       "AlertPage": {
@@ -541,6 +682,446 @@
           "created_at"
         ],
         "title": "AuditEvent",
+        "type": "object"
+      },
+      "BenchmarkFamily": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "group": {
+            "enum": [
+              "suspicious",
+              "benign",
+              "hard_negative"
+            ],
+            "title": "Group",
+            "type": "string"
+          },
+          "label": {
+            "enum": [
+              "suspicious",
+              "benign"
+            ],
+            "title": "Label",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "label",
+          "group",
+          "description"
+        ],
+        "title": "BenchmarkFamily",
+        "type": "object"
+      },
+      "BenchmarkMethod": {
+        "additionalProperties": false,
+        "properties": {
+          "config_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Config Sha256"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "group": {
+            "enum": [
+              "baseline",
+              "nexora"
+            ],
+            "title": "Group",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "threshold": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Threshold"
+          }
+        },
+        "required": [
+          "name",
+          "group",
+          "description",
+          "config_sha256",
+          "threshold"
+        ],
+        "title": "BenchmarkMethod",
+        "type": "object"
+      },
+      "BenchmarkReport": {
+        "additionalProperties": false,
+        "properties": {
+          "disclaimer": {
+            "title": "Disclaimer",
+            "type": "string"
+          },
+          "evaluation_units": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Evaluation Units",
+            "type": "object"
+          },
+          "examples": {
+            "items": {
+              "$ref": "#/components/schemas/ErrorExamples"
+            },
+            "title": "Examples",
+            "type": "array"
+          },
+          "experiments": {
+            "items": {
+              "$ref": "#/components/schemas/Experiment"
+            },
+            "title": "Experiments",
+            "type": "array"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "matching_rule": {
+            "title": "Matching Rule",
+            "type": "string"
+          },
+          "methods": {
+            "items": {
+              "$ref": "#/components/schemas/BenchmarkMethod"
+            },
+            "title": "Methods",
+            "type": "array"
+          },
+          "operating_points": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Operating Points",
+            "type": "object"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/MethodSplitResult"
+            },
+            "title": "Results",
+            "type": "array"
+          },
+          "run": {
+            "$ref": "#/components/schemas/BenchmarkRunInfo"
+          },
+          "scale": {
+            "items": {
+              "$ref": "#/components/schemas/ScaleResult"
+            },
+            "title": "Scale",
+            "type": "array"
+          },
+          "suite": {
+            "$ref": "#/components/schemas/BenchmarkSuite"
+          },
+          "time_to_detection": {
+            "items": {
+              "$ref": "#/components/schemas/TimeToDetection"
+            },
+            "title": "Time To Detection",
+            "type": "array"
+          }
+        },
+        "required": [
+          "label",
+          "disclaimer",
+          "run",
+          "suite",
+          "evaluation_units",
+          "matching_rule",
+          "operating_points",
+          "methods",
+          "results",
+          "time_to_detection",
+          "examples",
+          "experiments",
+          "scale"
+        ],
+        "title": "BenchmarkReport",
+        "type": "object"
+      },
+      "BenchmarkRunInfo": {
+        "additionalProperties": false,
+        "properties": {
+          "code_commit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code Commit"
+          },
+          "code_dirty": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code Dirty"
+          },
+          "cpu": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cpu"
+          },
+          "cpu_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cpu Count"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "duration_s": {
+            "title": "Duration S",
+            "type": "number"
+          },
+          "networkx": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Networkx"
+          },
+          "python": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Python"
+          },
+          "splits_evaluated": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Splits Evaluated",
+            "type": "array"
+          }
+        },
+        "required": [
+          "created_at",
+          "duration_s",
+          "code_commit",
+          "code_dirty",
+          "python",
+          "networkx",
+          "cpu",
+          "cpu_count",
+          "splits_evaluated"
+        ],
+        "title": "BenchmarkRunInfo",
+        "type": "object"
+      },
+      "BenchmarkRunList": {
+        "additionalProperties": false,
+        "properties": {
+          "latest": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest"
+          },
+          "runs": {
+            "items": {
+              "$ref": "#/components/schemas/BenchmarkRunRef"
+            },
+            "title": "Runs",
+            "type": "array"
+          }
+        },
+        "required": [
+          "latest",
+          "runs"
+        ],
+        "title": "BenchmarkRunList",
+        "type": "object"
+      },
+      "BenchmarkRunRef": {
+        "additionalProperties": false,
+        "properties": {
+          "code_commit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code Commit"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "splits": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Splits",
+            "type": "array"
+          }
+        },
+        "required": [
+          "label",
+          "created_at",
+          "code_commit",
+          "splits"
+        ],
+        "title": "BenchmarkRunRef",
+        "type": "object"
+      },
+      "BenchmarkSplit": {
+        "additionalProperties": false,
+        "properties": {
+          "benign": {
+            "title": "Benign",
+            "type": "integer"
+          },
+          "data_manifest_sha256": {
+            "title": "Data Manifest Sha256",
+            "type": "string"
+          },
+          "networks": {
+            "title": "Networks",
+            "type": "integer"
+          },
+          "split": {
+            "title": "Split",
+            "type": "string"
+          },
+          "suspicious": {
+            "title": "Suspicious",
+            "type": "integer"
+          },
+          "transactions": {
+            "title": "Transactions",
+            "type": "integer"
+          },
+          "truth_sha256": {
+            "title": "Truth Sha256",
+            "type": "string"
+          }
+        },
+        "required": [
+          "split",
+          "networks",
+          "transactions",
+          "suspicious",
+          "benign",
+          "data_manifest_sha256",
+          "truth_sha256"
+        ],
+        "title": "BenchmarkSplit",
+        "type": "object"
+      },
+      "BenchmarkSuite": {
+        "additionalProperties": false,
+        "properties": {
+          "benchmark_version": {
+            "title": "Benchmark Version",
+            "type": "string"
+          },
+          "families": {
+            "items": {
+              "$ref": "#/components/schemas/BenchmarkFamily"
+            },
+            "title": "Families",
+            "type": "array"
+          },
+          "master_seed": {
+            "title": "Master Seed",
+            "type": "integer"
+          },
+          "networks_per_family": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Networks Per Family",
+            "type": "object"
+          },
+          "splits": {
+            "items": {
+              "$ref": "#/components/schemas/BenchmarkSplit"
+            },
+            "title": "Splits",
+            "type": "array"
+          }
+        },
+        "required": [
+          "benchmark_version",
+          "master_seed",
+          "networks_per_family",
+          "families",
+          "splits"
+        ],
+        "title": "BenchmarkSuite",
         "type": "object"
       },
       "Body_import_csv_api_v1_datasets_import_post": {
@@ -895,6 +1476,75 @@
         "title": "CasePage",
         "type": "object"
       },
+      "Ci95": {
+        "additionalProperties": false,
+        "properties": {
+          "f1": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "F1"
+          },
+          "fpr": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fpr"
+          },
+          "precision": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Precision"
+          },
+          "recall": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recall"
+          }
+        },
+        "required": [
+          "precision",
+          "recall",
+          "f1",
+          "fpr"
+        ],
+        "title": "Ci95",
+        "type": "object"
+      },
       "Coverage": {
         "additionalProperties": false,
         "properties": {
@@ -1173,6 +1823,67 @@
         "title": "DecisionRequest",
         "type": "object"
       },
+      "ErrorExamples": {
+        "additionalProperties": false,
+        "properties": {
+          "false_negative_count": {
+            "title": "False Negative Count",
+            "type": "integer"
+          },
+          "false_negatives": {
+            "items": {
+              "$ref": "#/components/schemas/ExampleNetwork"
+            },
+            "title": "False Negatives",
+            "type": "array"
+          },
+          "false_negatives_by_family": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "False Negatives By Family",
+            "type": "object"
+          },
+          "false_positive_count": {
+            "title": "False Positive Count",
+            "type": "integer"
+          },
+          "false_positives": {
+            "items": {
+              "$ref": "#/components/schemas/ExampleNetwork"
+            },
+            "title": "False Positives",
+            "type": "array"
+          },
+          "false_positives_by_family": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "False Positives By Family",
+            "type": "object"
+          },
+          "method": {
+            "title": "Method",
+            "type": "string"
+          },
+          "split": {
+            "title": "Split",
+            "type": "string"
+          }
+        },
+        "required": [
+          "split",
+          "method",
+          "false_positive_count",
+          "false_negative_count",
+          "false_positives",
+          "false_negatives",
+          "false_positives_by_family",
+          "false_negatives_by_family"
+        ],
+        "title": "ErrorExamples",
+        "type": "object"
+      },
       "EvidenceChain": {
         "additionalProperties": false,
         "properties": {
@@ -1273,6 +1984,240 @@
         "title": "EvidenceItem",
         "type": "object"
       },
+      "ExampleAlert": {
+        "additionalProperties": false,
+        "properties": {
+          "band": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Band"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          }
+        },
+        "required": [
+          "kind",
+          "band",
+          "score",
+          "reasons"
+        ],
+        "title": "ExampleAlert",
+        "type": "object"
+      },
+      "ExampleNetwork": {
+        "additionalProperties": false,
+        "properties": {
+          "alerts": {
+            "items": {
+              "$ref": "#/components/schemas/ExampleAlert"
+            },
+            "title": "Alerts",
+            "type": "array"
+          },
+          "difficulty": {
+            "title": "Difficulty",
+            "type": "string"
+          },
+          "expected": {
+            "title": "Expected",
+            "type": "string"
+          },
+          "family": {
+            "title": "Family",
+            "type": "string"
+          },
+          "network_id": {
+            "title": "Network Id",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "variant": {
+            "title": "Variant",
+            "type": "string"
+          }
+        },
+        "required": [
+          "network_id",
+          "family",
+          "variant",
+          "difficulty",
+          "expected",
+          "reason",
+          "alerts"
+        ],
+        "title": "ExampleNetwork",
+        "type": "object"
+      },
+      "Experiment": {
+        "additionalProperties": false,
+        "properties": {
+          "alerts_per_network": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alerts Per Network"
+          },
+          "band_changes": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Band Changes",
+            "type": "object"
+          },
+          "changed": {
+            "title": "Changed",
+            "type": "integer"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "ablation",
+              "robustness"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "method": {
+            "title": "Method",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "precision_at_10": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Precision At 10"
+          },
+          "scenario": {
+            "$ref": "#/components/schemas/ScenarioMetrics"
+          },
+          "split": {
+            "title": "Split",
+            "type": "string"
+          },
+          "transitions": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Transitions",
+            "type": "object"
+          }
+        },
+        "required": [
+          "kind",
+          "name",
+          "method",
+          "description",
+          "split",
+          "scenario",
+          "alerts_per_network",
+          "precision_at_10",
+          "changed",
+          "transitions",
+          "band_changes"
+        ],
+        "title": "Experiment",
+        "type": "object"
+      },
+      "FamilyRate": {
+        "additionalProperties": false,
+        "properties": {
+          "alerts_per_network": {
+            "title": "Alerts Per Network",
+            "type": "number"
+          },
+          "family": {
+            "title": "Family",
+            "type": "string"
+          },
+          "label": {
+            "enum": [
+              "suspicious",
+              "benign"
+            ],
+            "title": "Label",
+            "type": "string"
+          },
+          "networks": {
+            "title": "Networks",
+            "type": "integer"
+          },
+          "rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate"
+          },
+          "rate_kind": {
+            "enum": [
+              "detection_rate",
+              "false_positive_rate"
+            ],
+            "title": "Rate Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "family",
+          "label",
+          "networks",
+          "rate",
+          "rate_kind",
+          "alerts_per_network"
+        ],
+        "title": "FamilyRate",
+        "type": "object"
+      },
       "FormationDetail": {
         "additionalProperties": false,
         "properties": {
@@ -1314,7 +2259,9 @@
           "kind": {
             "enum": [
               "funnel",
-              "chain"
+              "chain",
+              "fanout",
+              "cycle"
             ],
             "title": "Kind",
             "type": "string"
@@ -1390,7 +2337,9 @@
           "kind": {
             "enum": [
               "funnel",
-              "chain"
+              "chain",
+              "fanout",
+              "cycle"
             ],
             "title": "Kind",
             "type": "string"
@@ -1812,6 +2761,128 @@
         "title": "LabSuite",
         "type": "object"
       },
+      "LatencyMetrics": {
+        "additionalProperties": false,
+        "properties": {
+          "max": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max"
+          },
+          "median": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Median"
+          },
+          "p95": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "P95"
+          },
+          "per_1000_transactions": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Per 1000 Transactions"
+          }
+        },
+        "required": [
+          "median",
+          "p95",
+          "max",
+          "per_1000_transactions"
+        ],
+        "title": "LatencyMetrics",
+        "type": "object"
+      },
+      "MethodSplitResult": {
+        "additionalProperties": false,
+        "properties": {
+          "abstentions": {
+            "$ref": "#/components/schemas/Abstentions"
+          },
+          "accounts": {
+            "$ref": "#/components/schemas/AccountMetrics"
+          },
+          "alerts": {
+            "$ref": "#/components/schemas/AlertMetrics"
+          },
+          "by_family": {
+            "items": {
+              "$ref": "#/components/schemas/FamilyRate"
+            },
+            "title": "By Family",
+            "type": "array"
+          },
+          "latency_ms": {
+            "$ref": "#/components/schemas/LatencyMetrics"
+          },
+          "method": {
+            "title": "Method",
+            "type": "string"
+          },
+          "networks": {
+            "title": "Networks",
+            "type": "integer"
+          },
+          "queue": {
+            "items": {
+              "$ref": "#/components/schemas/QueuePoint"
+            },
+            "title": "Queue",
+            "type": "array"
+          },
+          "scenario": {
+            "$ref": "#/components/schemas/ScenarioMetrics"
+          },
+          "split": {
+            "title": "Split",
+            "type": "string"
+          },
+          "transactions": {
+            "title": "Transactions",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "split",
+          "method",
+          "scenario",
+          "alerts",
+          "queue",
+          "accounts",
+          "latency_ms",
+          "abstentions",
+          "networks",
+          "transactions",
+          "by_family"
+        ],
+        "title": "MethodSplitResult",
+        "type": "object"
+      },
       "Neighborhood": {
         "additionalProperties": false,
         "properties": {
@@ -1943,6 +3014,44 @@
           "temporal_status_counts"
         ],
         "title": "Overview",
+        "type": "object"
+      },
+      "QueuePoint": {
+        "additionalProperties": false,
+        "properties": {
+          "k": {
+            "title": "K",
+            "type": "integer"
+          },
+          "precision": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Precision"
+          },
+          "recall": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recall"
+          }
+        },
+        "required": [
+          "k",
+          "precision",
+          "recall"
+        ],
+        "title": "QueuePoint",
         "type": "object"
       },
       "ReasonCode": {
@@ -2091,6 +3200,156 @@
           "policy_sha256"
         ],
         "title": "RiskDetail",
+        "type": "object"
+      },
+      "ScaleResult": {
+        "additionalProperties": false,
+        "properties": {
+          "accounts": {
+            "title": "Accounts",
+            "type": "integer"
+          },
+          "edges": {
+            "title": "Edges",
+            "type": "integer"
+          },
+          "formations": {
+            "title": "Formations",
+            "type": "integer"
+          },
+          "method": {
+            "title": "Method",
+            "type": "string"
+          },
+          "networks_merged": {
+            "title": "Networks Merged",
+            "type": "integer"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "partial_reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Partial Reasons",
+            "type": "array"
+          },
+          "transactions": {
+            "title": "Transactions",
+            "type": "integer"
+          },
+          "wall_seconds": {
+            "title": "Wall Seconds",
+            "type": "number"
+          }
+        },
+        "required": [
+          "method",
+          "networks_merged",
+          "transactions",
+          "accounts",
+          "edges",
+          "formations",
+          "partial_reasons",
+          "wall_seconds",
+          "note"
+        ],
+        "title": "ScaleResult",
+        "type": "object"
+      },
+      "ScenarioMetrics": {
+        "additionalProperties": false,
+        "properties": {
+          "ci95": {
+            "$ref": "#/components/schemas/Ci95"
+          },
+          "f1": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "F1"
+          },
+          "fn": {
+            "title": "Fn",
+            "type": "integer"
+          },
+          "fnr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fnr"
+          },
+          "fp": {
+            "title": "Fp",
+            "type": "integer"
+          },
+          "fpr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fpr"
+          },
+          "precision": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Precision"
+          },
+          "recall": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recall"
+          },
+          "tn": {
+            "title": "Tn",
+            "type": "integer"
+          },
+          "tp": {
+            "title": "Tp",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tp",
+          "fp",
+          "fn",
+          "tn",
+          "precision",
+          "recall",
+          "f1",
+          "fpr",
+          "fnr",
+          "ci95"
+        ],
+        "title": "ScenarioMetrics",
         "type": "object"
       },
       "SignalItem": {
@@ -2310,6 +3569,64 @@
           "seed"
         ],
         "title": "SyntheticDatasetRequest",
+        "type": "object"
+      },
+      "TimeToDetection": {
+        "additionalProperties": false,
+        "properties": {
+          "detected_networks": {
+            "title": "Detected Networks",
+            "type": "integer"
+          },
+          "max_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Days"
+          },
+          "median_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Median Days"
+          },
+          "method": {
+            "title": "Method",
+            "type": "string"
+          },
+          "split": {
+            "title": "Split",
+            "type": "string"
+          },
+          "transient_detections": {
+            "title": "Transient Detections",
+            "type": "integer"
+          },
+          "undetected_networks": {
+            "title": "Undetected Networks",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "split",
+          "method",
+          "median_days",
+          "max_days",
+          "detected_networks",
+          "undetected_networks",
+          "transient_detections"
+        ],
+        "title": "TimeToDetection",
         "type": "object"
       },
       "Transaction": {
@@ -2551,7 +3868,7 @@
             "schema": {
               "anyOf": [
                 {
-                  "pattern": "^(funnel|chain)$",
+                  "pattern": "^(funnel|chain|fanout|cycle)$",
                   "type": "string"
                 },
                 {
@@ -3329,6 +4646,69 @@
         "summary": "Overview",
         "tags": [
           "datasets"
+        ]
+      }
+    },
+    "/api/v1/evaluation/runs": {
+      "get": {
+        "operationId": "list_runs_api_v1_evaluation_runs_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BenchmarkRunList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Runs",
+        "tags": [
+          "evaluation"
+        ]
+      }
+    },
+    "/api/v1/evaluation/runs/{label}": {
+      "get": {
+        "operationId": "get_run_api_v1_evaluation_runs__label__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "label",
+            "required": true,
+            "schema": {
+              "title": "Label",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BenchmarkReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Run",
+        "tags": [
+          "evaluation"
         ]
       }
     },

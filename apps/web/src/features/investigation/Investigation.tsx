@@ -4,7 +4,7 @@ import { GraphCanvas, GraphLegend } from "../../components/graph/GraphCanvas";
 import { AccountId, BandBadge, ErrorState, EvidenceBadge, Loading, Money, Panel, TxTable } from "../../components/ui";
 import { api } from "../../lib/api";
 import { formatBp, formatDate, shortId } from "../../lib/format";
-import { precisionLabel, reasonPolarity, reasonText, t, tDynamic } from "../../lib/i18n";
+import { kindLabel, precisionLabel, reasonPolarity, reasonText, t, tDynamic } from "../../lib/i18n";
 import type { AlertDetail, EvidenceChain, EvidenceItem, ReasonCode } from "../../lib/types";
 import { useApi } from "../../lib/useApi";
 import { CasePanel } from "./CasePanel";
@@ -12,7 +12,9 @@ import { buildFormationGraph } from "./formationGraph";
 
 function evidenceForReason(code: string, evidence: EvidenceItem[]): EvidenceItem | undefined {
   if (code.startsWith("STRUCT_")) return evidence.find((e) => e.kind === "graph_fact");
-  if (code.startsWith("TEMPORAL_")) return evidence.find((e) => e.kind === "temporal_fact" || e.kind === "counterevidence");
+  // Match by reason code: context counter-evidence also has kind "counterevidence".
+  if (code.startsWith("TEMPORAL_")) return evidence.find((e) => e.reason_code.startsWith("TEMPORAL_"));
+  if (code === "BENIGN_CONTEXT") return evidence.find((e) => e.reason_code.startsWith("CTX_"));
   return undefined;
 }
 
@@ -27,6 +29,12 @@ function Hypothesis({ alert }: { alert: AlertDetail }) {
         {t("alert.hypothesis.funnel", { feeders: f.entry_ids.length, center: f.subject_account_id, downstream })}
       </p>
     );
+  }
+  if (f.kind === "fanout") {
+    return <p>{t("alert.hypothesis.fanout", { source: f.subject_account_id, count: f.exit_ids.length })}</p>;
+  }
+  if (f.kind === "cycle") {
+    return <p>{t("alert.hypothesis.cycle", { episodes: Number(f.features.episodes ?? 0), count: f.member_ids.length })}</p>;
   }
   return (
     <p>
@@ -55,7 +63,7 @@ export function Investigation() {
   if (!alert.data) return <Loading rows={6} />;
   const a = alert.data;
   const f = a.formation;
-  const temporal = a.evidence.find((e) => e.kind === "temporal_fact" || e.kind === "counterevidence");
+  const temporal = a.evidence.find((e) => e.reason_code.startsWith("TEMPORAL_"));
   const structural = a.evidence.find((e) => e.kind === "graph_fact");
   const limitations = [...new Set([...a.coverage.limitations, ...(temporal?.limitations ?? [])])];
   const caseId = a.case_id ?? openedCase;
@@ -74,7 +82,7 @@ export function Investigation() {
             ← {t("alerts.title")}
           </Link>
           <h1>
-            {t(f.kind === "funnel" ? "kind.funnel" : "kind.chain")} · <AccountId id={f.subject_account_id} />
+            {kindLabel(f.kind)} · <AccountId id={f.subject_account_id} />
           </h1>
           <div className="row">
             <BandBadge band={a.risk.band} />

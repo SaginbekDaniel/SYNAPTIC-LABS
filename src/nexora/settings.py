@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -21,6 +22,8 @@ class Settings(BaseSettings):
     job_lease_seconds: int = 120
     job_max_attempts: int = 3
     worker_poll_seconds: float = 1.0
+    # Recorded benchmark artifacts served read-only to the Evaluation screen.
+    benchmark_results_dir: str = str(Path(__file__).resolve().parents[2] / "benchmarks" / "results")
 
 
 @lru_cache(maxsize=1)
