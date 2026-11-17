@@ -10,7 +10,12 @@ export async function seedAndAnalyse(page: Page, seed: string, suite = "demo-v1"
   await page.getByRole("button", { name: "Сгенерировать набор" }).click();
   await expect(page.getByTestId("import-report")).toBeVisible();
   await page.getByRole("button", { name: "Запустить анализ" }).click();
-  await expect(page.getByTestId("job-status")).toContainText("готово", { timeout: 30_000 });
+  // Fail with the API's own error message instead of a bare timeout if the job request is rejected.
+  const status = page.getByTestId("job-status");
+  const failure = page.locator(".state--error[role=alert]");
+  await expect(status.or(failure)).toBeVisible({ timeout: 30_000 });
+  if (await failure.isVisible()) throw new Error(`analysis request failed: ${await failure.innerText()}`);
+  await expect(status).toContainText("готово", { timeout: 30_000 });
   await expect(page.getByTestId("to-alerts")).toBeVisible();
 }
 

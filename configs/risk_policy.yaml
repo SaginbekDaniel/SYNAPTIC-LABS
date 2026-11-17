@@ -1,7 +1,7 @@
 # Triage priority policy. Priority ranks analyst work; it is NOT a probability of fraud
 # (ADR-005). Missing families contribute zero and are listed explicitly — weights are
 # never silently renormalised.
-version: risk-policy-v2
+version: risk-policy-v3
 family_weights:
   STRUCTURE: 0.35
   TEMPORAL: 0.30
@@ -23,3 +23,8 @@ caps:                        # evidence gates applied after scoring
   peer_contradicted: medium  # v2: turnover no more concentrated than peers' => network shape alone cannot rank high
 abstain_on_subject_limitations: [boundary_limited]
 alert_min_band: medium       # bands below this are stored as assessments but do not open alerts
+hypothesis:                  # v3: competing explanations (docs/architecture/HYPOTHESIS_ENGINE.md)
+  caps:
+    # Two independent observation groups support a legitimate explanation and the suspicious one has a
+    # negative balance: the formation stays stored with its evidence and hypotheses, but opens no alert.
+    benign_explanation_favoured: low

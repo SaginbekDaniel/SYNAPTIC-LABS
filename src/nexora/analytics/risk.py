@@ -12,7 +12,15 @@ from __future__ import annotations
 
 from typing import Any
 
-from nexora.domain.analysis import BAND_ORDER, Band, CoverageAssessment, ReasonCode, RiskAssessment, Signal
+from nexora.domain.analysis import (
+    BAND_ORDER,
+    Band,
+    CoverageAssessment,
+    HypothesisAssessment,
+    ReasonCode,
+    RiskAssessment,
+    Signal,
+)
 from nexora.domain.ids import stable_uuid
 
 
@@ -28,6 +36,7 @@ def assess(
     reasons: list[ReasonCode],
     policy: dict[str, Any],
     policy_sha256: str,
+    hypothesis: HypothesisAssessment | None = None,
 ) -> RiskAssessment:
     weights: dict[str, float] = {k: float(v) for k, v in policy["family_weights"].items()}
     by_family: dict[str, Signal] = {}
@@ -87,6 +96,15 @@ def assess(
     if peer is not None and peer.status == "contradicted" and "peer_contradicted" in caps:
         # Counter-evidence: the subject's turnover is no more time-concentrated than its peers'.
         gates.append("peer_contradicted")
+    hyp_caps: dict[str, str] = (policy.get("hypothesis") or {}).get("caps", {})
+    if hypothesis is not None:
+        # risk-policy-v3: competing-explanation outcome. A favoured legitimate explanation (two
+        # independent observation groups for it, a negative balance for the suspicious one) caps
+        # the band; the assessment, its evidence and the hypotheses are still stored and shown.
+        reason_list.append(ReasonCode("HYPOTHESIS_VERDICT", {"verdict": hypothesis.verdict}))
+        if hypothesis.verdict in hyp_caps:
+            gates.append(f"hypothesis_{hypothesis.verdict}")
+            caps = {**caps, f"hypothesis_{hypothesis.verdict}": hyp_caps[hypothesis.verdict]}
     capped = band
     applied: list[str] = []
     for gate in gates:

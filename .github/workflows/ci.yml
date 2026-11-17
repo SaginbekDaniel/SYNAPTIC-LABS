@@ -54,3 +54,10 @@ jobs:
         run: |
           npx playwright install --with-deps chromium
           npx playwright test
+      - name: Upload Playwright results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: apps/web/test-results/
+          retention-days: 7

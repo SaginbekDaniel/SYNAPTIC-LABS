@@ -24,7 +24,7 @@ def test_v2_formations_publish_and_render_through_the_api(client, settings):
     detail = client.get(f"/api/v1/alerts/{fan['id']}").json()
     families = {s["family"] for s in detail["signals"]}
     assert {"STRUCTURE", "TEMPORAL", "PEER_STATISTICS"} <= families
-    assert detail["risk"]["policy_version"] == "risk-policy-v2"
+    assert detail["risk"]["policy_version"] == "risk-policy-v3"
     chain = client.get(f"/api/v1/alerts/{fan['id']}/evidence").json()
     peer = [e for e in chain["evidence"] if "window_minor" in e["observations"]]
     assert peer, "peer evidence must be published with its window transactions"
@@ -100,8 +100,40 @@ def test_downgrade_refuses_to_discard_published_v2_analyses(client, settings, db
     _create_and_analyse(client, settings, seed=1001, suite="bench-v1")
     cfg = Config("alembic.ini")
     cfg.set_main_option("sqlalchemy.url", db_url)
-    with pytest.raises(Exception, match="ck_formations_kind"):
+    # The outermost guard (0003) refuses first; the 0002 CHECK guard sits behind it.
+    with pytest.raises(Exception, match="refusing to drop published hypothesis assessments"):
         command.downgrade(cfg, "0001")
     with create_engine(db_url).connect() as conn:  # transactional DDL: still at head, rows intact
-        assert conn.execute(text("SELECT version_num FROM alembic_version")).scalar_one() == "0002"
+        assert conn.execute(text("SELECT version_num FROM alembic_version")).scalar_one() == "0003"
         assert conn.execute(text("SELECT count(*) FROM formations WHERE kind = 'fan_out'")).scalar_one() > 0
+        assert conn.execute(text("SELECT count(*) FROM hypothesis_assessments")).scalar_one() > 0
+
+
+def test_hypotheses_publish_with_resolvable_evidence_and_rerun_idempotently(client, settings, db_url):
+    """hypotheses-v1 through PostgreSQL: every cited evidence id is a persisted, FK-linked evidence row."""
+    from sqlalchemy import create_engine, text
+
+    ds_id, job = _create_and_analyse(client, settings, seed=1001, suite="bench-v1")
+    alerts = client.get("/api/v1/alerts", params={"dataset_id": ds_id, "limit": 200}).json()["items"]
+    hubs = [a for a in alerts if a["formation"]["kind"] in ("funnel", "fan_out")]
+    assert hubs
+    for a in hubs:
+        detail = client.get(f"/api/v1/alerts/{a['id']}").json()
+        h = detail["hypotheses"]
+        assert h is not None and h["registry_version"] == "hypotheses-v1"
+        assert {x["polarity"] for x in h["hypotheses"]} == {"suspicious", "legitimate"}
+        assert any(x["status"] == "untestable" for x in h["hypotheses"])  # alternatives never dropped
+        published = {e["id"] for e in detail["evidence"]}
+        cited = {eid for x in h["hypotheses"] for t in x["tests"] for eid in t["evidence_ids"]}
+        assert cited <= published, cited - published
+        assert {"supported", "possible_ambiguous", "contradicted", "unavailable"} >= {
+            s["status"] for s in detail["signals"]
+        }
+    for a in alerts:
+        if a["formation"]["kind"] in ("chain", "cycle"):
+            assert client.get(f"/api/v1/alerts/{a['id']}").json()["hypotheses"] is None
+    with create_engine(db_url).connect() as c:
+        before = c.execute(text("SELECT count(*) FROM hypothesis_assessments")).scalar_one()
+    assert client.post("/api/v1/analysis/jobs", json={"dataset_id": ds_id}).json()["id"] == job["id"]
+    with create_engine(db_url).connect() as c:
+        assert c.execute(text("SELECT count(*) FROM hypothesis_assessments")).scalar_one() == before

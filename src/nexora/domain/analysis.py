@@ -147,3 +147,95 @@ class RiskAssessment:
             "priority": self.priority,
             "reasons": [r.as_dict() for r in self.reason_codes],
         }
+
+
+# -- Competing hypotheses (docs/architecture/HYPOTHESIS_ENGINE.md) ---------------------------
+TestResult = Literal["consistent", "inconsistent", "unavailable"]
+HypothesisStatus = Literal["supported", "weakened", "refuted", "not_established", "untestable"]
+Polarity = Literal["suspicious", "legitimate"]
+Verdict = Literal[
+    "suspicious_explanation_favoured",
+    "benign_explanation_favoured",
+    "inconclusive",
+    "insufficient_data",
+]
+
+
+@dataclass(frozen=True)
+class HypothesisTest:
+    """One falsification test: what the hypothesis predicts, what was observed, and the outcome.
+
+    ``group`` names the observation the test reads; tests that share a group are not
+    independent and count once when a hypothesis is scored.
+    """
+
+    test_id: str
+    group: str
+    observation: dict[str, Any]
+    expected: str  # code of the prediction the hypothesis makes, e.g. "one_off_counterparties"
+    result: TestResult
+    evidence_ids: tuple[str, ...]
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "test_id": self.test_id,
+            "group": self.group,
+            "observation": self.observation,
+            "expected": self.expected,
+            "result": self.result,
+            "evidence_ids": list(self.evidence_ids),
+        }
+
+
+@dataclass(frozen=True)
+class HypothesisEvaluation:
+    hypothesis_id: str
+    version: str
+    polarity: Polarity
+    status: HypothesisStatus
+    consistent_groups: int
+    inconsistent_groups: int
+    tests: tuple[HypothesisTest, ...]
+    required_data: tuple[str, ...]  # data that would discriminate further, as request codes
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "hypothesis_id": self.hypothesis_id,
+            "version": self.version,
+            "polarity": self.polarity,
+            "status": self.status,
+            "consistent_groups": self.consistent_groups,
+            "inconsistent_groups": self.inconsistent_groups,
+            "tests": [t.as_dict() for t in self.tests],
+            "required_data": list(self.required_data),
+        }
+
+
+@dataclass(frozen=True)
+class HypothesisAssessment:
+    """Competing explanations for one formation. Observations, not conclusions about a crime."""
+
+    id: str
+    formation_id: str
+    registry_version: str
+    config_sha256: str
+    verdict: Verdict
+    hypotheses: tuple[HypothesisEvaluation, ...]
+    subject_ids: tuple[str, ...]
+    transaction_ids: tuple[str, ...]
+    evidence_ids: tuple[str, ...]
+    unavailable_information: tuple[str, ...]
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "formation_id": self.formation_id,
+            "registry_version": self.registry_version,
+            "config_sha256": self.config_sha256,
+            "verdict": self.verdict,
+            "hypotheses": [h.as_dict() for h in self.hypotheses],
+            "subject_ids": list(self.subject_ids),
+            "transaction_ids": list(self.transaction_ids),
+            "evidence_ids": list(self.evidence_ids),
+            "unavailable_information": list(self.unavailable_information),
+        }

@@ -359,6 +359,22 @@ def alert_detail(session: Session, alert_id: uuid.UUID) -> dict[str, Any]:
     ]
     out["evidence"] = evidence_list(session, f.id)
     out["snapshot"] = snapshot_dict(snap)
+    h = session.execute(
+        select(orm.HypothesisAssessmentRow).where(orm.HypothesisAssessmentRow.formation_id == f.id)
+    ).scalar_one_or_none()
+    out["hypotheses"] = (
+        None
+        if h is None
+        else {
+            "id": str(h.id),
+            "registry_version": h.registry_version,
+            "config_sha256": h.config_sha256,
+            "verdict": h.verdict,
+            "hypotheses": h.hypotheses,
+            "evidence_ids": h.evidence_ids,
+            "unavailable_information": h.unavailable_information,
+        }
+    )
     return out
 
 

@@ -221,7 +221,11 @@ function Headline({ current, reference }: { current?: MethodSummary; reference?:
   const items: { key: MessageKey; value: number | null; ref: number | null | undefined; testId: string; lower?: boolean }[] = [
     { key: "eval.kpi.recall", value: current.scenario.recall, ref: reference?.scenario.recall, testId: "kpi-recall" },
     { key: "eval.kpi.highFpr", value: current.scenario.high_band_fpr, ref: reference?.scenario.high_band_fpr, testId: "kpi-high-fpr", lower: true },
-    { key: "eval.kpi.p5", value: current.queue.p_at_5, ref: reference?.queue.p_at_5, testId: "kpi-p5" },
+    // Distinct planted networks among the first five alerts: a second alert on an already found network is
+    // not a new find (audit L-02). Artifacts written before that metric fall back to raw P@5.
+    current.queue.distinct_p_at_5 != null
+      ? { key: "eval.kpi.p5Distinct", value: current.queue.distinct_p_at_5, ref: reference?.queue.distinct_p_at_5, testId: "kpi-p5" }
+      : { key: "eval.kpi.p5", value: current.queue.p_at_5, ref: reference?.queue.p_at_5, testId: "kpi-p5" },
     { key: "eval.kpi.r5", value: current.queue.recall_at_5, ref: reference?.queue.recall_at_5, testId: "kpi-r5" },
   ];
   return (

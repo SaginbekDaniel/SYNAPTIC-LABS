@@ -437,6 +437,13 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AbstentionMetrics */
+        AbstentionMetrics: {
+            /** Rate */
+            rate: number | null;
+            /** Suspicious Share */
+            suspicious_share: number | null;
+        };
         /** AccountFormation */
         AccountFormation: {
             /** Alert Id */
@@ -528,6 +535,7 @@ export interface components {
              */
             first_seen: string;
             formation: components["schemas"]["FormationDetail"];
+            hypotheses?: components["schemas"]["HypothesisAssessment"] | null;
             /** Id */
             id: string;
             /** In Latest Snapshot */
@@ -559,8 +567,12 @@ export interface components {
         AlertMetrics: {
             /** Flagged */
             flagged: number;
+            /** Networks With Duplicates */
+            networks_with_duplicates?: number | null;
             /** Per Dataset */
             per_dataset: number | null;
+            /** Per Flagged Network */
+            per_flagged_network?: number | null;
             /** Precision */
             precision: number | null;
             /** Unmatched */
@@ -1198,6 +1210,74 @@ export interface components {
              */
             status: "ok" | "degraded";
         };
+        /**
+         * HypothesisAssessment
+         * @description Competing explanations for the formation. Observations, not conclusions about a crime.
+         */
+        HypothesisAssessment: {
+            /** Config Sha256 */
+            config_sha256: string;
+            /** Evidence Ids */
+            evidence_ids: string[];
+            /** Hypotheses */
+            hypotheses: components["schemas"]["HypothesisItem"][];
+            /** Id */
+            id: string;
+            /** Registry Version */
+            registry_version: string;
+            /** Unavailable Information */
+            unavailable_information: string[];
+            /**
+             * Verdict
+             * @enum {string}
+             */
+            verdict: "suspicious_explanation_favoured" | "benign_explanation_favoured" | "inconclusive" | "insufficient_data";
+        };
+        /** HypothesisItem */
+        HypothesisItem: {
+            /** Consistent Groups */
+            consistent_groups: number;
+            /** Hypothesis Id */
+            hypothesis_id: string;
+            /** Inconsistent Groups */
+            inconsistent_groups: number;
+            /**
+             * Polarity
+             * @enum {string}
+             */
+            polarity: "suspicious" | "legitimate";
+            /** Required Data */
+            required_data: string[];
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "supported" | "weakened" | "refuted" | "not_established" | "untestable";
+            /** Tests */
+            tests: components["schemas"]["HypothesisTestItem"][];
+            /** Version */
+            version: string;
+        };
+        /** HypothesisTestItem */
+        HypothesisTestItem: {
+            /** Evidence Ids */
+            evidence_ids: string[];
+            /** Expected */
+            expected: string;
+            /** Group */
+            group: string;
+            /** Observation */
+            observation: {
+                [key: string]: unknown;
+            };
+            /**
+             * Result
+             * @enum {string}
+             */
+            result: "consistent" | "inconsistent" | "unavailable";
+            /** Test Id */
+            test_id: string;
+        };
         /** ImportIssue */
         ImportIssue: {
             /** Code */
@@ -1242,6 +1322,13 @@ export interface components {
             batch_id: string;
             dataset: components["schemas"]["Dataset"];
             report: components["schemas"]["ImportReport"];
+        };
+        /** IntegrityMetrics */
+        IntegrityMetrics: {
+            /** Partial Analysis Rate */
+            partial_analysis_rate: number | null;
+            /** Quarantined Formations */
+            quarantined_formations: number;
         };
         /** Job */
         Job: {
@@ -1295,6 +1382,7 @@ export interface components {
         };
         /** MethodSummary */
         MethodSummary: {
+            abstention?: components["schemas"]["AbstentionMetrics"] | null;
             alerts: components["schemas"]["AlertMetrics"];
             /** By Family */
             by_family: {
@@ -1302,6 +1390,7 @@ export interface components {
             };
             /** Datasets */
             datasets: number;
+            integrity?: components["schemas"]["IntegrityMetrics"] | null;
             latency_ms: components["schemas"]["LatencyMs"];
             queue: components["schemas"]["QueueMetrics"];
             scenario: components["schemas"]["ScenarioMetrics"];
@@ -1369,6 +1458,10 @@ export interface components {
         };
         /** QueueMetrics */
         QueueMetrics: {
+            /** Distinct P At 10 */
+            distinct_p_at_10?: number | null;
+            /** Distinct P At 5 */
+            distinct_p_at_5?: number | null;
             /** P At 10 */
             p_at_10: number | null;
             /** P At 5 */
