@@ -170,6 +170,21 @@ class HypothesisEngine:
         self.span_short = Fraction(str(cfg["span_short"]))
         self.single_run = Fraction(str(cfg["single_run_share"]))
         self.config_sha256 = sha256_hex(canonical_json(cfg))
+        # Per currency: account -> its transfers, built once (one pass over the edges) and reused by
+        # every formation, so the engine stays linear in the snapshot size.
+        self._by_account: dict[str, dict[str, list[ObservedTransfer]]] = {}
+
+    def _account_transfers(self, cg: CurrencyGraph, account: str) -> list[ObservedTransfer]:
+        index = self._by_account.get(cg.currency)
+        if index is None:
+            index = defaultdict(list)
+            for edge in cg.edges.values():
+                for tid in edge.transaction_ids:
+                    t = self.transfers[tid]
+                    index[t.sender].append(t)
+                    index[t.receiver].append(t)
+            self._by_account[cg.currency] = index
+        return index.get(account, [])
 
     # -- observations (each becomes validated, recomputable evidence) -----------------------
     def _counterparty_evidence(self, cg: CurrencyGraph, ctx: HubContext) -> Evidence:
@@ -208,15 +223,7 @@ class HypothesisEngine:
         )
 
     def _activity_evidence(self, cg: CurrencyGraph, ctx: HubContext) -> Evidence:
-        mine = sorted(
-            (
-                self.transfers[t]
-                for (snd, rcv), e in cg.edges.items()
-                if ctx.subject in (snd, rcv)
-                for t in e.transaction_ids
-            ),
-            key=lambda t: (t.observed_date, t.transaction_id),
-        )
+        mine = sorted(self._account_transfers(cg, ctx.subject), key=lambda t: (t.observed_date, t.transaction_id))
         first, last = mine[0], mine[-1]
         window_days = (ctx.window[1] - ctx.window[0]).days + 1
         span_days = (last.observed_date - first.observed_date).days + 1
