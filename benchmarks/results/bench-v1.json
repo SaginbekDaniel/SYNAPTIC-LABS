@@ -1,0 +1,7843 @@
+{
+ "schema_version": 1,
+ "benchmark_version": "bench-harness-v1",
+ "generated_at": "2026-11-17T10:18:07+00:00",
+ "synthetic": true,
+ "code": {
+  "commit": "58440cc19285b039e020a36c9bb1ec5b0c48c633",
+  "dirty": false,
+  "dirty_paths": []
+ },
+ "environment": {
+  "python": "3.13.18",
+  "platform": "Linux-6.18.44-fc-v553-x86_64-with-glibc2.39"
+ },
+ "generator": {
+  "suite": "bench-v1",
+  "version": "synthetic-bench-v1"
+ },
+ "config": {
+  "detectors_version": "detectors-v2",
+  "policy_version": "risk-policy-v2",
+  "config_sha256": "489b477a3da5ac1bac8ae3a7e3c1f5f22d9aac2a826e966d04d700347f194153"
+ },
+ "protocol": {
+  "matching_rule": "An item matches the planted scenario containing its subject account with the largest account overlap, requiring at least min(2, item accounts) shared accounts.",
+  "flagged": "NEXORA alert with band medium, high or critical; insufficient_evidence alerts are 'surfaced'.",
+  "units": {
+   "scenario": "Planted network. Precision, recall, F1, FPR, FNR count scenarios only.",
+   "alert": "Review item. Alert precision = flagged items that match a suspicious scenario.",
+   "queue": "Per-dataset analyst queue in review order; P@K and Recall@K averaged over datasets."
+  },
+  "splits": {
+   "dev": "design decisions and error analysis",
+   "validation": "confirmation only, no tuning",
+   "holdout": "first evaluated after the configuration was frozen"
+  }
+ },
+ "splits": {
+  "dev": {
+   "seeds": [
+    1000,
+    1029
+   ],
+   "datasets": 30,
+   "split_sha256": "f21a822c19c544262640331f0e7f39ea612807389461c83a394e6c45a0036a5d",
+   "precision_mix": {
+    "day": 21,
+    "timestamp": 9
+   },
+   "manifest": [
+    {
+     "seed": 1000,
+     "precision": "day",
+     "rows": 492,
+     "manifest_sha256": "b715520bc8dc537d355490629969cc77639e22c512a46011a30d01a3a3a8939a",
+     "truth_sha256": "5c38157098659cefc62989244ec22570b0b69cc4ff087633ec310a2d6a9a526e",
+     "families": [
+      "N7_treasury_sweep",
+      "N7_treasury_sweep",
+      "N3_supplier_payments",
+      "S4_circular_flow",
+      "S5_scatter_gather",
+      "S5_scatter_gather"
+     ]
+    },
+    {
+     "seed": 1001,
+     "precision": "day",
+     "rows": 492,
+     "manifest_sha256": "df284fb60292638930445809e4336925a975fd9db03ea1d1c0f461863eaa3d64",
+     "truth_sha256": "a8ae1286beced162ae9d5157075112206d69620d709bcdd452a99e7abb1bb317",
+     "families": [
+      "N6_loan_repayments",
+      "S3_coordinated_distribution",
+      "N2_merchant_settlement",
+      "S2_layering_chain",
+      "S4_circular_flow",
+      "N5_family_remittance",
+      "N1_payroll",
+      "S1_collection_funnel"
+     ]
+    },
+    {
+     "seed": 1002,
+     "precision": "timestamp",
+     "rows": 460,
+     "manifest_sha256": "f65c590ab0b143a472c4f3dc76fd1e2325538f0dbf6c0b6dca38cbe1fad62f0a",
+     "truth_sha256": "30e944c51ab8182a02ef8f0099ca83df91e792184f79b6d39965bc946f105e94",
+     "families": [
+      "S3_distribution_terminal",
+      "S4_circular_flow",
+      "S2_layering_chain",
+      "N5_family_remittance",
+      "N3_supplier_payments",
+      "N4_reimbursement",
+      "N3_supplier_payments",
+      "S1_collection_funnel",
+      "N4_reimbursement"
+     ]
+    },
+    {
+     "seed": 1003,
+     "precision": "day",
+     "rows": 575,
+     "manifest_sha256": "10325b620d95ce23abf27f6ce006d6f68bd798f04b36e2d3925e18fdd95638b7",
+     "truth_sha256": "a9d64ee32cded36138a8a1e852e9520dcc2adbceba4ce42f4952389c02f0bc0d",
+     "families": [
+      "S3_coordinated_distribution",
+      "N2_merchant_settlement",
+      "S1_collection_funnel",
+      "N1_payroll",
+      "S3_coordinated_distribution",
+      "N1_payroll",
+      "S5_scatter_gather"
+     ]
+    },
+    {
+     "seed": 1004,
+     "precision": "timestamp",
+     "rows": 289,
+     "manifest_sha256": "eb85543280497f9ef7c24c3c5269d2c2b0ba6c32b447ac3b9c667eb0f65acb20",
+     "truth_sha256": "4d5ba1289cc2b43f00aa6e629184717d039e7ce6f82c24163877492240309abb",
+     "families": [
+      "N1_payroll",
+      "S2_layering_chain",
+      "N8_reverse_chronology_chain",
+      "S4_circular_flow",
+      "N3_supplier_payments",
+      "N6_loan_repayments",
+      "N4_reimbursement"
+     ]
+    },
+    {
+     "seed": 1005,
+     "precision": "timestamp",
+     "rows": 413,
+     "manifest_sha256": "f2c6cecb080f8926ada8c8349283e6dfa9651bc550e6d801dfc1d883024d67c7",
+     "truth_sha256": "824fd0992f57250d2b6af3f6445ea62b4675a4451240452982b04ff228ccbc5c",
+     "families": [
+      "N2_merchant_settlement",
+      "N5_family_remittance",
+      "N4_reimbursement",
+      "S4_circular_flow",
+      "S3_coordinated_distribution"
+     ]
+    },
+    {
+     "seed": 1006,
+     "precision": "day",
+     "rows": 360,
+     "manifest_sha256": "fccf8840f998b6e8f68ffc41d78ad31dff2e9899e0ae78e3cd7f4e4ba347615e",
+     "truth_sha256": "a64b6a958ad48fd0ea883820437efef78734a80162174da1d88b9f231956737d",
+     "families": [
+      "N1_payroll",
+      "N3_supplier_payments",
+      "N8_reverse_chronology_chain",
+      "S5_scatter_gather",
+      "S1_collection_funnel",
+      "S1_collection_funnel",
+      "N5_family_remittance",
+      "N7_treasury_sweep",
+      "S2_layering_chain"
+     ]
+    },
+    {
+     "seed": 1007,
+     "precision": "timestamp",
+     "rows": 550,
+     "manifest_sha256": "ad3112f8bab963538c594bc20fc9fed020c5d4c00078361049cf7b65d106c716",
+     "truth_sha256": "241b2a601d9052672323b3baa6cd3b2123b91d9c7dbe72c632a6cf523ccf6714",
+     "families": [
+      "S5_scatter_gather",
+      "N2_merchant_settlement",
+      "N1_payroll",
+      "S5_scatter_gather",
+      "S2_layering_chain",
+      "S5_scatter_gather",
+      "N6_loan_repayments"
+     ]
+    },
+    {
+     "seed": 1008,
+     "precision": "day",
+     "rows": 365,
+     "manifest_sha256": "91ab4ae30a64765cd71ecbe1c53e05f95184a80985b27872577db58bc4e56dc9",
+     "truth_sha256": "6774b3a1e7e5aea6b8ccf22c86c74e607fb51541503eefb15c7829223e439ad1",
+     "families": [
+      "N7_treasury_sweep",
+      "N3_supplier_payments",
+      "N5_family_remittance",
+      "N5_family_remittance",
+      "S3_coordinated_distribution",
+      "S1_collection_funnel",
+      "N6_loan_repayments",
+      "S4_circular_flow",
+      "H_same_day_chain"
+     ]
+    },
+    {
+     "seed": 1009,
+     "precision": "day",
+     "rows": 203,
+     "manifest_sha256": "cdb0cbc8e024410dbf1d5e9877ee6f34694e311a7551c59e95d32a95bdbed20a",
+     "truth_sha256": "befa81d81f4f402a40e7255a52230559f3827ab3bd324cde3552848e92b1e463",
+     "families": [
+      "S3_distribution_terminal",
+      "S4_circular_flow",
+      "N6_loan_repayments",
+      "S5_scatter_gather",
+      "N5_family_remittance",
+      "N5_family_remittance"
+     ]
+    },
+    {
+     "seed": 1010,
+     "precision": "timestamp",
+     "rows": 413,
+     "manifest_sha256": "6c87d018bc90856eff95a8699e33d51c3de76ed1011c3194c2d06dd2ab9ce0ed",
+     "truth_sha256": "a280ea3eaf49ec2efada255a4811de64ac898f80113fbd86b49c1403ec3d413b",
+     "families": [
+      "S1_collection_funnel",
+      "N6_loan_repayments",
+      "S3_distribution_terminal",
+      "S2_layering_chain",
+      "N4_reimbursement",
+      "N2_merchant_settlement",
+      "N4_reimbursement",
+      "N3_supplier_payments"
+     ]
+    },
+    {
+     "seed": 1011,
+     "precision": "day",
+     "rows": 329,
+     "manifest_sha256": "ed48c5b8d86e3671d884230522c0e002eaa1df130862cc926eaf35f166cf3a31",
+     "truth_sha256": "a9fa474102dde6e148a9bf63a97d0cbfc4854f8d29df166dc9afc858af25b64a",
+     "families": [
+      "N1_payroll",
+      "N8_reverse_chronology_chain",
+      "S5_scatter_gather",
+      "N5_family_remittance",
+      "S5_scatter_gather",
+      "N1_payroll",
+      "S5_scatter_gather",
+      "N4_reimbursement",
+      "S2_layering_chain"
+     ]
+    },
+    {
+     "seed": 1012,
+     "precision": "day",
+     "rows": 736,
+     "manifest_sha256": "8d90b33798cade53add684eff6fbbc393d067194dbdb2becb6290671fa609438",
+     "truth_sha256": "8c71f09ae16609d97f4786b5105526fb3a08bd888f3b6c62f6bf44c436081292",
+     "families": [
+      "N7_treasury_sweep",
+      "N1_payroll",
+      "S2_layering_chain",
+      "S3_coordinated_distribution",
+      "S5_scatter_gather",
+      "S1_collection_funnel_boundary",
+      "N2_merchant_settlement",
+      "N2_merchant_settlement"
+     ]
+    },
+    {
+     "seed": 1013,
+     "precision": "day",
+     "rows": 520,
+     "manifest_sha256": "f81b5e3bf606138f4da01c5a4f9c57370de21da13fa1923047ec2b735ef3c85f",
+     "truth_sha256": "1ade2d7f934f755b4e545e14ad5d1c7f9acf2cdbf58ae753e6c09516a6797ce2",
+     "families": [
+      "N3_supplier_payments",
+      "N1_payroll",
+      "N6_loan_repayments",
+      "S1_collection_funnel",
+      "S5_scatter_gather",
+      "N7_treasury_sweep",
+      "N8_reverse_chronology_chain"
+     ]
+    },
+    {
+     "seed": 1014,
+     "precision": "day",
+     "rows": 549,
+     "manifest_sha256": "9dbab4e569b853b365d1fe9d32e2a9109802262e364d7996fde09056874cdcfc",
+     "truth_sha256": "551e811eb5ab84a32ba372c161fbef39c9814d4f839914c631788e83b9251892",
+     "families": [
+      "N2_merchant_settlement",
+      "N6_loan_repayments",
+      "S5_scatter_gather",
+      "S2_layering_chain",
+      "H_same_day_chain",
+      "S1_collection_funnel",
+      "N4_reimbursement",
+      "N6_loan_repayments"
+     ]
+    },
+    {
+     "seed": 1015,
+     "precision": "day",
+     "rows": 316,
+     "manifest_sha256": "2b37c666a5f29b4fa6c70be19487d21e3d1ee1424c0f97039e09e67a82763d3d",
+     "truth_sha256": "69f2148a6a21774c59e0e15938b4e49544d8ec5b48e16618676df7fdeb82cee4",
+     "families": [
+      "N3_supplier_payments",
+      "S1_collection_funnel",
+      "N8_reverse_chronology_chain",
+      "H_same_day_chain",
+      "N6_loan_repayments",
+      "N3_supplier_payments"
+     ]
+    },
+    {
+     "seed": 1016,
+     "precision": "day",
+     "rows": 352,
+     "manifest_sha256": "f5fb0a8150af57c419c943df96f76292b56c745a9f87a64ab2f2723a15ccbaa4",
+     "truth_sha256": "4172e9de9703cf89bb3ab4d21d6e5c67945af81676b74ef84504d3fd46896ead",
+     "families": [
+      "S3_distribution_terminal",
+      "S4_circular_flow",
+      "S4_circular_flow",
+      "N3_supplier_payments",
+      "N1_payroll",
+      "N5_family_remittance",
+      "S1_collection_funnel",
+      "N5_family_remittance"
+     ]
+    },
+    {
+     "seed": 1017,
+     "precision": "day",
+     "rows": 303,
+     "manifest_sha256": "9abc59d822dc44efa6969c0d2d4bf59a33a6d6f161a4f28e53664fc54efa65ab",
+     "truth_sha256": "b3feaa308d6d26aace370e8a029b447f0d7082a279ec5ced451ee2329f965749",
+     "families": [
+      "S3_distribution_terminal",
+      "N6_loan_repayments",
+      "N4_reimbursement",
+      "N7_treasury_sweep",
+      "S3_coordinated_distribution"
+     ]
+    },
+    {
+     "seed": 1018,
+     "precision": "day",
+     "rows": 444,
+     "manifest_sha256": "40ca67c9ce9ce2b687dabc9bf98e7a9ae6db1193d7cd76ecbe2f57c2b88c7f4f",
+     "truth_sha256": "dabaea980084dc7e4b96b2b8c96811e950780822b0b532f7ef45566f1be3c464",
+     "families": [
+      "S3_coordinated_distribution",
+      "N4_reimbursement",
+      "N6_loan_repayments",
+      "N7_treasury_sweep",
+      "N7_treasury_sweep",
+      "S5_scatter_gather"
+     ]
+    },
+    {
+     "seed": 1019,
+     "precision": "day",
+     "rows": 548,
+     "manifest_sha256": "5ac2e832302dde2426b66e81f8514c573c1f65006c93d0c1c4550571a1875eb1",
+     "truth_sha256": "ed3021040d51d66c66d20aabcd4c0c7ec09d4a45dad6aaaaa45eda9af0134769",
+     "families": [
+      "S5_scatter_gather",
+      "N5_family_remittance",
+      "S5_scatter_gather",
+      "N2_merchant_settlement",
+      "H_same_day_chain",
+      "N5_family_remittance",
+      "S2_layering_chain",
+      "N2_merchant_settlement"
+     ]
+    },
+    {
+     "seed": 1020,
+     "precision": "timestamp",
+     "rows": 423,
+     "manifest_sha256": "62858e95f89dacc535f1adcd64f8384c589f8bcbb923c3584a86de3e49a9ca6d",
+     "truth_sha256": "04b29d28d828bb903dd8d5aba46aa93a5eb678add26ed1f88df1f8922ccfb176",
+     "families": [
+      "S4_circular_flow",
+      "S3_coordinated_distribution",
+      "N8_reverse_chronology_chain",
+      "N6_loan_repayments",
+      "N1_payroll",
+      "S1_collection_funnel_boundary",
+      "N3_supplier_payments",
+      "S2_layering_chain"
+     ]
+    },
+    {
+     "seed": 1021,
+     "precision": "day",
+     "rows": 426,
+     "manifest_sha256": "29510eeee2c39dc8ddd446425cfee7ca7cba00b9159ad0fbda1bd24f15d27375",
+     "truth_sha256": "9398b4ccf5e684d96d63b134f03519170b178de4e56e0fd3a11911cda77ad682",
+     "families": [
+      "N8_reverse_chronology_chain",
+      "N5_family_remittance",
+      "N3_supplier_payments",
+      "S3_coordinated_distribution",
+      "S1_collection_funnel",
+      "N6_loan_repayments",
+      "N8_reverse_chronology_chain"
+     ]
+    },
+    {
+     "seed": 1022,
+     "precision": "day",
+     "rows": 668,
+     "manifest_sha256": "07bc4f00142659a301fcb52b594a3a17cfa4a712295a90de2ceb99e030b15614",
+     "truth_sha256": "6b96a5a385a3e26a65104447fb0d9a336f4ff2093cfbca0ca678c3d1fb8a4258",
+     "families": [
+      "N7_treasury_sweep",
+      "N3_supplier_payments",
+      "S3_coordinated_distribution",
+      "N7_treasury_sweep",
+      "S1_collection_funnel",
+      "N7_treasury_sweep",
+      "S4_circular_flow",
+      "N6_loan_repayments"
+     ]
+    },
+    {
+     "seed": 1023,
+     "precision": "timestamp",
+     "rows": 254,
+     "manifest_sha256": "2759b55a5d7c65232a8a169617cec7042b6d10427dede82ac6d47981d98717d4",
+     "truth_sha256": "1d9e13e672a62896f8d23873f30506fb03617e08ff92563bef1750ca06c5f470",
+     "families": [
+      "S1_collection_funnel_boundary",
+      "N4_reimbursement",
+      "N7_treasury_sweep",
+      "S2_layering_chain",
+      "N4_reimbursement",
+      "S4_circular_flow",
+      "S3_coordinated_distribution"
+     ]
+    },
+    {
+     "seed": 1024,
+     "precision": "day",
+     "rows": 415,
+     "manifest_sha256": "665081bb55302018f1c8a8930135538cf564c457076eb019c20002990cea7a92",
+     "truth_sha256": "4d5e4ff0012fbb989b44629f726d5ef39dbb558e392a737923977ab375745981",
+     "families": [
+      "H_same_day_chain",
+      "N6_loan_repayments",
+      "S1_collection_funnel",
+      "H_same_day_chain",
+      "N8_reverse_chronology_chain",
+      "S1_collection_funnel_boundary",
+      "N7_treasury_sweep"
+     ]
+    },
+    {
+     "seed": 1025,
+     "precision": "timestamp",
+     "rows": 427,
+     "manifest_sha256": "32807212deb98bfafa82ad47fbb6c6121ff36dfabc01d4c88f492082055fabeb",
+     "truth_sha256": "f66b78da22f8c6247234a8861184ec0c61616ab5442eb02c68118ef61f968471",
+     "families": [
+      "H_same_day_chain",
+      "N4_reimbursement",
+      "N3_supplier_payments",
+      "N1_payroll",
+      "S5_scatter_gather",
+      "S5_scatter_gather",
+      "N4_reimbursement",
+      "S5_scatter_gather"
+     ]
+    },
+    {
+     "seed": 1026,
+     "precision": "day",
+     "rows": 406,
+     "manifest_sha256": "32c9d3ed029c87a699df1cf4e57d30172fffa2c26b027f1a44f328f5c3d122c9",
+     "truth_sha256": "c7a4b865bc11fee0ca9f6684796b60122c57d2feb2071648f121c122ae3492f9",
+     "families": [
+      "N6_loan_repayments",
+      "S4_circular_flow",
+      "S1_collection_funnel_boundary",
+      "N7_treasury_sweep",
+      "N5_family_remittance"
+     ]
+    },
+    {
+     "seed": 1027,
+     "precision": "timestamp",
+     "rows": 266,
+     "manifest_sha256": "60f78cd097ded54141d9f7412007fdbb76e4ffe0fb0e1ebcc55c47247f034caf",
+     "truth_sha256": "d64aa2cd69478853b55c23167ee1c265159b030989be76c4daab847f2af88a7e",
+     "families": [
+      "N7_treasury_sweep",
+      "N5_family_remittance",
+      "N4_reimbursement",
+      "S3_distribution_terminal",
+      "S3_coordinated_distribution",
+      "S3_distribution_terminal"
+     ]
+    },
+    {
+     "seed": 1028,
+     "precision": "day",
+     "rows": 731,
+     "manifest_sha256": "0525cd3922187750cecf939023e83b99805d45e3c362307f9ace1ba806711516",
+     "truth_sha256": "c5f294971c97670a91d116ce19941275e94e2f620e38e9c9d4df9eee62367110",
+     "families": [
+      "S2_layering_chain",
+      "N3_supplier_payments",
+      "N6_loan_repayments",
+      "N2_merchant_settlement",
+      "N2_merchant_settlement",
+      "S1_collection_funnel"
+     ]
+    },
+    {
+     "seed": 1029,
+     "precision": "day",
+     "rows": 608,
+     "manifest_sha256": "cd899b78227797be7354e9e7f7a1ba48dc75b57eb6a26cc29fc567bcfc1331f7",
+     "truth_sha256": "2ea6eaf3e886696e1d5566de453c8ef89cb8524882d71158d3c930ee680241c4",
+     "families": [
+      "S2_layering_chain",
+      "N7_treasury_sweep",
+      "S4_circular_flow",
+      "N3_supplier_payments",
+      "N4_reimbursement",
+      "N2_merchant_settlement",
+      "S4_circular_flow",
+      "N8_reverse_chronology_chain"
+     ]
+    }
+   ]
+  },
+  "validation": {
+   "seeds": [
+    2000,
+    2019
+   ],
+   "datasets": 20,
+   "split_sha256": "297857df1edfd879cda490db8ca154e1e0cef6dea72ee099ec048c37c3b3283d",
+   "precision_mix": {
+    "day": 13,
+    "timestamp": 7
+   },
+   "manifest": [
+    {
+     "seed": 2000,
+     "precision": "day",
+     "rows": 413,
+     "manifest_sha256": "8b5938d77151ad2102348f2019424910db0a9aa678295ac2e00c73dfbae34d97",
+     "truth_sha256": "64e37f38d61b10c09d0fbadf66acbf61638a63b8177d0b5ef7043031f8b7c66e",
+     "families": [
+      "N4_reimbursement",
+      "N6_loan_repayments",
+      "N8_reverse_chronology_chain",
+      "S2_layering_chain",
+      "S1_collection_funnel_boundary",
+      "N3_supplier_payments",
+      "S1_collection_funnel"
+     ]
+    },
+    {
+     "seed": 2001,
+     "precision": "timestamp",
+     "rows": 364,
+     "manifest_sha256": "b64f7838aec17070048ed9ecd2e33bbeaf03a9e0b67b80d879de6612d87eda18",
+     "truth_sha256": "d714d172fd8cf85a956c15e493defc8ddac0a91c7669e9b218d73295b173fde9",
+     "families": [
+      "S2_layering_chain",
+      "S3_coordinated_distribution",
+      "S1_collection_funnel",
+      "N6_loan_repayments",
+      "N6_loan_repayments",
+      "S1_collection_funnel",
+      "N5_family_remittance",
+      "N1_payroll"
+     ]
+    },
+    {
+     "seed": 2002,
+     "precision": "day",
+     "rows": 208,
+     "manifest_sha256": "680927a5d798d4cab7a93d30a24828f099a39b5e158e5abb72048e1b4705d5da",
+     "truth_sha256": "592a101e6fd10e32ca9058f25be827cf03c0c62a467627341216892a7d71ce01",
+     "families": [
+      "S2_layering_chain",
+      "S2_layering_chain",
+      "N1_payroll",
+      "N8_reverse_chronology_chain",
+      "N4_reimbursement",
+      "S1_collection_funnel",
+      "N8_reverse_chronology_chain",
+      "N5_family_remittance"
+     ]
+    },
+    {
+     "seed": 2003,
+     "precision": "day",
+     "rows": 288,
+     "manifest_sha256": "a4b595f57e999b8f010b0dc06a8b1ecf9cc1ba87560fb9495bf47764db8a8019",
+     "truth_sha256": "867c60aeebf7e7ae1dd2d12e2b93aad190e76db7eb56b552969b3886a9768623",
+     "families": [
+      "S3_distribution_terminal",
+      "N5_family_remittance",
+      "N7_treasury_sweep",
+      "N1_payroll",
+      "N4_reimbursement",
+      "S5_scatter_gather"
+     ]
+    },
+    {
+     "seed": 2004,
+     "precision": "day",
+     "rows": 557,
+     "manifest_sha256": "71b7d6c77bab834955a0bf9bc9d9d9919f13a7ffee5d7e2b983682cd53f76e1a",
+     "truth_sha256": "9a4d00159a6d69f368e539bf9d41911985f8ec45dcda8ab9ba6216845e213d89",
+     "families": [
+      "S2_layering_chain",
+      "N2_merchant_settlement",
+      "N3_supplier_payments",
+      "S2_layering_chain",
+      "S3_coordinated_distribution",
+      "N5_family_remittance",
+      "S1_collection_funnel"
+     ]
+    },
+    {
+     "seed": 2005,
+     "precision": "timestamp",
+     "rows": 365,
+     "manifest_sha256": "76df78b4c9ece5e7e00c9bc65a9f204bea6b1acfb7b751ca198e8f71fde91c28",
+     "truth_sha256": "1bcfe041a1239a8b29cb763bc5b82cebf9726a3cba72274c04ac9c9d7207185e",
+     "families": [
+      "S1_collection_funnel",
+      "S2_layering_chain",
+      "N2_merchant_settlement",
+      "N3_supplier_payments",
+      "S4_circular_flow",
+      "N6_loan_repayments"
+     ]
+    },
+    {
+     "seed": 2006,
+     "precision": "timestamp",
+     "rows": 392,
+     "manifest_sha256": "f5375aae4c10a7b6369eff28c306d302ad89e83c2d8a67899409879e9fa1b1eb",
+     "truth_sha256": "629f8d6fcab6f1974cc2ed80081130b507369343765e130e972a12541e02fed3",
+     "families": [
+      "N5_family_remittance",
+      "N2_merchant_settlement",
+      "S1_collection_funnel_boundary",
+      "S1_collection_funnel",
+      "S1_collection_funnel",
+      "N8_reverse_chronology_chain",
+      "N4_reimbursement",
+      "N5_family_remittance"
+     ]
+    },
+    {
+     "seed": 2007,
+     "precision": "day",
+     "rows": 448,
+     "manifest_sha256": "914f10994a687b41e97335b45f9c5c8033de36fbb85d328cee1015e8d6cdc21b",
+     "truth_sha256": "86f84ec17f7121a95c572ad1590d5641014e2a372cf5ab778ed1a6a918f07622",
+     "families": [
+      "N4_reimbursement",
+      "S3_distribution_terminal",
+      "S4_circular_flow",
+      "S3_distribution_terminal",
+      "N1_payroll",
+      "N8_reverse_chronology_chain",
+      "S5_scatter_gather",
+      "N2_merchant_settlement"
+     ]
+    },
+    {
+     "seed": 2008,
+     "precision": "day",
+     "rows": 529,
+     "manifest_sha256": "3e4df5707718b9470f0114725122067c7113281ef8a18a788c993da3793c5acb",
+     "truth_sha256": "09969813444ce452cfaf65cdc49f825dbe15d21c12a38870c98060906003596f",
+     "families": [
+      "N3_supplier_payments",
+      "N1_payroll",
+      "N4_reimbursement",
+      "S1_collection_funnel",
+      "N5_family_remittance",
+      "S3_distribution_terminal",
+      "N7_treasury_sweep",
+      "S2_layering_chain"
+     ]
+    },
+    {
+     "seed": 2009,
+     "precision": "day",
+     "rows": 683,
+     "manifest_sha256": "c7b86cf45b48bf1e98a8a59a5a57e9663a81ddfb265cad4670b1601bbf7bb7d8",
+     "truth_sha256": "a74f4e8189637c533ec76d5dda4e02530853bad128aec812cc6b74e298ec3f14",
+     "families": [
+      "N2_merchant_settlement",
+      "N2_merchant_settlement",
+      "N7_treasury_sweep",
+      "N2_merchant_settlement",
+      "S1_collection_funnel_boundary",
+      "S4_circular_flow",
+      "N8_reverse_chronology_chain"
+     ]
+    },
+    {
+     "seed": 2010,
+     "precision": "timestamp",
+     "rows": 215,
+     "manifest_sha256": "dc2b6fd721c58d12c29fc7b31e0ecdd27bc3dd9794a52b73b2d58d1859cbc055",
+     "truth_sha256": "981d36e83af7b6ac9dc84ca854b8f7fd77ebd09932464f55841e35aab5f7aae9",
+     "families": [
+      "N4_reimbursement",
+      "S1_collection_funnel",
+      "N4_reimbursement",
+      "S4_circular_flow",
+      "N8_reverse_chronology_chain",
+      "N4_reimbursement"
+     ]
+    },
+    {
+     "seed": 2011,
+     "precision": "timestamp",
+     "rows": 345,
+     "manifest_sha256": "7025b0101acb56e4eb8f2494304910a1ac7e143940941493f230b806e3dbd966",
+     "truth_sha256": "261c6d7b9cf4242fdbb972ed45ffdfe48b30fef4e2a1a647ac0c32d5d8dc1c4b",
+     "families": [
+      "H_same_day_chain",
+      "N6_loan_repayments",
+      "S4_circular_flow",
+      "N8_reverse_chronology_chain",
+      "N1_payroll",
+      "N2_merchant_settlement",
+      "N5_family_remittance",
+      "S1_collection_funnel"
+     ]
+    },
+    {
+     "seed": 2012,
+     "precision": "day",
+     "rows": 295,
+     "manifest_sha256": "fa84df436ab8c52df360ced97d7c0264336e8fad94c201124bf7c07cb9669f76",
+     "truth_sha256": "b8407282736c0c1845963a711e7a9a571e4e65e8cd0912909662ce89d8398f7f",
+     "families": [
+      "N1_payroll",
+      "N8_reverse_chronology_chain",
+      "S2_layering_chain",
+      "N6_loan_repayments",
+      "N6_loan_repayments",
+      "S4_circular_flow",
+      "N5_family_remittance"
+     ]
+    },
+    {
+     "seed": 2013,
+     "precision": "timestamp",
+     "rows": 322,
+     "manifest_sha256": "37e28044bd7d00a07e43ada0ff64ad135778367890dca62e60d138d3ca819bb6",
+     "truth_sha256": "86b8eb25850e6274f2bb0904d9350dc160158a57468445c71bef4d55ec565126",
+     "families": [
+      "S1_collection_funnel",
+      "N7_treasury_sweep",
+      "N8_reverse_chronology_chain",
+      "N6_loan_repayments",
+      "S5_scatter_gather"
+     ]
+    },
+    {
+     "seed": 2014,
+     "precision": "day",
+     "rows": 623,
+     "manifest_sha256": "bd6232c5a51062e513cdfc05e681174e33be7fdee67a2d91dfa6c90bcc2b350e",
+     "truth_sha256": "a1b087755b15886072ff790360a7e35d48fe33be2a07e77c60005e6a05961d1d",
+     "families": [
+      "S3_coordinated_distribution",
+      "N6_loan_repayments",
+      "N7_treasury_sweep",
+      "N7_treasury_sweep",
+      "S1_collection_funnel",
+      "N7_treasury_sweep"
+     ]
+    },
+    {
+     "seed": 2015,
+     "precision": "timestamp",
+     "rows": 485,
+     "manifest_sha256": "5788133d5917137ac6f3bad3d4f5c11d8bc4b8d53f45e22e0091d218bd7327a2",
+     "truth_sha256": "4b39240f6ba709d306099230474df98313fbe4234b35f5595e5a2da8fe2b2016",
+     "families": [
+      "N2_merchant_settlement",
+      "S3_distribution_terminal",
+      "S3_distribution_terminal",
+      "N3_supplier_payments",
+      "S1_collection_funnel_boundary",
+      "N3_supplier_payments",
+      "N8_reverse_chronology_chain",
+      "N8_reverse_chronology_chain"
+     ]
+    },
+    {
+     "seed": 2016,
+     "precision": "day",
+     "rows": 491,
+     "manifest_sha256": "bea8344799422b3b3e6a26e2a8cebf6024940e36964f65813de750ead35eceeb",
+     "truth_sha256": "d9955b14e39e3810d9553e0660b88a59627e43d038bb5eff5113906ff689ca1c",
+     "families": [
+      "N8_reverse_chronology_chain",
+      "N5_family_remittance",
+      "N3_supplier_payments",
+      "S1_collection_funnel_boundary",
+      "S2_layering_chain",
+      "N2_merchant_settlement"
+     ]
+    },
+    {
+     "seed": 2017,
+     "precision": "day",
+     "rows": 635,
+     "manifest_sha256": "2c763eaaa94ad9cfd4cdd1776fc0f7f01cbb520a4f86c8b62be2af5628387449",
+     "truth_sha256": "6eb884feca78553bac7a149703c563e31747129ddff788343fcc2b40a6f95252",
+     "families": [
+      "N3_supplier_payments",
+      "N8_reverse_chronology_chain",
+      "N7_treasury_sweep",
+      "S5_scatter_gather",
+      "S1_collection_funnel",
+      "S4_circular_flow",
+      "N3_supplier_payments",
+      "N2_merchant_settlement"
+     ]
+    },
+    {
+     "seed": 2018,
+     "precision": "day",
+     "rows": 409,
+     "manifest_sha256": "9c6801591a80b8af4d89660fbbb1ef55b4d0641c15500caf725a91243e5feb49",
+     "truth_sha256": "a65784a867cba777428426bcbedab21920d374de1c3beea228e5d1eaa0da461e",
+     "families": [
+      "H_same_day_chain",
+      "S3_coordinated_distribution",
+      "N6_loan_repayments",
+      "N2_merchant_settlement",
+      "N1_payroll",
+      "N1_payroll",
+      "N1_payroll"
+     ]
+    },
+    {
+     "seed": 2019,
+     "precision": "day",
+     "rows": 338,
+     "manifest_sha256": "0c3dfe1a448bd303b4f6e1e6cacce1a0d8a7c2d1a0536c5fc5e96772bf29923e",
+     "truth_sha256": "872d6e7d3458e41f2fc9b8afcfaa93f6c72dc4e1f86fef048a26ae889f8578ff",
+     "families": [
+      "N5_family_remittance",
+      "H_same_day_chain",
+      "S1_collection_funnel",
+      "S5_scatter_gather",
+      "N2_merchant_settlement",
+      "N1_payroll",
+      "S5_scatter_gather"
+     ]
+    }
+   ]
+  },
+  "holdout": {
+   "seeds": [
+    3000,
+    3029
+   ],
+   "datasets": 30,
+   "split_sha256": "a68ac27f63d11fbeccbc09ded6f857e01b866d467986bad41199e63010f319cd",
+   "precision_mix": {
+    "day": 18,
+    "timestamp": 12
+   },
+   "manifest": [
+    {
+     "seed": 3000,
+     "precision": "timestamp",
+     "rows": 426,
+     "manifest_sha256": "874a156d4c23179bcafd67d0427b656c50611eb7f61ee6752bb98f91be820af3",
+     "truth_sha256": "5d77a2049376d796d26a37e9c489d5e457b89fce8bd55e09d09e2a549b872b44",
+     "families": [
+      "N1_payroll",
+      "S3_coordinated_distribution",
+      "N7_treasury_sweep",
+      "N2_merchant_settlement",
+      "S4_circular_flow",
+      "N4_reimbursement",
+      "S3_coordinated_distribution"
+     ]
+    },
+    {
+     "seed": 3001,
+     "precision": "day",
+     "rows": 499,
+     "manifest_sha256": "10b5efca24994d6eedfc338f5c2c58c1110a6a9a2dcad1a9d9841b76846fd36e",
+     "truth_sha256": "094a06c247ba15c7cb0da6a7b3489bdf3bd56b0cbaf82fa0a1ad875ad6c7b38e",
+     "families": [
+      "N6_loan_repayments",
+      "N8_reverse_chronology_chain",
+      "S3_coordinated_distribution",
+      "S1_collection_funnel",
+      "N2_merchant_settlement",
+      "N8_reverse_chronology_chain",
+      "N2_merchant_settlement"
+     ]
+    },
+    {
+     "seed": 3002,
+     "precision": "timestamp",
+     "rows": 477,
+     "manifest_sha256": "ff65e4ac744e83cb0a4ec2a713cfd64a47dd3c08f8f5bbd1eff3e63e0685dd1f",
+     "truth_sha256": "4f1a09be543eff039062536a068b69aad8e924fe195a473bff6fed856e67d361",
+     "families": [
+      "S5_scatter_gather",
+      "S5_scatter_gather",
+      "N8_reverse_chronology_chain",
+      "N1_payroll",
+      "N2_merchant_settlement"
+     ]
+    },
+    {
+     "seed": 3003,
+     "precision": "timestamp",
+     "rows": 560,
+     "manifest_sha256": "d6b3d64cb982dd572ea048692fa0b8e6b4dd8f3c034ba424c9d6b6d30ed8122e",
+     "truth_sha256": "7ec612e22fae257df89abb4b4e436cb303662e05f6d86b8b5d1e617f5cb6c959",
+     "families": [
+      "N2_merchant_settlement",
+      "N7_treasury_sweep",
+      "S3_coordinated_distribution",
+      "N7_treasury_sweep",
+      "S3_distribution_terminal",
+      "S1_collection_funnel",
+      "S5_scatter_gather"
+     ]
+    },
+    {
+     "seed": 3004,
+     "precision": "timestamp",
+     "rows": 664,
+     "manifest_sha256": "dcf06b2df8abca2d77be307314fdc4fbcfb7bc8acb337c11ffb1d6039725f213",
+     "truth_sha256": "776b00d03b05c89e083b6927466e7c3bf218d24d1d5f220681abcabe34a47320",
+     "families": [
+      "S3_coordinated_distribution",
+      "N2_merchant_settlement",
+      "N5_family_remittance",
+      "N2_merchant_settlement",
+      "S1_collection_funnel",
+      "N2_merchant_settlement",
+      "N6_loan_repayments",
+      "S4_circular_flow"
+     ]
+    },
+    {
+     "seed": 3005,
+     "precision": "day",
+     "rows": 391,
+     "manifest_sha256": "a2c6386f680a59378bd73da3fc6aab4aee76c3fcf82d09e642d0535972820602",
+     "truth_sha256": "5dfe65499fbf2eb8d937550772c0abad2f49f1856ef03d347e945a278b46d19b",
+     "families": [
+      "S2_layering_chain",
+      "N2_merchant_settlement",
+      "S4_circular_flow",
+      "N6_loan_repayments",
+      "N6_loan_repayments"
+     ]
+    },
+    {
+     "seed": 3006,
+     "precision": "day",
+     "rows": 400,
+     "manifest_sha256": "591a172791b4ec84e1885dda2fabfdb55e73538d756dad0b10fb48f6655a9ed8",
+     "truth_sha256": "df14b18bbf51328dff32b672d48d6f45dbc5ce52f67465983a84e833db2d8169",
+     "families": [
+      "S1_collection_funnel_boundary",
+      "N6_loan_repayments",
+      "N1_payroll",
+      "S1_collection_funnel_boundary",
+      "S5_scatter_gather",
+      "N4_reimbursement",
+      "N4_reimbursement",
+      "N2_merchant_settlement"
+     ]
+    },
+    {
+     "seed": 3007,
+     "precision": "day",
+     "rows": 230,
+     "manifest_sha256": "cfa1fd3290397b33f6abf7f7105f4d5709cc92fde3aed2a6e65156525a2a76bc",
+     "truth_sha256": "3b28465379625fd5d2a887c2d31874c7f0818af3ca08b6d99c06cb41847a9a0f",
+     "families": [
+      "S3_coordinated_distribution",
+      "N6_loan_repayments",
+      "N8_reverse_chronology_chain",
+      "S1_collection_funnel",
+      "S1_collection_funnel_boundary",
+      "N5_family_remittance",
+      "S3_coordinated_distribution"
+     ]
+    },
+    {
+     "seed": 3008,
+     "precision": "day",
+     "rows": 384,
+     "manifest_sha256": "af0ffa7abdf4897ececafaac9c6571d5e1b2377470995624b61ec3a686cd120f",
+     "truth_sha256": "b606603b3b24a0f0be646f3d9d8f3eb1d2edb30111ac129f97a972d18475a9d3",
+     "families": [
+      "N8_reverse_chronology_chain",
+      "N3_supplier_payments",
+      "N2_merchant_settlement",
+      "N3_supplier_payments",
+      "S5_scatter_gather",
+      "S4_circular_flow",
+      "S4_circular_flow"
+     ]
+    },
+    {
+     "seed": 3009,
+     "precision": "day",
+     "rows": 305,
+     "manifest_sha256": "7f7cf4f1d7117b1212c81311a0285fe7f3fd409523d2e6cca12047819a04505e",
+     "truth_sha256": "04f17acaba52c535b86697b68458f25ffaa1f2ac983886958764bed61ddcd420",
+     "families": [
+      "S4_circular_flow",
+      "S1_collection_funnel",
+      "N6_loan_repayments",
+      "S1_collection_funnel",
+      "N5_family_remittance",
+      "N6_loan_repayments",
+      "N3_supplier_payments"
+     ]
+    },
+    {
+     "seed": 3010,
+     "precision": "timestamp",
+     "rows": 335,
+     "manifest_sha256": "b002bd86b64f46e9eafc0f7c349cc7d12ca867b00ef207cf0253edc1d8d52831",
+     "truth_sha256": "28a90cc519b9e6d22a14960cfddb48c0b85796565dc84f6973039a87cb4ad288",
+     "families": [
+      "S2_layering_chain",
+      "N1_payroll",
+      "S3_coordinated_distribution",
+      "N1_payroll",
+      "S5_scatter_gather",
+      "S2_layering_chain",
+      "N2_merchant_settlement"
+     ]
+    },
+    {
+     "seed": 3011,
+     "precision": "timestamp",
+     "rows": 573,
+     "manifest_sha256": "f3df4e858f2a3e34a4a313abf6673d614df112f09303a84b9cb2075b31526644",
+     "truth_sha256": "6c34805615246fd20e9a97d2b7941c830645d80c347dfc3a69368ad17b0f329e",
+     "families": [
+      "N7_treasury_sweep",
+      "S4_circular_flow",
+      "N1_payroll",
+      "N6_loan_repayments",
+      "S1_collection_funnel",
+      "S4_circular_flow",
+      "N2_merchant_settlement"
+     ]
+    },
+    {
+     "seed": 3012,
+     "precision": "day",
+     "rows": 599,
+     "manifest_sha256": "93d13dca69578bd8e4019898f0ab40b5bce515c3cc5aa3b8b4ae8d47f209be67",
+     "truth_sha256": "f79a01dfba8d6427432afc6182ca797ba84dcd7559bd85279f5aff483ac0d9fa",
+     "families": [
+      "N7_treasury_sweep",
+      "N5_family_remittance",
+      "S2_layering_chain",
+      "N7_treasury_sweep",
+      "S3_coordinated_distribution",
+      "N8_reverse_chronology_chain",
+      "N2_merchant_settlement",
+      "S2_layering_chain"
+     ]
+    },
+    {
+     "seed": 3013,
+     "precision": "timestamp",
+     "rows": 537,
+     "manifest_sha256": "26d2092fefa608391c1fce382ea764db80710c93c900e22611515e04a794d2d7",
+     "truth_sha256": "3cc2222cf7c6c462da479426ef2dcec21b1dd0bec20d49f893ece741c0feb7a8",
+     "families": [
+      "N6_loan_repayments",
+      "S1_collection_funnel_boundary",
+      "N6_loan_repayments",
+      "S1_collection_funnel",
+      "N7_treasury_sweep",
+      "S2_layering_chain",
+      "S1_collection_funnel",
+      "N2_merchant_settlement"
+     ]
+    },
+    {
+     "seed": 3014,
+     "precision": "timestamp",
+     "rows": 334,
+     "manifest_sha256": "2cdaaf9225a56386fe1625ecc615aa74fdbf9ceffca9cb4d463786ad9eb96e51",
+     "truth_sha256": "0a7327fbc22a4353b6690aca2e307c2ccc516c6a0aadf9a84695e26a36337f6b",
+     "families": [
+      "S1_collection_funnel_boundary",
+      "N6_loan_repayments",
+      "N1_payroll",
+      "N1_payroll",
+      "S3_distribution_terminal",
+      "N5_family_remittance",
+      "S1_collection_funnel"
+     ]
+    },
+    {
+     "seed": 3015,
+     "precision": "timestamp",
+     "rows": 449,
+     "manifest_sha256": "df8fefff06639b95137f75e4c4e1c5c3b354e1972137a0835f046439859091c9",
+     "truth_sha256": "4ece83d87174595e1fce6ccefbf3743b1dd0b562816dab06253ce97699a30af7",
+     "families": [
+      "N5_family_remittance",
+      "S5_scatter_gather",
+      "N5_family_remittance",
+      "S4_circular_flow",
+      "N6_loan_repayments",
+      "N6_loan_repayments",
+      "N5_family_remittance",
+      "S5_scatter_gather",
+      "S5_scatter_gather"
+     ]
+    },
+    {
+     "seed": 3016,
+     "precision": "day",
+     "rows": 437,
+     "manifest_sha256": "9fa7311c2588420f224e2a600a0804a2de707b880c71446a3fc76b3cd61b3ff2",
+     "truth_sha256": "ba644fa398fee25d365416f44089d4e49f42dba4af1522e7d9a393f9ae735160",
+     "families": [
+      "N4_reimbursement",
+      "N4_reimbursement",
+      "S1_collection_funnel",
+      "S4_circular_flow",
+      "N7_treasury_sweep",
+      "S3_coordinated_distribution",
+      "S3_coordinated_distribution",
+      "N1_payroll",
+      "N5_family_remittance"
+     ]
+    },
+    {
+     "seed": 3017,
+     "precision": "day",
+     "rows": 575,
+     "manifest_sha256": "6429f7de18e2e389e26f4c5a8f0e496f5734597cf1963bbc3c919b258f1cf044",
+     "truth_sha256": "5e92d99147a7e4b4ba49fe886280d555503489f653f2227d9a3830a1224adaf2",
+     "families": [
+      "N7_treasury_sweep",
+      "N6_loan_repayments",
+      "N3_supplier_payments",
+      "N2_merchant_settlement",
+      "H_same_day_chain",
+      "S1_collection_funnel",
+      "N4_reimbursement",
+      "S1_collection_funnel"
+     ]
+    },
+    {
+     "seed": 3018,
+     "precision": "timestamp",
+     "rows": 420,
+     "manifest_sha256": "8c62d34cb02c38023646eed83fccd00ee1aab721692525472dad29be9d9c1eb6",
+     "truth_sha256": "432c76209c6bb62f01798ae30704755872ab4e9babc7e2450f59ec57085d20fc",
+     "families": [
+      "N6_loan_repayments",
+      "S1_collection_funnel_boundary",
+      "N1_payroll",
+      "N8_reverse_chronology_chain",
+      "N3_supplier_payments",
+      "H_same_day_chain"
+     ]
+    },
+    {
+     "seed": 3019,
+     "precision": "day",
+     "rows": 209,
+     "manifest_sha256": "6c75370fca906de3a5ed7d2ae197f3d7c13dac609d2268fd99c11786e0cb93c5",
+     "truth_sha256": "0164efa0fb97dddbbead84f4d3361ffca882818902b1520b849f4930cc2834e6",
+     "families": [
+      "S3_distribution_terminal",
+      "N8_reverse_chronology_chain",
+      "N4_reimbursement",
+      "N8_reverse_chronology_chain",
+      "N1_payroll",
+      "N4_reimbursement",
+      "S3_coordinated_distribution"
+     ]
+    },
+    {
+     "seed": 3020,
+     "precision": "day",
+     "rows": 259,
+     "manifest_sha256": "1024e06619d9cc2623ee3724afad41ea48fe6ac7477ffbe363e95bf30b20dcf7",
+     "truth_sha256": "7036091661f72a5c17b85fee8e65fbec2d35fac3d53e038c10196ce7dfe5c997",
+     "families": [
+      "N8_reverse_chronology_chain",
+      "N8_reverse_chronology_chain",
+      "N4_reimbursement",
+      "H_same_day_chain",
+      "S3_coordinated_distribution"
+     ]
+    },
+    {
+     "seed": 3021,
+     "precision": "day",
+     "rows": 392,
+     "manifest_sha256": "4dfc4f619f2f01dcba6067d2865e22b785000aa073e6fac811bdbc7c2222b8dd",
+     "truth_sha256": "9c7aad1d0d06f43fc518c825f4d935938047b2d262d16e91567a4438d623260b",
+     "families": [
+      "S1_collection_funnel",
+      "N8_reverse_chronology_chain",
+      "S3_distribution_terminal",
+      "N2_merchant_settlement",
+      "S5_scatter_gather",
+      "N8_reverse_chronology_chain",
+      "N1_payroll",
+      "S3_coordinated_distribution"
+     ]
+    },
+    {
+     "seed": 3022,
+     "precision": "timestamp",
+     "rows": 534,
+     "manifest_sha256": "bf29feb81179fac41d18aba9545654bcf90036ab3f6ffd1f0d29e34d746e3364",
+     "truth_sha256": "fdc7a0f11d40c856a301f4cad761d4488b561b1ed31ab4ac2c3b1d031e590580",
+     "families": [
+      "N6_loan_repayments",
+      "N5_family_remittance",
+      "S3_distribution_terminal",
+      "N7_treasury_sweep",
+      "N3_supplier_payments",
+      "S3_coordinated_distribution",
+      "N1_payroll",
+      "S3_distribution_terminal"
+     ]
+    },
+    {
+     "seed": 3023,
+     "precision": "day",
+     "rows": 485,
+     "manifest_sha256": "e63061a92868cca00d30e5ab233e7e069228aee5e4107d45be8672b2d849fc91",
+     "truth_sha256": "5d94e281ffe8676a84532dde5d46d41a30b7df4b0ec8b6ccfcc66ed9290f7f59",
+     "families": [
+      "N8_reverse_chronology_chain",
+      "S3_distribution_terminal",
+      "N6_loan_repayments",
+      "S2_layering_chain",
+      "N1_payroll",
+      "N7_treasury_sweep",
+      "N4_reimbursement"
+     ]
+    },
+    {
+     "seed": 3024,
+     "precision": "day",
+     "rows": 315,
+     "manifest_sha256": "fff6422b5a85b908af71e99ee468e9daf8cc2b76ffd647fc17b637144adc10de",
+     "truth_sha256": "39f1d0741260979f95066d23b3358f9712ccf10c190a47f8501d1c40220e4794",
+     "families": [
+      "N8_reverse_chronology_chain",
+      "H_same_day_chain",
+      "N4_reimbursement",
+      "S4_circular_flow",
+      "N5_family_remittance",
+      "S2_layering_chain",
+      "N4_reimbursement"
+     ]
+    },
+    {
+     "seed": 3025,
+     "precision": "day",
+     "rows": 434,
+     "manifest_sha256": "5930d7ffb26325f5ee87d36a717aa65a6745245bf0060883e377bae1c0122c23",
+     "truth_sha256": "b538dabca4b9cbee9724d64ab79b72bee4b27fcdf7a19eaa397869bbdadcc6a4",
+     "families": [
+      "N2_merchant_settlement",
+      "S1_collection_funnel_boundary",
+      "S4_circular_flow",
+      "N4_reimbursement",
+      "S2_layering_chain",
+      "N7_treasury_sweep",
+      "N1_payroll",
+      "N6_loan_repayments"
+     ]
+    },
+    {
+     "seed": 3026,
+     "precision": "day",
+     "rows": 477,
+     "manifest_sha256": "e46a65f340525ad43411858fada7bd0c6d2abe8daa76d88a643945a804d85785",
+     "truth_sha256": "b1be1408ccf6bd754b843d2f2a76a105e9b6ff020315195dee367ac25c2b41a7",
+     "families": [
+      "N8_reverse_chronology_chain",
+      "N6_loan_repayments",
+      "N8_reverse_chronology_chain",
+      "N4_reimbursement",
+      "N2_merchant_settlement",
+      "S1_collection_funnel_boundary",
+      "S3_coordinated_distribution",
+      "S4_circular_flow"
+     ]
+    },
+    {
+     "seed": 3027,
+     "precision": "timestamp",
+     "rows": 436,
+     "manifest_sha256": "b88286cf48ea3521be04e9fec300fb75e9af85ab0d7b9622940942f45479ffd4",
+     "truth_sha256": "570d54a0fed269457c605862b0fe33016e9c83b72e083513e2757dcdc45ca12c",
+     "families": [
+      "N3_supplier_payments",
+      "S5_scatter_gather",
+      "N4_reimbursement",
+      "N8_reverse_chronology_chain",
+      "S1_collection_funnel",
+      "S3_coordinated_distribution",
+      "N8_reverse_chronology_chain",
+      "S1_collection_funnel",
+      "N2_merchant_settlement"
+     ]
+    },
+    {
+     "seed": 3028,
+     "precision": "day",
+     "rows": 344,
+     "manifest_sha256": "700f6e44c2e19f7ca37064d45f77a51a27c01da0622c04975520c855f37f1423",
+     "truth_sha256": "15125df849a286192142e896780c88311e5f669f8d8059df368afef1dbb715dd",
+     "families": [
+      "N1_payroll",
+      "N8_reverse_chronology_chain",
+      "S2_layering_chain",
+      "S1_collection_funnel",
+      "S2_layering_chain",
+      "N4_reimbursement",
+      "N2_merchant_settlement",
+      "H_same_day_chain"
+     ]
+    },
+    {
+     "seed": 3029,
+     "precision": "day",
+     "rows": 266,
+     "manifest_sha256": "807891d96935d06d10bdb164502ab241048798e729112590f4c0bc374909add8",
+     "truth_sha256": "49da9e1d761f62c2c520f25e5547a63e77b2bcd2ba690fad69610f13f21ebf90",
+     "families": [
+      "N4_reimbursement",
+      "N4_reimbursement",
+      "N6_loan_repayments",
+      "N3_supplier_payments",
+      "S3_distribution_terminal",
+      "S5_scatter_gather",
+      "S2_layering_chain",
+      "N1_payroll"
+     ]
+    }
+   ]
+  }
+ },
+ "methods": [
+  {
+   "id": "nexora_v2",
+   "label": "NEXORA v2",
+   "description": "Full system: four structural detectors, temporal flow, peer statistics, risk-policy-v2."
+  },
+  {
+   "id": "nexora_v1",
+   "label": "NEXORA v1",
+   "description": "Configuration shipped before this benchmark: funnel + chain, temporal, risk-policy-v1."
+  },
+  {
+   "id": "B4_structure_temporal",
+   "label": "B4 Structure + temporal",
+   "description": "NEXORA v2 without the peer-statistics family."
+  },
+  {
+   "id": "B3_structure_only",
+   "label": "B3 Structure only",
+   "description": "Every structural formation alerts, ranked by structural strength."
+  },
+  {
+   "id": "B1_rules",
+   "label": "B1 Monitoring rules",
+   "description": "Per-account fan-in/out velocity, large amount and pass-through rules."
+  },
+  {
+   "id": "B0_volume",
+   "label": "B0 Turnover ranking",
+   "description": "Accounts ranked by turnover; flags the same number of items as NEXORA v2."
+  },
+  {
+   "id": "B2_pagerank",
+   "label": "B2 PageRank",
+   "description": "Amount-weighted PageRank; flags the same number of items as NEXORA v2."
+  }
+ ],
+ "results": {
+  "dev": {
+   "nexora_v2": {
+    "datasets": 30,
+    "scenario": {
+     "suspicious": 96,
+     "legitimate": 120,
+     "tp": 85,
+     "fp": 56,
+     "fn": 11,
+     "tn": 64,
+     "precision": 0.6028,
+     "recall": 0.8854,
+     "f1": 0.7173,
+     "fpr": 0.4667,
+     "fnr": 0.1146,
+     "surfaced_recall": 0.9375,
+     "high_band_recall": 0.7188,
+     "high_band_fpr": 0.0583
+    },
+    "alerts": {
+     "flagged": 292,
+     "per_dataset": 9.73,
+     "precision": 0.3973,
+     "unmatched": 29
+    },
+    "queue": {
+     "p_at_10": 0.448,
+     "p_at_5": 0.5333,
+     "recall_at_10": 0.875,
+     "recall_at_5": 0.75
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 7,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "N1_payroll": {
+      "total": 13,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N2_merchant_settlement": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "N3_supplier_payments": {
+      "total": 17,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "N4_reimbursement": {
+      "total": 16,
+      "flagged": 2,
+      "surfaced": 2
+     },
+     "N5_family_remittance": {
+      "total": 16,
+      "flagged": 14,
+      "surfaced": 14
+     },
+     "N6_loan_repayments": {
+      "total": 18,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N7_treasury_sweep": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 10,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 15,
+      "flagged": 11,
+      "surfaced": 11
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 5,
+      "flagged": 0,
+      "surfaced": 5
+     },
+     "S2_layering_chain": {
+      "total": 14,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "S3_coordinated_distribution": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "S3_distribution_terminal": {
+      "total": 7,
+      "flagged": 7,
+      "surfaced": 7
+     },
+     "S4_circular_flow": {
+      "total": 15,
+      "flagged": 15,
+      "surfaced": 15
+     },
+     "S5_scatter_gather": {
+      "total": 20,
+      "flagged": 20,
+      "surfaced": 20
+     }
+    },
+    "latency_ms": {
+     "median": 50.7,
+     "p95": 135.2,
+     "max": 213.5
+    }
+   },
+   "nexora_v1": {
+    "datasets": 30,
+    "scenario": {
+     "suspicious": 96,
+     "legitimate": 120,
+     "tp": 69,
+     "fp": 60,
+     "fn": 27,
+     "tn": 60,
+     "precision": 0.5349,
+     "recall": 0.7188,
+     "f1": 0.6134,
+     "fpr": 0.5,
+     "fnr": 0.2812,
+     "surfaced_recall": 0.7708,
+     "high_band_recall": 0.5,
+     "high_band_fpr": 0.4333
+    },
+    "alerts": {
+     "flagged": 212,
+     "per_dataset": 7.07,
+     "precision": 0.3915,
+     "unmatched": 28
+    },
+    "queue": {
+     "p_at_10": 0.4265,
+     "p_at_5": 0.415,
+     "recall_at_10": 0.7167,
+     "recall_at_5": 0.5139
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 7,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "N1_payroll": {
+      "total": 13,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N2_merchant_settlement": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "N3_supplier_payments": {
+      "total": 17,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "N4_reimbursement": {
+      "total": 16,
+      "flagged": 2,
+      "surfaced": 2
+     },
+     "N5_family_remittance": {
+      "total": 16,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N6_loan_repayments": {
+      "total": 18,
+      "flagged": 18,
+      "surfaced": 18
+     },
+     "N7_treasury_sweep": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 10,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 15,
+      "flagged": 11,
+      "surfaced": 11
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 5,
+      "flagged": 0,
+      "surfaced": 5
+     },
+     "S2_layering_chain": {
+      "total": 14,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "S3_coordinated_distribution": {
+      "total": 13,
+      "flagged": 9,
+      "surfaced": 9
+     },
+     "S3_distribution_terminal": {
+      "total": 7,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S4_circular_flow": {
+      "total": 15,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "S5_scatter_gather": {
+      "total": 20,
+      "flagged": 20,
+      "surfaced": 20
+     }
+    },
+    "latency_ms": {
+     "median": 36.2,
+     "p95": 63.4,
+     "max": 133.7
+    }
+   },
+   "B4_structure_temporal": {
+    "datasets": 30,
+    "scenario": {
+     "suspicious": 96,
+     "legitimate": 120,
+     "tp": 85,
+     "fp": 50,
+     "fn": 11,
+     "tn": 70,
+     "precision": 0.6296,
+     "recall": 0.8854,
+     "f1": 0.7359,
+     "fpr": 0.4167,
+     "fnr": 0.1146,
+     "surfaced_recall": 0.9375,
+     "high_band_recall": 0.7396,
+     "high_band_fpr": 0.3083
+    },
+    "alerts": {
+     "flagged": 261,
+     "per_dataset": 8.7,
+     "precision": 0.3678,
+     "unmatched": 29
+    },
+    "queue": {
+     "p_at_10": 0.4385,
+     "p_at_5": 0.4717,
+     "recall_at_10": 0.9,
+     "recall_at_5": 0.6917
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 7,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "N1_payroll": {
+      "total": 13,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N2_merchant_settlement": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "N3_supplier_payments": {
+      "total": 17,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "N4_reimbursement": {
+      "total": 16,
+      "flagged": 2,
+      "surfaced": 2
+     },
+     "N5_family_remittance": {
+      "total": 16,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N6_loan_repayments": {
+      "total": 18,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N7_treasury_sweep": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 10,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 15,
+      "flagged": 11,
+      "surfaced": 11
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 5,
+      "flagged": 0,
+      "surfaced": 5
+     },
+     "S2_layering_chain": {
+      "total": 14,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "S3_coordinated_distribution": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "S3_distribution_terminal": {
+      "total": 7,
+      "flagged": 7,
+      "surfaced": 7
+     },
+     "S4_circular_flow": {
+      "total": 15,
+      "flagged": 15,
+      "surfaced": 15
+     },
+     "S5_scatter_gather": {
+      "total": 20,
+      "flagged": 20,
+      "surfaced": 20
+     }
+    },
+    "latency_ms": {
+     "median": 52.6,
+     "p95": 104.8,
+     "max": 171.8
+    }
+   },
+   "B3_structure_only": {
+    "datasets": 30,
+    "scenario": {
+     "suspicious": 96,
+     "legitimate": 120,
+     "tp": 96,
+     "fp": 92,
+     "fn": 0,
+     "tn": 28,
+     "precision": 0.5106,
+     "recall": 1.0,
+     "f1": 0.676,
+     "fpr": 0.7667,
+     "fnr": 0.0,
+     "surfaced_recall": 1.0,
+     "high_band_recall": null,
+     "high_band_fpr": null
+    },
+    "alerts": {
+     "flagged": 1817,
+     "per_dataset": 60.57,
+     "precision": 0.0743,
+     "unmatched": 1482
+    },
+    "queue": {
+     "p_at_10": 0.19,
+     "p_at_5": 0.1667,
+     "recall_at_10": 0.4556,
+     "recall_at_5": 0.2139
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 7,
+      "flagged": 7,
+      "surfaced": 7
+     },
+     "N1_payroll": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "N2_merchant_settlement": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "N3_supplier_payments": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "N4_reimbursement": {
+      "total": 16,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "N5_family_remittance": {
+      "total": 16,
+      "flagged": 16,
+      "surfaced": 16
+     },
+     "N6_loan_repayments": {
+      "total": 18,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N7_treasury_sweep": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 10,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "S1_collection_funnel": {
+      "total": 15,
+      "flagged": 15,
+      "surfaced": 15
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 5,
+      "flagged": 5,
+      "surfaced": 5
+     },
+     "S2_layering_chain": {
+      "total": 14,
+      "flagged": 14,
+      "surfaced": 14
+     },
+     "S3_coordinated_distribution": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "S3_distribution_terminal": {
+      "total": 7,
+      "flagged": 7,
+      "surfaced": 7
+     },
+     "S4_circular_flow": {
+      "total": 15,
+      "flagged": 15,
+      "surfaced": 15
+     },
+     "S5_scatter_gather": {
+      "total": 20,
+      "flagged": 20,
+      "surfaced": 20
+     }
+    },
+    "latency_ms": {
+     "median": 54.9,
+     "p95": 110.8,
+     "max": 177.1
+    }
+   },
+   "B1_rules": {
+    "datasets": 30,
+    "scenario": {
+     "suspicious": 96,
+     "legitimate": 120,
+     "tp": 90,
+     "fp": 105,
+     "fn": 6,
+     "tn": 15,
+     "precision": 0.4615,
+     "recall": 0.9375,
+     "f1": 0.6185,
+     "fpr": 0.875,
+     "fnr": 0.0625,
+     "surfaced_recall": 0.9375,
+     "high_band_recall": null,
+     "high_band_fpr": null
+    },
+    "alerts": {
+     "flagged": 1379,
+     "per_dataset": 45.97,
+     "precision": 0.2893,
+     "unmatched": 774
+    },
+    "queue": {
+     "p_at_10": 0.4133,
+     "p_at_5": 0.2933,
+     "recall_at_10": 0.6639,
+     "recall_at_5": 0.3861
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 7,
+      "flagged": 7,
+      "surfaced": 7
+     },
+     "N1_payroll": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "N2_merchant_settlement": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "N3_supplier_payments": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "N4_reimbursement": {
+      "total": 16,
+      "flagged": 11,
+      "surfaced": 11
+     },
+     "N5_family_remittance": {
+      "total": 16,
+      "flagged": 16,
+      "surfaced": 16
+     },
+     "N6_loan_repayments": {
+      "total": 18,
+      "flagged": 18,
+      "surfaced": 18
+     },
+     "N7_treasury_sweep": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 10,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 15,
+      "flagged": 11,
+      "surfaced": 11
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 5,
+      "flagged": 5,
+      "surfaced": 5
+     },
+     "S2_layering_chain": {
+      "total": 14,
+      "flagged": 12,
+      "surfaced": 12
+     },
+     "S3_coordinated_distribution": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "S3_distribution_terminal": {
+      "total": 7,
+      "flagged": 7,
+      "surfaced": 7
+     },
+     "S4_circular_flow": {
+      "total": 15,
+      "flagged": 15,
+      "surfaced": 15
+     },
+     "S5_scatter_gather": {
+      "total": 20,
+      "flagged": 20,
+      "surfaced": 20
+     }
+    },
+    "latency_ms": {
+     "median": 1.6,
+     "p95": 2.1,
+     "max": 2.8
+    }
+   },
+   "B0_volume": {
+    "datasets": 30,
+    "scenario": {
+     "suspicious": 96,
+     "legitimate": 120,
+     "tp": 68,
+     "fp": 74,
+     "fn": 28,
+     "tn": 46,
+     "precision": 0.4789,
+     "recall": 0.7083,
+     "f1": 0.5714,
+     "fpr": 0.6167,
+     "fnr": 0.2917,
+     "surfaced_recall": 1.0,
+     "high_band_recall": null,
+     "high_band_fpr": null
+    },
+    "alerts": {
+     "flagged": 292,
+     "per_dataset": 9.73,
+     "precision": 0.4932,
+     "unmatched": 0
+    },
+    "queue": {
+     "p_at_10": 0.49,
+     "p_at_5": 0.3267,
+     "recall_at_10": 0.7194,
+     "recall_at_5": 0.3583
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 7,
+      "flagged": 2,
+      "surfaced": 7
+     },
+     "N1_payroll": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "N2_merchant_settlement": {
+      "total": 13,
+      "flagged": 2,
+      "surfaced": 13
+     },
+     "N3_supplier_payments": {
+      "total": 17,
+      "flagged": 15,
+      "surfaced": 17
+     },
+     "N4_reimbursement": {
+      "total": 16,
+      "flagged": 0,
+      "surfaced": 16
+     },
+     "N5_family_remittance": {
+      "total": 16,
+      "flagged": 8,
+      "surfaced": 16
+     },
+     "N6_loan_repayments": {
+      "total": 18,
+      "flagged": 18,
+      "surfaced": 18
+     },
+     "N7_treasury_sweep": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 10,
+      "flagged": 1,
+      "surfaced": 10
+     },
+     "S1_collection_funnel": {
+      "total": 15,
+      "flagged": 12,
+      "surfaced": 15
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 5,
+      "flagged": 3,
+      "surfaced": 5
+     },
+     "S2_layering_chain": {
+      "total": 14,
+      "flagged": 2,
+      "surfaced": 14
+     },
+     "S3_coordinated_distribution": {
+      "total": 13,
+      "flagged": 12,
+      "surfaced": 13
+     },
+     "S3_distribution_terminal": {
+      "total": 7,
+      "flagged": 6,
+      "surfaced": 7
+     },
+     "S4_circular_flow": {
+      "total": 15,
+      "flagged": 11,
+      "surfaced": 15
+     },
+     "S5_scatter_gather": {
+      "total": 20,
+      "flagged": 20,
+      "surfaced": 20
+     }
+    },
+    "latency_ms": {
+     "median": 3.4,
+     "p95": 4.7,
+     "max": 5.8
+    }
+   },
+   "B2_pagerank": {
+    "datasets": 30,
+    "scenario": {
+     "suspicious": 96,
+     "legitimate": 120,
+     "tp": 8,
+     "fp": 63,
+     "fn": 88,
+     "tn": 57,
+     "precision": 0.1127,
+     "recall": 0.0833,
+     "f1": 0.0958,
+     "fpr": 0.525,
+     "fnr": 0.9167,
+     "surfaced_recall": 1.0,
+     "high_band_recall": null,
+     "high_band_fpr": null
+    },
+    "alerts": {
+     "flagged": 292,
+     "per_dataset": 9.73,
+     "precision": 0.0411,
+     "unmatched": 173
+    },
+    "queue": {
+     "p_at_10": 0.0533,
+     "p_at_5": 0.0,
+     "recall_at_10": 0.0972,
+     "recall_at_5": 0.0
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 7,
+      "flagged": 0,
+      "surfaced": 7
+     },
+     "N1_payroll": {
+      "total": 13,
+      "flagged": 0,
+      "surfaced": 13
+     },
+     "N2_merchant_settlement": {
+      "total": 13,
+      "flagged": 11,
+      "surfaced": 13
+     },
+     "N3_supplier_payments": {
+      "total": 17,
+      "flagged": 9,
+      "surfaced": 17
+     },
+     "N4_reimbursement": {
+      "total": 16,
+      "flagged": 8,
+      "surfaced": 16
+     },
+     "N5_family_remittance": {
+      "total": 16,
+      "flagged": 0,
+      "surfaced": 16
+     },
+     "N6_loan_repayments": {
+      "total": 18,
+      "flagged": 18,
+      "surfaced": 18
+     },
+     "N7_treasury_sweep": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 10,
+      "flagged": 0,
+      "surfaced": 10
+     },
+     "S1_collection_funnel": {
+      "total": 15,
+      "flagged": 1,
+      "surfaced": 15
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 5,
+      "flagged": 0,
+      "surfaced": 5
+     },
+     "S2_layering_chain": {
+      "total": 14,
+      "flagged": 0,
+      "surfaced": 14
+     },
+     "S3_coordinated_distribution": {
+      "total": 13,
+      "flagged": 5,
+      "surfaced": 13
+     },
+     "S3_distribution_terminal": {
+      "total": 7,
+      "flagged": 0,
+      "surfaced": 7
+     },
+     "S4_circular_flow": {
+      "total": 15,
+      "flagged": 1,
+      "surfaced": 15
+     },
+     "S5_scatter_gather": {
+      "total": 20,
+      "flagged": 1,
+      "surfaced": 20
+     }
+    },
+    "latency_ms": {
+     "median": 29.1,
+     "p95": 40.0,
+     "max": 64.1
+    }
+   }
+  },
+  "validation": {
+   "nexora_v2": {
+    "datasets": 20,
+    "scenario": {
+     "suspicious": 56,
+     "legitimate": 85,
+     "tp": 43,
+     "fp": 36,
+     "fn": 13,
+     "tn": 49,
+     "precision": 0.5443,
+     "recall": 0.7679,
+     "f1": 0.637,
+     "fpr": 0.4235,
+     "fnr": 0.2321,
+     "surfaced_recall": 0.8571,
+     "high_band_recall": 0.625,
+     "high_band_fpr": 0.1059
+    },
+    "alerts": {
+     "flagged": 157,
+     "per_dataset": 7.85,
+     "precision": 0.3185,
+     "unmatched": 26
+    },
+    "queue": {
+     "p_at_10": 0.4183,
+     "p_at_5": 0.4917,
+     "recall_at_10": 0.8125,
+     "recall_at_5": 0.7
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 3,
+      "flagged": 2,
+      "surfaced": 2
+     },
+     "N1_payroll": {
+      "total": 11,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N2_merchant_settlement": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "N3_supplier_payments": {
+      "total": 9,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "N4_reimbursement": {
+      "total": 9,
+      "flagged": 1,
+      "surfaced": 1
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N6_loan_repayments": {
+      "total": 10,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N7_treasury_sweep": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 14,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 15,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 5,
+      "flagged": 0,
+      "surfaced": 5
+     },
+     "S2_layering_chain": {
+      "total": 10,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "S3_coordinated_distribution": {
+      "total": 4,
+      "flagged": 4,
+      "surfaced": 4
+     },
+     "S3_distribution_terminal": {
+      "total": 6,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "S4_circular_flow": {
+      "total": 7,
+      "flagged": 7,
+      "surfaced": 7
+     },
+     "S5_scatter_gather": {
+      "total": 6,
+      "flagged": 6,
+      "surfaced": 6
+     }
+    },
+    "latency_ms": {
+     "median": 55.2,
+     "p95": 145.9,
+     "max": 153.2
+    }
+   },
+   "nexora_v1": {
+    "datasets": 20,
+    "scenario": {
+     "suspicious": 56,
+     "legitimate": 85,
+     "tp": 33,
+     "fp": 38,
+     "fn": 23,
+     "tn": 47,
+     "precision": 0.4648,
+     "recall": 0.5893,
+     "f1": 0.5197,
+     "fpr": 0.4471,
+     "fnr": 0.4107,
+     "surfaced_recall": 0.6786,
+     "high_band_recall": 0.4286,
+     "high_band_fpr": 0.4353
+    },
+    "alerts": {
+     "flagged": 117,
+     "per_dataset": 5.85,
+     "precision": 0.3333,
+     "unmatched": 22
+    },
+    "queue": {
+     "p_at_10": 0.4332,
+     "p_at_5": 0.4017,
+     "recall_at_10": 0.6458,
+     "recall_at_5": 0.5
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 3,
+      "flagged": 2,
+      "surfaced": 2
+     },
+     "N1_payroll": {
+      "total": 11,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N2_merchant_settlement": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "N3_supplier_payments": {
+      "total": 9,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "N4_reimbursement": {
+      "total": 9,
+      "flagged": 1,
+      "surfaced": 1
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N6_loan_repayments": {
+      "total": 10,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "N7_treasury_sweep": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 14,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 15,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 5,
+      "flagged": 0,
+      "surfaced": 5
+     },
+     "S2_layering_chain": {
+      "total": 10,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "S3_coordinated_distribution": {
+      "total": 4,
+      "flagged": 2,
+      "surfaced": 2
+     },
+     "S3_distribution_terminal": {
+      "total": 6,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S4_circular_flow": {
+      "total": 7,
+      "flagged": 5,
+      "surfaced": 5
+     },
+     "S5_scatter_gather": {
+      "total": 6,
+      "flagged": 6,
+      "surfaced": 6
+     }
+    },
+    "latency_ms": {
+     "median": 33.3,
+     "p95": 80.7,
+     "max": 184.1
+    }
+   },
+   "B4_structure_temporal": {
+    "datasets": 20,
+    "scenario": {
+     "suspicious": 56,
+     "legitimate": 85,
+     "tp": 43,
+     "fp": 31,
+     "fn": 13,
+     "tn": 54,
+     "precision": 0.5811,
+     "recall": 0.7679,
+     "f1": 0.6616,
+     "fpr": 0.3647,
+     "fnr": 0.2321,
+     "surfaced_recall": 0.8571,
+     "high_band_recall": 0.6429,
+     "high_band_fpr": 0.3294
+    },
+    "alerts": {
+     "flagged": 146,
+     "per_dataset": 7.3,
+     "precision": 0.3082,
+     "unmatched": 26
+    },
+    "queue": {
+     "p_at_10": 0.4262,
+     "p_at_5": 0.3783,
+     "recall_at_10": 0.8,
+     "recall_at_5": 0.5208
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 3,
+      "flagged": 2,
+      "surfaced": 2
+     },
+     "N1_payroll": {
+      "total": 11,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N2_merchant_settlement": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "N3_supplier_payments": {
+      "total": 9,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "N4_reimbursement": {
+      "total": 9,
+      "flagged": 1,
+      "surfaced": 1
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 3,
+      "surfaced": 3
+     },
+     "N6_loan_repayments": {
+      "total": 10,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N7_treasury_sweep": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 14,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 15,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 5,
+      "flagged": 0,
+      "surfaced": 5
+     },
+     "S2_layering_chain": {
+      "total": 10,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "S3_coordinated_distribution": {
+      "total": 4,
+      "flagged": 4,
+      "surfaced": 4
+     },
+     "S3_distribution_terminal": {
+      "total": 6,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "S4_circular_flow": {
+      "total": 7,
+      "flagged": 7,
+      "surfaced": 7
+     },
+     "S5_scatter_gather": {
+      "total": 6,
+      "flagged": 6,
+      "surfaced": 6
+     }
+    },
+    "latency_ms": {
+     "median": 49.5,
+     "p95": 91.9,
+     "max": 160.2
+    }
+   },
+   "B3_structure_only": {
+    "datasets": 20,
+    "scenario": {
+     "suspicious": 56,
+     "legitimate": 85,
+     "tp": 56,
+     "fp": 69,
+     "fn": 0,
+     "tn": 16,
+     "precision": 0.448,
+     "recall": 1.0,
+     "f1": 0.6188,
+     "fpr": 0.8118,
+     "fnr": 0.0,
+     "surfaced_recall": 1.0,
+     "high_band_recall": null,
+     "high_band_fpr": null
+    },
+    "alerts": {
+     "flagged": 1027,
+     "per_dataset": 51.35,
+     "precision": 0.0652,
+     "unmatched": 838
+    },
+    "queue": {
+     "p_at_10": 0.125,
+     "p_at_5": 0.12,
+     "recall_at_10": 0.4375,
+     "recall_at_5": 0.2375
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 3,
+      "flagged": 3,
+      "surfaced": 3
+     },
+     "N1_payroll": {
+      "total": 11,
+      "flagged": 11,
+      "surfaced": 11
+     },
+     "N2_merchant_settlement": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "N3_supplier_payments": {
+      "total": 9,
+      "flagged": 9,
+      "surfaced": 9
+     },
+     "N4_reimbursement": {
+      "total": 9,
+      "flagged": 4,
+      "surfaced": 4
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "N6_loan_repayments": {
+      "total": 10,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N7_treasury_sweep": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 14,
+      "flagged": 14,
+      "surfaced": 14
+     },
+     "S1_collection_funnel": {
+      "total": 15,
+      "flagged": 15,
+      "surfaced": 15
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 5,
+      "flagged": 5,
+      "surfaced": 5
+     },
+     "S2_layering_chain": {
+      "total": 10,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "S3_coordinated_distribution": {
+      "total": 4,
+      "flagged": 4,
+      "surfaced": 4
+     },
+     "S3_distribution_terminal": {
+      "total": 6,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "S4_circular_flow": {
+      "total": 7,
+      "flagged": 7,
+      "surfaced": 7
+     },
+     "S5_scatter_gather": {
+      "total": 6,
+      "flagged": 6,
+      "surfaced": 6
+     }
+    },
+    "latency_ms": {
+     "median": 54.3,
+     "p95": 102.6,
+     "max": 154.0
+    }
+   },
+   "B1_rules": {
+    "datasets": 20,
+    "scenario": {
+     "suspicious": 56,
+     "legitimate": 85,
+     "tp": 50,
+     "fp": 65,
+     "fn": 6,
+     "tn": 20,
+     "precision": 0.4348,
+     "recall": 0.8929,
+     "f1": 0.5848,
+     "fpr": 0.7647,
+     "fnr": 0.1071,
+     "surfaced_recall": 0.8929,
+     "high_band_recall": null,
+     "high_band_fpr": null
+    },
+    "alerts": {
+     "flagged": 741,
+     "per_dataset": 37.05,
+     "precision": 0.2051,
+     "unmatched": 463
+    },
+    "queue": {
+     "p_at_10": 0.385,
+     "p_at_5": 0.33,
+     "recall_at_10": 0.7583,
+     "recall_at_5": 0.5
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 3,
+      "flagged": 3,
+      "surfaced": 3
+     },
+     "N1_payroll": {
+      "total": 11,
+      "flagged": 11,
+      "surfaced": 11
+     },
+     "N2_merchant_settlement": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "N3_supplier_payments": {
+      "total": 9,
+      "flagged": 9,
+      "surfaced": 9
+     },
+     "N4_reimbursement": {
+      "total": 9,
+      "flagged": 3,
+      "surfaced": 3
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 11,
+      "surfaced": 11
+     },
+     "N6_loan_repayments": {
+      "total": 10,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "N7_treasury_sweep": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 14,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 15,
+      "flagged": 11,
+      "surfaced": 11
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 5,
+      "flagged": 5,
+      "surfaced": 5
+     },
+     "S2_layering_chain": {
+      "total": 10,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S3_coordinated_distribution": {
+      "total": 4,
+      "flagged": 4,
+      "surfaced": 4
+     },
+     "S3_distribution_terminal": {
+      "total": 6,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "S4_circular_flow": {
+      "total": 7,
+      "flagged": 7,
+      "surfaced": 7
+     },
+     "S5_scatter_gather": {
+      "total": 6,
+      "flagged": 6,
+      "surfaced": 6
+     }
+    },
+    "latency_ms": {
+     "median": 1.5,
+     "p95": 2.0,
+     "max": 2.1
+    }
+   },
+   "B0_volume": {
+    "datasets": 20,
+    "scenario": {
+     "suspicious": 56,
+     "legitimate": 85,
+     "tp": 33,
+     "fp": 47,
+     "fn": 23,
+     "tn": 38,
+     "precision": 0.4125,
+     "recall": 0.5893,
+     "f1": 0.4853,
+     "fpr": 0.5529,
+     "fnr": 0.4107,
+     "surfaced_recall": 1.0,
+     "high_band_recall": null,
+     "high_band_fpr": null
+    },
+    "alerts": {
+     "flagged": 157,
+     "per_dataset": 7.85,
+     "precision": 0.4331,
+     "unmatched": 0
+    },
+    "queue": {
+     "p_at_10": 0.425,
+     "p_at_5": 0.34,
+     "recall_at_10": 0.6833,
+     "recall_at_5": 0.4417
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 3,
+      "flagged": 0,
+      "surfaced": 3
+     },
+     "N1_payroll": {
+      "total": 11,
+      "flagged": 11,
+      "surfaced": 11
+     },
+     "N2_merchant_settlement": {
+      "total": 13,
+      "flagged": 3,
+      "surfaced": 13
+     },
+     "N3_supplier_payments": {
+      "total": 9,
+      "flagged": 8,
+      "surfaced": 9
+     },
+     "N4_reimbursement": {
+      "total": 9,
+      "flagged": 0,
+      "surfaced": 9
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 4,
+      "surfaced": 11
+     },
+     "N6_loan_repayments": {
+      "total": 10,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "N7_treasury_sweep": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 14,
+      "flagged": 3,
+      "surfaced": 14
+     },
+     "S1_collection_funnel": {
+      "total": 15,
+      "flagged": 9,
+      "surfaced": 15
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 5,
+      "flagged": 3,
+      "surfaced": 5
+     },
+     "S2_layering_chain": {
+      "total": 10,
+      "flagged": 1,
+      "surfaced": 10
+     },
+     "S3_coordinated_distribution": {
+      "total": 4,
+      "flagged": 3,
+      "surfaced": 4
+     },
+     "S3_distribution_terminal": {
+      "total": 6,
+      "flagged": 5,
+      "surfaced": 6
+     },
+     "S4_circular_flow": {
+      "total": 7,
+      "flagged": 6,
+      "surfaced": 7
+     },
+     "S5_scatter_gather": {
+      "total": 6,
+      "flagged": 6,
+      "surfaced": 6
+     }
+    },
+    "latency_ms": {
+     "median": 3.3,
+     "p95": 5.4,
+     "max": 23.2
+    }
+   },
+   "B2_pagerank": {
+    "datasets": 20,
+    "scenario": {
+     "suspicious": 56,
+     "legitimate": 85,
+     "tp": 5,
+     "fp": 38,
+     "fn": 51,
+     "tn": 47,
+     "precision": 0.1163,
+     "recall": 0.0893,
+     "f1": 0.101,
+     "fpr": 0.4471,
+     "fnr": 0.9107,
+     "surfaced_recall": 1.0,
+     "high_band_recall": null,
+     "high_band_fpr": null
+    },
+    "alerts": {
+     "flagged": 157,
+     "per_dataset": 7.85,
+     "precision": 0.0382,
+     "unmatched": 94
+    },
+    "queue": {
+     "p_at_10": 0.04,
+     "p_at_5": 0.0,
+     "recall_at_10": 0.0833,
+     "recall_at_5": 0.0
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 3,
+      "flagged": 0,
+      "surfaced": 3
+     },
+     "N1_payroll": {
+      "total": 11,
+      "flagged": 0,
+      "surfaced": 11
+     },
+     "N2_merchant_settlement": {
+      "total": 13,
+      "flagged": 12,
+      "surfaced": 13
+     },
+     "N3_supplier_payments": {
+      "total": 9,
+      "flagged": 5,
+      "surfaced": 9
+     },
+     "N4_reimbursement": {
+      "total": 9,
+      "flagged": 3,
+      "surfaced": 9
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 0,
+      "surfaced": 11
+     },
+     "N6_loan_repayments": {
+      "total": 10,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "N7_treasury_sweep": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 14,
+      "flagged": 0,
+      "surfaced": 14
+     },
+     "S1_collection_funnel": {
+      "total": 15,
+      "flagged": 2,
+      "surfaced": 15
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 5,
+      "flagged": 0,
+      "surfaced": 5
+     },
+     "S2_layering_chain": {
+      "total": 10,
+      "flagged": 0,
+      "surfaced": 10
+     },
+     "S3_coordinated_distribution": {
+      "total": 4,
+      "flagged": 0,
+      "surfaced": 4
+     },
+     "S3_distribution_terminal": {
+      "total": 6,
+      "flagged": 0,
+      "surfaced": 6
+     },
+     "S4_circular_flow": {
+      "total": 7,
+      "flagged": 1,
+      "surfaced": 7
+     },
+     "S5_scatter_gather": {
+      "total": 6,
+      "flagged": 2,
+      "surfaced": 6
+     }
+    },
+    "latency_ms": {
+     "median": 26.2,
+     "p95": 41.2,
+     "max": 48.5
+    }
+   }
+  },
+  "holdout": {
+   "nexora_v2": {
+    "datasets": 30,
+    "scenario": {
+     "suspicious": 92,
+     "legitimate": 128,
+     "tp": 73,
+     "fp": 48,
+     "fn": 19,
+     "tn": 80,
+     "precision": 0.6033,
+     "recall": 0.7935,
+     "f1": 0.6855,
+     "fpr": 0.375,
+     "fnr": 0.2065,
+     "surfaced_recall": 0.8804,
+     "high_band_recall": 0.6413,
+     "high_band_fpr": 0.0625
+    },
+    "alerts": {
+     "flagged": 285,
+     "per_dataset": 9.5,
+     "precision": 0.3474,
+     "unmatched": 64
+    },
+    "queue": {
+     "p_at_10": 0.4196,
+     "p_at_5": 0.4828,
+     "recall_at_10": 0.8722,
+     "recall_at_5": 0.7361
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 5,
+      "flagged": 4,
+      "surfaced": 4
+     },
+     "N1_payroll": {
+      "total": 17,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N2_merchant_settlement": {
+      "total": 21,
+      "flagged": 21,
+      "surfaced": 21
+     },
+     "N3_supplier_payments": {
+      "total": 8,
+      "flagged": 5,
+      "surfaced": 5
+     },
+     "N4_reimbursement": {
+      "total": 18,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "N6_loan_repayments": {
+      "total": 21,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N7_treasury_sweep": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 20,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 17,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 8,
+      "flagged": 0,
+      "surfaced": 8
+     },
+     "S2_layering_chain": {
+      "total": 12,
+      "flagged": 11,
+      "surfaced": 11
+     },
+     "S3_coordinated_distribution": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "S3_distribution_terminal": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S4_circular_flow": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "S5_scatter_gather": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     }
+    },
+    "latency_ms": {
+     "median": 58.6,
+     "p95": 133.7,
+     "max": 143.0
+    }
+   },
+   "nexora_v1": {
+    "datasets": 30,
+    "scenario": {
+     "suspicious": 92,
+     "legitimate": 128,
+     "tp": 56,
+     "fp": 59,
+     "fn": 36,
+     "tn": 69,
+     "precision": 0.487,
+     "recall": 0.6087,
+     "f1": 0.5411,
+     "fpr": 0.4609,
+     "fnr": 0.3913,
+     "surfaced_recall": 0.6957,
+     "high_band_recall": 0.3587,
+     "high_band_fpr": 0.4375
+    },
+    "alerts": {
+     "flagged": 219,
+     "per_dataset": 7.3,
+     "precision": 0.3105,
+     "unmatched": 62
+    },
+    "queue": {
+     "p_at_10": 0.364,
+     "p_at_5": 0.3128,
+     "recall_at_10": 0.6639,
+     "recall_at_5": 0.4583
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 5,
+      "flagged": 4,
+      "surfaced": 4
+     },
+     "N1_payroll": {
+      "total": 17,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N2_merchant_settlement": {
+      "total": 21,
+      "flagged": 21,
+      "surfaced": 21
+     },
+     "N3_supplier_payments": {
+      "total": 8,
+      "flagged": 5,
+      "surfaced": 5
+     },
+     "N4_reimbursement": {
+      "total": 18,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N6_loan_repayments": {
+      "total": 21,
+      "flagged": 21,
+      "surfaced": 21
+     },
+     "N7_treasury_sweep": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 20,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 17,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 8,
+      "flagged": 0,
+      "surfaced": 8
+     },
+     "S2_layering_chain": {
+      "total": 12,
+      "flagged": 11,
+      "surfaced": 11
+     },
+     "S3_coordinated_distribution": {
+      "total": 17,
+      "flagged": 12,
+      "surfaced": 12
+     },
+     "S3_distribution_terminal": {
+      "total": 8,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S4_circular_flow": {
+      "total": 13,
+      "flagged": 9,
+      "surfaced": 9
+     },
+     "S5_scatter_gather": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     }
+    },
+    "latency_ms": {
+     "median": 39.1,
+     "p95": 88.8,
+     "max": 91.3
+    }
+   },
+   "B4_structure_temporal": {
+    "datasets": 30,
+    "scenario": {
+     "suspicious": 92,
+     "legitimate": 128,
+     "tp": 73,
+     "fp": 43,
+     "fn": 19,
+     "tn": 85,
+     "precision": 0.6293,
+     "recall": 0.7935,
+     "f1": 0.7019,
+     "fpr": 0.3359,
+     "fnr": 0.2065,
+     "surfaced_recall": 0.8804,
+     "high_band_recall": 0.6522,
+     "high_band_fpr": 0.2812
+    },
+    "alerts": {
+     "flagged": 265,
+     "per_dataset": 8.83,
+     "precision": 0.3321,
+     "unmatched": 63
+    },
+    "queue": {
+     "p_at_10": 0.3872,
+     "p_at_5": 0.3794,
+     "recall_at_10": 0.8333,
+     "recall_at_5": 0.6
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 5,
+      "flagged": 4,
+      "surfaced": 4
+     },
+     "N1_payroll": {
+      "total": 17,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N2_merchant_settlement": {
+      "total": 21,
+      "flagged": 21,
+      "surfaced": 21
+     },
+     "N3_supplier_payments": {
+      "total": 8,
+      "flagged": 5,
+      "surfaced": 5
+     },
+     "N4_reimbursement": {
+      "total": 18,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 5,
+      "surfaced": 5
+     },
+     "N6_loan_repayments": {
+      "total": 21,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N7_treasury_sweep": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 20,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 17,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 8,
+      "flagged": 0,
+      "surfaced": 8
+     },
+     "S2_layering_chain": {
+      "total": 12,
+      "flagged": 11,
+      "surfaced": 11
+     },
+     "S3_coordinated_distribution": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "S3_distribution_terminal": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S4_circular_flow": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "S5_scatter_gather": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     }
+    },
+    "latency_ms": {
+     "median": 58.9,
+     "p95": 103.5,
+     "max": 141.5
+    }
+   },
+   "B3_structure_only": {
+    "datasets": 30,
+    "scenario": {
+     "suspicious": 92,
+     "legitimate": 128,
+     "tp": 92,
+     "fp": 95,
+     "fn": 0,
+     "tn": 33,
+     "precision": 0.492,
+     "recall": 1.0,
+     "f1": 0.6595,
+     "fpr": 0.7422,
+     "fnr": 0.0,
+     "surfaced_recall": 1.0,
+     "high_band_recall": null,
+     "high_band_fpr": null
+    },
+    "alerts": {
+     "flagged": 1738,
+     "per_dataset": 57.93,
+     "precision": 0.0719,
+     "unmatched": 1438
+    },
+    "queue": {
+     "p_at_10": 0.1633,
+     "p_at_5": 0.22,
+     "recall_at_10": 0.4306,
+     "recall_at_5": 0.3056
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 5,
+      "flagged": 5,
+      "surfaced": 5
+     },
+     "N1_payroll": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "N2_merchant_settlement": {
+      "total": 21,
+      "flagged": 21,
+      "surfaced": 21
+     },
+     "N3_supplier_payments": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N4_reimbursement": {
+      "total": 18,
+      "flagged": 7,
+      "surfaced": 7
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "N6_loan_repayments": {
+      "total": 21,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N7_treasury_sweep": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 20,
+      "flagged": 20,
+      "surfaced": 20
+     },
+     "S1_collection_funnel": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S2_layering_chain": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     },
+     "S3_coordinated_distribution": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "S3_distribution_terminal": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S4_circular_flow": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "S5_scatter_gather": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     }
+    },
+    "latency_ms": {
+     "median": 64.3,
+     "p95": 113.9,
+     "max": 141.8
+    }
+   },
+   "B1_rules": {
+    "datasets": 30,
+    "scenario": {
+     "suspicious": 92,
+     "legitimate": 128,
+     "tp": 88,
+     "fp": 103,
+     "fn": 4,
+     "tn": 25,
+     "precision": 0.4607,
+     "recall": 0.9565,
+     "f1": 0.6219,
+     "fpr": 0.8047,
+     "fnr": 0.0435,
+     "surfaced_recall": 0.9565,
+     "high_band_recall": null,
+     "high_band_fpr": null
+    },
+    "alerts": {
+     "flagged": 1277,
+     "per_dataset": 42.57,
+     "precision": 0.2788,
+     "unmatched": 718
+    },
+    "queue": {
+     "p_at_10": 0.47,
+     "p_at_5": 0.3267,
+     "recall_at_10": 0.7167,
+     "recall_at_5": 0.4361
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 5,
+      "flagged": 5,
+      "surfaced": 5
+     },
+     "N1_payroll": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "N2_merchant_settlement": {
+      "total": 21,
+      "flagged": 21,
+      "surfaced": 21
+     },
+     "N3_supplier_payments": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N4_reimbursement": {
+      "total": 18,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 11,
+      "surfaced": 11
+     },
+     "N6_loan_repayments": {
+      "total": 21,
+      "flagged": 21,
+      "surfaced": 21
+     },
+     "N7_treasury_sweep": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 20,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 17,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S2_layering_chain": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     },
+     "S3_coordinated_distribution": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "S3_distribution_terminal": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S4_circular_flow": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "S5_scatter_gather": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     }
+    },
+    "latency_ms": {
+     "median": 1.4,
+     "p95": 1.9,
+     "max": 2.5
+    }
+   },
+   "B0_volume": {
+    "datasets": 30,
+    "scenario": {
+     "suspicious": 92,
+     "legitimate": 128,
+     "tp": 61,
+     "fp": 64,
+     "fn": 31,
+     "tn": 64,
+     "precision": 0.488,
+     "recall": 0.663,
+     "f1": 0.5622,
+     "fpr": 0.5,
+     "fnr": 0.337,
+     "surfaced_recall": 1.0,
+     "high_band_recall": null,
+     "high_band_fpr": null
+    },
+    "alerts": {
+     "flagged": 285,
+     "per_dataset": 9.5,
+     "precision": 0.4842,
+     "unmatched": 0
+    },
+    "queue": {
+     "p_at_10": 0.49,
+     "p_at_5": 0.34,
+     "recall_at_10": 0.7139,
+     "recall_at_5": 0.3306
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 5,
+      "flagged": 2,
+      "surfaced": 5
+     },
+     "N1_payroll": {
+      "total": 17,
+      "flagged": 16,
+      "surfaced": 17
+     },
+     "N2_merchant_settlement": {
+      "total": 21,
+      "flagged": 1,
+      "surfaced": 21
+     },
+     "N3_supplier_payments": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N4_reimbursement": {
+      "total": 18,
+      "flagged": 0,
+      "surfaced": 18
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 3,
+      "surfaced": 11
+     },
+     "N6_loan_repayments": {
+      "total": 21,
+      "flagged": 21,
+      "surfaced": 21
+     },
+     "N7_treasury_sweep": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 20,
+      "flagged": 3,
+      "surfaced": 20
+     },
+     "S1_collection_funnel": {
+      "total": 17,
+      "flagged": 13,
+      "surfaced": 17
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 8,
+      "flagged": 0,
+      "surfaced": 8
+     },
+     "S2_layering_chain": {
+      "total": 12,
+      "flagged": 1,
+      "surfaced": 12
+     },
+     "S3_coordinated_distribution": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "S3_distribution_terminal": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S4_circular_flow": {
+      "total": 13,
+      "flagged": 8,
+      "surfaced": 13
+     },
+     "S5_scatter_gather": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     }
+    },
+    "latency_ms": {
+     "median": 3.0,
+     "p95": 5.8,
+     "max": 6.3
+    }
+   },
+   "B2_pagerank": {
+    "datasets": 30,
+    "scenario": {
+     "suspicious": 92,
+     "legitimate": 128,
+     "tp": 7,
+     "fp": 58,
+     "fn": 85,
+     "tn": 70,
+     "precision": 0.1077,
+     "recall": 0.0761,
+     "f1": 0.0892,
+     "fpr": 0.4531,
+     "fnr": 0.9239,
+     "surfaced_recall": 1.0,
+     "high_band_recall": null,
+     "high_band_fpr": null
+    },
+    "alerts": {
+     "flagged": 285,
+     "per_dataset": 9.5,
+     "precision": 0.0386,
+     "unmatched": 183
+    },
+    "queue": {
+     "p_at_10": 0.0367,
+     "p_at_5": 0.0133,
+     "recall_at_10": 0.0694,
+     "recall_at_5": 0.0194
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 5,
+      "flagged": 0,
+      "surfaced": 5
+     },
+     "N1_payroll": {
+      "total": 17,
+      "flagged": 0,
+      "surfaced": 17
+     },
+     "N2_merchant_settlement": {
+      "total": 21,
+      "flagged": 15,
+      "surfaced": 21
+     },
+     "N3_supplier_payments": {
+      "total": 8,
+      "flagged": 4,
+      "surfaced": 8
+     },
+     "N4_reimbursement": {
+      "total": 18,
+      "flagged": 7,
+      "surfaced": 18
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 0,
+      "surfaced": 11
+     },
+     "N6_loan_repayments": {
+      "total": 21,
+      "flagged": 20,
+      "surfaced": 21
+     },
+     "N7_treasury_sweep": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 20,
+      "flagged": 0,
+      "surfaced": 20
+     },
+     "S1_collection_funnel": {
+      "total": 17,
+      "flagged": 0,
+      "surfaced": 17
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 8,
+      "flagged": 0,
+      "surfaced": 8
+     },
+     "S2_layering_chain": {
+      "total": 12,
+      "flagged": 0,
+      "surfaced": 12
+     },
+     "S3_coordinated_distribution": {
+      "total": 17,
+      "flagged": 3,
+      "surfaced": 17
+     },
+     "S3_distribution_terminal": {
+      "total": 8,
+      "flagged": 0,
+      "surfaced": 8
+     },
+     "S4_circular_flow": {
+      "total": 13,
+      "flagged": 3,
+      "surfaced": 13
+     },
+     "S5_scatter_gather": {
+      "total": 12,
+      "flagged": 1,
+      "surfaced": 12
+     }
+    },
+    "latency_ms": {
+     "median": 28.0,
+     "p95": 38.1,
+     "max": 45.2
+    }
+   }
+  }
+ },
+ "ablations": {
+  "validation": {
+   "full": {
+    "datasets": 20,
+    "scenario": {
+     "suspicious": 56,
+     "legitimate": 85,
+     "tp": 43,
+     "fp": 36,
+     "fn": 13,
+     "tn": 49,
+     "precision": 0.5443,
+     "recall": 0.7679,
+     "f1": 0.637,
+     "fpr": 0.4235,
+     "fnr": 0.2321,
+     "surfaced_recall": 0.8571,
+     "high_band_recall": 0.625,
+     "high_band_fpr": 0.1059
+    },
+    "alerts": {
+     "flagged": 157,
+     "per_dataset": 7.85,
+     "precision": 0.3185,
+     "unmatched": 26
+    },
+    "queue": {
+     "p_at_10": 0.4183,
+     "p_at_5": 0.4917,
+     "recall_at_10": 0.8125,
+     "recall_at_5": 0.7
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 3,
+      "flagged": 2,
+      "surfaced": 2
+     },
+     "N1_payroll": {
+      "total": 11,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N2_merchant_settlement": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "N3_supplier_payments": {
+      "total": 9,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "N4_reimbursement": {
+      "total": 9,
+      "flagged": 1,
+      "surfaced": 1
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N6_loan_repayments": {
+      "total": 10,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N7_treasury_sweep": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 14,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 15,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 5,
+      "flagged": 0,
+      "surfaced": 5
+     },
+     "S2_layering_chain": {
+      "total": 10,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "S3_coordinated_distribution": {
+      "total": 4,
+      "flagged": 4,
+      "surfaced": 4
+     },
+     "S3_distribution_terminal": {
+      "total": 6,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "S4_circular_flow": {
+      "total": 7,
+      "flagged": 7,
+      "surfaced": 7
+     },
+     "S5_scatter_gather": {
+      "total": 6,
+      "flagged": 6,
+      "surfaced": 6
+     }
+    },
+    "latency_ms": {
+     "median": 55.2,
+     "p95": 145.9,
+     "max": 153.2
+    }
+   },
+   "minus_temporal": {
+    "datasets": 20,
+    "scenario": {
+     "suspicious": 56,
+     "legitimate": 85,
+     "tp": 29,
+     "fp": 53,
+     "fn": 27,
+     "tn": 32,
+     "precision": 0.3537,
+     "recall": 0.5179,
+     "f1": 0.4203,
+     "fpr": 0.6235,
+     "fnr": 0.4821,
+     "surfaced_recall": 0.6071,
+     "high_band_recall": 0.125,
+     "high_band_fpr": 0.0235
+    },
+    "alerts": {
+     "flagged": 348,
+     "per_dataset": 17.4,
+     "precision": 0.1034,
+     "unmatched": 238
+    },
+    "queue": {
+     "p_at_10": 0.184,
+     "p_at_5": 0.23,
+     "recall_at_10": 0.4708,
+     "recall_at_5": 0.3625
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 3,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N1_payroll": {
+      "total": 11,
+      "flagged": 11,
+      "surfaced": 11
+     },
+     "N2_merchant_settlement": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "N3_supplier_payments": {
+      "total": 9,
+      "flagged": 9,
+      "surfaced": 9
+     },
+     "N4_reimbursement": {
+      "total": 9,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 9,
+      "surfaced": 9
+     },
+     "N6_loan_repayments": {
+      "total": 10,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N7_treasury_sweep": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 14,
+      "flagged": 3,
+      "surfaced": 3
+     },
+     "S1_collection_funnel": {
+      "total": 15,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 5,
+      "flagged": 0,
+      "surfaced": 5
+     },
+     "S2_layering_chain": {
+      "total": 10,
+      "flagged": 4,
+      "surfaced": 4
+     },
+     "S3_coordinated_distribution": {
+      "total": 4,
+      "flagged": 4,
+      "surfaced": 4
+     },
+     "S3_distribution_terminal": {
+      "total": 6,
+      "flagged": 5,
+      "surfaced": 5
+     },
+     "S4_circular_flow": {
+      "total": 7,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S5_scatter_gather": {
+      "total": 6,
+      "flagged": 6,
+      "surfaced": 6
+     }
+    },
+    "latency_ms": {
+     "median": 56.7,
+     "p95": 155.1,
+     "max": 176.4
+    }
+   },
+   "minus_peer": {
+    "datasets": 20,
+    "scenario": {
+     "suspicious": 56,
+     "legitimate": 85,
+     "tp": 43,
+     "fp": 31,
+     "fn": 13,
+     "tn": 54,
+     "precision": 0.5811,
+     "recall": 0.7679,
+     "f1": 0.6616,
+     "fpr": 0.3647,
+     "fnr": 0.2321,
+     "surfaced_recall": 0.8571,
+     "high_band_recall": 0.6429,
+     "high_band_fpr": 0.3294
+    },
+    "alerts": {
+     "flagged": 146,
+     "per_dataset": 7.3,
+     "precision": 0.3082,
+     "unmatched": 26
+    },
+    "queue": {
+     "p_at_10": 0.4262,
+     "p_at_5": 0.3783,
+     "recall_at_10": 0.8,
+     "recall_at_5": 0.5208
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 3,
+      "flagged": 2,
+      "surfaced": 2
+     },
+     "N1_payroll": {
+      "total": 11,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N2_merchant_settlement": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "N3_supplier_payments": {
+      "total": 9,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "N4_reimbursement": {
+      "total": 9,
+      "flagged": 1,
+      "surfaced": 1
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 3,
+      "surfaced": 3
+     },
+     "N6_loan_repayments": {
+      "total": 10,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N7_treasury_sweep": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 14,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 15,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 5,
+      "flagged": 0,
+      "surfaced": 5
+     },
+     "S2_layering_chain": {
+      "total": 10,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "S3_coordinated_distribution": {
+      "total": 4,
+      "flagged": 4,
+      "surfaced": 4
+     },
+     "S3_distribution_terminal": {
+      "total": 6,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "S4_circular_flow": {
+      "total": 7,
+      "flagged": 7,
+      "surfaced": 7
+     },
+     "S5_scatter_gather": {
+      "total": 6,
+      "flagged": 6,
+      "surfaced": 6
+     }
+    },
+    "latency_ms": {
+     "median": 52.3,
+     "p95": 110.1,
+     "max": 152.6
+    }
+   },
+   "minus_fan_out_cycle": {
+    "datasets": 20,
+    "scenario": {
+     "suspicious": 56,
+     "legitimate": 85,
+     "tp": 33,
+     "fp": 28,
+     "fn": 23,
+     "tn": 57,
+     "precision": 0.541,
+     "recall": 0.5893,
+     "f1": 0.5641,
+     "fpr": 0.3294,
+     "fnr": 0.4107,
+     "surfaced_recall": 0.6786,
+     "high_band_recall": 0.4107,
+     "high_band_fpr": 0.0824
+    },
+    "alerts": {
+     "flagged": 107,
+     "per_dataset": 5.35,
+     "precision": 0.3645,
+     "unmatched": 22
+    },
+    "queue": {
+     "p_at_10": 0.4859,
+     "p_at_5": 0.4858,
+     "recall_at_10": 0.6708,
+     "recall_at_5": 0.575
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 3,
+      "flagged": 2,
+      "surfaced": 2
+     },
+     "N1_payroll": {
+      "total": 11,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N2_merchant_settlement": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "N3_supplier_payments": {
+      "total": 9,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "N4_reimbursement": {
+      "total": 9,
+      "flagged": 1,
+      "surfaced": 1
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N6_loan_repayments": {
+      "total": 10,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N7_treasury_sweep": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 14,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 15,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 5,
+      "flagged": 0,
+      "surfaced": 5
+     },
+     "S2_layering_chain": {
+      "total": 10,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "S3_coordinated_distribution": {
+      "total": 4,
+      "flagged": 2,
+      "surfaced": 2
+     },
+     "S3_distribution_terminal": {
+      "total": 6,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S4_circular_flow": {
+      "total": 7,
+      "flagged": 5,
+      "surfaced": 5
+     },
+     "S5_scatter_gather": {
+      "total": 6,
+      "flagged": 6,
+      "surfaced": 6
+     }
+    },
+    "latency_ms": {
+     "median": 35.2,
+     "p95": 75.0,
+     "max": 80.3
+    }
+   },
+   "minus_returning_feeder_rule": {
+    "datasets": 20,
+    "scenario": {
+     "suspicious": 56,
+     "legitimate": 85,
+     "tp": 43,
+     "fp": 46,
+     "fn": 13,
+     "tn": 39,
+     "precision": 0.4831,
+     "recall": 0.7679,
+     "f1": 0.5931,
+     "fpr": 0.5412,
+     "fnr": 0.2321,
+     "surfaced_recall": 0.8571,
+     "high_band_recall": 0.625,
+     "high_band_fpr": 0.2235
+    },
+    "alerts": {
+     "flagged": 167,
+     "per_dataset": 8.35,
+     "precision": 0.2994,
+     "unmatched": 26
+    },
+    "queue": {
+     "p_at_10": 0.3865,
+     "p_at_5": 0.4483,
+     "recall_at_10": 0.8125,
+     "recall_at_5": 0.675
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 3,
+      "flagged": 2,
+      "surfaced": 2
+     },
+     "N1_payroll": {
+      "total": 11,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N2_merchant_settlement": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "N3_supplier_payments": {
+      "total": 9,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "N4_reimbursement": {
+      "total": 9,
+      "flagged": 1,
+      "surfaced": 1
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N6_loan_repayments": {
+      "total": 10,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "N7_treasury_sweep": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 14,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 15,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 5,
+      "flagged": 0,
+      "surfaced": 5
+     },
+     "S2_layering_chain": {
+      "total": 10,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "S3_coordinated_distribution": {
+      "total": 4,
+      "flagged": 4,
+      "surfaced": 4
+     },
+     "S3_distribution_terminal": {
+      "total": 6,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "S4_circular_flow": {
+      "total": 7,
+      "flagged": 7,
+      "surfaced": 7
+     },
+     "S5_scatter_gather": {
+      "total": 6,
+      "flagged": 6,
+      "surfaced": 6
+     }
+    },
+    "latency_ms": {
+     "median": 61.7,
+     "p95": 105.3,
+     "max": 199.5
+    }
+   },
+   "minus_coverage_abstention": {
+    "datasets": 20,
+    "scenario": {
+     "suspicious": 56,
+     "legitimate": 85,
+     "tp": 47,
+     "fp": 36,
+     "fn": 9,
+     "tn": 49,
+     "precision": 0.5663,
+     "recall": 0.8393,
+     "f1": 0.6763,
+     "fpr": 0.4235,
+     "fnr": 0.1607,
+     "surfaced_recall": 0.8393,
+     "high_band_recall": 0.625,
+     "high_band_fpr": 0.1059
+    },
+    "alerts": {
+     "flagged": 161,
+     "per_dataset": 8.05,
+     "precision": 0.3354,
+     "unmatched": 26
+    },
+    "queue": {
+     "p_at_10": 0.4194,
+     "p_at_5": 0.5017,
+     "recall_at_10": 0.8208,
+     "recall_at_5": 0.725
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 3,
+      "flagged": 2,
+      "surfaced": 2
+     },
+     "N1_payroll": {
+      "total": 11,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N2_merchant_settlement": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "N3_supplier_payments": {
+      "total": 9,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "N4_reimbursement": {
+      "total": 9,
+      "flagged": 1,
+      "surfaced": 1
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N6_loan_repayments": {
+      "total": 10,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N7_treasury_sweep": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 14,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 15,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 5,
+      "flagged": 4,
+      "surfaced": 4
+     },
+     "S2_layering_chain": {
+      "total": 10,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "S3_coordinated_distribution": {
+      "total": 4,
+      "flagged": 4,
+      "surfaced": 4
+     },
+     "S3_distribution_terminal": {
+      "total": 6,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "S4_circular_flow": {
+      "total": 7,
+      "flagged": 7,
+      "surfaced": 7
+     },
+     "S5_scatter_gather": {
+      "total": 6,
+      "flagged": 6,
+      "surfaced": 6
+     }
+    },
+    "latency_ms": {
+     "median": 60.3,
+     "p95": 156.3,
+     "max": 157.4
+    }
+   }
+  },
+  "holdout": {
+   "full": {
+    "datasets": 30,
+    "scenario": {
+     "suspicious": 92,
+     "legitimate": 128,
+     "tp": 73,
+     "fp": 48,
+     "fn": 19,
+     "tn": 80,
+     "precision": 0.6033,
+     "recall": 0.7935,
+     "f1": 0.6855,
+     "fpr": 0.375,
+     "fnr": 0.2065,
+     "surfaced_recall": 0.8804,
+     "high_band_recall": 0.6413,
+     "high_band_fpr": 0.0625
+    },
+    "alerts": {
+     "flagged": 285,
+     "per_dataset": 9.5,
+     "precision": 0.3474,
+     "unmatched": 64
+    },
+    "queue": {
+     "p_at_10": 0.4196,
+     "p_at_5": 0.4828,
+     "recall_at_10": 0.8722,
+     "recall_at_5": 0.7361
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 5,
+      "flagged": 4,
+      "surfaced": 4
+     },
+     "N1_payroll": {
+      "total": 17,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N2_merchant_settlement": {
+      "total": 21,
+      "flagged": 21,
+      "surfaced": 21
+     },
+     "N3_supplier_payments": {
+      "total": 8,
+      "flagged": 5,
+      "surfaced": 5
+     },
+     "N4_reimbursement": {
+      "total": 18,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "N6_loan_repayments": {
+      "total": 21,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N7_treasury_sweep": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 20,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 17,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 8,
+      "flagged": 0,
+      "surfaced": 8
+     },
+     "S2_layering_chain": {
+      "total": 12,
+      "flagged": 11,
+      "surfaced": 11
+     },
+     "S3_coordinated_distribution": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "S3_distribution_terminal": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S4_circular_flow": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "S5_scatter_gather": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     }
+    },
+    "latency_ms": {
+     "median": 58.6,
+     "p95": 133.7,
+     "max": 143.0
+    }
+   },
+   "minus_temporal": {
+    "datasets": 30,
+    "scenario": {
+     "suspicious": 92,
+     "legitimate": 128,
+     "tp": 51,
+     "fp": 78,
+     "fn": 41,
+     "tn": 50,
+     "precision": 0.3953,
+     "recall": 0.5543,
+     "f1": 0.4615,
+     "fpr": 0.6094,
+     "fnr": 0.4457,
+     "surfaced_recall": 0.6413,
+     "high_band_recall": 0.2174,
+     "high_band_fpr": 0.0547
+    },
+    "alerts": {
+     "flagged": 534,
+     "per_dataset": 17.8,
+     "precision": 0.1404,
+     "unmatched": 349
+    },
+    "queue": {
+     "p_at_10": 0.312,
+     "p_at_5": 0.3856,
+     "recall_at_10": 0.5389,
+     "recall_at_5": 0.45
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 5,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N1_payroll": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "N2_merchant_settlement": {
+      "total": 21,
+      "flagged": 21,
+      "surfaced": 21
+     },
+     "N3_supplier_payments": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "N4_reimbursement": {
+      "total": 18,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "N6_loan_repayments": {
+      "total": 21,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N7_treasury_sweep": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 20,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "S1_collection_funnel": {
+      "total": 17,
+      "flagged": 12,
+      "surfaced": 12
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 8,
+      "flagged": 0,
+      "surfaced": 8
+     },
+     "S2_layering_chain": {
+      "total": 12,
+      "flagged": 6,
+      "surfaced": 6
+     },
+     "S3_coordinated_distribution": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "S3_distribution_terminal": {
+      "total": 8,
+      "flagged": 7,
+      "surfaced": 7
+     },
+     "S4_circular_flow": {
+      "total": 13,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S5_scatter_gather": {
+      "total": 12,
+      "flagged": 9,
+      "surfaced": 9
+     }
+    },
+    "latency_ms": {
+     "median": 63.4,
+     "p95": 135.9,
+     "max": 180.7
+    }
+   },
+   "minus_peer": {
+    "datasets": 30,
+    "scenario": {
+     "suspicious": 92,
+     "legitimate": 128,
+     "tp": 73,
+     "fp": 43,
+     "fn": 19,
+     "tn": 85,
+     "precision": 0.6293,
+     "recall": 0.7935,
+     "f1": 0.7019,
+     "fpr": 0.3359,
+     "fnr": 0.2065,
+     "surfaced_recall": 0.8804,
+     "high_band_recall": 0.6522,
+     "high_band_fpr": 0.2812
+    },
+    "alerts": {
+     "flagged": 265,
+     "per_dataset": 8.83,
+     "precision": 0.3321,
+     "unmatched": 63
+    },
+    "queue": {
+     "p_at_10": 0.3872,
+     "p_at_5": 0.3794,
+     "recall_at_10": 0.8333,
+     "recall_at_5": 0.6
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 5,
+      "flagged": 4,
+      "surfaced": 4
+     },
+     "N1_payroll": {
+      "total": 17,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N2_merchant_settlement": {
+      "total": 21,
+      "flagged": 21,
+      "surfaced": 21
+     },
+     "N3_supplier_payments": {
+      "total": 8,
+      "flagged": 5,
+      "surfaced": 5
+     },
+     "N4_reimbursement": {
+      "total": 18,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 5,
+      "surfaced": 5
+     },
+     "N6_loan_repayments": {
+      "total": 21,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N7_treasury_sweep": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 20,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 17,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 8,
+      "flagged": 0,
+      "surfaced": 8
+     },
+     "S2_layering_chain": {
+      "total": 12,
+      "flagged": 11,
+      "surfaced": 11
+     },
+     "S3_coordinated_distribution": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "S3_distribution_terminal": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S4_circular_flow": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "S5_scatter_gather": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     }
+    },
+    "latency_ms": {
+     "median": 55.5,
+     "p95": 111.1,
+     "max": 179.3
+    }
+   },
+   "minus_fan_out_cycle": {
+    "datasets": 30,
+    "scenario": {
+     "suspicious": 92,
+     "legitimate": 128,
+     "tp": 58,
+     "fp": 38,
+     "fn": 34,
+     "tn": 90,
+     "precision": 0.6042,
+     "recall": 0.6304,
+     "f1": 0.617,
+     "fpr": 0.2969,
+     "fnr": 0.3696,
+     "surfaced_recall": 0.7174,
+     "high_band_recall": 0.3478,
+     "high_band_fpr": 0.0469
+    },
+    "alerts": {
+     "flagged": 199,
+     "per_dataset": 6.63,
+     "precision": 0.3518,
+     "unmatched": 61
+    },
+    "queue": {
+     "p_at_10": 0.4161,
+     "p_at_5": 0.4194,
+     "recall_at_10": 0.6917,
+     "recall_at_5": 0.5472
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 5,
+      "flagged": 4,
+      "surfaced": 4
+     },
+     "N1_payroll": {
+      "total": 17,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N2_merchant_settlement": {
+      "total": 21,
+      "flagged": 21,
+      "surfaced": 21
+     },
+     "N3_supplier_payments": {
+      "total": 8,
+      "flagged": 5,
+      "surfaced": 5
+     },
+     "N4_reimbursement": {
+      "total": 18,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N6_loan_repayments": {
+      "total": 21,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N7_treasury_sweep": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 20,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 17,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 8,
+      "flagged": 0,
+      "surfaced": 8
+     },
+     "S2_layering_chain": {
+      "total": 12,
+      "flagged": 11,
+      "surfaced": 11
+     },
+     "S3_coordinated_distribution": {
+      "total": 17,
+      "flagged": 14,
+      "surfaced": 14
+     },
+     "S3_distribution_terminal": {
+      "total": 8,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S4_circular_flow": {
+      "total": 13,
+      "flagged": 9,
+      "surfaced": 9
+     },
+     "S5_scatter_gather": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     }
+    },
+    "latency_ms": {
+     "median": 38.3,
+     "p95": 67.3,
+     "max": 116.3
+    }
+   },
+   "minus_returning_feeder_rule": {
+    "datasets": 30,
+    "scenario": {
+     "suspicious": 92,
+     "legitimate": 128,
+     "tp": 73,
+     "fp": 69,
+     "fn": 19,
+     "tn": 59,
+     "precision": 0.5141,
+     "recall": 0.7935,
+     "f1": 0.6239,
+     "fpr": 0.5391,
+     "fnr": 0.2065,
+     "surfaced_recall": 0.8804,
+     "high_band_recall": 0.6413,
+     "high_band_fpr": 0.2266
+    },
+    "alerts": {
+     "flagged": 308,
+     "per_dataset": 10.27,
+     "precision": 0.3214,
+     "unmatched": 66
+    },
+    "queue": {
+     "p_at_10": 0.397,
+     "p_at_5": 0.44,
+     "recall_at_10": 0.8722,
+     "recall_at_5": 0.6861
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 5,
+      "flagged": 4,
+      "surfaced": 4
+     },
+     "N1_payroll": {
+      "total": 17,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N2_merchant_settlement": {
+      "total": 21,
+      "flagged": 21,
+      "surfaced": 21
+     },
+     "N3_supplier_payments": {
+      "total": 8,
+      "flagged": 5,
+      "surfaced": 5
+     },
+     "N4_reimbursement": {
+      "total": 18,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "N6_loan_repayments": {
+      "total": 21,
+      "flagged": 21,
+      "surfaced": 21
+     },
+     "N7_treasury_sweep": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 20,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 17,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 8,
+      "flagged": 0,
+      "surfaced": 8
+     },
+     "S2_layering_chain": {
+      "total": 12,
+      "flagged": 11,
+      "surfaced": 11
+     },
+     "S3_coordinated_distribution": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "S3_distribution_terminal": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S4_circular_flow": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "S5_scatter_gather": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     }
+    },
+    "latency_ms": {
+     "median": 62.7,
+     "p95": 109.1,
+     "max": 139.4
+    }
+   },
+   "minus_coverage_abstention": {
+    "datasets": 30,
+    "scenario": {
+     "suspicious": 92,
+     "legitimate": 128,
+     "tp": 80,
+     "fp": 48,
+     "fn": 12,
+     "tn": 80,
+     "precision": 0.625,
+     "recall": 0.8696,
+     "f1": 0.7273,
+     "fpr": 0.375,
+     "fnr": 0.1304,
+     "surfaced_recall": 0.8696,
+     "high_band_recall": 0.6413,
+     "high_band_fpr": 0.0625
+    },
+    "alerts": {
+     "flagged": 292,
+     "per_dataset": 9.73,
+     "precision": 0.363,
+     "unmatched": 64
+    },
+    "queue": {
+     "p_at_10": 0.4206,
+     "p_at_5": 0.4961,
+     "recall_at_10": 0.8722,
+     "recall_at_5": 0.7695
+    },
+    "by_family": {
+     "H_same_day_chain": {
+      "total": 5,
+      "flagged": 4,
+      "surfaced": 4
+     },
+     "N1_payroll": {
+      "total": 17,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N2_merchant_settlement": {
+      "total": 21,
+      "flagged": 21,
+      "surfaced": 21
+     },
+     "N3_supplier_payments": {
+      "total": 8,
+      "flagged": 5,
+      "surfaced": 5
+     },
+     "N4_reimbursement": {
+      "total": 18,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N5_family_remittance": {
+      "total": 11,
+      "flagged": 10,
+      "surfaced": 10
+     },
+     "N6_loan_repayments": {
+      "total": 21,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "N7_treasury_sweep": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     },
+     "N8_reverse_chronology_chain": {
+      "total": 20,
+      "flagged": 0,
+      "surfaced": 0
+     },
+     "S1_collection_funnel": {
+      "total": 17,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S1_collection_funnel_boundary": {
+      "total": 8,
+      "flagged": 7,
+      "surfaced": 7
+     },
+     "S2_layering_chain": {
+      "total": 12,
+      "flagged": 11,
+      "surfaced": 11
+     },
+     "S3_coordinated_distribution": {
+      "total": 17,
+      "flagged": 17,
+      "surfaced": 17
+     },
+     "S3_distribution_terminal": {
+      "total": 8,
+      "flagged": 8,
+      "surfaced": 8
+     },
+     "S4_circular_flow": {
+      "total": 13,
+      "flagged": 13,
+      "surfaced": 13
+     },
+     "S5_scatter_gather": {
+      "total": 12,
+      "flagged": 12,
+      "surfaced": 12
+     }
+    },
+    "latency_ms": {
+     "median": 60.5,
+     "p95": 103.6,
+     "max": 134.3
+    }
+   }
+  }
+ },
+ "examples": {
+  "split": "holdout",
+  "false_positives": [
+   {
+    "dataset": "bench:bench-v1:3000:timestamp",
+    "scenario_id": "bench-v1-3000-02-N7_treasury_sweep",
+    "family": "N7_treasury_sweep",
+    "difficulty": "hard",
+    "notes": "weekly intercompany sweep cycle",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 58,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_TYPICAL_TURNOVER",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:bench-v1:3000:timestamp",
+    "scenario_id": "bench-v1-3000-03-N2_merchant_settlement",
+    "family": "N2_merchant_settlement",
+    "difficulty": "hard",
+    "notes": "processor hub",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 63,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_TYPICAL_TURNOVER",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:bench-v1:3001:day",
+    "scenario_id": "bench-v1-3001-04-N2_merchant_settlement",
+    "family": "N2_merchant_settlement",
+    "difficulty": "hard",
+    "notes": "processor hub",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 62,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_TYPICAL_TURNOVER",
+     "COVERAGE_DAY_PRECISION",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:bench-v1:3001:day",
+    "scenario_id": "bench-v1-3001-06-N2_merchant_settlement",
+    "family": "N2_merchant_settlement",
+    "difficulty": "hard",
+    "notes": "processor hub",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 63,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_TYPICAL_TURNOVER",
+     "COVERAGE_DAY_PRECISION",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:bench-v1:3002:timestamp",
+    "scenario_id": "bench-v1-3002-04-N2_merchant_settlement",
+    "family": "N2_merchant_settlement",
+    "difficulty": "hard",
+    "notes": "processor hub",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 64,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_TYPICAL_TURNOVER",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:bench-v1:3003:timestamp",
+    "scenario_id": "bench-v1-3003-00-N2_merchant_settlement",
+    "family": "N2_merchant_settlement",
+    "difficulty": "hard",
+    "notes": "processor hub",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 63,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_TYPICAL_TURNOVER",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:bench-v1:3003:timestamp",
+    "scenario_id": "bench-v1-3003-01-N7_treasury_sweep",
+    "family": "N7_treasury_sweep",
+    "difficulty": "hard",
+    "notes": "weekly intercompany sweep cycle",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 55,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:bench-v1:3003:timestamp",
+    "scenario_id": "bench-v1-3003-03-N7_treasury_sweep",
+    "family": "N7_treasury_sweep",
+    "difficulty": "hard",
+    "notes": "weekly intercompany sweep cycle",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 62,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_TYPICAL_TURNOVER",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:bench-v1:3004:timestamp",
+    "scenario_id": "bench-v1-3004-01-N2_merchant_settlement",
+    "family": "N2_merchant_settlement",
+    "difficulty": "hard",
+    "notes": "processor hub",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 64,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_TYPICAL_TURNOVER",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:bench-v1:3004:timestamp",
+    "scenario_id": "bench-v1-3004-02-N5_family_remittance",
+    "family": "N5_family_remittance",
+    "difficulty": "hard",
+    "notes": "salary followed by remittances to relatives",
+    "kind": "fan_out",
+    "band": "high",
+    "priority": 71,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_DISTRIBUTION_SUPPORTED",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:bench-v1:3004:timestamp",
+    "scenario_id": "bench-v1-3004-03-N2_merchant_settlement",
+    "family": "N2_merchant_settlement",
+    "difficulty": "hard",
+    "notes": "processor hub",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 65,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_TYPICAL_TURNOVER",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:bench-v1:3004:timestamp",
+    "scenario_id": "bench-v1-3004-05-N2_merchant_settlement",
+    "family": "N2_merchant_settlement",
+    "difficulty": "hard",
+    "notes": "processor hub",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 64,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_TYPICAL_TURNOVER",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   }
+  ],
+  "false_negatives": [
+   {
+    "dataset": "bench:bench-v1:3004:timestamp",
+    "scenario_id": "bench-v1-3004-04-S1_collection_funnel",
+    "family": "S1_collection_funnel",
+    "difficulty": "easy",
+    "notes": "consolidation then onward transfer",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 35,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_INCONCLUSIVE",
+     "BAND_CAPPED_BY_EVIDENCE",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:bench-v1:3006:day",
+    "scenario_id": "bench-v1-3006-00-S1_collection_funnel_boundary",
+    "family": "S1_collection_funnel_boundary",
+    "difficulty": "hard",
+    "notes": "centre at declared collection boundary",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:bench-v1:3006:day",
+    "scenario_id": "bench-v1-3006-03-S1_collection_funnel_boundary",
+    "family": "S1_collection_funnel_boundary",
+    "difficulty": "hard",
+    "notes": "centre at declared collection boundary",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:bench-v1:3007:day",
+    "scenario_id": "bench-v1-3007-03-S1_collection_funnel",
+    "family": "S1_collection_funnel",
+    "difficulty": "easy",
+    "notes": "consolidation then onward transfer",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 21,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_TYPICAL_TURNOVER",
+     "COVERAGE_DAY_PRECISION",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:bench-v1:3007:day",
+    "scenario_id": "bench-v1-3007-04-S1_collection_funnel_boundary",
+    "family": "S1_collection_funnel_boundary",
+    "difficulty": "hard",
+    "notes": "centre at declared collection boundary",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:bench-v1:3009:day",
+    "scenario_id": "bench-v1-3009-01-S1_collection_funnel",
+    "family": "S1_collection_funnel",
+    "difficulty": "easy",
+    "notes": "consolidation then onward transfer",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 35,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_TYPICAL_TURNOVER",
+     "COVERAGE_DAY_PRECISION",
+     "BAND_CAPPED_BY_EVIDENCE",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:bench-v1:3009:day",
+    "scenario_id": "bench-v1-3009-03-S1_collection_funnel",
+    "family": "S1_collection_funnel",
+    "difficulty": "easy",
+    "notes": "consolidation then onward transfer",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 35,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DAY_PRECISION",
+     "BAND_CAPPED_BY_EVIDENCE",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:bench-v1:3010:timestamp",
+    "scenario_id": "bench-v1-3010-00-S2_layering_chain",
+    "family": "S2_layering_chain",
+    "difficulty": "easy",
+    "notes": "multi-hop pass-through with increasing dates",
+    "kind": "chain",
+    "band": "low",
+    "priority": 35,
+    "reasons": [
+     "STRUCT_CHAIN_PATH",
+     "TEMPORAL_CONTRADICTED",
+     "BAND_CAPPED_BY_EVIDENCE",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:bench-v1:3013:timestamp",
+    "scenario_id": "bench-v1-3013-01-S1_collection_funnel_boundary",
+    "family": "S1_collection_funnel_boundary",
+    "difficulty": "hard",
+    "notes": "centre at declared collection boundary",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:bench-v1:3013:timestamp",
+    "scenario_id": "bench-v1-3013-03-S1_collection_funnel",
+    "family": "S1_collection_funnel",
+    "difficulty": "easy",
+    "notes": "consolidation then onward transfer",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 30,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_TYPICAL_TURNOVER",
+     "BAND_CAPPED_BY_EVIDENCE",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:bench-v1:3014:timestamp",
+    "scenario_id": "bench-v1-3014-00-S1_collection_funnel_boundary",
+    "family": "S1_collection_funnel_boundary",
+    "difficulty": "hard",
+    "notes": "centre at declared collection boundary",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:bench-v1:3014:timestamp",
+    "scenario_id": "bench-v1-3014-06-S1_collection_funnel",
+    "family": "S1_collection_funnel",
+    "difficulty": "easy",
+    "notes": "consolidation then onward transfer",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 26,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_TYPICAL_TURNOVER",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   }
+  ]
+ },
+ "robustness": {
+  "split": "validation",
+  "base": {
+   "datasets": 20,
+   "scenario": {
+    "suspicious": 56,
+    "legitimate": 85,
+    "tp": 43,
+    "fp": 36,
+    "fn": 13,
+    "tn": 49,
+    "precision": 0.5443,
+    "recall": 0.7679,
+    "f1": 0.637,
+    "fpr": 0.4235,
+    "fnr": 0.2321,
+    "surfaced_recall": 0.8571,
+    "high_band_recall": 0.625,
+    "high_band_fpr": 0.1059
+   },
+   "alerts": {
+    "flagged": 157,
+    "per_dataset": 7.85,
+    "precision": 0.3185,
+    "unmatched": 26
+   },
+   "queue": {
+    "p_at_10": 0.4183,
+    "p_at_5": 0.4917,
+    "recall_at_10": 0.8125,
+    "recall_at_5": 0.7
+   },
+   "by_family": {
+    "H_same_day_chain": {
+     "total": 3,
+     "flagged": 2,
+     "surfaced": 2
+    },
+    "N1_payroll": {
+     "total": 11,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "N2_merchant_settlement": {
+     "total": 13,
+     "flagged": 13,
+     "surfaced": 13
+    },
+    "N3_supplier_payments": {
+     "total": 9,
+     "flagged": 6,
+     "surfaced": 6
+    },
+    "N4_reimbursement": {
+     "total": 9,
+     "flagged": 1,
+     "surfaced": 1
+    },
+    "N5_family_remittance": {
+     "total": 11,
+     "flagged": 8,
+     "surfaced": 8
+    },
+    "N6_loan_repayments": {
+     "total": 10,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "N7_treasury_sweep": {
+     "total": 8,
+     "flagged": 8,
+     "surfaced": 8
+    },
+    "N8_reverse_chronology_chain": {
+     "total": 14,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "S1_collection_funnel": {
+     "total": 15,
+     "flagged": 8,
+     "surfaced": 8
+    },
+    "S1_collection_funnel_boundary": {
+     "total": 5,
+     "flagged": 0,
+     "surfaced": 5
+    },
+    "S2_layering_chain": {
+     "total": 10,
+     "flagged": 10,
+     "surfaced": 10
+    },
+    "S3_coordinated_distribution": {
+     "total": 4,
+     "flagged": 4,
+     "surfaced": 4
+    },
+    "S3_distribution_terminal": {
+     "total": 6,
+     "flagged": 6,
+     "surfaced": 6
+    },
+    "S4_circular_flow": {
+     "total": 7,
+     "flagged": 7,
+     "surfaced": 7
+    },
+    "S5_scatter_gather": {
+     "total": 6,
+     "flagged": 6,
+     "surfaced": 6
+    }
+   },
+   "latency_ms": {
+    "median": 50.6,
+    "p95": 101.9,
+    "max": 188.9
+   }
+  },
+  "perturbations": [
+   {
+    "id": "shuffled_rows",
+    "description": "row order shuffled (out-of-order arrival)",
+    "identical_to_base": true,
+    "summary": {
+     "datasets": 20,
+     "scenario": {
+      "suspicious": 56,
+      "legitimate": 85,
+      "tp": 43,
+      "fp": 36,
+      "fn": 13,
+      "tn": 49,
+      "precision": 0.5443,
+      "recall": 0.7679,
+      "f1": 0.637,
+      "fpr": 0.4235,
+      "fnr": 0.2321,
+      "surfaced_recall": 0.8571,
+      "high_band_recall": 0.625,
+      "high_band_fpr": 0.1059
+     },
+     "alerts": {
+      "flagged": 157,
+      "per_dataset": 7.85,
+      "precision": 0.3185,
+      "unmatched": 26
+     },
+     "queue": {
+      "p_at_10": 0.4183,
+      "p_at_5": 0.4917,
+      "recall_at_10": 0.8125,
+      "recall_at_5": 0.7
+     },
+     "by_family": {
+      "H_same_day_chain": {
+       "total": 3,
+       "flagged": 2,
+       "surfaced": 2
+      },
+      "N1_payroll": {
+       "total": 11,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N2_merchant_settlement": {
+       "total": 13,
+       "flagged": 13,
+       "surfaced": 13
+      },
+      "N3_supplier_payments": {
+       "total": 9,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "N4_reimbursement": {
+       "total": 9,
+       "flagged": 1,
+       "surfaced": 1
+      },
+      "N5_family_remittance": {
+       "total": 11,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N6_loan_repayments": {
+       "total": 10,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N7_treasury_sweep": {
+       "total": 8,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N8_reverse_chronology_chain": {
+       "total": 14,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "S1_collection_funnel": {
+       "total": 15,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "S1_collection_funnel_boundary": {
+       "total": 5,
+       "flagged": 0,
+       "surfaced": 5
+      },
+      "S2_layering_chain": {
+       "total": 10,
+       "flagged": 10,
+       "surfaced": 10
+      },
+      "S3_coordinated_distribution": {
+       "total": 4,
+       "flagged": 4,
+       "surfaced": 4
+      },
+      "S3_distribution_terminal": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "S4_circular_flow": {
+       "total": 7,
+       "flagged": 7,
+       "surfaced": 7
+      },
+      "S5_scatter_gather": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      }
+     },
+     "latency_ms": {
+      "median": 52.4,
+      "p95": 142.0,
+      "max": 174.1
+     }
+    }
+   },
+   {
+    "id": "duplicate_rows_5pct",
+    "description": "5% of rows re-sent as exact duplicates",
+    "identical_to_base": true,
+    "summary": {
+     "datasets": 20,
+     "scenario": {
+      "suspicious": 56,
+      "legitimate": 85,
+      "tp": 43,
+      "fp": 36,
+      "fn": 13,
+      "tn": 49,
+      "precision": 0.5443,
+      "recall": 0.7679,
+      "f1": 0.637,
+      "fpr": 0.4235,
+      "fnr": 0.2321,
+      "surfaced_recall": 0.8571,
+      "high_band_recall": 0.625,
+      "high_band_fpr": 0.1059
+     },
+     "alerts": {
+      "flagged": 157,
+      "per_dataset": 7.85,
+      "precision": 0.3185,
+      "unmatched": 26
+     },
+     "queue": {
+      "p_at_10": 0.4183,
+      "p_at_5": 0.4917,
+      "recall_at_10": 0.8125,
+      "recall_at_5": 0.7
+     },
+     "by_family": {
+      "H_same_day_chain": {
+       "total": 3,
+       "flagged": 2,
+       "surfaced": 2
+      },
+      "N1_payroll": {
+       "total": 11,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N2_merchant_settlement": {
+       "total": 13,
+       "flagged": 13,
+       "surfaced": 13
+      },
+      "N3_supplier_payments": {
+       "total": 9,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "N4_reimbursement": {
+       "total": 9,
+       "flagged": 1,
+       "surfaced": 1
+      },
+      "N5_family_remittance": {
+       "total": 11,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N6_loan_repayments": {
+       "total": 10,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N7_treasury_sweep": {
+       "total": 8,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N8_reverse_chronology_chain": {
+       "total": 14,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "S1_collection_funnel": {
+       "total": 15,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "S1_collection_funnel_boundary": {
+       "total": 5,
+       "flagged": 0,
+       "surfaced": 5
+      },
+      "S2_layering_chain": {
+       "total": 10,
+       "flagged": 10,
+       "surfaced": 10
+      },
+      "S3_coordinated_distribution": {
+       "total": 4,
+       "flagged": 4,
+       "surfaced": 4
+      },
+      "S3_distribution_terminal": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "S4_circular_flow": {
+       "total": 7,
+       "flagged": 7,
+       "surfaced": 7
+      },
+      "S5_scatter_gather": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      }
+     },
+     "latency_ms": {
+      "median": 53.9,
+      "p95": 114.4,
+      "max": 158.5
+     }
+    }
+   },
+   {
+    "id": "missing_rows_10pct",
+    "description": "10% of rows missing at random",
+    "identical_to_base": false,
+    "summary": {
+     "datasets": 20,
+     "scenario": {
+      "suspicious": 56,
+      "legitimate": 85,
+      "tp": 34,
+      "fp": 34,
+      "fn": 22,
+      "tn": 51,
+      "precision": 0.5,
+      "recall": 0.6071,
+      "f1": 0.5484,
+      "fpr": 0.4,
+      "fnr": 0.3929,
+      "surfaced_recall": 0.6964,
+      "high_band_recall": 0.5179,
+      "high_band_fpr": 0.0706
+     },
+     "alerts": {
+      "flagged": 137,
+      "per_dataset": 6.85,
+      "precision": 0.3066,
+      "unmatched": 21
+     },
+     "queue": {
+      "p_at_10": 0.3659,
+      "p_at_5": 0.4105,
+      "recall_at_10": 0.6333,
+      "recall_at_5": 0.55
+     },
+     "by_family": {
+      "H_same_day_chain": {
+       "total": 3,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N1_payroll": {
+       "total": 11,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N2_merchant_settlement": {
+       "total": 13,
+       "flagged": 13,
+       "surfaced": 13
+      },
+      "N3_supplier_payments": {
+       "total": 9,
+       "flagged": 5,
+       "surfaced": 5
+      },
+      "N4_reimbursement": {
+       "total": 9,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N5_family_remittance": {
+       "total": 11,
+       "flagged": 7,
+       "surfaced": 7
+      },
+      "N6_loan_repayments": {
+       "total": 10,
+       "flagged": 1,
+       "surfaced": 1
+      },
+      "N7_treasury_sweep": {
+       "total": 8,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N8_reverse_chronology_chain": {
+       "total": 14,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "S1_collection_funnel": {
+       "total": 15,
+       "flagged": 9,
+       "surfaced": 9
+      },
+      "S1_collection_funnel_boundary": {
+       "total": 5,
+       "flagged": 0,
+       "surfaced": 5
+      },
+      "S2_layering_chain": {
+       "total": 10,
+       "flagged": 7,
+       "surfaced": 7
+      },
+      "S3_coordinated_distribution": {
+       "total": 4,
+       "flagged": 3,
+       "surfaced": 3
+      },
+      "S3_distribution_terminal": {
+       "total": 6,
+       "flagged": 5,
+       "surfaced": 5
+      },
+      "S4_circular_flow": {
+       "total": 7,
+       "flagged": 4,
+       "surfaced": 4
+      },
+      "S5_scatter_gather": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      }
+     },
+     "latency_ms": {
+      "median": 45.9,
+      "p95": 120.0,
+      "max": 132.2
+     }
+    }
+   },
+   {
+    "id": "amount_jitter_1pct",
+    "description": "every amount perturbed by up to +/-1%",
+    "identical_to_base": false,
+    "summary": {
+     "datasets": 20,
+     "scenario": {
+      "suspicious": 56,
+      "legitimate": 85,
+      "tp": 43,
+      "fp": 36,
+      "fn": 13,
+      "tn": 49,
+      "precision": 0.5443,
+      "recall": 0.7679,
+      "f1": 0.637,
+      "fpr": 0.4235,
+      "fnr": 0.2321,
+      "surfaced_recall": 0.8571,
+      "high_band_recall": 0.6071,
+      "high_band_fpr": 0.1294
+     },
+     "alerts": {
+      "flagged": 158,
+      "per_dataset": 7.9,
+      "precision": 0.3165,
+      "unmatched": 26
+     },
+     "queue": {
+      "p_at_10": 0.4115,
+      "p_at_5": 0.4717,
+      "recall_at_10": 0.8125,
+      "recall_at_5": 0.6833
+     },
+     "by_family": {
+      "H_same_day_chain": {
+       "total": 3,
+       "flagged": 2,
+       "surfaced": 2
+      },
+      "N1_payroll": {
+       "total": 11,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N2_merchant_settlement": {
+       "total": 13,
+       "flagged": 13,
+       "surfaced": 13
+      },
+      "N3_supplier_payments": {
+       "total": 9,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "N4_reimbursement": {
+       "total": 9,
+       "flagged": 1,
+       "surfaced": 1
+      },
+      "N5_family_remittance": {
+       "total": 11,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N6_loan_repayments": {
+       "total": 10,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N7_treasury_sweep": {
+       "total": 8,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N8_reverse_chronology_chain": {
+       "total": 14,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "S1_collection_funnel": {
+       "total": 15,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "S1_collection_funnel_boundary": {
+       "total": 5,
+       "flagged": 0,
+       "surfaced": 5
+      },
+      "S2_layering_chain": {
+       "total": 10,
+       "flagged": 10,
+       "surfaced": 10
+      },
+      "S3_coordinated_distribution": {
+       "total": 4,
+       "flagged": 4,
+       "surfaced": 4
+      },
+      "S3_distribution_terminal": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "S4_circular_flow": {
+       "total": 7,
+       "flagged": 7,
+       "surfaced": 7
+      },
+      "S5_scatter_gather": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      }
+     },
+     "latency_ms": {
+      "median": 58.6,
+      "p95": 157.5,
+      "max": 212.4
+     }
+    }
+   },
+   {
+    "id": "timestamps_removed",
+    "description": "intraday timestamps removed (day precision only)",
+    "identical_to_base": false,
+    "summary": {
+     "datasets": 20,
+     "scenario": {
+      "suspicious": 56,
+      "legitimate": 85,
+      "tp": 44,
+      "fp": 37,
+      "fn": 12,
+      "tn": 48,
+      "precision": 0.5432,
+      "recall": 0.7857,
+      "f1": 0.6423,
+      "fpr": 0.4353,
+      "fnr": 0.2143,
+      "surfaced_recall": 0.875,
+      "high_band_recall": 0.625,
+      "high_band_fpr": 0.0941
+     },
+     "alerts": {
+      "flagged": 160,
+      "per_dataset": 8.0,
+      "precision": 0.3187,
+      "unmatched": 26
+     },
+     "queue": {
+      "p_at_10": 0.419,
+      "p_at_5": 0.4917,
+      "recall_at_10": 0.8292,
+      "recall_at_5": 0.7
+     },
+     "by_family": {
+      "H_same_day_chain": {
+       "total": 3,
+       "flagged": 3,
+       "surfaced": 3
+      },
+      "N1_payroll": {
+       "total": 11,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N2_merchant_settlement": {
+       "total": 13,
+       "flagged": 13,
+       "surfaced": 13
+      },
+      "N3_supplier_payments": {
+       "total": 9,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "N4_reimbursement": {
+       "total": 9,
+       "flagged": 1,
+       "surfaced": 1
+      },
+      "N5_family_remittance": {
+       "total": 11,
+       "flagged": 9,
+       "surfaced": 9
+      },
+      "N6_loan_repayments": {
+       "total": 10,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N7_treasury_sweep": {
+       "total": 8,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N8_reverse_chronology_chain": {
+       "total": 14,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "S1_collection_funnel": {
+       "total": 15,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "S1_collection_funnel_boundary": {
+       "total": 5,
+       "flagged": 0,
+       "surfaced": 5
+      },
+      "S2_layering_chain": {
+       "total": 10,
+       "flagged": 10,
+       "surfaced": 10
+      },
+      "S3_coordinated_distribution": {
+       "total": 4,
+       "flagged": 4,
+       "surfaced": 4
+      },
+      "S3_distribution_terminal": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "S4_circular_flow": {
+       "total": 7,
+       "flagged": 7,
+       "surfaced": 7
+      },
+      "S5_scatter_gather": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      }
+     },
+     "latency_ms": {
+      "median": 52.8,
+      "p95": 98.3,
+      "max": 189.2
+     }
+    }
+   },
+   {
+    "id": "boundary_10pct",
+    "description": "10% of accounts declared at the collection boundary",
+    "identical_to_base": false,
+    "summary": {
+     "datasets": 20,
+     "scenario": {
+      "suspicious": 56,
+      "legitimate": 85,
+      "tp": 41,
+      "fp": 34,
+      "fn": 15,
+      "tn": 51,
+      "precision": 0.5467,
+      "recall": 0.7321,
+      "f1": 0.626,
+      "fpr": 0.4,
+      "fnr": 0.2679,
+      "surfaced_recall": 0.875,
+      "high_band_recall": 0.5893,
+      "high_band_fpr": 0.1059
+     },
+     "alerts": {
+      "flagged": 145,
+      "per_dataset": 7.25,
+      "precision": 0.3241,
+      "unmatched": 22
+     },
+     "queue": {
+      "p_at_10": 0.311,
+      "p_at_5": 0.4233,
+      "recall_at_10": 0.8167,
+      "recall_at_5": 0.675
+     },
+     "by_family": {
+      "H_same_day_chain": {
+       "total": 3,
+       "flagged": 2,
+       "surfaced": 2
+      },
+      "N1_payroll": {
+       "total": 11,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N2_merchant_settlement": {
+       "total": 13,
+       "flagged": 11,
+       "surfaced": 13
+      },
+      "N3_supplier_payments": {
+       "total": 9,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "N4_reimbursement": {
+       "total": 9,
+       "flagged": 1,
+       "surfaced": 3
+      },
+      "N5_family_remittance": {
+       "total": 11,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N6_loan_repayments": {
+       "total": 10,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N7_treasury_sweep": {
+       "total": 8,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N8_reverse_chronology_chain": {
+       "total": 14,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "S1_collection_funnel": {
+       "total": 15,
+       "flagged": 8,
+       "surfaced": 9
+      },
+      "S1_collection_funnel_boundary": {
+       "total": 5,
+       "flagged": 0,
+       "surfaced": 5
+      },
+      "S2_layering_chain": {
+       "total": 10,
+       "flagged": 8,
+       "surfaced": 10
+      },
+      "S3_coordinated_distribution": {
+       "total": 4,
+       "flagged": 4,
+       "surfaced": 4
+      },
+      "S3_distribution_terminal": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "S4_circular_flow": {
+       "total": 7,
+       "flagged": 7,
+       "surfaced": 7
+      },
+      "S5_scatter_gather": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      }
+     },
+     "latency_ms": {
+      "median": 54.4,
+      "p95": 134.6,
+      "max": 144.1
+     }
+    }
+   },
+   {
+    "id": "background_x2",
+    "description": "twice the unlabelled background volume",
+    "identical_to_base": false,
+    "summary": {
+     "datasets": 20,
+     "scenario": {
+      "suspicious": 56,
+      "legitimate": 85,
+      "tp": 44,
+      "fp": 37,
+      "fn": 12,
+      "tn": 48,
+      "precision": 0.5432,
+      "recall": 0.7857,
+      "f1": 0.6423,
+      "fpr": 0.4353,
+      "fnr": 0.2143,
+      "surfaced_recall": 0.875,
+      "high_band_recall": 0.6429,
+      "high_band_fpr": 0.0706
+     },
+     "alerts": {
+      "flagged": 162,
+      "per_dataset": 8.1,
+      "precision": 0.3148,
+      "unmatched": 28
+     },
+     "queue": {
+      "p_at_10": 0.4182,
+      "p_at_5": 0.4775,
+      "recall_at_10": 0.825,
+      "recall_at_5": 0.725
+     },
+     "by_family": {
+      "H_same_day_chain": {
+       "total": 3,
+       "flagged": 3,
+       "surfaced": 3
+      },
+      "N1_payroll": {
+       "total": 11,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N2_merchant_settlement": {
+       "total": 13,
+       "flagged": 13,
+       "surfaced": 13
+      },
+      "N3_supplier_payments": {
+       "total": 9,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "N4_reimbursement": {
+       "total": 9,
+       "flagged": 1,
+       "surfaced": 1
+      },
+      "N5_family_remittance": {
+       "total": 11,
+       "flagged": 9,
+       "surfaced": 9
+      },
+      "N6_loan_repayments": {
+       "total": 10,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N7_treasury_sweep": {
+       "total": 8,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N8_reverse_chronology_chain": {
+       "total": 14,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "S1_collection_funnel": {
+       "total": 15,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "S1_collection_funnel_boundary": {
+       "total": 5,
+       "flagged": 0,
+       "surfaced": 5
+      },
+      "S2_layering_chain": {
+       "total": 10,
+       "flagged": 10,
+       "surfaced": 10
+      },
+      "S3_coordinated_distribution": {
+       "total": 4,
+       "flagged": 4,
+       "surfaced": 4
+      },
+      "S3_distribution_terminal": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "S4_circular_flow": {
+       "total": 7,
+       "flagged": 7,
+       "surfaced": 7
+      },
+      "S5_scatter_gather": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      }
+     },
+     "latency_ms": {
+      "median": 50.3,
+      "p95": 114.6,
+      "max": 212.9
+     }
+    }
+   },
+   {
+    "id": "background_x4",
+    "description": "four times the unlabelled background volume",
+    "identical_to_base": false,
+    "summary": {
+     "datasets": 20,
+     "scenario": {
+      "suspicious": 56,
+      "legitimate": 85,
+      "tp": 44,
+      "fp": 36,
+      "fn": 12,
+      "tn": 49,
+      "precision": 0.55,
+      "recall": 0.7857,
+      "f1": 0.6471,
+      "fpr": 0.4235,
+      "fnr": 0.2143,
+      "surfaced_recall": 0.875,
+      "high_band_recall": 0.6429,
+      "high_band_fpr": 0.0706
+     },
+     "alerts": {
+      "flagged": 137,
+      "per_dataset": 6.85,
+      "precision": 0.3796,
+      "unmatched": 7
+     },
+     "queue": {
+      "p_at_10": 0.505,
+      "p_at_5": 0.5467,
+      "recall_at_10": 0.8417,
+      "recall_at_5": 0.7375
+     },
+     "by_family": {
+      "H_same_day_chain": {
+       "total": 3,
+       "flagged": 3,
+       "surfaced": 3
+      },
+      "N1_payroll": {
+       "total": 11,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N2_merchant_settlement": {
+       "total": 13,
+       "flagged": 13,
+       "surfaced": 13
+      },
+      "N3_supplier_payments": {
+       "total": 9,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "N4_reimbursement": {
+       "total": 9,
+       "flagged": 1,
+       "surfaced": 1
+      },
+      "N5_family_remittance": {
+       "total": 11,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N6_loan_repayments": {
+       "total": 10,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N7_treasury_sweep": {
+       "total": 8,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N8_reverse_chronology_chain": {
+       "total": 14,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "S1_collection_funnel": {
+       "total": 15,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "S1_collection_funnel_boundary": {
+       "total": 5,
+       "flagged": 0,
+       "surfaced": 5
+      },
+      "S2_layering_chain": {
+       "total": 10,
+       "flagged": 10,
+       "surfaced": 10
+      },
+      "S3_coordinated_distribution": {
+       "total": 4,
+       "flagged": 4,
+       "surfaced": 4
+      },
+      "S3_distribution_terminal": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "S4_circular_flow": {
+       "total": 7,
+       "flagged": 7,
+       "surfaced": 7
+      },
+      "S5_scatter_gather": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      }
+     },
+     "latency_ms": {
+      "median": 45.7,
+      "p95": 119.5,
+      "max": 144.4
+     }
+    }
+   }
+  ]
+ },
+ "sensitivity": {
+  "split": "validation",
+  "variants": [
+   {
+    "id": "funnel.min_feeder_share=0.4",
+    "summary": {
+     "datasets": 20,
+     "scenario": {
+      "suspicious": 56,
+      "legitimate": 85,
+      "tp": 43,
+      "fp": 36,
+      "fn": 13,
+      "tn": 49,
+      "precision": 0.5443,
+      "recall": 0.7679,
+      "f1": 0.637,
+      "fpr": 0.4235,
+      "fnr": 0.2321,
+      "surfaced_recall": 0.8571,
+      "high_band_recall": 0.625,
+      "high_band_fpr": 0.1059
+     },
+     "alerts": {
+      "flagged": 173,
+      "per_dataset": 8.65,
+      "precision": 0.289,
+      "unmatched": 42
+     },
+     "queue": {
+      "p_at_10": 0.3525,
+      "p_at_5": 0.435,
+      "recall_at_10": 0.8125,
+      "recall_at_5": 0.7
+     },
+     "by_family": {
+      "H_same_day_chain": {
+       "total": 3,
+       "flagged": 2,
+       "surfaced": 2
+      },
+      "N1_payroll": {
+       "total": 11,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N2_merchant_settlement": {
+       "total": 13,
+       "flagged": 13,
+       "surfaced": 13
+      },
+      "N3_supplier_payments": {
+       "total": 9,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "N4_reimbursement": {
+       "total": 9,
+       "flagged": 1,
+       "surfaced": 1
+      },
+      "N5_family_remittance": {
+       "total": 11,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N6_loan_repayments": {
+       "total": 10,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N7_treasury_sweep": {
+       "total": 8,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N8_reverse_chronology_chain": {
+       "total": 14,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "S1_collection_funnel": {
+       "total": 15,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "S1_collection_funnel_boundary": {
+       "total": 5,
+       "flagged": 0,
+       "surfaced": 5
+      },
+      "S2_layering_chain": {
+       "total": 10,
+       "flagged": 10,
+       "surfaced": 10
+      },
+      "S3_coordinated_distribution": {
+       "total": 4,
+       "flagged": 4,
+       "surfaced": 4
+      },
+      "S3_distribution_terminal": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "S4_circular_flow": {
+       "total": 7,
+       "flagged": 7,
+       "surfaced": 7
+      },
+      "S5_scatter_gather": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      }
+     },
+     "latency_ms": {
+      "median": 54.4,
+      "p95": 106.6,
+      "max": 193.7
+     }
+    }
+   },
+   {
+    "id": "funnel.min_feeder_share=0.6",
+    "summary": {
+     "datasets": 20,
+     "scenario": {
+      "suspicious": 56,
+      "legitimate": 85,
+      "tp": 43,
+      "fp": 36,
+      "fn": 13,
+      "tn": 49,
+      "precision": 0.5443,
+      "recall": 0.7679,
+      "f1": 0.637,
+      "fpr": 0.4235,
+      "fnr": 0.2321,
+      "surfaced_recall": 0.8571,
+      "high_band_recall": 0.625,
+      "high_band_fpr": 0.1059
+     },
+     "alerts": {
+      "flagged": 155,
+      "per_dataset": 7.75,
+      "precision": 0.3226,
+      "unmatched": 24
+     },
+     "queue": {
+      "p_at_10": 0.4224,
+      "p_at_5": 0.4817,
+      "recall_at_10": 0.8125,
+      "recall_at_5": 0.7
+     },
+     "by_family": {
+      "H_same_day_chain": {
+       "total": 3,
+       "flagged": 2,
+       "surfaced": 2
+      },
+      "N1_payroll": {
+       "total": 11,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N2_merchant_settlement": {
+       "total": 13,
+       "flagged": 13,
+       "surfaced": 13
+      },
+      "N3_supplier_payments": {
+       "total": 9,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "N4_reimbursement": {
+       "total": 9,
+       "flagged": 1,
+       "surfaced": 1
+      },
+      "N5_family_remittance": {
+       "total": 11,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N6_loan_repayments": {
+       "total": 10,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N7_treasury_sweep": {
+       "total": 8,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N8_reverse_chronology_chain": {
+       "total": 14,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "S1_collection_funnel": {
+       "total": 15,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "S1_collection_funnel_boundary": {
+       "total": 5,
+       "flagged": 0,
+       "surfaced": 5
+      },
+      "S2_layering_chain": {
+       "total": 10,
+       "flagged": 10,
+       "surfaced": 10
+      },
+      "S3_coordinated_distribution": {
+       "total": 4,
+       "flagged": 4,
+       "surfaced": 4
+      },
+      "S3_distribution_terminal": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "S4_circular_flow": {
+       "total": 7,
+       "flagged": 7,
+       "surfaced": 7
+      },
+      "S5_scatter_gather": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      }
+     },
+     "latency_ms": {
+      "median": 56.6,
+      "p95": 107.8,
+      "max": 154.4
+     }
+    }
+   },
+   {
+    "id": "temporal.max_hop_lag_days=5",
+    "summary": {
+     "datasets": 20,
+     "scenario": {
+      "suspicious": 56,
+      "legitimate": 85,
+      "tp": 40,
+      "fp": 31,
+      "fn": 16,
+      "tn": 54,
+      "precision": 0.5634,
+      "recall": 0.7143,
+      "f1": 0.6299,
+      "fpr": 0.3647,
+      "fnr": 0.2857,
+      "surfaced_recall": 0.8036,
+      "high_band_recall": 0.5714,
+      "high_band_fpr": 0.0588
+     },
+     "alerts": {
+      "flagged": 128,
+      "per_dataset": 6.4,
+      "precision": 0.3672,
+      "unmatched": 16
+     },
+     "queue": {
+      "p_at_10": 0.4641,
+      "p_at_5": 0.4917,
+      "recall_at_10": 0.7833,
+      "recall_at_5": 0.6958
+     },
+     "by_family": {
+      "H_same_day_chain": {
+       "total": 3,
+       "flagged": 2,
+       "surfaced": 2
+      },
+      "N1_payroll": {
+       "total": 11,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N2_merchant_settlement": {
+       "total": 13,
+       "flagged": 13,
+       "surfaced": 13
+      },
+      "N3_supplier_payments": {
+       "total": 9,
+       "flagged": 2,
+       "surfaced": 2
+      },
+      "N4_reimbursement": {
+       "total": 9,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N5_family_remittance": {
+       "total": 11,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N6_loan_repayments": {
+       "total": 10,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N7_treasury_sweep": {
+       "total": 8,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N8_reverse_chronology_chain": {
+       "total": 14,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "S1_collection_funnel": {
+       "total": 15,
+       "flagged": 5,
+       "surfaced": 5
+      },
+      "S1_collection_funnel_boundary": {
+       "total": 5,
+       "flagged": 0,
+       "surfaced": 5
+      },
+      "S2_layering_chain": {
+       "total": 10,
+       "flagged": 10,
+       "surfaced": 10
+      },
+      "S3_coordinated_distribution": {
+       "total": 4,
+       "flagged": 4,
+       "surfaced": 4
+      },
+      "S3_distribution_terminal": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "S4_circular_flow": {
+       "total": 7,
+       "flagged": 7,
+       "surfaced": 7
+      },
+      "S5_scatter_gather": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      }
+     },
+     "latency_ms": {
+      "median": 49.1,
+      "p95": 110.4,
+      "max": 154.9
+     }
+    }
+   },
+   {
+    "id": "temporal.max_hop_lag_days=10",
+    "summary": {
+     "datasets": 20,
+     "scenario": {
+      "suspicious": 56,
+      "legitimate": 85,
+      "tp": 49,
+      "fp": 40,
+      "fn": 7,
+      "tn": 45,
+      "precision": 0.5506,
+      "recall": 0.875,
+      "f1": 0.6759,
+      "fpr": 0.4706,
+      "fnr": 0.125,
+      "surfaced_recall": 0.9643,
+      "high_band_recall": 0.6964,
+      "high_band_fpr": 0.1294
+     },
+     "alerts": {
+      "flagged": 185,
+      "per_dataset": 9.25,
+      "precision": 0.3027,
+      "unmatched": 41
+     },
+     "queue": {
+      "p_at_10": 0.3734,
+      "p_at_5": 0.455,
+      "recall_at_10": 0.8917,
+      "recall_at_5": 0.7375
+     },
+     "by_family": {
+      "H_same_day_chain": {
+       "total": 3,
+       "flagged": 2,
+       "surfaced": 2
+      },
+      "N1_payroll": {
+       "total": 11,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N2_merchant_settlement": {
+       "total": 13,
+       "flagged": 13,
+       "surfaced": 13
+      },
+      "N3_supplier_payments": {
+       "total": 9,
+       "flagged": 9,
+       "surfaced": 9
+      },
+      "N4_reimbursement": {
+       "total": 9,
+       "flagged": 2,
+       "surfaced": 2
+      },
+      "N5_family_remittance": {
+       "total": 11,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N6_loan_repayments": {
+       "total": 10,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N7_treasury_sweep": {
+       "total": 8,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N8_reverse_chronology_chain": {
+       "total": 14,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "S1_collection_funnel": {
+       "total": 15,
+       "flagged": 14,
+       "surfaced": 14
+      },
+      "S1_collection_funnel_boundary": {
+       "total": 5,
+       "flagged": 0,
+       "surfaced": 5
+      },
+      "S2_layering_chain": {
+       "total": 10,
+       "flagged": 10,
+       "surfaced": 10
+      },
+      "S3_coordinated_distribution": {
+       "total": 4,
+       "flagged": 4,
+       "surfaced": 4
+      },
+      "S3_distribution_terminal": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "S4_circular_flow": {
+       "total": 7,
+       "flagged": 7,
+       "surfaced": 7
+      },
+      "S5_scatter_gather": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      }
+     },
+     "latency_ms": {
+      "median": 56.5,
+      "p95": 110.2,
+      "max": 195.0
+     }
+    }
+   },
+   {
+    "id": "fan_out.min_recipients=4",
+    "summary": {
+     "datasets": 20,
+     "scenario": {
+      "suspicious": 56,
+      "legitimate": 85,
+      "tp": 43,
+      "fp": 38,
+      "fn": 13,
+      "tn": 47,
+      "precision": 0.5309,
+      "recall": 0.7679,
+      "f1": 0.6278,
+      "fpr": 0.4471,
+      "fnr": 0.2321,
+      "surfaced_recall": 0.8571,
+      "high_band_recall": 0.625,
+      "high_band_fpr": 0.1176
+     },
+     "alerts": {
+      "flagged": 175,
+      "per_dataset": 8.75,
+      "precision": 0.2914,
+      "unmatched": 29
+     },
+     "queue": {
+      "p_at_10": 0.363,
+      "p_at_5": 0.4333,
+      "recall_at_10": 0.7792,
+      "recall_at_5": 0.6833
+     },
+     "by_family": {
+      "H_same_day_chain": {
+       "total": 3,
+       "flagged": 2,
+       "surfaced": 2
+      },
+      "N1_payroll": {
+       "total": 11,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N2_merchant_settlement": {
+       "total": 13,
+       "flagged": 13,
+       "surfaced": 13
+      },
+      "N3_supplier_payments": {
+       "total": 9,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "N4_reimbursement": {
+       "total": 9,
+       "flagged": 1,
+       "surfaced": 1
+      },
+      "N5_family_remittance": {
+       "total": 11,
+       "flagged": 10,
+       "surfaced": 10
+      },
+      "N6_loan_repayments": {
+       "total": 10,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N7_treasury_sweep": {
+       "total": 8,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N8_reverse_chronology_chain": {
+       "total": 14,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "S1_collection_funnel": {
+       "total": 15,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "S1_collection_funnel_boundary": {
+       "total": 5,
+       "flagged": 0,
+       "surfaced": 5
+      },
+      "S2_layering_chain": {
+       "total": 10,
+       "flagged": 10,
+       "surfaced": 10
+      },
+      "S3_coordinated_distribution": {
+       "total": 4,
+       "flagged": 4,
+       "surfaced": 4
+      },
+      "S3_distribution_terminal": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "S4_circular_flow": {
+       "total": 7,
+       "flagged": 7,
+       "surfaced": 7
+      },
+      "S5_scatter_gather": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      }
+     },
+     "latency_ms": {
+      "median": 60.0,
+      "p95": 99.5,
+      "max": 148.0
+     }
+    }
+   },
+   {
+    "id": "fan_out.min_recipients=6",
+    "summary": {
+     "datasets": 20,
+     "scenario": {
+      "suspicious": 56,
+      "legitimate": 85,
+      "tp": 41,
+      "fp": 32,
+      "fn": 15,
+      "tn": 53,
+      "precision": 0.5616,
+      "recall": 0.7321,
+      "f1": 0.6356,
+      "fpr": 0.3765,
+      "fnr": 0.2679,
+      "surfaced_recall": 0.8214,
+      "high_band_recall": 0.5714,
+      "high_band_fpr": 0.1059
+     },
+     "alerts": {
+      "flagged": 133,
+      "per_dataset": 6.65,
+      "precision": 0.3383,
+      "unmatched": 24
+     },
+     "queue": {
+      "p_at_10": 0.4458,
+      "p_at_5": 0.4883,
+      "recall_at_10": 0.7958,
+      "recall_at_5": 0.6833
+     },
+     "by_family": {
+      "H_same_day_chain": {
+       "total": 3,
+       "flagged": 2,
+       "surfaced": 2
+      },
+      "N1_payroll": {
+       "total": 11,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N2_merchant_settlement": {
+       "total": 13,
+       "flagged": 13,
+       "surfaced": 13
+      },
+      "N3_supplier_payments": {
+       "total": 9,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "N4_reimbursement": {
+       "total": 9,
+       "flagged": 1,
+       "surfaced": 1
+      },
+      "N5_family_remittance": {
+       "total": 11,
+       "flagged": 4,
+       "surfaced": 4
+      },
+      "N6_loan_repayments": {
+       "total": 10,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N7_treasury_sweep": {
+       "total": 8,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N8_reverse_chronology_chain": {
+       "total": 14,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "S1_collection_funnel": {
+       "total": 15,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "S1_collection_funnel_boundary": {
+       "total": 5,
+       "flagged": 0,
+       "surfaced": 5
+      },
+      "S2_layering_chain": {
+       "total": 10,
+       "flagged": 10,
+       "surfaced": 10
+      },
+      "S3_coordinated_distribution": {
+       "total": 4,
+       "flagged": 3,
+       "surfaced": 3
+      },
+      "S3_distribution_terminal": {
+       "total": 6,
+       "flagged": 5,
+       "surfaced": 5
+      },
+      "S4_circular_flow": {
+       "total": 7,
+       "flagged": 7,
+       "surfaced": 7
+      },
+      "S5_scatter_gather": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      }
+     },
+     "latency_ms": {
+      "median": 48.1,
+      "p95": 121.6,
+      "max": 128.0
+     }
+    }
+   },
+   {
+    "id": "peer.fence_iqr_multiplier=1.0",
+    "summary": {
+     "datasets": 20,
+     "scenario": {
+      "suspicious": 56,
+      "legitimate": 85,
+      "tp": 43,
+      "fp": 36,
+      "fn": 13,
+      "tn": 49,
+      "precision": 0.5443,
+      "recall": 0.7679,
+      "f1": 0.637,
+      "fpr": 0.4235,
+      "fnr": 0.2321,
+      "surfaced_recall": 0.8571,
+      "high_band_recall": 0.625,
+      "high_band_fpr": 0.1059
+     },
+     "alerts": {
+      "flagged": 158,
+      "per_dataset": 7.9,
+      "precision": 0.3228,
+      "unmatched": 26
+     },
+     "queue": {
+      "p_at_10": 0.4228,
+      "p_at_5": 0.4917,
+      "recall_at_10": 0.8125,
+      "recall_at_5": 0.7
+     },
+     "by_family": {
+      "H_same_day_chain": {
+       "total": 3,
+       "flagged": 2,
+       "surfaced": 2
+      },
+      "N1_payroll": {
+       "total": 11,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N2_merchant_settlement": {
+       "total": 13,
+       "flagged": 13,
+       "surfaced": 13
+      },
+      "N3_supplier_payments": {
+       "total": 9,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "N4_reimbursement": {
+       "total": 9,
+       "flagged": 1,
+       "surfaced": 1
+      },
+      "N5_family_remittance": {
+       "total": 11,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N6_loan_repayments": {
+       "total": 10,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N7_treasury_sweep": {
+       "total": 8,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N8_reverse_chronology_chain": {
+       "total": 14,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "S1_collection_funnel": {
+       "total": 15,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "S1_collection_funnel_boundary": {
+       "total": 5,
+       "flagged": 0,
+       "surfaced": 5
+      },
+      "S2_layering_chain": {
+       "total": 10,
+       "flagged": 10,
+       "surfaced": 10
+      },
+      "S3_coordinated_distribution": {
+       "total": 4,
+       "flagged": 4,
+       "surfaced": 4
+      },
+      "S3_distribution_terminal": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "S4_circular_flow": {
+       "total": 7,
+       "flagged": 7,
+       "surfaced": 7
+      },
+      "S5_scatter_gather": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      }
+     },
+     "latency_ms": {
+      "median": 53.8,
+      "p95": 101.8,
+      "max": 146.8
+     }
+    }
+   },
+   {
+    "id": "peer.fence_iqr_multiplier=2.0",
+    "summary": {
+     "datasets": 20,
+     "scenario": {
+      "suspicious": 56,
+      "legitimate": 85,
+      "tp": 43,
+      "fp": 35,
+      "fn": 13,
+      "tn": 50,
+      "precision": 0.5513,
+      "recall": 0.7679,
+      "f1": 0.6418,
+      "fpr": 0.4118,
+      "fnr": 0.2321,
+      "surfaced_recall": 0.8571,
+      "high_band_recall": 0.625,
+      "high_band_fpr": 0.1059
+     },
+     "alerts": {
+      "flagged": 155,
+      "per_dataset": 7.75,
+      "precision": 0.3226,
+      "unmatched": 26
+     },
+     "queue": {
+      "p_at_10": 0.4386,
+      "p_at_5": 0.4983,
+      "recall_at_10": 0.8125,
+      "recall_at_5": 0.7
+     },
+     "by_family": {
+      "H_same_day_chain": {
+       "total": 3,
+       "flagged": 2,
+       "surfaced": 2
+      },
+      "N1_payroll": {
+       "total": 11,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N2_merchant_settlement": {
+       "total": 13,
+       "flagged": 13,
+       "surfaced": 13
+      },
+      "N3_supplier_payments": {
+       "total": 9,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "N4_reimbursement": {
+       "total": 9,
+       "flagged": 1,
+       "surfaced": 1
+      },
+      "N5_family_remittance": {
+       "total": 11,
+       "flagged": 7,
+       "surfaced": 7
+      },
+      "N6_loan_repayments": {
+       "total": 10,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "N7_treasury_sweep": {
+       "total": 8,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "N8_reverse_chronology_chain": {
+       "total": 14,
+       "flagged": 0,
+       "surfaced": 0
+      },
+      "S1_collection_funnel": {
+       "total": 15,
+       "flagged": 8,
+       "surfaced": 8
+      },
+      "S1_collection_funnel_boundary": {
+       "total": 5,
+       "flagged": 0,
+       "surfaced": 5
+      },
+      "S2_layering_chain": {
+       "total": 10,
+       "flagged": 10,
+       "surfaced": 10
+      },
+      "S3_coordinated_distribution": {
+       "total": 4,
+       "flagged": 4,
+       "surfaced": 4
+      },
+      "S3_distribution_terminal": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      },
+      "S4_circular_flow": {
+       "total": 7,
+       "flagged": 7,
+       "surfaced": 7
+      },
+      "S5_scatter_gather": {
+       "total": 6,
+       "flagged": 6,
+       "surfaced": 6
+      }
+     },
+     "latency_ms": {
+      "median": 53.6,
+      "p95": 104.8,
+      "max": 147.9
+     }
+    }
+   }
+  ]
+ },
+ "runtime_seconds": 59.3,
+ "limitations": [
+  "All datasets are synthetic and generated by the same team that wrote the detectors; typologies, parameter ranges and hard negatives reflect our assumptions, not observed bank data.",
+  "Scenario counts per split are small (tens per family); differences of one or two scenarios are noise.",
+  "Priority is a triage ranking, not a calibrated probability of fraud.",
+  "Latency is wall-clock time of the pure analysis pipeline on one CPU core of the benchmark machine; it excludes database I/O and is not a banking-scale throughput claim.",
+  "Legitimate hubs capped by peer counter-evidence remain alerted at medium by design; any-alert FPR therefore stays high while high-band FPR measures the prioritisation effect."
+ ]
+}
