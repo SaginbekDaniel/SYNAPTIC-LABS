@@ -39,3 +39,30 @@ describe("i18n plurals", () => {
     expect(reasonText({ code: "BAND_CAPPED_BY_EVIDENCE", params: { from: "high", to: "medium" } })).toContain("качества доказательств");
   });
 });
+
+describe("competing explanations (hypotheses-v1)", () => {
+  const ids = [
+    "collection_through_intermediary",
+    "coordinated_distribution",
+    "recurring_business_activity",
+    "scheduled_payout",
+    "loan_disbursement_and_repayment",
+    "one_off_legitimate_collection",
+    "personal_remittance",
+  ];
+  it("localises every registry hypothesis, verdict and gate", () => {
+    for (const id of ids) expect(t(`hyp.id.${id}` as Parameters<typeof t>[0])).not.toContain("hyp.");
+    for (const v of ["suspicious_explanation_favoured", "benign_explanation_favoured", "inconclusive", "insufficient_data"]) {
+      expect(reasonText({ code: "HYPOTHESIS_VERDICT", params: { verdict: v } })).not.toContain("hyp.");
+    }
+    const capped = reasonText({ code: "BAND_CAPPED_BY_EVIDENCE", params: { from: "medium", to: "low", gates: ["hypothesis_benign_explanation_favoured"] } });
+    expect(capped).toContain("законное объяснение");
+  });
+  it("never claims a crime was committed or proven", () => {
+    const copy = ["hyp.title", "hyp.hint", "hyp.verdict.suspicious_explanation_favoured", "hyp.verdict.benign_explanation_favoured"].map((k) =>
+      t(k as Parameters<typeof t>[0]).toLowerCase(),
+    );
+    for (const text of copy) expect(text).not.toMatch(/отмыв|мошенни|доказан|преступ/);
+    expect(t("hyp.verdict.suspicious_explanation_favoured")).toContain("не исключены");
+  });
+});

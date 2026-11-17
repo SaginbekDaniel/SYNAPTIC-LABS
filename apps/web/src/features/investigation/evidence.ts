@@ -26,9 +26,20 @@ export function stanceOf(code: string): Stance {
   return p === "for" ? "supports" : p === "against" ? "weakens" : "unknown";
 }
 
-export function groupReasons(alert: AlertDetail): Record<Stance, ReasonCode[]> {
+/** The hypothesis verdict is a summary reason: its stance depends on which explanation is favoured. */
+function stanceOfReason(rc: ReasonCode): Stance {
+  if (rc.code !== "HYPOTHESIS_VERDICT") return stanceOf(rc.code);
+  const verdict = (rc.params as Record<string, unknown>).verdict;
+  return verdict === "suspicious_explanation_favoured" ? "supports" : verdict === "benign_explanation_favoured" ? "weakens" : "unknown";
+}
+
+/** Reasons by stance. ``withVerdict: false`` when the competing-explanations section is shown separately. */
+export function groupReasons(alert: AlertDetail, { withVerdict = true } = {}): Record<Stance, ReasonCode[]> {
   const out: Record<Stance, ReasonCode[]> = { supports: [], weakens: [], unknown: [] };
-  for (const rc of alert.risk.reason_codes) out[stanceOf(rc.code)].push(rc as ReasonCode);
+  for (const rc of alert.risk.reason_codes as ReasonCode[]) {
+    if (!withVerdict && rc.code === "HYPOTHESIS_VERDICT") continue;
+    out[stanceOfReason(rc)].push(rc);
+  }
   return out;
 }
 

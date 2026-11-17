@@ -528,6 +528,7 @@ export interface components {
              */
             first_seen: string;
             formation: components["schemas"]["FormationDetail"];
+            hypotheses?: components["schemas"]["HypothesisAssessment"] | null;
             /** Id */
             id: string;
             /** In Latest Snapshot */
@@ -1197,6 +1198,74 @@ export interface components {
              * @enum {string}
              */
             status: "ok" | "degraded";
+        };
+        /**
+         * HypothesisAssessment
+         * @description Competing explanations for the formation. Observations, not conclusions about a crime.
+         */
+        HypothesisAssessment: {
+            /** Config Sha256 */
+            config_sha256: string;
+            /** Evidence Ids */
+            evidence_ids: string[];
+            /** Hypotheses */
+            hypotheses: components["schemas"]["HypothesisItem"][];
+            /** Id */
+            id: string;
+            /** Registry Version */
+            registry_version: string;
+            /** Unavailable Information */
+            unavailable_information: string[];
+            /**
+             * Verdict
+             * @enum {string}
+             */
+            verdict: "suspicious_explanation_favoured" | "benign_explanation_favoured" | "inconclusive" | "insufficient_data";
+        };
+        /** HypothesisItem */
+        HypothesisItem: {
+            /** Consistent Groups */
+            consistent_groups: number;
+            /** Hypothesis Id */
+            hypothesis_id: string;
+            /** Inconsistent Groups */
+            inconsistent_groups: number;
+            /**
+             * Polarity
+             * @enum {string}
+             */
+            polarity: "suspicious" | "legitimate";
+            /** Required Data */
+            required_data: string[];
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "supported" | "weakened" | "refuted" | "not_established" | "untestable";
+            /** Tests */
+            tests: components["schemas"]["HypothesisTestItem"][];
+            /** Version */
+            version: string;
+        };
+        /** HypothesisTestItem */
+        HypothesisTestItem: {
+            /** Evidence Ids */
+            evidence_ids: string[];
+            /** Expected */
+            expected: string;
+            /** Group */
+            group: string;
+            /** Observation */
+            observation: {
+                [key: string]: unknown;
+            };
+            /**
+             * Result
+             * @enum {string}
+             */
+            result: "consistent" | "inconsistent" | "unavailable";
+            /** Test Id */
+            test_id: string;
         };
         /** ImportIssue */
         ImportIssue: {

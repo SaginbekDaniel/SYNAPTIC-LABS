@@ -626,6 +626,52 @@
   line-height: 1.6;
   overflow-wrap: anywhere;
 }
+/* Competing explanations (hypotheses-v1): a divided list, no nested cards. */
+.hyp-verdict {
+  color: var(--text);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+}
+.hyp-list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+.hyp {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--s-2) 0;
+  border-bottom: 1px solid var(--line);
+}
+.hyp__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-2);
+  font-size: var(--fs-sm);
+}
+.hyp__name {
+  min-width: 0;
+  font-weight: var(--fw-semibold);
+  overflow-wrap: anywhere;
+}
+.hyp__polarity {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+.hyp__status {
+  flex-shrink: 0;
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+}
+.hyp__status--supported { color: var(--ev-supported); }
+.hyp__status--weakened,
+.hyp__status--refuted { color: var(--ev-contradicted); }
+.hyp .disclosure {
+  margin-top: var(--s-1);
+}
 .reason-list {
   display: flex;
   flex-direction: column;

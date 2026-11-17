@@ -256,6 +256,16 @@
           "formation": {
             "$ref": "#/components/schemas/FormationDetail"
           },
+          "hypotheses": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HypothesisAssessment"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "id": {
             "title": "Id",
             "type": "string"
@@ -2159,6 +2169,180 @@
           "actor"
         ],
         "title": "Health",
+        "type": "object"
+      },
+      "HypothesisAssessment": {
+        "additionalProperties": false,
+        "description": "Competing explanations for the formation. Observations, not conclusions about a crime.",
+        "properties": {
+          "config_sha256": {
+            "title": "Config Sha256",
+            "type": "string"
+          },
+          "evidence_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidence Ids",
+            "type": "array"
+          },
+          "hypotheses": {
+            "items": {
+              "$ref": "#/components/schemas/HypothesisItem"
+            },
+            "title": "Hypotheses",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "registry_version": {
+            "title": "Registry Version",
+            "type": "string"
+          },
+          "unavailable_information": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Unavailable Information",
+            "type": "array"
+          },
+          "verdict": {
+            "enum": [
+              "suspicious_explanation_favoured",
+              "benign_explanation_favoured",
+              "inconclusive",
+              "insufficient_data"
+            ],
+            "title": "Verdict",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "registry_version",
+          "config_sha256",
+          "verdict",
+          "hypotheses",
+          "evidence_ids",
+          "unavailable_information"
+        ],
+        "title": "HypothesisAssessment",
+        "type": "object"
+      },
+      "HypothesisItem": {
+        "additionalProperties": false,
+        "properties": {
+          "consistent_groups": {
+            "title": "Consistent Groups",
+            "type": "integer"
+          },
+          "hypothesis_id": {
+            "title": "Hypothesis Id",
+            "type": "string"
+          },
+          "inconsistent_groups": {
+            "title": "Inconsistent Groups",
+            "type": "integer"
+          },
+          "polarity": {
+            "enum": [
+              "suspicious",
+              "legitimate"
+            ],
+            "title": "Polarity",
+            "type": "string"
+          },
+          "required_data": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Required Data",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "supported",
+              "weakened",
+              "refuted",
+              "not_established",
+              "untestable"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "tests": {
+            "items": {
+              "$ref": "#/components/schemas/HypothesisTestItem"
+            },
+            "title": "Tests",
+            "type": "array"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "hypothesis_id",
+          "version",
+          "polarity",
+          "status",
+          "consistent_groups",
+          "inconsistent_groups",
+          "tests",
+          "required_data"
+        ],
+        "title": "HypothesisItem",
+        "type": "object"
+      },
+      "HypothesisTestItem": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidence Ids",
+            "type": "array"
+          },
+          "expected": {
+            "title": "Expected",
+            "type": "string"
+          },
+          "group": {
+            "title": "Group",
+            "type": "string"
+          },
+          "observation": {
+            "additionalProperties": true,
+            "title": "Observation",
+            "type": "object"
+          },
+          "result": {
+            "enum": [
+              "consistent",
+              "inconsistent",
+              "unavailable"
+            ],
+            "title": "Result",
+            "type": "string"
+          },
+          "test_id": {
+            "title": "Test Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "test_id",
+          "group",
+          "observation",
+          "expected",
+          "result",
+          "evidence_ids"
+        ],
+        "title": "HypothesisTestItem",
         "type": "object"
       },
       "ImportIssue": {
