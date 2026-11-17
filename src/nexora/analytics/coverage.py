@@ -23,6 +23,7 @@ def assess_coverage(
     entry_ids: tuple[str, ...],
     has_downstream: bool,
     transfers: list[ObservedTransfer],
+    exit_ids: tuple[str, ...] = (),
     flow: FlowResult | None,
     contract: dict[str, Any],
     window: tuple[date, date],
@@ -63,19 +64,33 @@ def assess_coverage(
                 priority_heuristic=3,
             )
         )
-    if kind == "funnel" and not has_downstream:
+    if kind in ("funnel", "fan_out") and not has_downstream:
+        # funnel: the centre's onward movement; fan-out: the recipients' onward movement.
         limitations.append("downstream_unobserved")
         if subject_account_id not in boundary:
             requests.append(
                 DataRequest(
-                    type="outgoing_history_for_center",
-                    subject_ids=(subject_account_id,),
+                    type="outgoing_history_for_center" if kind == "funnel" else "outgoing_history_for_recipients",
+                    subject_ids=(subject_account_id,) if kind == "funnel" else tuple(sorted(exit_ids)),
                     proposed_window=follow_window,
                     missing_dependency="downstream_unobserved",
                     expected_resolution="determine_onward_movement",
                     priority_heuristic=2,
                 )
             )
+    if kind == "fan_out" and not entry_ids and "upstream_unknown" not in limitations:
+        # The distributed money has no observed source in the window: never assume it had none.
+        limitations.append("upstream_unknown")
+        requests.append(
+            DataRequest(
+                type="incoming_history_for_distributor",
+                subject_ids=(subject_account_id,),
+                proposed_window=((start - timedelta(days=30)).isoformat(), end.isoformat()),
+                missing_dependency="upstream_unknown",
+                expected_resolution="identify_funding_sources",
+                priority_heuristic=2,
+            )
+        )
     if flow is not None and flow.status == "possible_ambiguous" and flow.precision != "timestamp":
         requests.append(
             DataRequest(

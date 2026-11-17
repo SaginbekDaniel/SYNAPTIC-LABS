@@ -18,3 +18,8 @@ Each entry: decision → consequence → exit criterion / rollback.
 | 012 | One React app, one OpenAPI-generated type file | No API/UI drift | `npm run gen:api` + diff in CI |
 | 013 | No third-party code without verified licence | Independent implementation | See REFERENCE_AUDIT.md |
 | 014 | No LLM in the evidence pipeline | Demo works offline | Optional narrator later, read-only |
+| 015 | Peer statistics as a separate family; counter-evidence caps, never clears | Steady hubs drop to *medium* but stay reviewable | `peer.enabled: false` / policy v1 |
+| 016 | Two-way relationships are not consolidation or dispersal | Loan books no longer alert; token repayments are a known evasion route | `exclude_returning_*: false` |
+| 017 | Benchmark artifact committed and served read-only | Every displayed metric traces to a commit + config + dataset hashes | Re-run `scripts/run_benchmark.py` |
+| 018 | No GNN in the MVP | No independent labels; leakage and explainability risk | Revisit with licensed labelled data |
+| 019 | Test/E2E databases are reset by schema drop, not migration downgrade | Downgrade 0002 refuses to discard published analyses | `scripts/reset_disposable_db.py` (refuses non-`_test`/`_e2e` names) |

@@ -17,7 +17,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from nexora import __version__
 from nexora.analytics.config import AnalysisConfig, default_config
 from nexora.api import schemas
-from nexora.api.routes import alerts, analysis, cases, datasets
+from nexora.api.routes import alerts, analysis, cases, datasets, evaluation
 from nexora.application.errors import AppError
 from nexora.persistence import orm
 from nexora.persistence.db import session_factory
@@ -137,7 +137,7 @@ def create_app(settings: Settings | None = None, config: AnalysisConfig | None =
         }
         return JSONResponse(status_code=200 if body["status"] == "ok" else 503, content=body)
 
-    for module in (datasets, analysis, alerts, cases):
+    for module in (datasets, analysis, alerts, cases, evaluation):
         app.include_router(module.router)
     return app
 

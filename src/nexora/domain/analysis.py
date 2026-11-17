@@ -24,6 +24,7 @@ EvidenceKind = Literal[
 SignalStatus = Literal["supported", "possible_ambiguous", "contradicted", "unavailable"]
 Family = Literal["STRUCTURE", "TEMPORAL", "PEER_STATISTICS", "NETWORK_CONTEXT"]
 Band = Literal["critical", "high", "medium", "low", "insufficient_evidence"]
+FormationKind = Literal["funnel", "chain", "fan_out", "cycle"]
 BAND_ORDER: tuple[str, ...] = ("low", "medium", "high", "critical")
 
 
@@ -69,7 +70,7 @@ class Evidence:
 @dataclass(frozen=True)
 class Formation:
     id: str
-    kind: Literal["funnel", "chain"]
+    kind: FormationKind
     currency: str
     subject_account_id: str
     member_ids: tuple[str, ...]

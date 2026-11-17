@@ -104,14 +104,14 @@ def compute(
 
 
 def alert_fingerprint(dataset_id: uuid.UUID, formation: Formation) -> str:
-    members = (
-        list(formation.member_ids)
-        if formation.kind == "chain"
-        else [
-            formation.subject_account_id,
-            *sorted(formation.entry_ids),
-        ]
-    )
+    # Identity of the *pattern*, independent of snapshot: ordered route for paths/loops,
+    # hub plus its counterparties on the side that defines the formation otherwise.
+    if formation.kind in ("chain", "cycle"):
+        members = list(formation.member_ids)
+    elif formation.kind == "fan_out":
+        members = [formation.subject_account_id, *sorted(formation.exit_ids)]
+    else:
+        members = [formation.subject_account_id, *sorted(formation.entry_ids)]
     return sha256_hex(
         canonical_json(
             {

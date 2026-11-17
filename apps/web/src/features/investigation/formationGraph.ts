@@ -36,7 +36,9 @@ export function buildFormationGraph(alert: AlertDetail, txs: Transaction[], high
     }
   }
   const nodes: GraphNodeSpec[] = [...nodeIds].sort().map((id) => ({ id, role: roleOf(id) }));
-  if (f.kind === "funnel") layoutFunnel(nodes, f.subject_account_id, new Set(f.entry_ids), new Set(f.exit_ids));
+  // Funnel and fan-out share the flow layout: sources left, the hub centred, recipients right.
+  if (f.kind === "funnel" || f.kind === "fan_out") layoutFunnel(nodes, f.subject_account_id, new Set(f.entry_ids), new Set(f.exit_ids));
+  if (f.kind === "cycle") layoutCycle(nodes, f.member_ids);
   const edges: GraphEdgeSpec[] = [...pairs.entries()]
     .sort(([a], [b]) => (a < b ? -1 : 1))
     .map(([key, p]) => ({
@@ -73,4 +75,21 @@ function layoutFunnel(nodes: GraphNodeSpec[], center: string, entries: Set<strin
   place(other, 80 * deg, 100 * deg, radius(other.length) * 1.2);
   const c = nodes.find((n) => n.id === center);
   if (c) c.position = { x: 0, y: 0 };
+}
+
+/** Loop members on a circle in observed order (clockwise from the top), other accounts outside. */
+function layoutCycle(nodes: GraphNodeSpec[], loop: readonly string[]): void {
+  const order = new Map(loop.map((id, i) => [id, i]));
+  const radius = Math.max(140, loop.length * 45);
+  const outside = nodes.filter((n) => !order.has(n.id));
+  for (const n of nodes) {
+    const i = order.get(n.id);
+    if (i === undefined) continue;
+    const a = -Math.PI / 2 + (2 * Math.PI * i) / loop.length;
+    n.position = { x: Math.cos(a) * radius, y: Math.sin(a) * radius };
+  }
+  outside.forEach((n, i) => {
+    const a = -Math.PI / 2 + (2 * Math.PI * (i + 0.5)) / Math.max(1, outside.length);
+    n.position = { x: Math.cos(a) * radius * 1.8, y: Math.sin(a) * radius * 1.8 };
+  });
 }

@@ -10,6 +10,7 @@ const NAV: { to: string; key: MessageKey; end?: boolean }[] = [
   { to: "/cases", key: "nav.cases" },
   { to: "/network", key: "nav.network" },
   { to: "/lab", key: "nav.lab" },
+  { to: "/evaluation", key: "nav.evaluation" },
 ];
 
 function NavItems() {

@@ -5,6 +5,12 @@ A centre ``c`` qualifies when at least ``min_feeders`` distinct senders route at
 qualifying feeders' total reaches ``min_incoming_minor``. Feeder count alone is not
 treated as proof: payroll, marketplace and settlement hubs share this structure, which
 is why structural strength is capped and temporal corroboration is evaluated separately.
+
+``funnel-v2`` (``exclude_returning_feeders``): a sender that the centre itself paid
+earlier — at least ``returning_min_ratio`` of what the sender later returns, with the
+centre's first payment no later than the sender's last transfer back — is *returning*
+funds (loan instalments, reimbursements), not consolidating an independent source. Such
+senders are reported as ``returning_feeders`` but do not count towards ``min_feeders``.
 """
 
 from __future__ import annotations
@@ -35,6 +41,7 @@ class FunnelCandidate:
     center: str
     feeders: tuple[FeederEdge, ...]
     downstream: tuple[str, ...]
+    returning_feeders: tuple[str, ...] = ()
 
     @property
     def total_incoming_minor(self) -> int:
@@ -45,9 +52,12 @@ def detect_funnels(cg: CurrencyGraph, cfg: dict[str, Any]) -> list[FunnelCandida
     min_feeders = int(cfg["min_feeders"])
     min_share = Fraction(str(cfg["min_feeder_share"]))
     min_incoming = int(cfg["min_incoming_minor"])
+    exclude_returning = bool(cfg.get("exclude_returning_feeders", False))
+    returning_ratio = Fraction(str(cfg.get("returning_min_ratio", "0.1")))
     out: list[FunnelCandidate] = []
     for center in sorted(cg.graph.nodes):
         feeders: list[FeederEdge] = []
+        returning: list[str] = []
         for sender in sorted(cg.graph.predecessors(center)):
             if sender == center:
                 continue
@@ -56,6 +66,15 @@ def detect_funnels(cg: CurrencyGraph, cfg: dict[str, Any]) -> list[FunnelCandida
             if sender_out <= 0:
                 continue
             if Fraction(edge.amount_minor, sender_out) >= min_share:
+                back = cg.edges.get((center, sender))
+                if (
+                    exclude_returning
+                    and back is not None
+                    and back.first_date <= edge.last_date
+                    and Fraction(back.amount_minor, edge.amount_minor) >= returning_ratio
+                ):
+                    returning.append(sender)
+                    continue
                 feeders.append(
                     FeederEdge(
                         account_id=sender,
@@ -69,7 +88,11 @@ def detect_funnels(cg: CurrencyGraph, cfg: dict[str, Any]) -> list[FunnelCandida
         if sum(f.edge_minor for f in feeders) < min_incoming:
             continue
         downstream = tuple(sorted(r for r in cg.graph.successors(center) if r != center))
-        out.append(FunnelCandidate(center=center, feeders=tuple(feeders), downstream=downstream))
+        out.append(
+            FunnelCandidate(
+                center=center, feeders=tuple(feeders), downstream=downstream, returning_feeders=tuple(returning)
+            )
+        )
     return out
 
 

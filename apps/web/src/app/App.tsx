@@ -5,6 +5,7 @@ import { Loading } from "../components/ui";
 import { AlertsQueue } from "../features/alerts/AlertsQueue";
 import { CasesList } from "../features/cases/CasesList";
 import { CommandCenter } from "../features/command-center/CommandCenter";
+import { Evaluation } from "../features/evaluation/Evaluation";
 import { FraudLab } from "../features/fraud-lab/FraudLab";
 import { DatasetProvider } from "./dataset";
 
@@ -25,6 +26,7 @@ export function App() {
               <Route path="cases" element={<CasesList />} />
               <Route path="network" element={<NetworkExplorer />} />
               <Route path="lab" element={<FraudLab />} />
+              <Route path="evaluation" element={<Evaluation />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           </Routes>

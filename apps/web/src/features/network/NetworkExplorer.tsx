@@ -5,7 +5,7 @@ import { GraphCanvas, GraphLegend, type GraphEdgeSpec, type GraphNodeSpec } from
 import { AccountId, BandBadge, Empty, ErrorState, EvidenceBadge, Loading, Money, NoDataset, Panel, TxTable } from "../../components/ui";
 import { api } from "../../lib/api";
 import { shortId } from "../../lib/format";
-import { t, type MessageKey } from "../../lib/i18n";
+import { t, tDynamic, type MessageKey } from "../../lib/i18n";
 import type { AccountSummary, Neighborhood, TransactionPage } from "../../lib/types";
 import { useApi } from "../../lib/useApi";
 
@@ -239,7 +239,7 @@ function AccountPanel({ summary }: { summary: AccountSummary }) {
             {summary.formations.map((f) => (
               <li key={f.formation_id} className="row" style={{ justifyContent: "space-between" }}>
                 <span>
-                  {t(f.kind === "funnel" ? "kind.funnelShort" : "kind.chainShort")} · {t(`network.role.${f.role}` as MessageKey)}
+                  {tDynamic("kind.", `${f.kind}Short`)} · {t(`network.role.${f.role}` as MessageKey)}
                 </span>
                 <span className="row">
                   <EvidenceBadge status={f.temporal_status} />

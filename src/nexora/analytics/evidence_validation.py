@@ -30,6 +30,14 @@ def validate_evidence(ev: Evidence, transfers: dict[str, ObservedTransfer]) -> N
         actual = sum(transfers[t].amount_minor for t in ev.transaction_ids)
         if claimed != actual:
             raise EvidenceIntegrityError(f"{ev.id}: claimed {field}={claimed} but transactions sum to {actual}")
+    if "window_minor" in ev.observations:  # peer statistics: the cited window must recompute
+        claimed = int(ev.observations["window_minor"])
+        actual = sum(transfers[t].amount_minor for t in ev.transaction_ids)
+        if claimed != actual:
+            raise EvidenceIntegrityError(f"{ev.id}: claimed window_minor={claimed} but transactions sum to {actual}")
+        turnover = int(ev.observations["turnover_minor"])
+        if not 0 < claimed <= turnover or claimed * 10_000 // turnover != int(ev.observations["burst_share_bp"]):
+            raise EvidenceIntegrityError(f"{ev.id}: burst share does not recompute from window and turnover")
     if ev.kind == "temporal_fact":
         strict = int(ev.observations["strict_compatible_minor"])
         possible = int(ev.observations["possible_compatible_minor"])
