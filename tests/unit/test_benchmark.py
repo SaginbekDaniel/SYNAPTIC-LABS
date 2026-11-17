@@ -211,3 +211,16 @@ def test_v2_shipped_variant_reconstructs_the_merged_configuration_exactly():
     assert v2.config_sha256 == "489b477a3da5ac1b" + v2.config_sha256[16:]
     assert v2.detectors["funnel"]["returning_min_ratio"] == 0.1
     assert yaml.safe_dump(v2.risk_policy) and "hypothesis" not in v2.risk_policy
+
+
+def test_committed_benchmark_artifact_validates_against_the_api_schema():
+    """GET /api/v1/evaluation serves this file; a harness change must not make it a 500."""
+    import json
+    from pathlib import Path
+
+    from nexora.api.schemas import EvaluationReport
+    from nexora.application.evaluation import load_report
+
+    root = Path(__file__).resolve().parents[2]
+    assert json.loads((root / "benchmarks/results/bench-v1.json").read_text())["schema_version"] == 1
+    EvaluationReport.model_validate(load_report("benchmarks/results/bench-v1.json"))

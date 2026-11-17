@@ -475,6 +475,9 @@ class AlertMetrics(Model):
     per_dataset: float | None
     precision: float | None
     unmatched: int
+    # Audit additions (optional so artifacts written before them still validate).
+    per_flagged_network: float | None = None
+    networks_with_duplicates: float | None = None
 
 
 class QueueMetrics(Model):
@@ -482,6 +485,19 @@ class QueueMetrics(Model):
     p_at_10: float | None
     recall_at_5: float | None
     recall_at_10: float | None
+    # Distinct planted networks among the first K alerts; duplicates on one network are not new finds.
+    distinct_p_at_5: float | None = None
+    distinct_p_at_10: float | None = None
+
+
+class AbstentionMetrics(Model):
+    rate: float | None
+    suspicious_share: float | None
+
+
+class IntegrityMetrics(Model):
+    partial_analysis_rate: float | None
+    quarantined_formations: int
 
 
 class FamilyCount(Model):
@@ -503,6 +519,8 @@ class MethodSummary(Model):
     queue: QueueMetrics
     by_family: dict[str, FamilyCount]
     latency_ms: LatencyMs
+    abstention: AbstentionMetrics | None = None
+    integrity: IntegrityMetrics | None = None
 
 
 class EvaluationMethod(Model):

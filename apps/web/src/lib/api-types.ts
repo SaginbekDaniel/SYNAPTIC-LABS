@@ -437,6 +437,13 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AbstentionMetrics */
+        AbstentionMetrics: {
+            /** Rate */
+            rate: number | null;
+            /** Suspicious Share */
+            suspicious_share: number | null;
+        };
         /** AccountFormation */
         AccountFormation: {
             /** Alert Id */
@@ -560,8 +567,12 @@ export interface components {
         AlertMetrics: {
             /** Flagged */
             flagged: number;
+            /** Networks With Duplicates */
+            networks_with_duplicates?: number | null;
             /** Per Dataset */
             per_dataset: number | null;
+            /** Per Flagged Network */
+            per_flagged_network?: number | null;
             /** Precision */
             precision: number | null;
             /** Unmatched */
@@ -1312,6 +1323,13 @@ export interface components {
             dataset: components["schemas"]["Dataset"];
             report: components["schemas"]["ImportReport"];
         };
+        /** IntegrityMetrics */
+        IntegrityMetrics: {
+            /** Partial Analysis Rate */
+            partial_analysis_rate: number | null;
+            /** Quarantined Formations */
+            quarantined_formations: number;
+        };
         /** Job */
         Job: {
             /** Attempt Count */
@@ -1364,6 +1382,7 @@ export interface components {
         };
         /** MethodSummary */
         MethodSummary: {
+            abstention?: components["schemas"]["AbstentionMetrics"] | null;
             alerts: components["schemas"]["AlertMetrics"];
             /** By Family */
             by_family: {
@@ -1371,6 +1390,7 @@ export interface components {
             };
             /** Datasets */
             datasets: number;
+            integrity?: components["schemas"]["IntegrityMetrics"] | null;
             latency_ms: components["schemas"]["LatencyMs"];
             queue: components["schemas"]["QueueMetrics"];
             scenario: components["schemas"]["ScenarioMetrics"];
@@ -1438,6 +1458,10 @@ export interface components {
         };
         /** QueueMetrics */
         QueueMetrics: {
+            /** Distinct P At 10 */
+            distinct_p_at_10?: number | null;
+            /** Distinct P At 5 */
+            distinct_p_at_5?: number | null;
             /** P At 10 */
             p_at_10: number | null;
             /** P At 5 */

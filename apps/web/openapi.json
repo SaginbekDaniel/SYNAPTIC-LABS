@@ -1,6 +1,39 @@
 {
   "components": {
     "schemas": {
+      "AbstentionMetrics": {
+        "additionalProperties": false,
+        "properties": {
+          "rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate"
+          },
+          "suspicious_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suspicious Share"
+          }
+        },
+        "required": [
+          "rate",
+          "suspicious_share"
+        ],
+        "title": "AbstentionMetrics",
+        "type": "object"
+      },
       "AccountFormation": {
         "additionalProperties": false,
         "properties": {
@@ -357,6 +390,17 @@
             "title": "Flagged",
             "type": "integer"
           },
+          "networks_with_duplicates": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Networks With Duplicates"
+          },
           "per_dataset": {
             "anyOf": [
               {
@@ -367,6 +411,17 @@
               }
             ],
             "title": "Per Dataset"
+          },
+          "per_flagged_network": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Per Flagged Network"
           },
           "precision": {
             "anyOf": [
@@ -2478,6 +2533,32 @@
         "title": "ImportResult",
         "type": "object"
       },
+      "IntegrityMetrics": {
+        "additionalProperties": false,
+        "properties": {
+          "partial_analysis_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Partial Analysis Rate"
+          },
+          "quarantined_formations": {
+            "title": "Quarantined Formations",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "partial_analysis_rate",
+          "quarantined_formations"
+        ],
+        "title": "IntegrityMetrics",
+        "type": "object"
+      },
       "Job": {
         "additionalProperties": false,
         "properties": {
@@ -2642,6 +2723,16 @@
       "MethodSummary": {
         "additionalProperties": false,
         "properties": {
+          "abstention": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AbstentionMetrics"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "alerts": {
             "$ref": "#/components/schemas/AlertMetrics"
           },
@@ -2655,6 +2746,16 @@
           "datasets": {
             "title": "Datasets",
             "type": "integer"
+          },
+          "integrity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/IntegrityMetrics"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "latency_ms": {
             "$ref": "#/components/schemas/LatencyMs"
@@ -2841,6 +2942,28 @@
       "QueueMetrics": {
         "additionalProperties": false,
         "properties": {
+          "distinct_p_at_10": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Distinct P At 10"
+          },
+          "distinct_p_at_5": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Distinct P At 5"
+          },
           "p_at_10": {
             "anyOf": [
               {
