@@ -23,3 +23,7 @@ export type AuditEvent = S["AuditEvent"];
 export type Overview = S["Overview"];
 export type Band = S["Risk"]["band"];
 export type DataRequest = S["DataRequest"];
+export type FormationKind = S["FormationSummary"]["kind"];
+export const FORMATION_KINDS: readonly FormationKind[] = ["funnel", "fan_out", "chain", "cycle"];
+export type EvaluationReport = S["EvaluationReport"];
+export type MethodSummary = S["MethodSummary"];

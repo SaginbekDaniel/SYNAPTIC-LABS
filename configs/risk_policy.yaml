@@ -1,7 +1,7 @@
 # Triage priority policy. Priority ranks analyst work; it is NOT a probability of fraud
 # (ADR-005). Missing families contribute zero and are listed explicitly — weights are
 # never silently renormalised.
-version: risk-policy-v1
+version: risk-policy-v2
 family_weights:
   STRUCTURE: 0.35
   TEMPORAL: 0.30
@@ -20,5 +20,6 @@ caps:                        # evidence gates applied after scoring
   temporal_contradicted: low
   temporal_ambiguous: medium
   temporal_unavailable: medium
+  peer_contradicted: medium  # v2: turnover no more concentrated than peers' => network shape alone cannot rank high
 abstain_on_subject_limitations: [boundary_limited]
 alert_min_band: medium       # bands below this are stored as assessments but do not open alerts

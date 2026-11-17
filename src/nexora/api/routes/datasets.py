@@ -9,7 +9,7 @@ from nexora.api import schemas
 from nexora.api.deps import get_session, parse_uuid
 from nexora.application import ingest_service, queries
 from nexora.application.errors import Invalid, PayloadTooLarge
-from nexora.evaluation.generator import SUITES
+from nexora.evaluation.generator import SUITES, suite_families
 from nexora.ingest.csv_adapter import CsvSchemaError, read_csv_rows
 
 router = APIRouter(prefix="/api/v1", tags=["datasets"])
@@ -89,7 +89,7 @@ def lab_suites() -> Any:
         {
             "id": sid,
             "description": spec["description"],
-            "scenario_families": [f for f, _ in spec["scenarios"]],
+            "scenario_families": suite_families(sid),
         }
         for sid, spec in SUITES.items()
     ]

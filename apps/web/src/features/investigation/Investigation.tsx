@@ -4,20 +4,42 @@ import { GraphCanvas, GraphLegend } from "../../components/graph/GraphCanvas";
 import { AccountId, BandBadge, ErrorState, EvidenceBadge, Loading, Money, Panel, TxTable } from "../../components/ui";
 import { api } from "../../lib/api";
 import { formatBp, formatDate, shortId } from "../../lib/format";
-import { precisionLabel, reasonPolarity, reasonText, t, tDynamic } from "../../lib/i18n";
+import { precisionLabel, reasonFamily, reasonPolarity, reasonText, t, tDynamic } from "../../lib/i18n";
 import type { AlertDetail, EvidenceChain, EvidenceItem, ReasonCode } from "../../lib/types";
 import { useApi } from "../../lib/useApi";
 import { CasePanel } from "./CasePanel";
 import { buildFormationGraph } from "./formationGraph";
 
+/**
+ * Evidence is paired with reasons by signal family (reason-code prefix), never by evidence
+ * kind alone: both temporal and peer findings can be `counterevidence`.
+ */
+function evidenceOfFamily(family: ReturnType<typeof reasonFamily>, evidence: EvidenceItem[]): EvidenceItem | undefined {
+  if (family === "other") return undefined;
+  return evidence.find((e) => e.kind !== "coverage_fact" && reasonFamily(e.reason_code) === family);
+}
+
 function evidenceForReason(code: string, evidence: EvidenceItem[]): EvidenceItem | undefined {
-  if (code.startsWith("STRUCT_")) return evidence.find((e) => e.kind === "graph_fact");
-  if (code.startsWith("TEMPORAL_")) return evidence.find((e) => e.kind === "temporal_fact" || e.kind === "counterevidence");
-  return undefined;
+  return evidenceOfFamily(reasonFamily(code), evidence);
 }
 
 function Hypothesis({ alert }: { alert: AlertDetail }) {
   const f = alert.formation;
+  if (f.kind === "fan_out") {
+    const onward = Number(f.features.onward_count ?? 0);
+    return (
+      <p>
+        {t("alert.hypothesis.fanOut", {
+          center: f.subject_account_id,
+          count: f.exit_ids.length,
+          onward: onward > 0 ? t("alert.hypothesis.fanOutOnward", { count: onward }) : t("alert.hypothesis.fanOutTerminal"),
+        })}
+      </p>
+    );
+  }
+  if (f.kind === "cycle") {
+    return <p>{t("alert.hypothesis.cycle", { count: f.member_ids.length, start: f.subject_account_id })}</p>;
+  }
   if (f.kind === "funnel") {
     const downstream = f.exit_ids.length
       ? t("alert.hypothesis.funnelDown", { count: f.exit_ids.length })
@@ -55,9 +77,10 @@ export function Investigation() {
   if (!alert.data) return <Loading rows={6} />;
   const a = alert.data;
   const f = a.formation;
-  const temporal = a.evidence.find((e) => e.kind === "temporal_fact" || e.kind === "counterevidence");
-  const structural = a.evidence.find((e) => e.kind === "graph_fact");
-  const limitations = [...new Set([...a.coverage.limitations, ...(temporal?.limitations ?? [])])];
+  const temporal = evidenceOfFamily("temporal", a.evidence);
+  const structural = evidenceOfFamily("structure", a.evidence);
+  const peer = evidenceOfFamily("peer", a.evidence);
+  const limitations = [...new Set([...a.coverage.limitations, ...(temporal?.limitations ?? []), ...(peer?.limitations ?? [])])];
   const caseId = a.case_id ?? openedCase;
 
   function toggleHighlight(rc: ReasonCode) {
@@ -74,7 +97,7 @@ export function Investigation() {
             ← {t("alerts.title")}
           </Link>
           <h1>
-            {t(f.kind === "funnel" ? "kind.funnel" : "kind.chain")} · <AccountId id={f.subject_account_id} />
+            {tDynamic("kind.", f.kind)} · <AccountId id={f.subject_account_id} />
           </h1>
           <div className="row">
             <BandBadge band={a.risk.band} />
@@ -135,6 +158,7 @@ export function Investigation() {
           </Panel>
 
           {temporal && <TemporalPanel ev={temporal} currency={f.currency} />}
+          {peer && <PeerPanel ev={peer} currency={f.currency} />}
 
           <Panel
             title={t("alert.evidenceTx")}
@@ -262,6 +286,53 @@ function TemporalPanel({ ev, currency }: { ev: EvidenceItem; currency: string })
         <dd>{String(o.uncertain_transition_count)}</dd>
         <dt>{t("temporal.precision")}</dt>
         <dd>{precisionLabel(String(o.time_precision))}</dd>
+      </dl>
+    </Panel>
+  );
+}
+
+function PeerPanel({ ev, currency }: { ev: EvidenceItem; currency: string }) {
+  const o = ev.observations as Record<string, unknown>;
+  const th = ev.thresholds as Record<string, unknown>;
+  const status = String(o.status);
+  const days = Number(th.window_days);
+  const bp = (v: unknown) => (typeof v === "number" ? formatBp(v) : "—");
+  const factor = Number(o.cohort_count_factor);
+  return (
+    <Panel
+      title={t("peer.title")}
+      hint={t("peer.hint")}
+      id="peer"
+      actions={<span className={`badge badge--${status}`}>{tDynamic("peer.status.", status)}</span>}
+    >
+      <dl className="kv" data-testid="peer-facts">
+        <dt>{t("peer.burst", { days })}</dt>
+        <dd className="num">{bp(o.burst_share_bp)}</dd>
+        <dt>{t("peer.median")}</dt>
+        <dd className="num">{bp(o.cohort_median_bp)}</dd>
+        <dt>{t("peer.fence")}</dt>
+        <dd className="num">{bp(o.fence_bp)}</dd>
+        <dt>{t("peer.cohort")}</dt>
+        <dd>
+          {t("peer.cohortSize", { count: Number(o.cohort_size) })}
+          {Number.isFinite(factor) && (
+            <span className="subtle"> · {factor === 0 ? t("peer.cohortAll") : t("peer.cohortFactor", { factor })}</span>
+          )}
+        </dd>
+        {typeof o.turnover_minor === "string" && (
+          <>
+            <dt>{t("peer.turnover")}</dt>
+            <dd>
+              <Money minor={o.turnover_minor} currency={currency} />
+            </dd>
+          </>
+        )}
+        {typeof o.window_start === "string" && (
+          <>
+            <dt>{t("peer.window")}</dt>
+            <dd>{formatDate(o.window_start)}</dd>
+          </>
+        )}
       </dl>
     </Panel>
   );

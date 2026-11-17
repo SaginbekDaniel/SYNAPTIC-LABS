@@ -5,8 +5,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 PORT="${1:-8100}"
 : "${NEXORA_DATABASE_URL:?NEXORA_DATABASE_URL must point at a disposable database}"
-uv run alembic downgrade base >/dev/null
-uv run alembic upgrade head >/dev/null
+uv run python scripts/reset_disposable_db.py >/dev/null
 uv run python -m nexora.worker.runner &
 WORKER=$!
 trap 'kill "$WORKER" 2>/dev/null || true' EXIT INT TERM

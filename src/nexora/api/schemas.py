@@ -151,9 +151,12 @@ class ReasonCode(Model):
     params: dict[str, Any] = Field(default_factory=dict)
 
 
+FormationKind = Literal["funnel", "chain", "fan_out", "cycle"]
+
+
 class FormationSummary(Model):
     id: str
-    kind: Literal["funnel", "chain"]
+    kind: FormationKind
     currency: str
     subject_account_id: str
     member_count: int
@@ -294,7 +297,7 @@ class Neighborhood(Model):
 
 class AccountFormation(Model):
     formation_id: str
-    kind: str
+    kind: FormationKind
     role: Literal["subject", "member", "exit"]
     band: Band
     priority: int | None
@@ -394,3 +397,155 @@ class Health(Model):
     queue: dict[str, int]
     demo_mode: bool
     actor: str
+
+
+# -- Evaluation (persisted benchmark artifact; synthetic data only) ----------------------
+class ScenarioMetrics(Model):
+    suspicious: int
+    legitimate: int
+    tp: int
+    fp: int
+    fn: int
+    tn: int
+    precision: float | None
+    recall: float | None
+    f1: float | None
+    fpr: float | None
+    fnr: float | None
+    surfaced_recall: float | None
+    high_band_recall: float | None
+    high_band_fpr: float | None
+
+
+class AlertMetrics(Model):
+    flagged: int
+    per_dataset: float | None
+    precision: float | None
+    unmatched: int
+
+
+class QueueMetrics(Model):
+    p_at_5: float | None
+    p_at_10: float | None
+    recall_at_5: float | None
+    recall_at_10: float | None
+
+
+class FamilyCount(Model):
+    total: int
+    flagged: int
+    surfaced: int
+
+
+class LatencyMs(Model):
+    median: float | None
+    p95: float | None
+    max: float | None
+
+
+class MethodSummary(Model):
+    datasets: int
+    scenario: ScenarioMetrics
+    alerts: AlertMetrics
+    queue: QueueMetrics
+    by_family: dict[str, FamilyCount]
+    latency_ms: LatencyMs
+
+
+class EvaluationMethod(Model):
+    id: str
+    label: str
+    description: str
+
+
+class EvaluationSplit(Model):
+    seeds: list[int]
+    datasets: int
+    split_sha256: str
+    precision_mix: dict[str, int]
+    role: str
+
+
+class EvaluationCode(Model):
+    commit: str
+    dirty: bool
+
+
+class EvaluationGenerator(Model):
+    suite: str
+    version: str
+
+
+class EvaluationConfig(Model):
+    detectors_version: str
+    policy_version: str
+    config_sha256: str
+
+
+class EvaluationProtocol(Model):
+    matching_rule: str
+    flagged: str
+    units: dict[str, str]
+
+
+class Perturbation(Model):
+    id: str
+    description: str
+    identical_to_base: bool
+    summary: MethodSummary
+
+
+class Robustness(Model):
+    split: str
+    base: MethodSummary
+    perturbations: list[Perturbation]
+
+
+class SensitivityVariant(Model):
+    id: str
+    summary: MethodSummary
+
+
+class Sensitivity(Model):
+    split: str
+    variants: list[SensitivityVariant]
+
+
+class ErrorExample(Model):
+    dataset: str
+    scenario_id: str
+    family: str
+    difficulty: str
+    notes: str
+    kind: str | None
+    band: str | None
+    priority: int | None
+    reasons: list[str]
+    explanation: Literal["no_formation", "below_alert_band", "abstained", "alerted"]
+
+
+class ErrorExamples(Model):
+    split: str
+    false_positives: list[ErrorExample]
+    false_negatives: list[ErrorExample]
+
+
+class EvaluationReport(Model):
+    schema_version: Literal[1]
+    benchmark_version: str
+    generated_at: dt.datetime
+    synthetic: Literal[True]
+    code: EvaluationCode
+    environment: dict[str, str]
+    generator: EvaluationGenerator
+    config: EvaluationConfig
+    protocol: EvaluationProtocol
+    splits: dict[str, EvaluationSplit]
+    methods: list[EvaluationMethod]
+    results: dict[str, dict[str, MethodSummary]]
+    ablations: dict[str, dict[str, MethodSummary]]
+    robustness: Robustness | None = None
+    sensitivity: Sensitivity | None = None
+    examples: ErrorExamples | None = None
+    runtime_seconds: float
+    limitations: list[str]

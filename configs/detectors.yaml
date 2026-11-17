@@ -1,12 +1,14 @@
 # NEXORA detector configuration. Every value is a product hypothesis to be evaluated
 # on the synthetic development split — not a discovered optimum. Changing any value
 # changes the config hash and therefore produces a new snapshot identity.
-version: detectors-v1
+version: detectors-v2
 funnel:
-  detector_version: funnel-v1
+  detector_version: funnel-v2
   min_feeders: 3              # distinct senders that route most of their observed outflow to the centre
   min_feeder_share: 0.5       # volume(s->c) / observed outgoing volume of s, same currency
   min_incoming_minor: "5000000"   # 50 000.00 KZT in tiyn; decimal string to keep money exact
+  exclude_returning_feeders: true  # v2: senders first paid by the centre are returning funds, not independent feeders
+  returning_min_ratio: 0.1         # centre->sender volume / sender->centre volume that counts as "funded by the centre"
 chain:
   detector_version: chain-v1
   min_hops: 3                 # A->B->C->D: at least two pass-through intermediaries
@@ -22,3 +24,29 @@ temporal:
   max_hop_lag_days: 7         # a later transfer more than 7 days after an earlier one is not linked
   min_compatible_fraction: 0.5  # share of the entry-layer amount that must be chronology-compatible
   max_transfers: 600          # flow-network budget; above it the result is `unavailable`
+fan_out:
+  enabled: true
+  detector_version: fanout-v1
+  min_recipients: 5           # distinct receivers that obtain most of their observed inflow from the distributor
+  min_recipient_share: 0.5    # volume(d->r) / observed incoming volume of r, same currency
+  min_outgoing_minor: "5000000"   # 50 000.00 KZT
+  exclude_returning_recipients: true  # receivers that later pay the distributor back are two-way relationships
+  returning_min_ratio: 0.1
+cycle:
+  enabled: true
+  detector_version: cycle-v1
+  min_length: 3
+  max_length: 5
+  member_max_degree: 4        # loop members are low-degree pass-through accounts (distinct in- and out-counterparties)
+  min_edge_minor: "1000000"   # 10 000.00 KZT
+  hop_amount_min_ratio: 0.5   # consecutive loop edges keep a similar size
+  max_cycles: 500             # enumeration budget; above it the snapshot is marked partial
+peer:
+  enabled: true
+  detector_version: peer-concentration-v1
+  window_days: 3              # burst window: largest share of turnover inside any 3 consecutive days
+  min_cohort: 8               # fewer comparable peers => signal unavailable
+  cohort_count_factors: [2, 4, 8]   # peers have transfer counts within x2, widened to x4 / x8 if needed
+  fence_iqr_multiplier: 1.5   # Tukey fence Q3 + 1.5 IQR (3.0 exceeds the bounded 0-100 % range for small cohorts)
+  min_burst_share: 0.5        # an outlier must also move at least half its turnover inside the window
+  fallback_all_active: true   # if no activity-matched cohort exists (hubs in small snapshots), compare with all active accounts

@@ -156,7 +156,7 @@ class Formation(Base):
     detector_version: Mapped[str] = mapped_column(Text, nullable=False)
     window_start: Mapped[dt.date] = mapped_column(Date, nullable=False)
     window_end: Mapped[dt.date] = mapped_column(Date, nullable=False)
-    __table_args__ = (CheckConstraint("kind IN ('funnel','chain')", name="ck_formations_kind"),)
+    __table_args__ = (CheckConstraint("kind IN ('funnel','chain','fan_out','cycle')", name="ck_formations_kind"),)
 
 
 class Evidence(Base):

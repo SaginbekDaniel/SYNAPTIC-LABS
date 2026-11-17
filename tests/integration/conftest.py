@@ -3,10 +3,10 @@ from __future__ import annotations
 import os
 
 import pytest
-from alembic import command
-from alembic.config import Config
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
+
+from scripts import reset_disposable_db
 
 TEST_URL = os.environ.get("NEXORA_TEST_DATABASE_URL", "postgresql+psycopg://nexora:nexora@localhost:5432/nexora_test")
 
@@ -24,10 +24,9 @@ def _db_available() -> bool:
 def db_url() -> str:
     if not _db_available():
         pytest.skip(f"PostgreSQL not reachable at {TEST_URL}")
-    cfg = Config("alembic.ini")
-    cfg.set_main_option("sqlalchemy.url", TEST_URL)
-    command.downgrade(cfg, "base")  # every run starts from an empty, freshly migrated schema
-    command.upgrade(cfg, "head")
+    # Every run starts from an empty, freshly migrated schema. Downgrades are not used for this:
+    # they refuse to discard published analyses (migration 0002).
+    reset_disposable_db.reset(TEST_URL)
     return TEST_URL
 
 

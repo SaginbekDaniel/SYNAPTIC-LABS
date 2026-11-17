@@ -260,6 +260,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/evaluation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Evaluation
+         * @description Latest benchmark run on SYNTHETIC data (artifact of ``scripts/run_benchmark.py``).
+         */
+        get: operations["get_evaluation_api_v1_evaluation_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/lab/datasets": {
         parameters: {
             query?: never;
@@ -411,8 +431,11 @@ export interface components {
             band: "critical" | "high" | "medium" | "low" | "insufficient_evidence";
             /** Formation Id */
             formation_id: string;
-            /** Kind */
-            kind: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "funnel" | "chain" | "fan_out" | "cycle";
             /** Priority */
             priority: number | null;
             /**
@@ -495,6 +518,17 @@ export interface components {
             temporal_status: string | null;
             /** Transaction Count */
             transaction_count: number;
+        };
+        /** AlertMetrics */
+        AlertMetrics: {
+            /** Flagged */
+            flagged: number;
+            /** Per Dataset */
+            per_dataset: number | null;
+            /** Precision */
+            precision: number | null;
+            /** Unmatched */
+            unmatched: number;
         };
         /** AlertPage */
         AlertPage: {
@@ -777,6 +811,169 @@ export interface components {
              */
             to_status: "new" | "investigating" | "escalated" | "dismissed" | "closed" | "reopened";
         };
+        /** ErrorBody */
+        ErrorBody: {
+            /** Code */
+            code: string;
+            /** Details */
+            details?: {
+                [key: string]: unknown;
+            };
+            /** Message */
+            message: string;
+            /** Request Id */
+            request_id: string | null;
+        };
+        /** ErrorEnvelope */
+        ErrorEnvelope: {
+            error: components["schemas"]["ErrorBody"];
+        };
+        /** ErrorExample */
+        ErrorExample: {
+            /** Band */
+            band: string | null;
+            /** Dataset */
+            dataset: string;
+            /** Difficulty */
+            difficulty: string;
+            /**
+             * Explanation
+             * @enum {string}
+             */
+            explanation: "no_formation" | "below_alert_band" | "abstained" | "alerted";
+            /** Family */
+            family: string;
+            /** Kind */
+            kind: string | null;
+            /** Notes */
+            notes: string;
+            /** Priority */
+            priority: number | null;
+            /** Reasons */
+            reasons: string[];
+            /** Scenario Id */
+            scenario_id: string;
+        };
+        /** ErrorExamples */
+        ErrorExamples: {
+            /** False Negatives */
+            false_negatives: components["schemas"]["ErrorExample"][];
+            /** False Positives */
+            false_positives: components["schemas"]["ErrorExample"][];
+            /** Split */
+            split: string;
+        };
+        /** EvaluationCode */
+        EvaluationCode: {
+            /** Commit */
+            commit: string;
+            /** Dirty */
+            dirty: boolean;
+        };
+        /** EvaluationConfig */
+        EvaluationConfig: {
+            /** Config Sha256 */
+            config_sha256: string;
+            /** Detectors Version */
+            detectors_version: string;
+            /** Policy Version */
+            policy_version: string;
+        };
+        /** EvaluationGenerator */
+        EvaluationGenerator: {
+            /** Suite */
+            suite: string;
+            /** Version */
+            version: string;
+        };
+        /** EvaluationMethod */
+        EvaluationMethod: {
+            /** Description */
+            description: string;
+            /** Id */
+            id: string;
+            /** Label */
+            label: string;
+        };
+        /** EvaluationProtocol */
+        EvaluationProtocol: {
+            /** Flagged */
+            flagged: string;
+            /** Matching Rule */
+            matching_rule: string;
+            /** Units */
+            units: {
+                [key: string]: string;
+            };
+        };
+        /** EvaluationReport */
+        EvaluationReport: {
+            /** Ablations */
+            ablations: {
+                [key: string]: {
+                    [key: string]: components["schemas"]["MethodSummary"];
+                };
+            };
+            /** Benchmark Version */
+            benchmark_version: string;
+            code: components["schemas"]["EvaluationCode"];
+            config: components["schemas"]["EvaluationConfig"];
+            /** Environment */
+            environment: {
+                [key: string]: string;
+            };
+            examples?: components["schemas"]["ErrorExamples"] | null;
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            generator: components["schemas"]["EvaluationGenerator"];
+            /** Limitations */
+            limitations: string[];
+            /** Methods */
+            methods: components["schemas"]["EvaluationMethod"][];
+            protocol: components["schemas"]["EvaluationProtocol"];
+            /** Results */
+            results: {
+                [key: string]: {
+                    [key: string]: components["schemas"]["MethodSummary"];
+                };
+            };
+            robustness?: components["schemas"]["Robustness"] | null;
+            /** Runtime Seconds */
+            runtime_seconds: number;
+            /**
+             * Schema Version
+             * @constant
+             */
+            schema_version: 1;
+            sensitivity?: components["schemas"]["Sensitivity"] | null;
+            /** Splits */
+            splits: {
+                [key: string]: components["schemas"]["EvaluationSplit"];
+            };
+            /**
+             * Synthetic
+             * @constant
+             */
+            synthetic: true;
+        };
+        /** EvaluationSplit */
+        EvaluationSplit: {
+            /** Datasets */
+            datasets: number;
+            /** Precision Mix */
+            precision_mix: {
+                [key: string]: number;
+            };
+            /** Role */
+            role: string;
+            /** Seeds */
+            seeds: number[];
+            /** Split Sha256 */
+            split_sha256: string;
+        };
         /** EvidenceChain */
         EvidenceChain: {
             /** Evidence */
@@ -813,6 +1010,15 @@ export interface components {
             /** Transaction Ids */
             transaction_ids: string[];
         };
+        /** FamilyCount */
+        FamilyCount: {
+            /** Flagged */
+            flagged: number;
+            /** Surfaced */
+            surfaced: number;
+            /** Total */
+            total: number;
+        };
         /** FormationDetail */
         FormationDetail: {
             /** Currency */
@@ -835,7 +1041,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "funnel" | "chain";
+            kind: "funnel" | "chain" | "fan_out" | "cycle";
             /** Limitations */
             limitations: string[];
             /** Member Count */
@@ -869,7 +1075,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "funnel" | "chain";
+            kind: "funnel" | "chain" | "fan_out" | "cycle";
             /** Member Count */
             member_count: number;
             /** Subject Account Id */
@@ -1028,6 +1234,28 @@ export interface components {
             /** Scenario Families */
             scenario_families: string[];
         };
+        /** LatencyMs */
+        LatencyMs: {
+            /** Max */
+            max: number | null;
+            /** Median */
+            median: number | null;
+            /** P95 */
+            p95: number | null;
+        };
+        /** MethodSummary */
+        MethodSummary: {
+            alerts: components["schemas"]["AlertMetrics"];
+            /** By Family */
+            by_family: {
+                [key: string]: components["schemas"]["FamilyCount"];
+            };
+            /** Datasets */
+            datasets: number;
+            latency_ms: components["schemas"]["LatencyMs"];
+            queue: components["schemas"]["QueueMetrics"];
+            scenario: components["schemas"]["ScenarioMetrics"];
+        };
         /** Neighborhood */
         Neighborhood: {
             /** Center */
@@ -1079,6 +1307,27 @@ export interface components {
                 [key: string]: number;
             };
         };
+        /** Perturbation */
+        Perturbation: {
+            /** Description */
+            description: string;
+            /** Id */
+            id: string;
+            /** Identical To Base */
+            identical_to_base: boolean;
+            summary: components["schemas"]["MethodSummary"];
+        };
+        /** QueueMetrics */
+        QueueMetrics: {
+            /** P At 10 */
+            p_at_10: number | null;
+            /** P At 5 */
+            p_at_5: number | null;
+            /** Recall At 10 */
+            recall_at_10: number | null;
+            /** Recall At 5 */
+            recall_at_5: number | null;
+        };
         /** ReasonCode */
         ReasonCode: {
             /** Code */
@@ -1125,6 +1374,58 @@ export interface components {
             reason_codes: components["schemas"]["ReasonCode"][];
             /** Supported Families */
             supported_families: string[];
+        };
+        /** Robustness */
+        Robustness: {
+            base: components["schemas"]["MethodSummary"];
+            /** Perturbations */
+            perturbations: components["schemas"]["Perturbation"][];
+            /** Split */
+            split: string;
+        };
+        /** ScenarioMetrics */
+        ScenarioMetrics: {
+            /** F1 */
+            f1: number | null;
+            /** Fn */
+            fn: number;
+            /** Fnr */
+            fnr: number | null;
+            /** Fp */
+            fp: number;
+            /** Fpr */
+            fpr: number | null;
+            /** High Band Fpr */
+            high_band_fpr: number | null;
+            /** High Band Recall */
+            high_band_recall: number | null;
+            /** Legitimate */
+            legitimate: number;
+            /** Precision */
+            precision: number | null;
+            /** Recall */
+            recall: number | null;
+            /** Surfaced Recall */
+            surfaced_recall: number | null;
+            /** Suspicious */
+            suspicious: number;
+            /** Tn */
+            tn: number;
+            /** Tp */
+            tp: number;
+        };
+        /** Sensitivity */
+        Sensitivity: {
+            /** Split */
+            split: string;
+            /** Variants */
+            variants: components["schemas"]["SensitivityVariant"][];
+        };
+        /** SensitivityVariant */
+        SensitivityVariant: {
+            /** Id */
+            id: string;
+            summary: components["schemas"]["MethodSummary"];
         };
         /** SignalItem */
         SignalItem: {
@@ -1799,6 +2100,44 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_evaluation_api_v1_evaluation_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvaluationReport"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };

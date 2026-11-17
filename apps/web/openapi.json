@@ -31,6 +31,12 @@
             "type": "string"
           },
           "kind": {
+            "enum": [
+              "funnel",
+              "chain",
+              "fan_out",
+              "cycle"
+            ],
             "title": "Kind",
             "type": "string"
           },
@@ -285,6 +291,49 @@
           "snapshot"
         ],
         "title": "AlertDetail",
+        "type": "object"
+      },
+      "AlertMetrics": {
+        "additionalProperties": false,
+        "properties": {
+          "flagged": {
+            "title": "Flagged",
+            "type": "integer"
+          },
+          "per_dataset": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Per Dataset"
+          },
+          "precision": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Precision"
+          },
+          "unmatched": {
+            "title": "Unmatched",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "flagged",
+          "per_dataset",
+          "precision",
+          "unmatched"
+        ],
+        "title": "AlertMetrics",
         "type": "object"
       },
       "AlertPage": {
@@ -1173,6 +1222,464 @@
         "title": "DecisionRequest",
         "type": "object"
       },
+      "ErrorBody": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "details": {
+            "additionalProperties": true,
+            "title": "Details",
+            "type": "object"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "request_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Request Id"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "request_id"
+        ],
+        "title": "ErrorBody",
+        "type": "object"
+      },
+      "ErrorEnvelope": {
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "title": "ErrorEnvelope",
+        "type": "object"
+      },
+      "ErrorExample": {
+        "additionalProperties": false,
+        "properties": {
+          "band": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Band"
+          },
+          "dataset": {
+            "title": "Dataset",
+            "type": "string"
+          },
+          "difficulty": {
+            "title": "Difficulty",
+            "type": "string"
+          },
+          "explanation": {
+            "enum": [
+              "no_formation",
+              "below_alert_band",
+              "abstained",
+              "alerted"
+            ],
+            "title": "Explanation",
+            "type": "string"
+          },
+          "family": {
+            "title": "Family",
+            "type": "string"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "priority": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priority"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "scenario_id": {
+            "title": "Scenario Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dataset",
+          "scenario_id",
+          "family",
+          "difficulty",
+          "notes",
+          "kind",
+          "band",
+          "priority",
+          "reasons",
+          "explanation"
+        ],
+        "title": "ErrorExample",
+        "type": "object"
+      },
+      "ErrorExamples": {
+        "additionalProperties": false,
+        "properties": {
+          "false_negatives": {
+            "items": {
+              "$ref": "#/components/schemas/ErrorExample"
+            },
+            "title": "False Negatives",
+            "type": "array"
+          },
+          "false_positives": {
+            "items": {
+              "$ref": "#/components/schemas/ErrorExample"
+            },
+            "title": "False Positives",
+            "type": "array"
+          },
+          "split": {
+            "title": "Split",
+            "type": "string"
+          }
+        },
+        "required": [
+          "split",
+          "false_positives",
+          "false_negatives"
+        ],
+        "title": "ErrorExamples",
+        "type": "object"
+      },
+      "EvaluationCode": {
+        "additionalProperties": false,
+        "properties": {
+          "commit": {
+            "title": "Commit",
+            "type": "string"
+          },
+          "dirty": {
+            "title": "Dirty",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "commit",
+          "dirty"
+        ],
+        "title": "EvaluationCode",
+        "type": "object"
+      },
+      "EvaluationConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "config_sha256": {
+            "title": "Config Sha256",
+            "type": "string"
+          },
+          "detectors_version": {
+            "title": "Detectors Version",
+            "type": "string"
+          },
+          "policy_version": {
+            "title": "Policy Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "detectors_version",
+          "policy_version",
+          "config_sha256"
+        ],
+        "title": "EvaluationConfig",
+        "type": "object"
+      },
+      "EvaluationGenerator": {
+        "additionalProperties": false,
+        "properties": {
+          "suite": {
+            "title": "Suite",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "suite",
+          "version"
+        ],
+        "title": "EvaluationGenerator",
+        "type": "object"
+      },
+      "EvaluationMethod": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "description"
+        ],
+        "title": "EvaluationMethod",
+        "type": "object"
+      },
+      "EvaluationProtocol": {
+        "additionalProperties": false,
+        "properties": {
+          "flagged": {
+            "title": "Flagged",
+            "type": "string"
+          },
+          "matching_rule": {
+            "title": "Matching Rule",
+            "type": "string"
+          },
+          "units": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Units",
+            "type": "object"
+          }
+        },
+        "required": [
+          "matching_rule",
+          "flagged",
+          "units"
+        ],
+        "title": "EvaluationProtocol",
+        "type": "object"
+      },
+      "EvaluationReport": {
+        "additionalProperties": false,
+        "properties": {
+          "ablations": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "$ref": "#/components/schemas/MethodSummary"
+              },
+              "type": "object"
+            },
+            "title": "Ablations",
+            "type": "object"
+          },
+          "benchmark_version": {
+            "title": "Benchmark Version",
+            "type": "string"
+          },
+          "code": {
+            "$ref": "#/components/schemas/EvaluationCode"
+          },
+          "config": {
+            "$ref": "#/components/schemas/EvaluationConfig"
+          },
+          "environment": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Environment",
+            "type": "object"
+          },
+          "examples": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ErrorExamples"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "generated_at": {
+            "format": "date-time",
+            "title": "Generated At",
+            "type": "string"
+          },
+          "generator": {
+            "$ref": "#/components/schemas/EvaluationGenerator"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "methods": {
+            "items": {
+              "$ref": "#/components/schemas/EvaluationMethod"
+            },
+            "title": "Methods",
+            "type": "array"
+          },
+          "protocol": {
+            "$ref": "#/components/schemas/EvaluationProtocol"
+          },
+          "results": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "$ref": "#/components/schemas/MethodSummary"
+              },
+              "type": "object"
+            },
+            "title": "Results",
+            "type": "object"
+          },
+          "robustness": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Robustness"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "runtime_seconds": {
+            "title": "Runtime Seconds",
+            "type": "number"
+          },
+          "schema_version": {
+            "const": 1,
+            "title": "Schema Version",
+            "type": "integer"
+          },
+          "sensitivity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Sensitivity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "splits": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/EvaluationSplit"
+            },
+            "title": "Splits",
+            "type": "object"
+          },
+          "synthetic": {
+            "const": true,
+            "title": "Synthetic",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "schema_version",
+          "benchmark_version",
+          "generated_at",
+          "synthetic",
+          "code",
+          "environment",
+          "generator",
+          "config",
+          "protocol",
+          "splits",
+          "methods",
+          "results",
+          "ablations",
+          "runtime_seconds",
+          "limitations"
+        ],
+        "title": "EvaluationReport",
+        "type": "object"
+      },
+      "EvaluationSplit": {
+        "additionalProperties": false,
+        "properties": {
+          "datasets": {
+            "title": "Datasets",
+            "type": "integer"
+          },
+          "precision_mix": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Precision Mix",
+            "type": "object"
+          },
+          "role": {
+            "title": "Role",
+            "type": "string"
+          },
+          "seeds": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Seeds",
+            "type": "array"
+          },
+          "split_sha256": {
+            "title": "Split Sha256",
+            "type": "string"
+          }
+        },
+        "required": [
+          "seeds",
+          "datasets",
+          "split_sha256",
+          "precision_mix",
+          "role"
+        ],
+        "title": "EvaluationSplit",
+        "type": "object"
+      },
       "EvidenceChain": {
         "additionalProperties": false,
         "properties": {
@@ -1273,6 +1780,30 @@
         "title": "EvidenceItem",
         "type": "object"
       },
+      "FamilyCount": {
+        "additionalProperties": false,
+        "properties": {
+          "flagged": {
+            "title": "Flagged",
+            "type": "integer"
+          },
+          "surfaced": {
+            "title": "Surfaced",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "flagged",
+          "surfaced"
+        ],
+        "title": "FamilyCount",
+        "type": "object"
+      },
       "FormationDetail": {
         "additionalProperties": false,
         "properties": {
@@ -1314,7 +1845,9 @@
           "kind": {
             "enum": [
               "funnel",
-              "chain"
+              "chain",
+              "fan_out",
+              "cycle"
             ],
             "title": "Kind",
             "type": "string"
@@ -1390,7 +1923,9 @@
           "kind": {
             "enum": [
               "funnel",
-              "chain"
+              "chain",
+              "fan_out",
+              "cycle"
             ],
             "title": "Kind",
             "type": "string"
@@ -1812,6 +2347,89 @@
         "title": "LabSuite",
         "type": "object"
       },
+      "LatencyMs": {
+        "additionalProperties": false,
+        "properties": {
+          "max": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max"
+          },
+          "median": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Median"
+          },
+          "p95": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "P95"
+          }
+        },
+        "required": [
+          "median",
+          "p95",
+          "max"
+        ],
+        "title": "LatencyMs",
+        "type": "object"
+      },
+      "MethodSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "alerts": {
+            "$ref": "#/components/schemas/AlertMetrics"
+          },
+          "by_family": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/FamilyCount"
+            },
+            "title": "By Family",
+            "type": "object"
+          },
+          "datasets": {
+            "title": "Datasets",
+            "type": "integer"
+          },
+          "latency_ms": {
+            "$ref": "#/components/schemas/LatencyMs"
+          },
+          "queue": {
+            "$ref": "#/components/schemas/QueueMetrics"
+          },
+          "scenario": {
+            "$ref": "#/components/schemas/ScenarioMetrics"
+          }
+        },
+        "required": [
+          "datasets",
+          "scenario",
+          "alerts",
+          "queue",
+          "by_family",
+          "latency_ms"
+        ],
+        "title": "MethodSummary",
+        "type": "object"
+      },
       "Neighborhood": {
         "additionalProperties": false,
         "properties": {
@@ -1943,6 +2561,91 @@
           "temporal_status_counts"
         ],
         "title": "Overview",
+        "type": "object"
+      },
+      "Perturbation": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "identical_to_base": {
+            "title": "Identical To Base",
+            "type": "boolean"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/MethodSummary"
+          }
+        },
+        "required": [
+          "id",
+          "description",
+          "identical_to_base",
+          "summary"
+        ],
+        "title": "Perturbation",
+        "type": "object"
+      },
+      "QueueMetrics": {
+        "additionalProperties": false,
+        "properties": {
+          "p_at_10": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "P At 10"
+          },
+          "p_at_5": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "P At 5"
+          },
+          "recall_at_10": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recall At 10"
+          },
+          "recall_at_5": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recall At 5"
+          }
+        },
+        "required": [
+          "p_at_5",
+          "p_at_10",
+          "recall_at_5",
+          "recall_at_10"
+        ],
+        "title": "QueueMetrics",
         "type": "object"
       },
       "ReasonCode": {
@@ -2091,6 +2794,207 @@
           "policy_sha256"
         ],
         "title": "RiskDetail",
+        "type": "object"
+      },
+      "Robustness": {
+        "additionalProperties": false,
+        "properties": {
+          "base": {
+            "$ref": "#/components/schemas/MethodSummary"
+          },
+          "perturbations": {
+            "items": {
+              "$ref": "#/components/schemas/Perturbation"
+            },
+            "title": "Perturbations",
+            "type": "array"
+          },
+          "split": {
+            "title": "Split",
+            "type": "string"
+          }
+        },
+        "required": [
+          "split",
+          "base",
+          "perturbations"
+        ],
+        "title": "Robustness",
+        "type": "object"
+      },
+      "ScenarioMetrics": {
+        "additionalProperties": false,
+        "properties": {
+          "f1": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "F1"
+          },
+          "fn": {
+            "title": "Fn",
+            "type": "integer"
+          },
+          "fnr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fnr"
+          },
+          "fp": {
+            "title": "Fp",
+            "type": "integer"
+          },
+          "fpr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fpr"
+          },
+          "high_band_fpr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "High Band Fpr"
+          },
+          "high_band_recall": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "High Band Recall"
+          },
+          "legitimate": {
+            "title": "Legitimate",
+            "type": "integer"
+          },
+          "precision": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Precision"
+          },
+          "recall": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recall"
+          },
+          "surfaced_recall": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Surfaced Recall"
+          },
+          "suspicious": {
+            "title": "Suspicious",
+            "type": "integer"
+          },
+          "tn": {
+            "title": "Tn",
+            "type": "integer"
+          },
+          "tp": {
+            "title": "Tp",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "suspicious",
+          "legitimate",
+          "tp",
+          "fp",
+          "fn",
+          "tn",
+          "precision",
+          "recall",
+          "f1",
+          "fpr",
+          "fnr",
+          "surfaced_recall",
+          "high_band_recall",
+          "high_band_fpr"
+        ],
+        "title": "ScenarioMetrics",
+        "type": "object"
+      },
+      "Sensitivity": {
+        "additionalProperties": false,
+        "properties": {
+          "split": {
+            "title": "Split",
+            "type": "string"
+          },
+          "variants": {
+            "items": {
+              "$ref": "#/components/schemas/SensitivityVariant"
+            },
+            "title": "Variants",
+            "type": "array"
+          }
+        },
+        "required": [
+          "split",
+          "variants"
+        ],
+        "title": "Sensitivity",
+        "type": "object"
+      },
+      "SensitivityVariant": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/MethodSummary"
+          }
+        },
+        "required": [
+          "id",
+          "summary"
+        ],
+        "title": "SensitivityVariant",
         "type": "object"
       },
       "SignalItem": {
@@ -2551,7 +3455,7 @@
             "schema": {
               "anyOf": [
                 {
-                  "pattern": "^(funnel|chain)$",
+                  "pattern": "^(funnel|chain|fan_out|cycle)$",
                   "type": "string"
                 },
                 {
@@ -3329,6 +4233,48 @@
         "summary": "Overview",
         "tags": [
           "datasets"
+        ]
+      }
+    },
+    "/api/v1/evaluation": {
+      "get": {
+        "description": "Latest benchmark run on SYNTHETIC data (artifact of ``scripts/run_benchmark.py``).",
+        "operationId": "get_evaluation_api_v1_evaluation_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Get Evaluation",
+        "tags": [
+          "evaluation"
         ]
       }
     },

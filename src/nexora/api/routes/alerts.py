@@ -19,7 +19,7 @@ def list_alerts(
     dataset_id: str | None = None,
     band: Annotated[list[schemas.Band] | None, Query()] = None,
     status: str | None = Query(None, pattern="^(open|in_case|closed)$"),
-    kind: str | None = Query(None, pattern="^(funnel|chain)$"),
+    kind: str | None = Query(None, pattern="^(funnel|chain|fan_out|cycle)$"),
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
 ) -> Any:

@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     job_lease_seconds: int = 120
     job_max_attempts: int = 3
     worker_poll_seconds: float = 1.0
+    # Benchmark artifact written by scripts/run_benchmark.py; relative paths resolve from the repository root.
+    benchmark_artifact: str = "benchmarks/results/bench-v1.json"
 
 
 @lru_cache(maxsize=1)

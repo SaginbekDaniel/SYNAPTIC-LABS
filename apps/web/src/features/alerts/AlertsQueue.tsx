@@ -4,7 +4,7 @@ import { AccountId, BandBadge, CaseStatusBadge, Empty, ErrorState, EvidenceBadge
 import { api } from "../../lib/api";
 import { formatDate } from "../../lib/format";
 import { reasonText, t, tDynamic } from "../../lib/i18n";
-import type { AlertPage, AlertSummary, Band } from "../../lib/types";
+import { FORMATION_KINDS, type AlertPage, type AlertSummary, type Band } from "../../lib/types";
 import { useApi } from "../../lib/useApi";
 
 const BANDS: Band[] = ["critical", "high", "medium", "insufficient_evidence"];
@@ -58,8 +58,11 @@ export function AlertsQueue() {
               </label>
               <select className="select" value={kind} onChange={(e) => setFilter("kind", e.target.value)} aria-label={t("alerts.filterKind")}>
                 <option value="">{`${t("alerts.filterKind")}: ${t("alerts.all")}`}</option>
-                <option value="funnel">{t("kind.funnel")}</option>
-                <option value="chain">{t("kind.chain")}</option>
+                {FORMATION_KINDS.map((k) => (
+                  <option key={k} value={k}>
+                    {tDynamic("kind.", k)}
+                  </option>
+                ))}
               </select>
               <select className="select" value={status} onChange={(e) => setFilter("status", e.target.value)} aria-label={t("alerts.filterStatus")}>
                 <option value="">{`${t("alerts.filterStatus")}: ${t("alerts.all")}`}</option>
@@ -109,7 +112,7 @@ function AlertRow({ alert }: { alert: AlertSummary }) {
       </div>
       <div className="stack stack--sm" style={{ minWidth: 0 }}>
         <div className="alert-row__title">
-          {t(f.kind === "funnel" ? "kind.funnel" : "kind.chain")} · <AccountId id={f.subject_account_id} link={false} />
+          {tDynamic("kind.", f.kind)} · <AccountId id={f.subject_account_id} link={false} />
         </div>
         {structural && <span className="subtle">{reasonText(structural, f.currency)}</span>}
         <div className="alert-row__meta">

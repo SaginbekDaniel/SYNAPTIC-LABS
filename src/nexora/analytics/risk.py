@@ -76,16 +76,26 @@ def assess(
 
     temporal = by_family.get("TEMPORAL")
     caps = policy["caps"]
+    gates: list[str] = []
     if temporal is None or temporal.status == "unavailable":
-        capped = _cap(band, caps["temporal_unavailable"])
+        gates.append("temporal_unavailable")
     elif temporal.status == "contradicted":
-        capped = _cap(band, caps["temporal_contradicted"])
+        gates.append("temporal_contradicted")
     elif temporal.status == "possible_ambiguous":
-        capped = _cap(band, caps["temporal_ambiguous"])
-    else:
-        capped = band
+        gates.append("temporal_ambiguous")
+    peer = by_family.get("PEER_STATISTICS")
+    if peer is not None and peer.status == "contradicted" and "peer_contradicted" in caps:
+        # Counter-evidence: the subject's turnover is no more time-concentrated than its peers'.
+        gates.append("peer_contradicted")
+    capped = band
+    applied: list[str] = []
+    for gate in gates:
+        new_band = _cap(capped, caps[gate])
+        if new_band != capped:
+            applied.append(gate)
+        capped = new_band
     if capped != band:
-        reason_list.append(ReasonCode("BAND_CAPPED_BY_EVIDENCE", {"from": band, "to": capped}))
+        reason_list.append(ReasonCode("BAND_CAPPED_BY_EVIDENCE", {"from": band, "to": capped, "gates": applied}))
     if len(supported) < 2:
         reason_list.append(ReasonCode("NO_INDEPENDENT_CORROBORATION", {"supported_families": supported}))
 
