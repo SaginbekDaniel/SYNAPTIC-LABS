@@ -4,6 +4,18 @@ import type { AlertSummary, Band, ReasonCode } from "../../lib/types";
 
 export const BAND_ORDER: Band[] = ["critical", "high", "medium", "insufficient_evidence"];
 
+const BAND_RANK: Record<Band, number> = { critical: 0, high: 1, medium: 2, insufficient_evidence: 3, low: 4 };
+
+/** The API's default queue order: band, then priority (highest first, unknown last), then first seen, then id. */
+export function byQueueOrder(a: AlertSummary, b: AlertSummary): number {
+  return (
+    (BAND_RANK[a.risk.band] ?? 9) - (BAND_RANK[b.risk.band] ?? 9) ||
+    (b.risk.priority ?? -Infinity) - (a.risk.priority ?? -Infinity) ||
+    (a.first_seen < b.first_seen ? -1 : a.first_seen > b.first_seen ? 1 : 0) ||
+    (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)
+  );
+}
+
 /** Colour token per band, shared by charts and badges. */
 export const BAND_COLOR: Record<Band, string> = {
   critical: "var(--band-critical)",

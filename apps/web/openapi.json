@@ -386,12 +386,28 @@
       "AlertPage": {
         "additionalProperties": false,
         "properties": {
+          "band_counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "description": "Alerts per risk band under every filter except band",
+            "title": "Band Counts",
+            "type": "object"
+          },
           "items": {
             "items": {
               "$ref": "#/components/schemas/AlertSummary"
             },
             "title": "Items",
             "type": "array"
+          },
+          "kind_counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "description": "Alerts per formation kind under every filter except kind",
+            "title": "Kind Counts",
+            "type": "object"
           },
           "limit": {
             "title": "Limit",
@@ -3533,6 +3549,36 @@
               "minimum": 0,
               "title": "Offset",
               "type": "integer"
+            }
+          },
+          {
+            "description": "Case-insensitive substring of a member account id",
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Case-insensitive substring of a member account id",
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "schema": {
+              "default": "priority",
+              "pattern": "^(priority|accounts|transfers|recent)$",
+              "title": "Sort",
+              "type": "string"
             }
           }
         ],

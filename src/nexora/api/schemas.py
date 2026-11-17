@@ -211,6 +211,12 @@ class AlertSummary(Model):
 
 class AlertPage(Page):
     items: list[AlertSummary]
+    band_counts: dict[str, int] = Field(
+        default_factory=dict, description="Alerts per risk band under every filter except band"
+    )
+    kind_counts: dict[str, int] = Field(
+        default_factory=dict, description="Alerts per formation kind under every filter except kind"
+    )
 
 
 class EvidenceItem(Model):

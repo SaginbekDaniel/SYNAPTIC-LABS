@@ -1520,15 +1520,19 @@
   .toolbar--sub {
     padding: var(--s-3) var(--s-4);
   }
+  /* Two filters side by side, sort on its own row: three selects in 358 px truncate their labels.
+     Font size stays at the phone input size (16 px) so iOS Safari does not zoom on focus. */
   .toolbar__filters {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     width: 100%;
   }
   .toolbar__filters .select {
     width: 100%;
-    padding-left: var(--s-2);
-    font-size: var(--fs-sm);
+    padding-left: var(--s-3);
+  }
+  .toolbar__filters .select-wrap:last-child .select {
+    grid-column: 1 / -1;
   }
   .toolbar--sub .segmented {
     flex-wrap: nowrap;
@@ -1640,5 +1644,28 @@
   }
   .disclosure__body {
     padding: 0 var(--s-4) var(--s-4);
+  }
+}
+
+/* ---------------------------------------------------------------- queue pager */
+.alert-list[data-refreshing] {
+  opacity: 0.6;
+  transition: opacity var(--dur-1) var(--ease);
+}
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-6) var(--s-5);
+  border-top: 1px solid var(--line);
+}
+.pager__status {
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+}
+@media (max-width: 767px) {
+  .pager {
+    padding: var(--s-3) var(--s-4) var(--s-4);
   }
 }

@@ -180,7 +180,7 @@ export function Money({ minor, currency = "KZT" }: { minor: string; currency?: s
 /** Account identifiers are opaque strings: shown verbatim, never converted to numbers. */
 export function AccountId({ id, link = true, compact = false }: { id: string; link?: boolean; compact?: boolean }) {
   const body = (
-    <code className="mono account-id" title={compact ? id : undefined}>
+    <code className="mono account-id" title={compact ? id : undefined} translate="no">
       {compact ? shortId(id, 4) : id}
     </code>
   );

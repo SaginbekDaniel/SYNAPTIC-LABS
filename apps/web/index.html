@@ -12,7 +12,10 @@
         try {
           var c = localStorage.getItem("nexora.theme");
           var light = c === "light" || (c === "system" && matchMedia("(prefers-color-scheme: light)").matches);
-          if (light) document.documentElement.dataset.theme = "light";
+          if (light) {
+            document.documentElement.dataset.theme = "light";
+            document.querySelector('meta[name="theme-color"]').content = "#f3f3f7";
+          }
         } catch (e) {}
       })();
     </script>

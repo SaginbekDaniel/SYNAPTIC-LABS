@@ -1,4 +1,4 @@
-import { useDeferredValue, useMemo, useState, type KeyboardEvent, type MouseEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useDataset } from "../../app/dataset";
 import { AccountId, BandBadge, bandIcon, CaseStatusBadge, Empty, ErrorState, EvidenceBadge, Icon, Loading, NoDataset, PageHeader, Segmented } from "../../components/ui";
@@ -13,23 +13,9 @@ import { alertTitle, alertWhy, BAND_ORDER } from "./alertText";
 
 type SortKey = "priority" | "accounts" | "transfers" | "recent";
 const SORTS: SortKey[] = ["priority", "accounts", "transfers", "recent"];
-const BAND_RANK: Record<string, number> = { critical: 0, high: 1, medium: 2, insufficient_evidence: 3, low: 4 };
-
-function sortAlerts(items: AlertSummary[], key: SortKey): AlertSummary[] {
-  const byPriority = (a: AlertSummary, b: AlertSummary) =>
-    (BAND_RANK[a.risk.band] ?? 9) - (BAND_RANK[b.risk.band] ?? 9) || (b.risk.priority ?? -1) - (a.risk.priority ?? -1);
-  const out = [...items];
-  if (key === "priority") return out.sort(byPriority);
-  if (key === "accounts") return out.sort((a, b) => b.formation.member_count - a.formation.member_count || byPriority(a, b));
-  if (key === "transfers") return out.sort((a, b) => b.transaction_count - a.transaction_count || byPriority(a, b));
-  return out.sort((a, b) => (a.formation.window_end < b.formation.window_end ? 1 : a.formation.window_end > b.formation.window_end ? -1 : byPriority(a, b)));
-}
-
-function matches(a: AlertSummary, q: string): boolean {
-  if (!q) return true;
-  const needle = q.toLowerCase();
-  return a.formation.subject_account_id.toLowerCase().includes(needle) || alertTitle(a).toLowerCase().includes(needle);
-}
+/** Server page size. Band counts, totals, search and sorting are computed over all matches by the API. */
+export const QUEUE_PAGE_SIZE = 50;
+const SEARCH_DEBOUNCE_MS = 250;
 
 export function AlertsQueue() {
   const { activeId } = useDataset();
@@ -42,15 +28,35 @@ export function AlertsQueue() {
   const sort = (SORTS as string[]).includes(params.get("sort") ?? "") ? (params.get("sort") as SortKey) : "priority";
   const q = params.get("q") ?? "";
   const sel = params.get("sel");
+  const page = Math.max(1, Number.parseInt(params.get("page") ?? "1", 10) || 1);
   const [draft, setDraft] = useState(q);
-  const deferredQ = useDeferredValue(draft.trim());
 
-  // Kind and status filter on the server; band, search and sort are local so band counts stay visible.
-  const key = activeId ? `alerts:${activeId}:${kind}:${status}` : null;
-  const alerts = useApi(key, (signal) => api.get<AlertPage>("/api/v1/alerts", { dataset_id: activeId, kind, status, limit: 200 }, signal));
+  // Keep the field in sync when the URL changes from outside (back/forward, reset).
+  const lastUrlQ = useRef(q);
+  useEffect(() => {
+    if (q !== lastUrlQ.current) {
+      lastUrlQ.current = q;
+      setDraft(q);
+    }
+  }, [q]);
+
+  // Every filter, the search and the sort run on the server; the queue only ever holds one page.
+  const key = activeId ? `alerts:${activeId}:${band}:${kind}:${status}:${q}:${sort}:${page}` : null;
+  const alerts = useApi(
+    key,
+    (signal) =>
+      api.get<AlertPage>(
+        "/api/v1/alerts",
+        { dataset_id: activeId, band, kind, status, q, sort, limit: QUEUE_PAGE_SIZE, offset: (page - 1) * QUEUE_PAGE_SIZE },
+        signal,
+      ),
+    { scope: activeId ?? undefined },
+  );
 
   function update(changes: Record<string, string | null>, replace = true) {
     const next = new URLSearchParams(params);
+    // Any change to what is listed starts again from the first page.
+    if (!("page" in changes) && !("sel" in changes && Object.keys(changes).length === 1)) next.delete("page");
     for (const [k, v] of Object.entries(changes)) {
       if (v) next.set(k, v);
       else next.delete(k);
@@ -58,18 +64,37 @@ export function AlertsQueue() {
     setParams(next, { replace });
   }
 
-  const all = alerts.data?.items ?? [];
-  const bandCounts = useMemo(() => {
-    const c: Record<string, number> = {};
-    for (const a of all) if (matches(a, deferredQ)) c[a.risk.band] = (c[a.risk.band] ?? 0) + 1;
-    return c;
-  }, [all, deferredQ]);
-  const visible = useMemo(
-    () => sortAlerts(all.filter((a) => (!band || a.risk.band === band) && matches(a, deferredQ)), sort),
-    [all, band, deferredQ, sort],
-  );
-  const filtered = Boolean(band || kind || status || deferredQ);
+  useEffect(() => {
+    const trimmed = draft.trim();
+    if (trimmed === q) return;
+    const id = window.setTimeout(() => {
+      lastUrlQ.current = trimmed;
+      update({ q: trimmed || null, sel: null });
+    }, SEARCH_DEBOUNCE_MS);
+    return () => window.clearTimeout(id);
+    // `update` closes over the current params; re-arming on every params change would reset the timer.
+  }, [draft, q]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const pageData = alerts.data;
+  const visible = pageData?.items ?? [];
+  const bandCounts = pageData?.band_counts ?? {};
+  const total = pageData?.total ?? 0;
+  const pageCount = Math.max(1, Math.ceil(total / QUEUE_PAGE_SIZE));
+  const from = pageData && total > 0 ? pageData.offset + 1 : 0;
+  const to = pageData ? pageData.offset + visible.length : 0;
+  const filtered = Boolean(band || kind || status || q);
+  const refreshing = alerts.loading && pageData !== null;
   const selected = wide && sel ? visible.find((a) => a.id === sel) ?? null : null;
+
+  // A page beyond the end (e.g. after a filter shrank the list in another tab) falls back to the last page.
+  useEffect(() => {
+    if (pageData && page > pageCount) update({ page: pageCount > 1 ? String(pageCount) : null });
+  }, [pageData, page, pageCount]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function goToPage(n: number) {
+    update({ page: n > 1 ? String(n) : null, sel: null }, false);
+    document.getElementById("queue-title")?.scrollIntoView({ block: "nearest" });
+  }
 
   function onRowClick(e: MouseEvent, a: AlertSummary) {
     // Wide screens preview in place; modifier-clicks and narrow screens follow the link.
@@ -108,7 +133,8 @@ export function AlertsQueue() {
                 role="search"
                 onSubmit={(e) => {
                   e.preventDefault();
-                  update({ q: draft.trim() || null });
+                  lastUrlQ.current = draft.trim();
+                  update({ q: draft.trim() || null, sel: null });
                 }}
               >
                 <Icon name="search" size={18} />
@@ -120,10 +146,7 @@ export function AlertsQueue() {
                   type="search"
                   value={draft}
                   placeholder={t("alerts.searchPlaceholder")}
-                  onChange={(e) => {
-                    setDraft(e.target.value);
-                    update({ q: e.target.value.trim() || null });
-                  }}
+                  onChange={(e) => setDraft(e.target.value)}
                   spellCheck={false}
                   autoComplete="off"
                 />
@@ -181,9 +204,13 @@ export function AlertsQueue() {
                   })),
                 ]}
               />
-              {alerts.data && (
-                <span className="toolbar__count" aria-live="polite">
-                  {filtered ? t("alerts.shown", { shown: visible.length, total: alerts.data.total }) : t("alerts.total", { count: alerts.data.total })}
+              {pageData && (
+                <span className="toolbar__count num" aria-live="polite" data-testid="queue-count">
+                  {total === 0
+                    ? t("alerts.total", { count: 0 })
+                    : pageCount > 1
+                      ? t(filtered ? "alerts.rangeFiltered" : "alerts.range", { from, to, total })
+                      : t(filtered ? "alerts.found" : "alerts.total", { count: total })}
                 </span>
               )}
             </div>
@@ -202,6 +229,7 @@ export function AlertsQueue() {
                     type="button"
                     className="btn btn--sm"
                     onClick={() => {
+                      lastUrlQ.current = "";
                       setDraft("");
                       setParams(new URLSearchParams(), { replace: true });
                     }}
@@ -212,7 +240,7 @@ export function AlertsQueue() {
               </Empty>
             )}
             {visible.length > 0 && (
-              <ul className="alert-list" data-testid="alert-list" onKeyDown={onListKey}>
+              <ul className="alert-list" data-testid="alert-list" onKeyDown={onListKey} aria-busy={refreshing || undefined} data-refreshing={refreshing || undefined}>
                 {visible.map((a) => (
                   <li key={a.id}>
                     <AlertRow alert={a} selected={selected?.id === a.id} onClick={(e) => onRowClick(e, a)} />
@@ -220,11 +248,30 @@ export function AlertsQueue() {
                 ))}
               </ul>
             )}
+            {pageData && pageCount > 1 && <Pager page={Math.min(page, pageCount)} pageCount={pageCount} onPage={goToPage} disabled={refreshing} />}
           </section>
           {selected && <AlertPreview alert={selected} onClose={() => update({ sel: null })} onOpen={() => navigate(`/alerts/${selected.id}`)} />}
         </div>
       )}
     </div>
+  );
+}
+
+function Pager({ page, pageCount, onPage, disabled }: { page: number; pageCount: number; onPage: (n: number) => void; disabled: boolean }) {
+  return (
+    <nav className="pager" aria-label={t("alerts.pager")}>
+      <button type="button" className="btn btn--sm" disabled={disabled || page <= 1} onClick={() => onPage(page - 1)}>
+        <Icon name="arrowLeft" size={16} />
+        {t("alerts.prevPage")}
+      </button>
+      <span className="pager__status num" aria-current="page">
+        {t("alerts.pageOf", { page, pages: pageCount })}
+      </span>
+      <button type="button" className="btn btn--sm" disabled={disabled || page >= pageCount} onClick={() => onPage(page + 1)} data-testid="next-page">
+        {t("alerts.nextPage")}
+        <Icon name="arrowRight" size={16} />
+      </button>
+    </nav>
   );
 }
 

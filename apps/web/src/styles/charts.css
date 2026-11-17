@@ -165,11 +165,12 @@ button.donut__row[aria-pressed="true"] {
   border-radius: 3px;
   background: currentColor;
 }
+/* Legend names wrap rather than truncate: in narrow cards an ellipsis hid which status a row meant. */
 .donut__name {
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  padding-block: var(--s-1);
+  line-height: var(--lh-tight);
+  overflow-wrap: break-word;
 }
 .donut__count {
   font-weight: var(--fw-semibold);
@@ -343,7 +344,11 @@ button.donut__row[aria-pressed="true"] {
 .columns__label {
   color: var(--text-2);
   font-size: var(--fs-xs);
+  line-height: var(--lh-tight);
   text-align: center;
+  /* Single long words ("Критический") must not spill into the neighbouring column. */
+  hyphens: auto;
+  overflow-wrap: break-word;
 }
 .column-links {
   display: flex;

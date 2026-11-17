@@ -9,7 +9,9 @@ import { formatDate } from "../../lib/format";
 import { t } from "../../lib/i18n";
 import type { Activity, AlertPage, AlertSummary, Overview } from "../../lib/types";
 import { useApi } from "../../lib/useApi";
-import { alertTitle, alertWhy, BAND_COLOR, BAND_ORDER } from "../alerts/alertText";
+import { alertTitle, alertWhy, BAND_COLOR, BAND_ORDER, byQueueOrder } from "../alerts/alertText";
+
+const TOP_N = 5;
 
 const ACTIVE_CASE = ["new", "investigating", "escalated", "reopened"];
 const FINAL_CASE = ["dismissed", "closed"];
@@ -27,17 +29,17 @@ export function CommandCenter() {
   const snapId = active?.latest_snapshot?.id ?? null;
   // Independent reads run in parallel (one waterfall-free request group per dataset/snapshot).
   const data = useApi(activeId ? `overview:${activeId}:${snapId}` : null, async (signal) => {
-    const [ov, activity, top, open, inCase] = await Promise.all([
+    const [ov, activity, open, inCase] = await Promise.all([
       api.get<Overview>(`/api/v1/datasets/${activeId}/overview`, undefined, signal),
       snapId ? api.get<Activity>(`/api/v1/snapshots/${snapId}/activity`, undefined, signal) : Promise.resolve(null),
-      api.get<AlertPage>("/api/v1/alerts", { dataset_id: activeId, limit: 12 }, signal),
-      api.get<AlertPage>("/api/v1/alerts", { dataset_id: activeId, status: "open", limit: 1 }, signal),
-      api.get<AlertPage>("/api/v1/alerts", { dataset_id: activeId, status: "in_case", limit: 1 }, signal),
+      api.get<AlertPage>("/api/v1/alerts", { dataset_id: activeId, status: "open", limit: TOP_N }, signal),
+      api.get<AlertPage>("/api/v1/alerts", { dataset_id: activeId, status: "in_case", limit: TOP_N }, signal),
     ]);
     return {
       ov,
       activity,
-      top: top.items.filter((a) => a.status !== "closed").slice(0, 5),
+      // Both lists arrive in queue order, so the first TOP_N of their merge are the top unresolved alerts.
+      top: [...open.items, ...inCase.items].sort(byQueueOrder).slice(0, TOP_N),
       openCount: open.total,
       inCaseCount: inCase.total,
     } satisfies OverviewData;

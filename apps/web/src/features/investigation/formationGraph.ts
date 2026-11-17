@@ -12,7 +12,20 @@ export interface FormationGraph {
  * with a deterministic layout chosen by formation kind — money always reads left to right
  * (or clockwise for a loop), and the same alert always looks the same.
  */
-export function buildFormationGraph(alert: AlertDetail, txs: Transaction[], highlight: ReadonlySet<string>): FormationGraph {
+export interface LayoutOptions {
+  /**
+   * Portrait stages (phones) read money top to bottom instead of left to right, so the formation
+   * fills the stage instead of shrinking into a strip. Only positions change, never nodes or edges.
+   */
+  portrait?: boolean;
+}
+
+export function buildFormationGraph(
+  alert: AlertDetail,
+  txs: Transaction[],
+  highlight: ReadonlySet<string>,
+  options: LayoutOptions = {},
+): FormationGraph {
   const f = alert.formation;
   const boundary = new Set(alert.coverage.boundary_accounts);
   const roleOf = (id: string): NodeRole => {
@@ -63,7 +76,11 @@ export function buildFormationGraph(alert: AlertDetail, txs: Transaction[], high
 
   if (f.kind === "cycle") layoutCycle(nodes, f.member_ids);
   else if (f.kind === "chain") layoutChain(nodes, f.member_ids, edges);
-  else layoutFlow(nodes, f.subject_account_id, new Set(f.entry_ids), new Set(f.exit_ids));
+  else layoutFlow(nodes, f.subject_account_id, new Set(f.entry_ids), new Set(f.exit_ids), options.portrait ? PORTRAIT : LANDSCAPE);
+  if (options.portrait && f.kind !== "cycle") {
+    // Lay out along the main axis, then swap axes: left→right becomes top→bottom.
+    for (const n of nodes) if (n.position) n.position = { x: n.position.y, y: n.position.x };
+  }
 
   const roles = [...new Set(nodes.map((n) => n.role))];
   return { nodes, edges, roles };
@@ -80,18 +97,54 @@ function column(group: GraphNodeSpec[], x: number, gap: number, bend: number): v
   });
 }
 
+/** Spacing for a flow laid out along its main axis (x = direction of money). */
+interface FlowMetrics {
+  /** Distance from the hub to the first column of sources / recipients. */
+  hub: number;
+  /** Most accounts in one column before a group wraps into another column. */
+  maxColumn: number;
+  /** Distance between wrapped columns, and between accounts within one. */
+  colStep: number;
+  rowGap: number;
+}
+const LANDSCAPE: FlowMetrics = { hub: 260, maxColumn: 8, colStep: 130, rowGap: 64 };
+/** Portrait: columns become rows across a narrow stage, so keep them short and close to the hub. */
+const PORTRAIT: FlowMetrics = { hub: 170, maxColumn: 6, colStep: 90, rowGap: 62 };
+
 /**
- * Funnel and fan-out: sources in a left column, the hub in the centre, recipients to the right,
- * anything further downstream in a fourth column.
+ * Place a side group (sources or recipients) of a flow. Small groups are one column; large groups
+ * (e.g. a 24-feeder funnel) wrap into staggered columns moving away from the hub, so the formation
+ * keeps the stage's shape and fits at a zoom where labels stay readable.
  */
-function layoutFlow(nodes: GraphNodeSpec[], center: string, entries: Set<string>, exits: Set<string>): void {
+function sideGroup(group: GraphNodeSpec[], x: number, direction: -1 | 1, m: FlowMetrics): void {
+  if (group.length <= m.maxColumn) {
+    column(group, x, group.length > 6 ? 52 : 70, group.length > 6 ? 60 * direction : 0);
+    return;
+  }
+  const cols = Math.ceil(group.length / m.maxColumn);
+  const perCol = Math.ceil(group.length / cols);
+  for (let c = 0; c < cols; c++) {
+    const slice = group.slice(c * perCol, (c + 1) * perCol);
+    // Alternate columns are offset by half a row so edges from outer columns pass between inner nodes.
+    const stagger = c % 2 === 1 ? m.rowGap / 2 : 0;
+    slice.forEach((node, i) => {
+      node.position = { x: x + direction * c * m.colStep, y: (i - (perCol - 1) / 2) * m.rowGap + stagger };
+    });
+  }
+}
+
+/**
+ * Funnel and fan-out: sources on the left, the hub in the centre, recipients to the right,
+ * anything further downstream in a further column.
+ */
+function layoutFlow(nodes: GraphNodeSpec[], center: string, entries: Set<string>, exits: Set<string>, m: FlowMetrics): void {
   const left = nodes.filter((n) => n.id !== center && entries.has(n.id));
   const right = nodes.filter((n) => n.id !== center && !entries.has(n.id) && exits.has(n.id));
   const other = nodes.filter((n) => n.id !== center && !entries.has(n.id) && !exits.has(n.id));
-  const gap = (n: number) => (n > 12 ? 40 : n > 6 ? 52 : 70);
-  column(left, -260, gap(left.length), left.length > 6 ? -60 : 0);
-  column(right, 260, gap(right.length), right.length > 6 ? 60 : 0);
-  column(other, 480, gap(other.length), 0);
+  sideGroup(left, -m.hub, -1, m);
+  sideGroup(right, m.hub, 1, m);
+  const rightCols = right.length > m.maxColumn ? Math.ceil(right.length / m.maxColumn) : 1;
+  sideGroup(other, m.hub + rightCols * m.colStep + 90, 1, m);
   const c = nodes.find((n) => n.id === center);
   if (c) c.position = { x: 0, y: 0 };
 }

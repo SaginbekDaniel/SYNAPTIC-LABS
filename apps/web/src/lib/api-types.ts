@@ -568,8 +568,22 @@ export interface components {
         };
         /** AlertPage */
         AlertPage: {
+            /**
+             * Band Counts
+             * @description Alerts per risk band under every filter except band
+             */
+            band_counts?: {
+                [key: string]: number;
+            };
             /** Items */
             items: components["schemas"]["AlertSummary"][];
+            /**
+             * Kind Counts
+             * @description Alerts per formation kind under every filter except kind
+             */
+            kind_counts?: {
+                [key: string]: number;
+            };
             /** Limit */
             limit: number;
             /** Offset */
@@ -1621,6 +1635,9 @@ export interface operations {
                 kind?: string | null;
                 limit?: number;
                 offset?: number;
+                /** @description Case-insensitive substring of a member account id */
+                q?: string | null;
+                sort?: string;
             };
             header?: never;
             path?: never;

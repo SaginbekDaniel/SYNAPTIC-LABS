@@ -72,3 +72,20 @@ test("theme choice applies immediately and persists", async ({ page }) => {
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
 });
+
+test("queue search runs on the server and finds alerts by any member account", async ({ page, request }) => {
+  const errors = collectErrors(page);
+  await seedAndAnalyse(page, "7005");
+  await page.goto("/alerts");
+  const href = await page.getByTestId("alert-row").first().getAttribute("href");
+  const alertId = href!.split("/").pop()!;
+  const detail = await (await request.get(`http://127.0.0.1:8100/api/v1/alerts/${alertId}`)).json();
+  const member: string = detail.formation.member_ids.find((m: string) => m !== detail.formation.subject_account_id);
+  const search = page.getByRole("searchbox");
+  await search.fill(member.slice(-8));
+  await expect(page).toHaveURL(new RegExp(`q=${member.slice(-8)}`));
+  await expect(page.locator(`[data-testid="alert-row"][href$="${alertId}"]`)).toBeVisible();
+  // The count reports matches over the whole dataset, not the loaded page.
+  await expect(page.getByTestId("queue-count")).toHaveText(/^Найдено: \d+$/);
+  expect(errors).toEqual([]);
+});

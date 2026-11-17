@@ -36,7 +36,8 @@ export function Analytics() {
   const data = useApi(activeId ? `analytics:${activeId}` : null, async (signal) => {
     const [ov, alerts] = await Promise.all([
       api.get<Overview>(`/api/v1/datasets/${activeId}/overview`, undefined, signal),
-      api.get<AlertPage>("/api/v1/alerts", { dataset_id: activeId, limit: 200 }, signal),
+      // Only the facet counts are needed: they cover every alert in the dataset, not just one page.
+      api.get<AlertPage>("/api/v1/alerts", { dataset_id: activeId, limit: 1 }, signal),
     ]);
     return { ov, alerts };
   });
@@ -57,8 +58,7 @@ export function Analytics() {
           const { ov, alerts } = data.data;
           const snap = ov.dataset.latest_snapshot;
           const formations = Object.values(ov.formations_by_kind).reduce((a, b) => a + b, 0);
-          const alertsByKind: Record<string, number> = {};
-          for (const a of alerts.items) alertsByKind[a.formation.kind] = (alertsByKind[a.formation.kind] ?? 0) + 1;
+          const alertsByKind = alerts.kind_counts ?? {};
           const temporalTotal = TEMPORAL.reduce((a, s) => a + (ov.temporal_status_counts[s] ?? 0), 0);
           const cases = Object.values(ov.cases_by_status).reduce((a, b) => a + b, 0);
           const maxKind = Math.max(1, ...FORMATION_KINDS.map((k) => ov.formations_by_kind[k] ?? 0));

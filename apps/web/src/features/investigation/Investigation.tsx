@@ -7,6 +7,7 @@ import { api } from "../../lib/api";
 import { formatDate, shortId } from "../../lib/format";
 import { t } from "../../lib/i18n";
 import type { AlertDetail, EvidenceChain, ReasonCode } from "../../lib/types";
+import { useMediaQuery } from "../../lib/useMediaQuery";
 import { useApi } from "../../lib/useApi";
 import { alertTitle } from "../alerts/alertText";
 import { CasePanel, useOpenCase } from "./CasePanel";
@@ -56,7 +57,10 @@ function Workspace({
   const txs = chain?.transactions ?? [];
 
   // The graph depends only on the evidence; highlight and selection are applied as styles.
-  const graph = useMemo(() => (chain ? buildFormationGraph(a, chain.transactions, new Set()) : null), [a, chain]);
+  // Phones have a portrait stage and show the context panel below the graph instead of beside it.
+  const phone = useMediaQuery("(max-width: 767px)");
+  const stacked = useMediaQuery("(max-width: 1099px)");
+  const graph = useMemo(() => (chain ? buildFormationGraph(a, chain.transactions, new Set(), { portrait: phone }) : null), [a, chain, phone]);
   const roles = useMemo(() => new Map<string, NodeRole>(graph?.nodes.map((n) => [n.id, n.role]) ?? []), [graph]);
   const highlightEdges = useMemo(() => {
     if (!highlight || !graph) return undefined;
@@ -176,7 +180,7 @@ function Workspace({
               overlay={<GraphLegend roles={graph.roles} highlighted={!!highlight} />}
             />
           )}
-          <p className="stage-hint">{t("alert.stageHint")}</p>
+          <p className="stage-hint">{t(stacked ? "alert.stageHintStacked" : "alert.stageHint")}</p>
         </section>
 
         <aside className="workspace__side panel" aria-label={t("ctx.label")} aria-live="polite">

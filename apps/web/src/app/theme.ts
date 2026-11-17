@@ -21,10 +21,18 @@ function readChoice(): ThemeChoice {
 }
 
 let choice: ThemeChoice = typeof window !== "undefined" ? readChoice() : "dark";
+if (typeof document !== "undefined") syncThemeColor();
 
 function resolve(c: ThemeChoice): ResolvedTheme {
   if (c === "system") return media?.matches ? "light" : "dark";
   return c;
+}
+
+/** Browser/PWA toolbar tint follows the active canvas token (the meta tag starts with the dark value). */
+function syncThemeColor(): void {
+  const canvas = getComputedStyle(document.documentElement).getPropertyValue("--canvas").trim();
+  const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+  if (meta && canvas) meta.content = canvas;
 }
 
 function apply(): void {
@@ -32,6 +40,7 @@ function apply(): void {
   const root = document.documentElement;
   if (resolved === "light") root.dataset.theme = "light";
   else delete root.dataset.theme;
+  syncThemeColor();
   listeners.forEach((l) => l());
 }
 
