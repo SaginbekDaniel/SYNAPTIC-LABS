@@ -38,6 +38,7 @@ from nexora.analytics.risk import opens_alert
 from nexora.domain.ids import canonical_json, sha256_hex, transaction_uuid
 from nexora.domain.transfers import ObservedTransfer
 from nexora.evaluation.generator import GeneratedDataset, ScenarioTruth, generate
+from nexora.evaluation.sealed_generator import generate_sealed
 from nexora.ingest.validation import prepare_batch
 
 BENCHMARK_VERSION = "bench-harness-v1"
@@ -47,7 +48,12 @@ SPLITS: dict[str, tuple[int, ...]] = {
     "dev": tuple(range(1000, 1030)),
     "validation": tuple(range(2000, 2020)),
     "holdout": tuple(range(3000, 3030)),
+    # Sealed final evaluation (docs/evaluation/EXPERIMENT_PROTOCOL.md): independent generator
+    # ``sealed-gen-v1``, evaluated once after the configuration and this harness were locked.
+    "sealed": tuple(range(9000, 9060)),
 }
+#: Splits whose results have been inspected during development; reported, never tuned on again.
+EXPOSED_SPLITS = frozenset({"dev", "validation", "holdout"})
 BAND_RANK = {"critical": 0, "high": 1, "medium": 2, "insufficient_evidence": 3, "low": 4}
 FLAG_BANDS = frozenset({"critical", "high", "medium"})
 HIGH_BANDS = frozenset({"critical", "high"})
@@ -310,10 +316,17 @@ class DatasetEval:
     matches: list[ScenarioTruth | None]
     seconds: float
     n_transfers: int
+    partial: bool = False  # the method reported a budget-limited (non-exhaustive) analysis
+    quarantined: int = 0  # formations withheld because their evidence failed validation
 
 
 def evaluate_items(
-    ds: GeneratedDataset, items: list[ReviewItem], seconds: float, n_transfers: int, budget: int | None = None
+    ds: GeneratedDataset,
+    items: list[ReviewItem],
+    seconds: float,
+    n_transfers: int,
+    budget: int | None = None,
+    output: AnalysisOutput | None = None,
 ) -> DatasetEval:
     ranked = sorted(items, key=lambda i: i.sort_key)
     if budget is not None:  # equal-alert-budget view for score-only baselines
@@ -330,6 +343,8 @@ def evaluate_items(
         matches=[match(i, ds.truth) for i in ranked],
         seconds=seconds,
         n_transfers=n_transfers,
+        partial=bool(output and output.partial_reasons),
+        quarantined=len(output.quarantined) if output else 0,
     )
 
 
@@ -357,14 +372,26 @@ def summarize(evals: list[DatasetEval]) -> dict[str, Any]:
     fam: dict[str, dict[str, int]] = defaultdict(lambda: {"total": 0, "flagged": 0, "surfaced": 0})
     queue: dict[str, list[float | None]] = defaultdict(list)
     seconds: list[float] = []
+    dup_counts: list[int] = []  # flagged alerts per flagged, matched network (1 = no duplicates)
+    abstained = abstained_relevant = queued_total = 0
+    partial = quarantined = 0
     for ev in evals:
         seconds.append(ev.seconds)
+        partial += ev.partial
+        quarantined += ev.quarantined
+        per_network: dict[str, int] = defaultdict(int)
         flagged_ids: set[str] = set()
         high_ids: set[str] = set()
         surfaced_ids: set[str] = set()
         for item, m in zip(ev.items, ev.matches, strict=True):
             if not item.queued:
                 continue
+            queued_total += 1
+            if item.band == "insufficient_evidence":
+                abstained += 1
+                abstained_relevant += m is not None and m.label == "suspicious"
+            if item.flagged and m is not None:
+                per_network[m.scenario_id] += 1
             if item.flagged:
                 flagged_items += 1
                 if m is None:
@@ -377,6 +404,7 @@ def summarize(evals: list[DatasetEval]) -> dict[str, Any]:
                     flagged_ids.add(m.scenario_id)
                 if item.band in HIGH_BANDS:
                     high_ids.add(m.scenario_id)
+        dup_counts.extend(per_network.values())
         for t in ev.truth:
             f = fam[t.family]
             f["total"] += 1
@@ -399,6 +427,8 @@ def summarize(evals: list[DatasetEval]) -> dict[str, Any]:
             rel = sum(1 for _, m in top if m is not None and m.label == "suspicious")
             reached = {m.scenario_id for _, m in top if m is not None and m.label == "suspicious"}
             queue[f"p_at_{k}"].append(_ratio(rel, len(top)) if top else None)
+            # Distinct-network precision: a second alert on an already reached network is not a new find.
+            queue[f"distinct_p_at_{k}"].append(_ratio(len(reached), len(top)) if top else None)
             queue[f"recall_at_{k}"].append(_ratio(len(reached), n_susp))
     fn = susp_total - tp
     tn = legit_total - fp
@@ -430,6 +460,18 @@ def summarize(evals: list[DatasetEval]) -> dict[str, Any]:
             "per_dataset": round(flagged_items / len(evals), 2) if evals else None,
             "precision": _ratio(relevant_flagged, flagged_items),
             "unmatched": unmatched_flagged,
+            "per_flagged_network": _mean(float(c) for c in dup_counts),
+            "networks_with_duplicates": _ratio(sum(1 for c in dup_counts if c > 1), len(dup_counts)),
+        },
+        "abstention": {
+            "rate": _ratio(abstained, queued_total),
+            # Share of abstentions that are planted fraud. Near 1.0 with few legitimate boundary
+            # accounts is a sign that the coverage contract leaks the label (audit finding L-01).
+            "suspicious_share": _ratio(abstained_relevant, abstained),
+        },
+        "integrity": {
+            "partial_analysis_rate": _ratio(partial, len(evals)),
+            "quarantined_formations": quarantined,
         },
         "queue": {name: _mean(vals) for name, vals in sorted(queue.items())},
         "by_family": {k: dict(v) for k, v in sorted(fam.items())},
@@ -501,6 +543,8 @@ class SplitRun:
 
 
 def load_split(split: str) -> list[GeneratedDataset]:
+    if split == "sealed":
+        return [generate_sealed(seed) for seed in SPLITS[split]]
     return [generate(SUITE, seed) for seed in SPLITS[split]]
 
 
@@ -520,7 +564,7 @@ def run_experiments(
         for exp in experiments:
             res = exp.method(transfers, contract, did)
             budget = flagged_counts.get(exp.budget_from) if exp.budget_from else None
-            ev = evaluate_items(ds, res.items, res.seconds, len(transfers), budget=budget)
+            ev = evaluate_items(ds, res.items, res.seconds, len(transfers), budget=budget, output=res.output)
             flagged_counts[exp.name] = sum(1 for i in ev.items if i.flagged and i.queued)
             results[exp.name].append(ev)
     return results
@@ -566,6 +610,20 @@ def _v1(det: dict[str, Any], pol: dict[str, Any]) -> None:
     pol["caps"].pop("peer_contradicted", None)
 
 
+def _v2(det: dict[str, Any], pol: dict[str, Any]) -> None:
+    """The configuration merged at 4c01a7a (detectors-v2 / risk-policy-v2), the sealed-evaluation baseline.
+
+    Reverses every later change by name, so it stays exact while the candidate evolves:
+    funnel-v3's returning ratio, the hypothesis engine (``hypotheses``) and its policy gates.
+    """
+    det["version"] = "detectors-v2"
+    det["funnel"]["detector_version"] = "funnel-v2"
+    det["funnel"]["returning_min_ratio"] = 0.1
+    det.pop("hypotheses", None)
+    pol["version"] = "risk-policy-v2"
+    pol.pop("hypothesis", None)
+
+
 def _no_temporal(det: dict[str, Any], pol: dict[str, Any]) -> None:
     pol["family_weights"]["TEMPORAL"] = 0.0
     for gate in ("temporal_contradicted", "temporal_ambiguous", "temporal_unavailable"):
@@ -593,6 +651,7 @@ def _no_coverage_abstention(det: dict[str, Any], pol: dict[str, Any]) -> None:
 
 VARIANTS: dict[str, Callable[[dict[str, Any], dict[str, Any]], None]] = {
     "v1_shipped": _v1,
+    "v2_shipped": _v2,
     "minus_temporal": _no_temporal,
     "minus_peer": _no_peer,
     "minus_fan_out_cycle": _no_new_formations,

@@ -84,7 +84,14 @@ def test_summary_counts_scenarios_not_items():
     assert (sc["tp"], sc["fp"], sc["fn"]) == (1, 1, len(susp) - 1)
     assert sc["precision"] == 0.5 and sc["recall"] == round(1 / len(susp), 4)
     assert sc["high_band_fpr"] == 0.0  # the legitimate hit is only medium
-    assert s["alerts"] == {"flagged": 4, "per_dataset": 4.0, "precision": 0.5, "unmatched": 1}
+    assert s["alerts"] == {
+        "flagged": 4,
+        "per_dataset": 4.0,
+        "precision": 0.5,
+        "unmatched": 1,
+        "per_flagged_network": 1.5,  # hit: 2 alerts, legitimate: 1
+        "networks_with_duplicates": 0.5,
+    }
     assert s["queue"]["p_at_5"] == 0.5
 
 
@@ -129,3 +136,77 @@ def test_background_perturbation_never_touches_planted_accounts():
     added = [r for r in rows if r["source_transaction_id"] not in original]
     assert len(added) > 0
     assert not any(r["sender_account_id"] in truth or r["receiver_account_id"] in truth for r in added)
+
+
+# -- Audit additions: evaluation invariants (docs/architecture/LEAKAGE_ANALYSIS.md) ----------
+def _ds(truth):
+    from nexora.evaluation.generator import GeneratedDataset
+
+    return GeneratedDataset("t", 1, "day", [], {}, truth, (None, None))  # type: ignore[arg-type]
+
+
+def _item(subject, accounts, score, band="high"):
+    return b.ReviewItem(
+        subject=subject, accounts=frozenset(accounts), score=score, band=band, band_rank=b.BAND_RANK[band],
+        flagged=band in b.FLAG_BANDS, item_id=f"{subject}{score}",
+    )  # fmt: skip
+
+
+def test_duplicate_alerts_on_one_network_do_not_inflate_distinct_precision_or_recall():
+    truth = [_truth("s1", "suspicious", ["A", "B", "C"]), _truth("s2", "suspicious", ["P", "Q"])]
+    dupes = [_item("A", {"A", "B"}, 90 - i) for i in range(5)]  # five alerts, same planted network
+    ev = b.evaluate_items(_ds(truth), dupes, 0.0, 0)
+    summary = b.summarize([ev])
+    assert summary["scenario"]["tp"] == 1 and summary["scenario"]["recall"] == 0.5
+    assert summary["queue"]["p_at_5"] == 1.0  # raw alert precision counts every duplicate
+    assert summary["queue"]["distinct_p_at_5"] == 0.2  # one new network in five alerts
+    assert summary["alerts"]["per_flagged_network"] == 5.0
+    assert summary["alerts"]["networks_with_duplicates"] == 1.0
+
+
+def test_unlabelled_alerts_count_against_alert_precision():
+    truth = [_truth("s1", "suspicious", ["A", "B"])]
+    items = [_item("A", {"A", "B"}, 9), _item("Z", {"Z", "W"}, 8)]  # second alert matches nothing planted
+    summary = b.summarize([b.evaluate_items(_ds(truth), items, 0.0, 0)])
+    assert summary["alerts"]["flagged"] == 2 and summary["alerts"]["unmatched"] == 1
+    assert summary["alerts"]["precision"] == 0.5
+
+
+def test_single_shared_account_does_not_match_a_multi_account_item():
+    """Partial overlap of one account (the subject) is not enough when the item lists several accounts."""
+    truth = [_truth("s1", "suspicious", ["A", "B", "C"])]
+    item = _item("A", {"A", "X", "Y"}, 9)
+    assert b.match(item, truth) is None
+
+
+def test_abstention_share_exposes_a_label_leaking_boundary():
+    truth = [_truth("s1", "suspicious", ["A", "B"]), _truth("n1", "legitimate", ["N", "M"])]
+    items = [_item("A", {"A", "B"}, -1, band="insufficient_evidence")]
+    summary = b.summarize([b.evaluate_items(_ds(truth), items, 0.0, 0)])
+    assert summary["abstention"] == {"rate": 1.0, "suspicious_share": 1.0}
+
+
+def test_sealed_split_is_disjoint_from_every_exposed_split_and_label_blind():
+    from nexora.evaluation.sealed_generator import generate_sealed
+
+    for name in b.EXPOSED_SPLITS:
+        assert not set(b.SPLITS["sealed"]) & set(b.SPLITS[name])
+    ds = generate_sealed(b.SPLITS["sealed"][0])
+    assert all(set(r) == CANONICAL_FIELDS for r in ds.rows)
+    planted_legit = {a for t in ds.truth if t.label == "legitimate" for a in t.accounts}
+    boundary = set(ds.coverage_contract["boundary_account_ids"])
+    everyone = {r["sender_account_id"] for r in ds.rows} | {r["receiver_account_id"] for r in ds.rows}
+    assert boundary <= everyone
+    # Boundary accounts are sampled from all accounts, not only from planted fraud centres.
+    assert boundary - {a for t in ds.truth if t.label == "suspicious" for a in t.accounts}
+    assert planted_legit  # the dataset contains legitimate lookalikes
+
+
+def test_v2_shipped_variant_reconstructs_the_merged_configuration_exactly():
+    """The sealed baseline must be the configuration merged at 4c01a7a, byte for byte."""
+    import yaml
+
+    v2 = b.config_variant(default_config(), b.VARIANTS["v2_shipped"])
+    assert v2.config_sha256 == "489b477a3da5ac1b" + v2.config_sha256[16:]
+    assert v2.detectors["funnel"]["returning_min_ratio"] == 0.1
+    assert yaml.safe_dump(v2.risk_policy) and "hypothesis" not in v2.risk_policy
