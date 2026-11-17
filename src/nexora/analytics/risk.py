@@ -30,8 +30,12 @@ def assess(
     policy_sha256: str,
 ) -> RiskAssessment:
     weights: dict[str, float] = {k: float(v) for k, v in policy["family_weights"].items()}
+    # Evaluation/ablation switch: families listed here are kept for provenance but never credited.
+    ignored = set(policy.get("ignore_families") or ())
     by_family: dict[str, Signal] = {}
-    for s in sorted(signals, key=lambda s: (s.family, -(s.strength or 0.0), s.id)):
+    for s in sorted(
+        (s for s in signals if s.family not in ignored), key=lambda s: (s.family, -(s.strength or 0.0), s.id)
+    ):
         # Correlation guard: at most one (the strongest) credited signal per family.
         by_family.setdefault(s.family, s)
 
