@@ -191,13 +191,23 @@ def test_peer_counter_evidence_caps_band_with_named_gate():
     for a in range(30):
         for k in range(6):
             txs.append(tx(f"b{a}-{k}", f"Q{a}", f"Q{(a + 3) % 30}", M // 20, rng.randrange(0, 30)))
-    out = _run(txs)
+    # Under risk-policy-v2 (no hypothesis gates) the peer counter-evidence alone caps at medium.
+    from nexora.evaluation.benchmark import VARIANTS, config_variant
+
+    v2 = config_variant(CFG, VARIANTS["v2_shipped"])
+    out = run_analysis(dataset_id="d", transfers=txs, contract=CONTRACT, config=v2)
     funnels = _by_kind(out, "funnel")
     assert funnels
     _f, a = funnels[0]
     assert "PEER_TYPICAL_TURNOVER" in {r.code for r in a.reason_codes}
     capped = [r for r in a.reason_codes if r.code == "BAND_CAPPED_BY_EVIDENCE"]
     assert a.band == "medium" and capped and "peer_contradicted" in capped[0].params["gates"]
+
+    # risk-policy-v3: recurring customers + steady turnover favour the recurring-business explanation.
+    _f3, a3 = _by_kind(_run(txs), "funnel")[0]
+    capped3 = next(r for r in a3.reason_codes if r.code == "BAND_CAPPED_BY_EVIDENCE")
+    assert a3.band == "low"
+    assert {"peer_contradicted", "hypothesis_benign_explanation_favoured"} <= set(capped3.params["gates"])
 
 
 def test_v2_outputs_are_deterministic_under_row_order():

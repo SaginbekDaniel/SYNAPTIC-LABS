@@ -1,7 +1,7 @@
 # NEXORA detector configuration. Every value is a product hypothesis to be evaluated
 # on the synthetic development split — not a discovered optimum. Changing any value
 # changes the config hash and therefore produces a new snapshot identity.
-version: detectors-v2
+version: detectors-v3
 funnel:
   detector_version: funnel-v3
   min_feeders: 3              # distinct senders that route most of their observed outflow to the centre
@@ -53,3 +53,13 @@ peer:
   fence_iqr_multiplier: 1.5   # Tukey fence Q3 + 1.5 IQR (3.0 exceeds the bounded 0-100 % range for small cohorts)
   min_burst_share: 0.5        # an outlier must also move at least half its turnover inside the window
   fallback_all_active: true   # if no activity-matched cohort exists (hubs in small snapshots), compare with all active accounts
+hypotheses:
+  enabled: true
+  registry_version: hypotheses-v1
+  kinds: [funnel, fan_out]    # hub formations; chains and loops are not yet covered (HYPOTHESIS_ENGINE.md)
+  recurring_min_days: 2       # a counterparty transacting with the hub on >= 2 distinct days is a recurring relationship
+  recurrence_high: 0.5        # majority of counterparties recurring => consistent with recurring business
+  recurrence_low: 0.2         # at most one in five recurring => consistent with one-off payers / payees
+  span_established: 0.8       # hub active over >= 80% of the observed window
+  span_short: 0.3             # hub active over <= 30% of the observed window
+  single_run_share: 0.9       # >= 90% of a distribution paid on one calendar day = one payment run

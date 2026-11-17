@@ -603,6 +603,9 @@ def _v1(det: dict[str, Any], pol: dict[str, Any]) -> None:
     det["version"] = "detectors-v1"
     det["funnel"]["detector_version"] = "funnel-v1"
     det["funnel"]["exclude_returning_feeders"] = False
+    det["funnel"]["returning_min_ratio"] = 0.1
+    det.pop("hypotheses", None)
+    pol.pop("hypothesis", None)
     for name in ("fan_out", "cycle", "peer"):
         if name in det:
             det[name]["enabled"] = False

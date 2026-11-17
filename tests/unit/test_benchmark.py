@@ -106,7 +106,8 @@ def test_harness_is_deterministic_and_v1_variant_disables_new_parts():
     cfg = default_config()
     v1 = b.config_variant(cfg, b.VARIANTS["v1_shipped"])
     assert v1.policy_version == "risk-policy-v1" and not v1.detectors["fan_out"]["enabled"]
-    assert cfg.detectors["fan_out"]["enabled"] and cfg.policy_version == "risk-policy-v2"
+    assert cfg.detectors["fan_out"]["enabled"] and cfg.policy_version == "risk-policy-v3"
+    assert "hypotheses" not in v1.detectors and "hypothesis" not in v1.risk_policy
     ds = [generate("bench-v1", s) for s in (1001, 1002)]
     exps = [b.Experiment("v2", b.nexora_method(cfg)), b.Experiment("v1", b.nexora_method(v1))]
     first, second = b.run_experiments(ds, exps), b.run_experiments(ds, exps)

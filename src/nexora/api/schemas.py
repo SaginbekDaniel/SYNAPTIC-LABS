@@ -259,6 +259,40 @@ class Coverage(Model):
     data_requests: list[DataRequest]
 
 
+class HypothesisTestItem(Model):
+    test_id: str
+    group: str  # observation group; tests sharing a group are not independent
+    observation: dict[str, Any]
+    expected: str
+    result: Literal["consistent", "inconsistent", "unavailable"]
+    evidence_ids: list[str]
+
+
+class HypothesisItem(Model):
+    hypothesis_id: str
+    version: str
+    polarity: Literal["suspicious", "legitimate"]
+    status: Literal["supported", "weakened", "refuted", "not_established", "untestable"]
+    consistent_groups: int
+    inconsistent_groups: int
+    tests: list[HypothesisTestItem]
+    required_data: list[str]
+
+
+class HypothesisAssessment(Model):
+    """Competing explanations for the formation. Observations, not conclusions about a crime."""
+
+    id: str
+    registry_version: str
+    config_sha256: str
+    verdict: Literal[
+        "suspicious_explanation_favoured", "benign_explanation_favoured", "inconclusive", "insufficient_data"
+    ]
+    hypotheses: list[HypothesisItem]
+    evidence_ids: list[str]
+    unavailable_information: list[str]
+
+
 class AlertDetail(AlertSummary):
     formation: FormationDetail  # type: ignore[assignment]
     risk: RiskDetail  # type: ignore[assignment]
@@ -266,6 +300,8 @@ class AlertDetail(AlertSummary):
     signals: list[SignalItem]
     evidence: list[EvidenceItem]
     snapshot: Snapshot
+    # Additive (hypotheses-v1): null for chain/cycle formations and for snapshots analysed before v3.
+    hypotheses: HypothesisAssessment | None = None
 
 
 class EvidenceChain(Model):
