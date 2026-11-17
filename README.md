@@ -19,14 +19,34 @@ claiming that a graph anomaly proves a crime.
   *ambiguous*, reversed dates *contradicted*) and **peer statistics** (turnover concentration vs. an
   activity-matched cohort, used as corroboration *or* counter-evidence).
 * Coverage-aware abstention (`insufficient_evidence` at collection boundaries) and next-data requests.
-* Versioned risk policy (`risk-policy-v2`) with correlation guard and named evidence gates; legitimate-looking
-  hubs are capped, never silently cleared.
+* **Competing hypotheses** (`hypotheses-v1`) for funnel and fan-out formations: the suspicious reading and the
+  legitimate explanations with the same shape (recurring business, scheduled payout, lending, one-off collections,
+  remittances), each tested against dependency-grouped observations; untestable alternatives are listed with the
+  data that would decide. Shown in the investigation as *Альтернативные объяснения*.
+* Versioned risk policy (`risk-policy-v3`) with correlation guard and named evidence gates; a formation whose
+  legitimate explanation is favoured by two independent observation groups is stored at `low`, never deleted.
 * **Reproducible synthetic benchmark** (`scripts/run_benchmark.py`): dev / validation / holdout seeds,
   baselines, ablations, robustness — rendered on the **Evaluation** screen and in `docs/EVALUATION.md`.
 * Investigation UI: alert queue → hypothesis → reasons → highlighted source transfers → formation graph
   → case decision with optimistic concurrency and append-only audit.
 
-### Measured on the synthetic holdout split (30 datasets, evaluated once after the configuration was frozen)
+### Measured on the sealed split `sealed-v1` (60 datasets, independent generator, evaluated once)
+
+Protocol and decision rule were locked and pushed before the hypothesis engine was written
+(`docs/evaluation/EXPERIMENT_PROTOCOL.md`). Baseline = the configuration merged at `4c01a7a`.
+
+| | NEXORA v2 (baseline) | NEXORA v3 | Difference (95 % paired bootstrap) |
+|---|---:|---:|---|
+| Legitimate networks flagged (scenario FPR) | 50.7 % | **15.9 %** | −34.8 pp [−40.2, −29.1] |
+| Suspicious networks flagged (scenario recall) | 73.3 % | **74.8 %** | +1.5 pp [0.0, +3.2] |
+| Legitimate networks reaching *high* priority | 17.8 % | **9.8 %** | −8.0 pp [−12.3, −4.3] |
+| Distinct planted networks in the first 5 alerts (distinct P@5) | 46.5 % | **59.3 %** | +12.8 pp [+8.6, +17.6] |
+
+Still indistinguishable without KYC or merchant data: event ticketing (22/23 flagged), charity campaigns (13/36),
+family remittances (5/20). Slow accumulation (recurring-mule collection) is missed by both versions (1/8).
+Details, ablations and negative results: `docs/evaluation/RESULTS.md`; audit: `docs/architecture/DEEP_AUDIT.md`.
+
+### Historical: v2 on the `bench-v1` holdout (now exposed — see `docs/architecture/LEAKAGE_ANALYSIS.md`)
 
 | | NEXORA v1 (before) | NEXORA v2 | Best simple baseline |
 |---|---:|---:|---|
@@ -85,6 +105,12 @@ uv run python scripts/run_benchmark.py
 ```
 
 Writes `benchmarks/results/bench-v1.json` (served by `GET /api/v1/evaluation`) and `docs/EVALUATION.md`.
+This is the historical v2 benchmark, pinned to the exact v2 configuration (it reproduces the committed artifact).
+The locked comparison of the current configuration against that baseline is:
+
+```bash
+uv run python scripts/run_sealed_evaluation.py --split sealed --out /tmp/sealed.json
+```
 About one minute on one CPU core; deterministic except wall-clock latency.
 
 ## Tests

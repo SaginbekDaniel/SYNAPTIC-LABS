@@ -17,7 +17,26 @@
   results reproduced exactly (verified by diffing the two artifacts).
 * Latency is the pure pipeline on one core without database I/O — not a throughput claim.
 
-## Analytical limitations observed (measured on the holdout split unless noted)
+## Since the deep audit (v3, measured on the sealed split `sealed-v1`)
+
+See `docs/architecture/DEEP_AUDIT.md` and `docs/evaluation/RESULTS.md`.
+
+* **Recurring-business hubs no longer alert** when two independent observation groups favour that
+  explanation (sealed: rent, marketplace, cash pooling, wholesale 91/122 → 0/122 flagged). They remain
+  stored with evidence and hypotheses at `low`.
+* **Legitimate one-off collections are indistinguishable from mule collections** on transaction data:
+  event ticketing 22/23 and charity 13/36 still alert. The engine lists them as untestable
+  alternatives and names the data that would decide (merchant category, payment references).
+* **Remittances** (5/20) and **payroll whose staff spend onward** (4/43) still alert.
+* **Slow accumulation is missed** (recurring-mule collection 1/8, also missed by v2): deposits held
+  longer than the 7-day lag contradict the temporal flow.
+* **Fan-out two-way rule can still be gamed**: a recipient returning ≥ 10 % looks like a borrower. The funnel
+  side is fixed (funnel-v3); for fan-out the ratio cannot separate kickbacks from instalments.
+* **`bench-v1` abstention numbers are optimistic**: its boundary list contains only planted centres
+  (audit L-01). Its holdout is exposed and no longer an unbiased test.
+* **No authorization or tenancy** (audit F-05) — demo identity only.
+
+## Analytical limitations observed with v2 (bench-v1 holdout, historical)
 
 * **Legitimate hubs still alert, at medium.** Merchant settlement (21/21) and treasury sweeps (12/12) are
   flagged; peer counter-evidence caps them below the planted cases (high-band FPR 6.3 %) but by design they are
@@ -31,7 +50,7 @@
 * **Boundary funnels abstain.** A collection centre at the declared crawl boundary is `insufficient_evidence`
   by design (surfaced, not flagged).
 * **Two-way relationship rule can be gamed.** Feeders/recipients in a two-way relationship (≥10 % returned) are
-  not counted; token repayments by a launderer would weaken a funnel/fan-out.
+  not counted; token repayments by a launderer would weaken a funnel/fan-out. *(Funnel side fixed in v3.)*
 * **Peer and temporal signals are not independent.** Both use timing; the policy weights peer at 0.20 and it is a
   separate family, but corroboration between them is weaker than between structure and time.
 * **Alerts on unlabelled background activity** (mostly coincidental chains): 1.0 per dataset on dev, 1.3 on

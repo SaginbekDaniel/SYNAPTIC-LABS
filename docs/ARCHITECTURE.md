@@ -58,17 +58,28 @@ FastAPI ──► PostgreSQL ◄── analysis_jobs (lease, heartbeat, bounded 
    active accounts, each step recorded); Tukey fence Q3 + 1.5·IQR. Outlier → supported; at or below
    the cohort median → counter-evidence; otherwise inconclusive. Window transactions are cited and
    the share recomputes from them.
-5. **Coverage**: co-occurring limitations (day precision, boundary, downstream unobserved,
+5. **Competing hypotheses** (`hypotheses/engine.py`, `hypotheses-v1`, funnel and fan-out only): the
+   suspicious hypothesis and the legitimate explanations with the same shape, each tested against
+   observations grouped by dependency (flow timing; subject activity = peer concentration + activity
+   span; counterparty recurrence; payout schedule; two-way flows). New observations are
+   `aggregate_fact` evidence. Verdict: suspicious/benign explanation favoured, inconclusive or
+   insufficient data; untestable alternatives are always listed. See
+   `docs/architecture/HYPOTHESIS_ENGINE.md`.
+6. **Coverage**: co-occurring limitations (day precision, boundary, downstream unobserved,
    upstream unknown, missing context) and next-best-data requests.
-6. **Evidence** validation: every id resolves, sums recompute, no NaN — failures are
+7. **Evidence** validation: every id resolves, sums recompute, no NaN — failures are
    quarantined, never published.
-7. **Risk** (`risk-policy-v2`): ≤1 credited signal per family; missing families count zero
+8. **Risk** (`risk-policy-v3` = v2 plus one gate): ≤1 credited signal per family; missing families count zero
    (no renormalisation); named evidence gates cap the band (temporal unavailable/ambiguous/
-   contradicted, peer counter-evidence → `medium`); subject at boundary ⇒ `insufficient_evidence`
+   contradicted, peer counter-evidence → `medium`; benign explanation favoured → `low`); subject at boundary ⇒ `insufficient_evidence`
    with no numeric priority. A policy change changes the config hash, so it produces a new
    snapshot and never rewrites published assessments.
 
 ## Evaluation
+
+Since the deep audit, claims about detection quality come from the sealed protocol
+(`docs/evaluation/EXPERIMENT_PROTOCOL.md`, `scripts/run_sealed_evaluation.py`) on an independently
+written generator; `bench-v1` below is kept as the reproducible historical benchmark.
 
 `scripts/run_benchmark.py` runs the pure pipeline (plus baselines and configuration variants) on
 generated datasets, matches review items to planted scenarios *after* detection, and writes a
@@ -88,6 +99,8 @@ idempotent and row order never changes results.
 * `alerts UNIQUE(dataset_id, fingerprint)` — reruns update `last_seen`/revision, never duplicate.
 * `audit_events`: statement trigger rejects UPDATE/DELETE/TRUNCATE.
 * `risk_assessments` CHECK: `insufficient_evidence ⇔ priority IS NULL`.
+* `hypothesis_assessments`: one per formation, verdict CHECK, FK to formation and snapshot; migration
+  0003's downgrade refuses while rows exist.
 
 ## Worker semantics
 

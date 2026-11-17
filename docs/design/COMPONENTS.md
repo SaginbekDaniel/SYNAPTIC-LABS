@@ -17,6 +17,7 @@ All styling comes from `apps/web/src/styles/tokens.css`; copy from `apps/web/src
 | `EvidenceTimeline` | `features/investigation/EvidenceTimeline.tsx` | evidence transfers per day by direction; money only when one currency |
 | `AlertPreview` | `features/alerts/AlertPreview.tsx` | queue preview with SVG mini network (no Cytoscape) |
 | `SummaryView`, `AccountView`, `EdgeView` | `features/investigation/ContextPanel.tsx` | investigation side panel states |
+| `CompetingExplanations` | `features/investigation/Hypotheses.tsx` | verdict, hypotheses with status, falsification tests on demand (flat disclosure, reason rows), untestable alternatives and next data |
 | `CasePanel` | `features/investigation/CasePanel.tsx` | API-driven case actions, required reasons, confirmation for terminal actions, notes, audit |
 
 Theme: `app/theme.ts` (`useTheme`, `setTheme`); dark default, light and system options; stored per

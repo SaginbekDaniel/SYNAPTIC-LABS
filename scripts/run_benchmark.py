@@ -50,7 +50,7 @@ METHODS: list[tuple[str, str, str]] = [
     ("B0_volume", "B0 Turnover ranking", "Accounts ranked by turnover; flags the same number of items as NEXORA v2."),
     ("B2_pagerank", "B2 PageRank", "Amount-weighted PageRank; flags the same number of items as NEXORA v2."),
 ]
-ABLATIONS = [k for k in b.VARIANTS if k != "v1_shipped"]
+ABLATIONS = [k for k in b.VARIANTS if k not in ("v1_shipped", "v2_shipped")]
 
 
 def git_state() -> dict[str, Any]:
@@ -77,7 +77,10 @@ def experiments(cfg: Any) -> list[b.Experiment]:
 
 
 def run(splits: list[str]) -> dict[str, Any]:
-    cfg = default_config()
+    # bench-v1 is the historical v2 benchmark: pinned to the exact configuration merged at 4c01a7a so the
+    # committed artifact stays reproducible and "NEXORA v2" means v2. v3 is evaluated by
+    # scripts/run_sealed_evaluation.py against this same baseline.
+    cfg = b.config_variant(default_config(), b.VARIANTS["v2_shipped"])
     started = time.perf_counter()
     loaded = {s: b.load_split(s) for s in splits}
     artifact: dict[str, Any] = {
