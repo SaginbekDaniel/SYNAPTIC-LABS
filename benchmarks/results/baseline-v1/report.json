@@ -1,0 +1,5594 @@
+{
+ "schema": "nexora-benchmark-report/1",
+ "disclaimer": "SYNTHETIC BENCHMARK. All networks, labels and metrics come from the NEXORA synthetic scenario generator, not from bank data. Results describe behaviour on this synthetic distribution only and are not estimates of real-world fraud detection accuracy.",
+ "run": {
+  "label": "baseline-v1",
+  "created_at": "2026-11-17T06:15:30+00:00",
+  "duration_s": 37.9,
+  "splits_evaluated": [
+   "dev",
+   "val"
+  ],
+  "code_commit": "19c852159d762766d4691c7df05c368d489ac277",
+  "code_dirty": true,
+  "python": "3.13.18",
+  "networkx": "3.7",
+  "platform": "Linux-6.18.44-fc-v553-x86_64-with-glibc2.39",
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "cpu_count": 4
+ },
+ "suite": {
+  "benchmark_version": "nexora-bench-v1",
+  "master_seed": 2026,
+  "networks_per_family": {
+   "dev": 12,
+   "val": 8
+  },
+  "families": [
+   {
+    "name": "P1_mule_collection",
+    "label": "suspicious",
+    "group": "suspicious",
+    "description": "Money-mule collection and consolidation"
+   },
+   {
+    "name": "P2_layering_chain",
+    "label": "suspicious",
+    "group": "suspicious",
+    "description": "Layered transfer chains"
+   },
+   {
+    "name": "P3_coordinated_distribution",
+    "label": "suspicious",
+    "group": "suspicious",
+    "description": "Coordinated distribution to mule recipients"
+   },
+   {
+    "name": "P4_circular_transfers",
+    "label": "suspicious",
+    "group": "suspicious",
+    "description": "Repeated circular transfers"
+   },
+   {
+    "name": "P5_split_coordinated",
+    "label": "suspicious",
+    "group": "suspicious",
+    "description": "Split and coordinated transactions"
+   },
+   {
+    "name": "N1_merchant_settlement",
+    "label": "benign",
+    "group": "benign",
+    "description": "Merchant settlement hubs"
+   },
+   {
+    "name": "N2_payroll",
+    "label": "benign",
+    "group": "benign",
+    "description": "Payroll distribution"
+   },
+   {
+    "name": "N3_supplier_payments",
+    "label": "benign",
+    "group": "benign",
+    "description": "Supplier payments"
+   },
+   {
+    "name": "N4_family_remittance",
+    "label": "benign",
+    "group": "benign",
+    "description": "Family remittances"
+   },
+   {
+    "name": "N5_group_reimbursement",
+    "label": "benign",
+    "group": "benign",
+    "description": "Group reimbursements"
+   },
+   {
+    "name": "N6_loan_repayment",
+    "label": "benign",
+    "group": "benign",
+    "description": "Loan repayment patterns"
+   },
+   {
+    "name": "H1_crowdfunding",
+    "label": "benign",
+    "group": "hard_negative",
+    "description": "Crowdfunding / group purchase (vs P1)"
+   },
+   {
+    "name": "H2_microfinance_hub",
+    "label": "benign",
+    "group": "hard_negative",
+    "description": "Microfinance re-lending (vs P1)"
+   },
+   {
+    "name": "H3_tight_supplier_chain",
+    "label": "benign",
+    "group": "hard_negative",
+    "description": "Low-margin supply chain (vs P2)"
+   },
+   {
+    "name": "H4_reverse_chronology_chain",
+    "label": "benign",
+    "group": "hard_negative",
+    "description": "Backwards-in-time path (vs P2)"
+   },
+   {
+    "name": "H5_payout_sweep",
+    "label": "benign",
+    "group": "hard_negative",
+    "description": "Payouts swept to savings (vs P3)"
+   },
+   {
+    "name": "H6_reciprocal_trading",
+    "label": "benign",
+    "group": "hard_negative",
+    "description": "Mutual invoicing ring (vs P4)"
+   }
+  ],
+  "splits": {
+   "dev": {
+    "networks": 204,
+    "transactions": 53778,
+    "suspicious": 60,
+    "benign": 144,
+    "data_manifest_sha256": "e0c03678d2176857b42f082c753427bca0890fee8369f9b0a5aa7b92782bb6bd",
+    "truth_sha256": "5c235c63c1fc816a4ac7e13816562caa151dd30cf62a40781ec89f6177a7d68b"
+   },
+   "val": {
+    "networks": 136,
+    "transactions": 35459,
+    "suspicious": 40,
+    "benign": 96,
+    "data_manifest_sha256": "b285e08936a237961df4488000c2e5270b1a765b6a595c20908f4b9ffb2923af",
+    "truth_sha256": "f4f54c273bdd2040d8f9f10b4f03c00d0466df7e51c988ecb59ba7ec6a15b84b"
+   }
+  },
+  "split_rule": "disjoint seed material per (split, family, index); one network = one scenario instance"
+ },
+ "evaluation_units": {
+  "unit_scenario": "One planted scenario per network. TP = a raised alert matches a planted suspicious scenario; FP = a raised alert matches a planted benign scenario.",
+  "unit_alert": "Every raised alert. True only if it matches a planted suspicious scenario; alerts on benign scenarios or unlabelled background are false.",
+  "unit_queue": "Raised alerts of a split pooled and sorted by review score. Precision@K/Recall@K count distinct suspicious scenarios; duplicate alerts on one scenario waste a slot.",
+  "unit_account": "Accounts in raised alerts vs accounts of planted suspicious scenarios. Over-counts large networks; reported separately and never combined with scenario metrics."
+ },
+ "matching_rule": {
+  "min_account_share": 0.5,
+  "requires_shared_transaction": true,
+  "text": "A prediction matches a scenario when >= 50% of its accounts belong to the scenario and, if it cites transactions, at least one is a planted scenario transaction."
+ },
+ "operating_points": {
+  "nexora": "raised = band >= policy alert_min_band (medium); insufficient_evidence counts as abstention",
+  "baselines": "raised = account score >= threshold fitted on the development split (max scenario F1)"
+ },
+ "methods": [
+  {
+   "name": "B0_volume",
+   "group": "baseline",
+   "description": "Accounts ranked by total observed in+out volume",
+   "params": {},
+   "threshold_fitted_on_dev": 117335932.0
+  },
+  {
+   "name": "B1_centrality",
+   "group": "baseline",
+   "description": "Amount-weighted PageRank (relative to uniform)",
+   "params": {},
+   "threshold_fitted_on_dev": 0.4945651086787811
+  },
+  {
+   "name": "B2_static_rules",
+   "group": "baseline",
+   "description": "Large single transfer, 7-day fan-in or fan-out rules",
+   "params": {
+    "large_minor": 50000000,
+    "fan": 10
+   },
+   "threshold_fitted_on_dev": 1.0
+  },
+  {
+   "name": "B3_v1_structural_only",
+   "group": "nexora",
+   "description": "v1 formations, structure credited only",
+   "detectors_version": "detectors-v1",
+   "policy_version": "risk-policy-v1",
+   "config_sha256": "843882cd4c24aedeafb6a77db7c042b7d0a49e68ddd8bbb54249254ee4946338"
+  },
+  {
+   "name": "B4_v1_structural_temporal",
+   "group": "nexora",
+   "description": "v1 engine as shipped: structure + temporal + coverage",
+   "detectors_version": "detectors-v1",
+   "policy_version": "risk-policy-v1",
+   "config_sha256": "3e251bd89c485bb50ee26f6b4035434c869d71227bbca96a42d2583f56a1ff8d"
+  }
+ ],
+ "results": {
+  "dev": {
+   "B0_volume": {
+    "unit_scenario": {
+     "tp": 59,
+     "fp": 113,
+     "fn": 1,
+     "tn": 31,
+     "precision": 0.343,
+     "recall": 0.9833,
+     "f1": 0.5086,
+     "fpr": 0.7847,
+     "fnr": 0.0167,
+     "ci95": {
+      "precision": [
+       0.3222,
+       0.3642
+      ],
+      "recall": [
+       0.95,
+       1.0
+      ],
+      "f1": [
+       0.4831,
+       0.5333
+      ],
+      "fpr": [
+       0.7153,
+       0.8472
+      ]
+     }
+    },
+    "unit_alert": {
+     "raised": 777,
+     "true_alerts": 299,
+     "precision": 0.3848,
+     "on_benign_scenarios": 361,
+     "on_background": 117,
+     "duplicates_of_detected_scenario": 488,
+     "alerts_per_network": 3.809,
+     "alerts_per_1000_transactions": 14.448,
+     "background_alerts_per_network": 0.574
+    },
+    "unit_queue": {
+     "10": {
+      "precision": 0.2,
+      "recall": 0.0333,
+      "hits": 2
+     },
+     "25": {
+      "precision": 0.16,
+      "recall": 0.0667,
+      "hits": 4
+     },
+     "50": {
+      "precision": 0.16,
+      "recall": 0.1333,
+      "hits": 8
+     },
+     "100": {
+      "precision": 0.13,
+      "recall": 0.2167,
+      "hits": 13
+     }
+    },
+    "unit_account": {
+     "tp": 299,
+     "fp": 478,
+     "fn": 246,
+     "tn": 13100,
+     "precision": 0.3848,
+     "recall": 0.5486,
+     "fpr": 0.0352
+    },
+    "by_family": {
+     "H1_crowdfunding": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.75,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.25,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 9,
+       "no_alert": 3
+      },
+      "by_variant": {
+       "crowdfunding": 0.4,
+       "group_purchase": 1.0
+      }
+     },
+     "H2_microfinance_hub": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 2.333,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 12
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "H3_tight_supplier_chain": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 4.333,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 12
+      },
+      "by_variant": {
+       "tight": 1.0
+      }
+     },
+     "H4_reverse_chronology_chain": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.6667,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 3.333,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 4,
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "standard": 0.6667
+      }
+     },
+     "H5_payout_sweep": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 2.5,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 12
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "H6_reciprocal_trading": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 3.583,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 12
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "N1_merchant_settlement": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 2.917,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 12
+      },
+      "by_variant": {
+       "bursty": 1.0,
+       "small": 1.0,
+       "standard": 1.0
+      }
+     },
+     "N2_payroll": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 7.833,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 12
+      },
+      "by_variant": {
+       "biweekly": 1.0,
+       "monthly": 1.0
+      }
+     },
+     "N3_supplier_payments": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 5.833,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 12
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "N4_family_remittance": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.3333,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.083,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 8,
+       "alerted:account": 4
+      },
+      "by_variant": {
+       "pooling": 0.0,
+       "support": 0.5
+      }
+     },
+     "N5_group_reimbursement": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 0.667,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 12
+      },
+      "by_variant": {
+       "standard": 0.0
+      }
+     },
+     "N6_loan_repayment": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.6667,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 2.0,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8,
+       "no_alert": 4
+      },
+      "by_variant": {
+       "family_lending": 1.0,
+       "personal": 0.3333
+      }
+     },
+     "P1_mule_collection": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 2.333,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 12
+      },
+      "by_variant": {
+       "boundary": 1.0,
+       "large": 1.0,
+       "repeated": 1.0,
+       "slow": 1.0,
+       "standard": 1.0
+      }
+     },
+     "P2_layering_chain": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 4.417,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 12
+      },
+      "by_variant": {
+       "clean": 1.0,
+       "noisy": 1.0,
+       "same_day": 1.0,
+       "split": 1.0
+      }
+     },
+     "P3_coordinated_distribution": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 4.333,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 12
+      },
+      "by_variant": {
+       "boundary": 1.0,
+       "converge": 1.0,
+       "scatter": 1.0
+      }
+     },
+     "P4_circular_transfers": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 0.9167,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 3.583,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 11,
+       "below_alert_band": 1
+      },
+      "by_variant": {
+       "clean": 0.9091,
+       "noisy": 1.0
+      }
+     },
+     "P5_split_coordinated": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 12.417,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 12
+      },
+      "by_variant": {
+       "multi_source": 1.0,
+       "single_source": 1.0
+      }
+     }
+    },
+    "by_difficulty": {
+     "easy": {
+      "tp": 23,
+      "fp": 12,
+      "fn": 1,
+      "tn": 20,
+      "precision": 0.6571,
+      "recall": 0.9583,
+      "f1": 0.7796,
+      "fpr": 0.375,
+      "fnr": 0.0417
+     },
+     "hard": {
+      "tp": 7,
+      "fp": 67,
+      "fn": 0,
+      "tn": 7,
+      "precision": 0.0946,
+      "recall": 1.0,
+      "f1": 0.1728,
+      "fpr": 0.9054,
+      "fnr": 0.0
+     },
+     "medium": {
+      "tp": 29,
+      "fp": 34,
+      "fn": 0,
+      "tn": 4,
+      "precision": 0.4603,
+      "recall": 1.0,
+      "f1": 0.6304,
+      "fpr": 0.8947,
+      "fnr": 0.0
+     }
+    },
+    "abstentions": {
+     "on_suspicious": 0,
+     "on_benign": 0
+    },
+    "latency_ms": {
+     "median": 2.35,
+     "p95": 4.73,
+     "max": 6.89,
+     "per_1000_transactions": 9.52
+    },
+    "partial_networks": 0,
+    "networks": 204,
+    "transactions": 53778
+   },
+   "B1_centrality": {
+    "unit_scenario": {
+     "tp": 59,
+     "fp": 129,
+     "fn": 1,
+     "tn": 15,
+     "precision": 0.3138,
+     "recall": 0.9833,
+     "f1": 0.4758,
+     "fpr": 0.8958,
+     "fnr": 0.0167,
+     "ci95": {
+      "precision": [
+       0.301,
+       0.3279
+      ],
+      "recall": [
+       0.95,
+       1.0
+      ],
+      "f1": [
+       0.4578,
+       0.4939
+      ],
+      "fpr": [
+       0.8472,
+       0.9444
+      ]
+     }
+    },
+    "unit_alert": {
+     "raised": 6602,
+     "true_alerts": 178,
+     "precision": 0.027,
+     "on_benign_scenarios": 534,
+     "on_background": 5890,
+     "duplicates_of_detected_scenario": 524,
+     "alerts_per_network": 32.363,
+     "alerts_per_1000_transactions": 122.764,
+     "background_alerts_per_network": 28.873
+    },
+    "unit_queue": {
+     "10": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     },
+     "25": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     },
+     "50": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     },
+     "100": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     }
+    },
+    "unit_account": {
+     "tp": 178,
+     "fp": 6424,
+     "fn": 367,
+     "tn": 7154,
+     "precision": 0.027,
+     "recall": 0.3266,
+     "fpr": 0.4731
+    },
+    "by_family": {
+     "H1_crowdfunding": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 34.333,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 12
+      },
+      "by_variant": {
+       "crowdfunding": 1.0,
+       "group_purchase": 1.0
+      }
+     },
+     "H2_microfinance_hub": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 44.25,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 12
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "H3_tight_supplier_chain": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 28.25,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 12
+      },
+      "by_variant": {
+       "tight": 1.0
+      }
+     },
+     "H4_reverse_chronology_chain": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.9167,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 29.5,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 1,
+       "alerted:account": 11
+      },
+      "by_variant": {
+       "standard": 0.9167
+      }
+     },
+     "H5_payout_sweep": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.6667,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 29.25,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8,
+       "no_alert": 4
+      },
+      "by_variant": {
+       "standard": 0.6667
+      }
+     },
+     "H6_reciprocal_trading": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 25.25,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 12
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "N1_merchant_settlement": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 41.333,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 12
+      },
+      "by_variant": {
+       "bursty": 1.0,
+       "small": 1.0,
+       "standard": 1.0
+      }
+     },
+     "N2_payroll": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.9167,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 41.917,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 11,
+       "no_alert": 1
+      },
+      "by_variant": {
+       "biweekly": 0.8,
+       "monthly": 1.0
+      }
+     },
+     "N3_supplier_payments": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 29.75,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 12
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "N4_family_remittance": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.4167,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 26.917,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 5,
+       "no_alert": 7
+      },
+      "by_variant": {
+       "pooling": 1.0,
+       "support": 0.125
+      }
+     },
+     "N5_group_reimbursement": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.8333,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 30.083,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 10,
+       "no_alert": 2
+      },
+      "by_variant": {
+       "standard": 0.8333
+      }
+     },
+     "N6_loan_repayment": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 33.25,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 12
+      },
+      "by_variant": {
+       "family_lending": 1.0,
+       "personal": 1.0
+      }
+     },
+     "P1_mule_collection": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 31.083,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 12
+      },
+      "by_variant": {
+       "boundary": 1.0,
+       "large": 1.0,
+       "repeated": 1.0,
+       "slow": 1.0,
+       "standard": 1.0
+      }
+     },
+     "P2_layering_chain": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 26.917,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 12
+      },
+      "by_variant": {
+       "clean": 1.0,
+       "noisy": 1.0,
+       "same_day": 1.0,
+       "split": 1.0
+      }
+     },
+     "P3_coordinated_distribution": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 0.9167,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 33.417,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 11,
+       "below_alert_band": 1
+      },
+      "by_variant": {
+       "boundary": 0.6667,
+       "converge": 1.0,
+       "scatter": 1.0
+      }
+     },
+     "P4_circular_transfers": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 31.5,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 12
+      },
+      "by_variant": {
+       "clean": 1.0,
+       "noisy": 1.0
+      }
+     },
+     "P5_split_coordinated": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 33.167,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 12
+      },
+      "by_variant": {
+       "multi_source": 1.0,
+       "single_source": 1.0
+      }
+     }
+    },
+    "by_difficulty": {
+     "easy": {
+      "tp": 24,
+      "fp": 23,
+      "fn": 0,
+      "tn": 9,
+      "precision": 0.5106,
+      "recall": 1.0,
+      "f1": 0.676,
+      "fpr": 0.7188,
+      "fnr": 0.0
+     },
+     "hard": {
+      "tp": 6,
+      "fp": 69,
+      "fn": 1,
+      "tn": 5,
+      "precision": 0.08,
+      "recall": 0.8571,
+      "f1": 0.1463,
+      "fpr": 0.9324,
+      "fnr": 0.1429
+     },
+     "medium": {
+      "tp": 29,
+      "fp": 37,
+      "fn": 0,
+      "tn": 1,
+      "precision": 0.4394,
+      "recall": 1.0,
+      "f1": 0.6105,
+      "fpr": 0.9737,
+      "fnr": 0.0
+     }
+    },
+    "abstentions": {
+     "on_suspicious": 0,
+     "on_benign": 0
+    },
+    "latency_ms": {
+     "median": 4.58,
+     "p95": 7.78,
+     "max": 10.11,
+     "per_1000_transactions": 17.57
+    },
+    "partial_networks": 0,
+    "networks": 204,
+    "transactions": 53778
+   },
+   "B2_static_rules": {
+    "unit_scenario": {
+     "tp": 55,
+     "fp": 114,
+     "fn": 5,
+     "tn": 30,
+     "precision": 0.3254,
+     "recall": 0.9167,
+     "f1": 0.4803,
+     "fpr": 0.7917,
+     "fnr": 0.0833,
+     "ci95": {
+      "precision": [
+       0.3006,
+       0.3519
+      ],
+      "recall": [
+       0.8333,
+       0.9833
+      ],
+      "f1": [
+       0.4435,
+       0.5136
+      ],
+      "fpr": [
+       0.7222,
+       0.8611
+      ]
+     }
+    },
+    "unit_alert": {
+     "raised": 984,
+     "true_alerts": 349,
+     "precision": 0.3547,
+     "on_benign_scenarios": 449,
+     "on_background": 186,
+     "duplicates_of_detected_scenario": 629,
+     "alerts_per_network": 4.824,
+     "alerts_per_1000_transactions": 18.297,
+     "background_alerts_per_network": 0.912
+    },
+    "unit_queue": {
+     "10": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     },
+     "25": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     },
+     "50": {
+      "precision": 0.2,
+      "recall": 0.1667,
+      "hits": 10
+     },
+     "100": {
+      "precision": 0.1,
+      "recall": 0.1667,
+      "hits": 10
+     }
+    },
+    "unit_account": {
+     "tp": 349,
+     "fp": 635,
+     "fn": 196,
+     "tn": 12943,
+     "precision": 0.3547,
+     "recall": 0.6404,
+     "fpr": 0.0468
+    },
+    "by_family": {
+     "H1_crowdfunding": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.8333,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 2.167,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 10,
+       "no_alert": 2
+      },
+      "by_variant": {
+       "crowdfunding": 1.0,
+       "group_purchase": 0.7143
+      }
+     },
+     "H2_microfinance_hub": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 2.75,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 12
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "H3_tight_supplier_chain": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 6.0,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 12
+      },
+      "by_variant": {
+       "tight": 1.0
+      }
+     },
+     "H4_reverse_chronology_chain": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.9167,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 4.417,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 1,
+       "alerted:account": 11
+      },
+      "by_variant": {
+       "standard": 0.9167
+      }
+     },
+     "H5_payout_sweep": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.9167,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 3.417,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 11,
+       "no_alert": 1
+      },
+      "by_variant": {
+       "standard": 0.9167
+      }
+     },
+     "H6_reciprocal_trading": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 3.75,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 12
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "N1_merchant_settlement": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.8333,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.25,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 2,
+       "alerted:account": 10
+      },
+      "by_variant": {
+       "bursty": 1.0,
+       "small": 0.0,
+       "standard": 1.0
+      }
+     },
+     "N2_payroll": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 14.0,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 12
+      },
+      "by_variant": {
+       "biweekly": 1.0,
+       "monthly": 1.0
+      }
+     },
+     "N3_supplier_payments": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 8.167,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 12
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "N4_family_remittance": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.3333,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.0,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 8,
+       "alerted:account": 4
+      },
+      "by_variant": {
+       "pooling": 0.0,
+       "support": 0.5
+      }
+     },
+     "N5_group_reimbursement": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 0.833,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 12
+      },
+      "by_variant": {
+       "standard": 0.0
+      }
+     },
+     "N6_loan_repayment": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.6667,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 2.167,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8,
+       "no_alert": 4
+      },
+      "by_variant": {
+       "family_lending": 1.0,
+       "personal": 0.3333
+      }
+     },
+     "P1_mule_collection": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 0.8333,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 4.333,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 10,
+       "no_candidate": 2
+      },
+      "by_variant": {
+       "boundary": 1.0,
+       "large": 1.0,
+       "repeated": 1.0,
+       "slow": 0.0,
+       "standard": 0.75
+      }
+     },
+     "P2_layering_chain": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 5.333,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 12
+      },
+      "by_variant": {
+       "clean": 1.0,
+       "noisy": 1.0,
+       "same_day": 1.0,
+       "split": 1.0
+      }
+     },
+     "P3_coordinated_distribution": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 6.167,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 12
+      },
+      "by_variant": {
+       "boundary": 1.0,
+       "converge": 1.0,
+       "scatter": 1.0
+      }
+     },
+     "P4_circular_transfers": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 0.75,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 3.667,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 9,
+       "no_candidate": 3
+      },
+      "by_variant": {
+       "clean": 0.8182,
+       "noisy": 0.0
+      }
+     },
+     "P5_split_coordinated": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 12.583,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 12
+      },
+      "by_variant": {
+       "multi_source": 1.0,
+       "single_source": 1.0
+      }
+     }
+    },
+    "by_difficulty": {
+     "easy": {
+      "tp": 21,
+      "fp": 12,
+      "fn": 3,
+      "tn": 20,
+      "precision": 0.6364,
+      "recall": 0.875,
+      "f1": 0.7369,
+      "fpr": 0.375,
+      "fnr": 0.125
+     },
+     "hard": {
+      "tp": 7,
+      "fp": 68,
+      "fn": 0,
+      "tn": 6,
+      "precision": 0.0933,
+      "recall": 1.0,
+      "f1": 0.1707,
+      "fpr": 0.9189,
+      "fnr": 0.0
+     },
+     "medium": {
+      "tp": 27,
+      "fp": 34,
+      "fn": 2,
+      "tn": 4,
+      "precision": 0.4426,
+      "recall": 0.931,
+      "f1": 0.6,
+      "fpr": 0.8947,
+      "fnr": 0.069
+     }
+    },
+    "abstentions": {
+     "on_suspicious": 0,
+     "on_benign": 0
+    },
+    "latency_ms": {
+     "median": 3.11,
+     "p95": 6.8,
+     "max": 35.87,
+     "per_1000_transactions": 14.3
+    },
+    "partial_networks": 0,
+    "networks": 204,
+    "transactions": 53778
+   },
+   "B3_v1_structural_only": {
+    "unit_scenario": {
+     "tp": 49,
+     "fp": 95,
+     "fn": 11,
+     "tn": 49,
+     "precision": 0.3403,
+     "recall": 0.8167,
+     "f1": 0.4804,
+     "fpr": 0.6597,
+     "fnr": 0.1833,
+     "ci95": {
+      "precision": [
+       0.3043,
+       0.378
+      ],
+      "recall": [
+       0.7167,
+       0.9167
+      ],
+      "f1": [
+       0.43,
+       0.5309
+      ],
+      "fpr": [
+       0.5833,
+       0.7361
+      ]
+     }
+    },
+    "unit_alert": {
+     "raised": 1082,
+     "true_alerts": 91,
+     "precision": 0.0841,
+     "on_benign_scenarios": 120,
+     "on_background": 871,
+     "duplicates_of_detected_scenario": 67,
+     "alerts_per_network": 5.304,
+     "alerts_per_1000_transactions": 20.12,
+     "background_alerts_per_network": 4.27
+    },
+    "unit_queue": {
+     "10": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     },
+     "25": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     },
+     "50": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     },
+     "100": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     }
+    },
+    "unit_account": {
+     "tp": 387,
+     "fp": 4975,
+     "fn": 158,
+     "tn": 8603,
+     "precision": 0.0722,
+     "recall": 0.7101,
+     "fpr": 0.3664
+    },
+    "by_family": {
+     "H1_crowdfunding": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 6.417,
+      "abstained": 0,
+      "reasons": {
+       "alerted:funnel": 12
+      },
+      "by_variant": {
+       "crowdfunding": 1.0,
+       "group_purchase": 1.0
+      }
+     },
+     "H2_microfinance_hub": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 6.0,
+      "abstained": 0,
+      "reasons": {
+       "alerted:funnel": 12
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "H3_tight_supplier_chain": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 5.25,
+      "abstained": 0,
+      "reasons": {
+       "alerted:chain": 7,
+       "alerted:chain+funnel": 5
+      },
+      "by_variant": {
+       "tight": 1.0
+      }
+     },
+     "H4_reverse_chronology_chain": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 5.333,
+      "abstained": 0,
+      "reasons": {
+       "alerted:chain": 12
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "H5_payout_sweep": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.3333,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 3.917,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 8,
+       "alerted:funnel": 4
+      },
+      "by_variant": {
+       "standard": 0.3333
+      }
+     },
+     "H6_reciprocal_trading": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.25,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 4.0,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 9,
+       "alerted:chain+funnel": 1,
+       "alerted:funnel": 2
+      },
+      "by_variant": {
+       "standard": 0.25
+      }
+     },
+     "N1_merchant_settlement": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 6.75,
+      "abstained": 0,
+      "reasons": {
+       "alerted:funnel": 11,
+       "alerted:chain+funnel": 1
+      },
+      "by_variant": {
+       "bursty": 1.0,
+       "small": 1.0,
+       "standard": 1.0
+      }
+     },
+     "N2_payroll": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.25,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 4.167,
+      "abstained": 0,
+      "reasons": {
+       "alerted:funnel": 3,
+       "no_alert": 9
+      },
+      "by_variant": {
+       "biweekly": 0.0,
+       "monthly": 0.4286
+      }
+     },
+     "N3_supplier_payments": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.75,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 6.0,
+      "abstained": 0,
+      "reasons": {
+       "alerted:chain+funnel": 6,
+       "alerted:funnel": 2,
+       "no_alert": 3,
+       "alerted:chain": 1
+      },
+      "by_variant": {
+       "standard": 0.75
+      }
+     },
+     "N4_family_remittance": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.3333,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 4.167,
+      "abstained": 0,
+      "reasons": {
+       "alerted:funnel": 4,
+       "no_alert": 8
+      },
+      "by_variant": {
+       "pooling": 1.0,
+       "support": 0.0
+      }
+     },
+     "N5_group_reimbursement": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.75,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 4.083,
+      "abstained": 0,
+      "reasons": {
+       "alerted:funnel": 7,
+       "alerted:chain": 2,
+       "no_alert": 3
+      },
+      "by_variant": {
+       "standard": 0.75
+      }
+     },
+     "N6_loan_repayment": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.25,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 4.667,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 9,
+       "alerted:funnel": 3
+      },
+      "by_variant": {
+       "family_lending": 0.5,
+       "personal": 0.0
+      }
+     },
+     "P1_mule_collection": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 6.417,
+      "abstained": 0,
+      "reasons": {
+       "detected:funnel": 12
+      },
+      "by_variant": {
+       "boundary": 1.0,
+       "large": 1.0,
+       "repeated": 1.0,
+       "slow": 1.0,
+       "standard": 1.0
+      }
+     },
+     "P2_layering_chain": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 5.583,
+      "abstained": 0,
+      "reasons": {
+       "detected:chain": 11,
+       "detected:chain+funnel": 1
+      },
+      "by_variant": {
+       "clean": 1.0,
+       "noisy": 1.0,
+       "same_day": 1.0,
+       "split": 1.0
+      }
+     },
+     "P3_coordinated_distribution": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 0.4167,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 5.25,
+      "abstained": 0,
+      "reasons": {
+       "no_candidate": 7,
+       "detected:funnel": 5
+      },
+      "by_variant": {
+       "boundary": 0.0,
+       "converge": 1.0,
+       "scatter": 0.0
+      }
+     },
+     "P4_circular_transfers": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 0.6667,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 5.833,
+      "abstained": 0,
+      "reasons": {
+       "detected:chain": 8,
+       "no_candidate": 4
+      },
+      "by_variant": {
+       "clean": 0.6364,
+       "noisy": 1.0
+      }
+     },
+     "P5_split_coordinated": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 6.333,
+      "abstained": 0,
+      "reasons": {
+       "detected:funnel": 12
+      },
+      "by_variant": {
+       "multi_source": 1.0,
+       "single_source": 1.0
+      }
+     }
+    },
+    "by_difficulty": {
+     "easy": {
+      "tp": 20,
+      "fp": 12,
+      "fn": 4,
+      "tn": 20,
+      "precision": 0.625,
+      "recall": 0.8333,
+      "f1": 0.7143,
+      "fpr": 0.375,
+      "fnr": 0.1667
+     },
+     "hard": {
+      "tp": 4,
+      "fp": 57,
+      "fn": 3,
+      "tn": 17,
+      "precision": 0.0656,
+      "recall": 0.5714,
+      "f1": 0.1177,
+      "fpr": 0.7703,
+      "fnr": 0.4286
+     },
+     "medium": {
+      "tp": 25,
+      "fp": 26,
+      "fn": 4,
+      "tn": 12,
+      "precision": 0.4902,
+      "recall": 0.8621,
+      "f1": 0.625,
+      "fpr": 0.6842,
+      "fnr": 0.1379
+     }
+    },
+    "abstentions": {
+     "on_suspicious": 0,
+     "on_benign": 0
+    },
+    "latency_ms": {
+     "median": 9.33,
+     "p95": 21.63,
+     "max": 328.05,
+     "per_1000_transactions": 51.41
+    },
+    "partial_networks": 0,
+    "networks": 204,
+    "transactions": 53778
+   },
+   "B4_v1_structural_temporal": {
+    "unit_scenario": {
+     "tp": 39,
+     "fp": 48,
+     "fn": 21,
+     "tn": 96,
+     "precision": 0.4483,
+     "recall": 0.65,
+     "f1": 0.5306,
+     "fpr": 0.3333,
+     "fnr": 0.35,
+     "ci95": {
+      "precision": [
+       0.3721,
+       0.5244
+      ],
+      "recall": [
+       0.5333,
+       0.7667
+      ],
+      "f1": [
+       0.4383,
+       0.6069
+      ],
+      "fpr": [
+       0.2639,
+       0.4097
+      ]
+     }
+    },
+    "unit_alert": {
+     "raised": 234,
+     "true_alerts": 59,
+     "precision": 0.2521,
+     "on_benign_scenarios": 52,
+     "on_background": 123,
+     "duplicates_of_detected_scenario": 24,
+     "alerts_per_network": 1.147,
+     "alerts_per_1000_transactions": 4.351,
+     "background_alerts_per_network": 0.603
+    },
+    "unit_queue": {
+     "10": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     },
+     "25": {
+      "precision": 0.24,
+      "recall": 0.1,
+      "hits": 6
+     },
+     "50": {
+      "precision": 0.32,
+      "recall": 0.2667,
+      "hits": 16
+     },
+     "100": {
+      "precision": 0.21,
+      "recall": 0.35,
+      "hits": 21
+     }
+    },
+    "unit_account": {
+     "tp": 256,
+     "fp": 1261,
+     "fn": 289,
+     "tn": 12317,
+     "precision": 0.1688,
+     "recall": 0.4697,
+     "fpr": 0.0929
+    },
+    "by_family": {
+     "H1_crowdfunding": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.417,
+      "abstained": 0,
+      "reasons": {
+       "alerted:funnel": 12
+      },
+      "by_variant": {
+       "crowdfunding": 1.0,
+       "group_purchase": 1.0
+      }
+     },
+     "H2_microfinance_hub": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.1667,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 0.917,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 10,
+       "alerted:funnel": 2
+      },
+      "by_variant": {
+       "standard": 0.1667
+      }
+     },
+     "H3_tight_supplier_chain": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.583,
+      "abstained": 0,
+      "reasons": {
+       "alerted:chain": 9,
+       "alerted:chain+funnel": 3
+      },
+      "by_variant": {
+       "tight": 1.0
+      }
+     },
+     "H4_reverse_chronology_chain": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 0.667,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 12
+      },
+      "by_variant": {
+       "standard": 0.0
+      }
+     },
+     "H5_payout_sweep": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.25,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.083,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 9,
+       "alerted:funnel": 3
+      },
+      "by_variant": {
+       "standard": 0.25
+      }
+     },
+     "H6_reciprocal_trading": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.1667,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 0.833,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 10,
+       "alerted:funnel": 2
+      },
+      "by_variant": {
+       "standard": 0.1667
+      }
+     },
+     "N1_merchant_settlement": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.75,
+      "abstained": 0,
+      "reasons": {
+       "alerted:funnel": 12
+      },
+      "by_variant": {
+       "bursty": 1.0,
+       "small": 1.0,
+       "standard": 1.0
+      }
+     },
+     "N2_payroll": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.0,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 12
+      },
+      "by_variant": {
+       "biweekly": 0.0,
+       "monthly": 0.0
+      }
+     },
+     "N3_supplier_payments": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.0833,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.0,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 11,
+       "alerted:funnel": 1
+      },
+      "by_variant": {
+       "standard": 0.0833
+      }
+     },
+     "N4_family_remittance": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.25,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 0.75,
+      "abstained": 0,
+      "reasons": {
+       "alerted:funnel": 3,
+       "no_alert": 9
+      },
+      "by_variant": {
+       "pooling": 0.75,
+       "support": 0.0
+      }
+     },
+     "N5_group_reimbursement": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.0833,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 0.333,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 11,
+       "alerted:funnel": 1
+      },
+      "by_variant": {
+       "standard": 0.0833
+      }
+     },
+     "N6_loan_repayment": {
+      "label": "benign",
+      "networks": 12,
+      "rate": 0.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 0.75,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 12
+      },
+      "by_variant": {
+       "family_lending": 0.0,
+       "personal": 0.0
+      }
+     },
+     "P1_mule_collection": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 0.8333,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 1.333,
+      "abstained": 2,
+      "reasons": {
+       "abstained": 2,
+       "detected:funnel": 10
+      },
+      "by_variant": {
+       "boundary": 0.0,
+       "large": 1.0,
+       "repeated": 1.0,
+       "slow": 1.0,
+       "standard": 1.0
+      }
+     },
+     "P2_layering_chain": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 1.333,
+      "abstained": 0,
+      "reasons": {
+       "detected:chain": 11,
+       "detected:chain+funnel": 1
+      },
+      "by_variant": {
+       "clean": 1.0,
+       "noisy": 1.0,
+       "same_day": 1.0,
+       "split": 1.0
+      }
+     },
+     "P3_coordinated_distribution": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 0.25,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 0.917,
+      "abstained": 0,
+      "reasons": {
+       "no_candidate": 7,
+       "below_alert_band": 2,
+       "detected:funnel": 3
+      },
+      "by_variant": {
+       "boundary": 0.0,
+       "converge": 0.6,
+       "scatter": 0.0
+      }
+     },
+     "P4_circular_transfers": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 0.6667,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 2.667,
+      "abstained": 0,
+      "reasons": {
+       "detected:chain": 8,
+       "no_candidate": 4
+      },
+      "by_variant": {
+       "clean": 0.6364,
+       "noisy": 1.0
+      }
+     },
+     "P5_split_coordinated": {
+      "label": "suspicious",
+      "networks": 12,
+      "rate": 0.5,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 1.167,
+      "abstained": 0,
+      "reasons": {
+       "below_alert_band": 6,
+       "detected:funnel": 6
+      },
+      "by_variant": {
+       "multi_source": 0.4286,
+       "single_source": 0.6
+      }
+     }
+    },
+    "by_difficulty": {
+     "easy": {
+      "tp": 18,
+      "fp": 1,
+      "fn": 6,
+      "tn": 31,
+      "precision": 0.9474,
+      "recall": 0.75,
+      "f1": 0.8372,
+      "fpr": 0.0312,
+      "fnr": 0.25
+     },
+     "hard": {
+      "tp": 2,
+      "fp": 33,
+      "fn": 5,
+      "tn": 41,
+      "precision": 0.0571,
+      "recall": 0.2857,
+      "f1": 0.0952,
+      "fpr": 0.4459,
+      "fnr": 0.7143
+     },
+     "medium": {
+      "tp": 19,
+      "fp": 14,
+      "fn": 10,
+      "tn": 24,
+      "precision": 0.5758,
+      "recall": 0.6552,
+      "f1": 0.6129,
+      "fpr": 0.3684,
+      "fnr": 0.3448
+     }
+    },
+    "abstentions": {
+     "on_suspicious": 2,
+     "on_benign": 0
+    },
+    "latency_ms": {
+     "median": 9.52,
+     "p95": 32.06,
+     "max": 270.42,
+     "per_1000_transactions": 51.09
+    },
+    "partial_networks": 0,
+    "networks": 204,
+    "transactions": 53778
+   }
+  },
+  "val": {
+   "B0_volume": {
+    "unit_scenario": {
+     "tp": 36,
+     "fp": 86,
+     "fn": 4,
+     "tn": 10,
+     "precision": 0.2951,
+     "recall": 0.9,
+     "f1": 0.4445,
+     "fpr": 0.8958,
+     "fnr": 0.1,
+     "ci95": {
+      "precision": [
+       0.2689,
+       0.3197
+      ],
+      "recall": [
+       0.8,
+       0.975
+      ],
+      "f1": [
+       0.4049,
+       0.4791
+      ],
+      "fpr": [
+       0.8333,
+       0.9479
+      ]
+     }
+    },
+    "unit_alert": {
+     "raised": 493,
+     "true_alerts": 177,
+     "precision": 0.359,
+     "on_benign_scenarios": 247,
+     "on_background": 69,
+     "duplicates_of_detected_scenario": 302,
+     "alerts_per_network": 3.625,
+     "alerts_per_1000_transactions": 13.903,
+     "background_alerts_per_network": 0.507
+    },
+    "unit_queue": {
+     "10": {
+      "precision": 0.3,
+      "recall": 0.075,
+      "hits": 3
+     },
+     "25": {
+      "precision": 0.12,
+      "recall": 0.075,
+      "hits": 3
+     },
+     "50": {
+      "precision": 0.12,
+      "recall": 0.15,
+      "hits": 6
+     },
+     "100": {
+      "precision": 0.13,
+      "recall": 0.325,
+      "hits": 13
+     }
+    },
+    "unit_account": {
+     "tp": 177,
+     "fp": 316,
+     "fn": 217,
+     "tn": 9060,
+     "precision": 0.359,
+     "recall": 0.4492,
+     "fpr": 0.0337
+    },
+    "by_family": {
+     "H1_crowdfunding": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.25,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "crowdfunding": 1.0,
+       "group_purchase": 1.0
+      }
+     },
+     "H2_microfinance_hub": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 2.875,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "H3_tight_supplier_chain": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 4.75,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "tight": 1.0
+      }
+     },
+     "H4_reverse_chronology_chain": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 4.75,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "H5_payout_sweep": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 3.0,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "H6_reciprocal_trading": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 3.375,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "N1_merchant_settlement": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 2.625,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "bursty": 1.0,
+       "small": 1.0,
+       "standard": 1.0
+      }
+     },
+     "N2_payroll": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 5.375,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "biweekly": 1.0,
+       "monthly": 1.0
+      }
+     },
+     "N3_supplier_payments": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 4.875,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "N4_family_remittance": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.625,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.375,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 3,
+       "alerted:account": 5
+      },
+      "by_variant": {
+       "pooling": 0.3333,
+       "support": 0.8
+      }
+     },
+     "N5_group_reimbursement": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.125,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 0.625,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 7,
+       "alerted:account": 1
+      },
+      "by_variant": {
+       "standard": 0.125
+      }
+     },
+     "N6_loan_repayment": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 2.5,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "family_lending": 1.0,
+       "personal": 1.0
+      }
+     },
+     "P1_mule_collection": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 3.5,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 8
+      },
+      "by_variant": {
+       "boundary": 1.0,
+       "repeated": 1.0,
+       "slow": 1.0,
+       "standard": 1.0
+      }
+     },
+     "P2_layering_chain": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 0.5,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 2.875,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 4,
+       "below_alert_band": 4
+      },
+      "by_variant": {
+       "clean": 0.0,
+       "noisy": 0.0,
+       "same_day": 0.75,
+       "split": 1.0
+      }
+     },
+     "P3_coordinated_distribution": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 4.625,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 8
+      },
+      "by_variant": {
+       "boundary": 1.0,
+       "converge": 1.0,
+       "scatter": 1.0
+      }
+     },
+     "P4_circular_transfers": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 3.375,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 8
+      },
+      "by_variant": {
+       "clean": 1.0,
+       "noisy": 1.0
+      }
+     },
+     "P5_split_coordinated": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 9.875,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 8
+      },
+      "by_variant": {
+       "multi_source": 1.0,
+       "single_source": 1.0
+      }
+     }
+    },
+    "by_difficulty": {
+     "easy": {
+      "tp": 12,
+      "fp": 13,
+      "fn": 1,
+      "tn": 8,
+      "precision": 0.48,
+      "recall": 0.9231,
+      "f1": 0.6316,
+      "fpr": 0.619,
+      "fnr": 0.0769
+     },
+     "hard": {
+      "tp": 6,
+      "fp": 50,
+      "fn": 1,
+      "tn": 0,
+      "precision": 0.1071,
+      "recall": 0.8571,
+      "f1": 0.1904,
+      "fpr": 1.0,
+      "fnr": 0.1429
+     },
+     "medium": {
+      "tp": 18,
+      "fp": 23,
+      "fn": 2,
+      "tn": 2,
+      "precision": 0.439,
+      "recall": 0.9,
+      "f1": 0.5901,
+      "fpr": 0.92,
+      "fnr": 0.1
+     }
+    },
+    "abstentions": {
+     "on_suspicious": 0,
+     "on_benign": 0
+    },
+    "latency_ms": {
+     "median": 1.75,
+     "p95": 3.06,
+     "max": 6.79,
+     "per_1000_transactions": 7.11
+    },
+    "partial_networks": 0,
+    "networks": 136,
+    "transactions": 35459
+   },
+   "B1_centrality": {
+    "unit_scenario": {
+     "tp": 40,
+     "fp": 88,
+     "fn": 0,
+     "tn": 8,
+     "precision": 0.3125,
+     "recall": 1.0,
+     "f1": 0.4762,
+     "fpr": 0.9167,
+     "fnr": 0.0,
+     "ci95": {
+      "precision": [
+       0.3008,
+       0.3279
+      ],
+      "recall": [
+       1.0,
+       1.0
+      ],
+      "f1": [
+       0.4625,
+       0.4939
+      ],
+      "fpr": [
+       0.8542,
+       0.9688
+      ]
+     }
+    },
+    "unit_alert": {
+     "raised": 4527,
+     "true_alerts": 116,
+     "precision": 0.0256,
+     "on_benign_scenarios": 337,
+     "on_background": 4074,
+     "duplicates_of_detected_scenario": 325,
+     "alerts_per_network": 33.287,
+     "alerts_per_1000_transactions": 127.669,
+     "background_alerts_per_network": 29.956
+    },
+    "unit_queue": {
+     "10": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     },
+     "25": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     },
+     "50": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     },
+     "100": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     }
+    },
+    "unit_account": {
+     "tp": 116,
+     "fp": 4411,
+     "fn": 278,
+     "tn": 4965,
+     "precision": 0.0256,
+     "recall": 0.2944,
+     "fpr": 0.4705
+    },
+    "by_family": {
+     "H1_crowdfunding": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 30.125,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "crowdfunding": 1.0,
+       "group_purchase": 1.0
+      }
+     },
+     "H2_microfinance_hub": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 39.375,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "H3_tight_supplier_chain": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 25.875,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "tight": 1.0
+      }
+     },
+     "H4_reverse_chronology_chain": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 30.25,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "H5_payout_sweep": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.875,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 40.5,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 7,
+       "no_alert": 1
+      },
+      "by_variant": {
+       "standard": 0.875
+      }
+     },
+     "H6_reciprocal_trading": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 32.375,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "N1_merchant_settlement": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 39.25,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "bursty": 1.0,
+       "small": 1.0,
+       "standard": 1.0
+      }
+     },
+     "N2_payroll": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 36.375,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "biweekly": 1.0,
+       "monthly": 1.0
+      }
+     },
+     "N3_supplier_payments": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 41.0,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "N4_family_remittance": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.375,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 33.75,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 5,
+       "alerted:account": 3
+      },
+      "by_variant": {
+       "pooling": 1.0,
+       "support": 0.0
+      }
+     },
+     "N5_group_reimbursement": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.75,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 30.0,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 6,
+       "no_alert": 2
+      },
+      "by_variant": {
+       "standard": 0.75
+      }
+     },
+     "N6_loan_repayment": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 28.875,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "family_lending": 1.0,
+       "personal": 1.0
+      }
+     },
+     "P1_mule_collection": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 30.875,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 8
+      },
+      "by_variant": {
+       "boundary": 1.0,
+       "repeated": 1.0,
+       "slow": 1.0,
+       "standard": 1.0
+      }
+     },
+     "P2_layering_chain": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 32.875,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 8
+      },
+      "by_variant": {
+       "clean": 1.0,
+       "noisy": 1.0,
+       "same_day": 1.0,
+       "split": 1.0
+      }
+     },
+     "P3_coordinated_distribution": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 34.25,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 8
+      },
+      "by_variant": {
+       "boundary": 1.0,
+       "converge": 1.0,
+       "scatter": 1.0
+      }
+     },
+     "P4_circular_transfers": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 35.625,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 8
+      },
+      "by_variant": {
+       "clean": 1.0,
+       "noisy": 1.0
+      }
+     },
+     "P5_split_coordinated": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 24.5,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 8
+      },
+      "by_variant": {
+       "multi_source": 1.0,
+       "single_source": 1.0
+      }
+     }
+    },
+    "by_difficulty": {
+     "easy": {
+      "tp": 13,
+      "fp": 14,
+      "fn": 0,
+      "tn": 7,
+      "precision": 0.4815,
+      "recall": 1.0,
+      "f1": 0.65,
+      "fpr": 0.6667,
+      "fnr": 0.0
+     },
+     "hard": {
+      "tp": 7,
+      "fp": 49,
+      "fn": 0,
+      "tn": 1,
+      "precision": 0.125,
+      "recall": 1.0,
+      "f1": 0.2222,
+      "fpr": 0.98,
+      "fnr": 0.0
+     },
+     "medium": {
+      "tp": 20,
+      "fp": 25,
+      "fn": 0,
+      "tn": 0,
+      "precision": 0.4444,
+      "recall": 1.0,
+      "f1": 0.6153,
+      "fpr": 1.0,
+      "fnr": 0.0
+     }
+    },
+    "abstentions": {
+     "on_suspicious": 0,
+     "on_benign": 0
+    },
+    "latency_ms": {
+     "median": 3.35,
+     "p95": 6.25,
+     "max": 10.47,
+     "per_1000_transactions": 13.73
+    },
+    "partial_networks": 0,
+    "networks": 136,
+    "transactions": 35459
+   },
+   "B2_static_rules": {
+    "unit_scenario": {
+     "tp": 35,
+     "fp": 80,
+     "fn": 5,
+     "tn": 16,
+     "precision": 0.3043,
+     "recall": 0.875,
+     "f1": 0.4516,
+     "fpr": 0.8333,
+     "fnr": 0.125,
+     "ci95": {
+      "precision": [
+       0.2735,
+       0.3333
+      ],
+      "recall": [
+       0.775,
+       0.975
+      ],
+      "f1": [
+       0.4027,
+       0.4937
+      ],
+      "fpr": [
+       0.75,
+       0.9062
+      ]
+     }
+    },
+    "unit_alert": {
+     "raised": 647,
+     "true_alerts": 220,
+     "precision": 0.34,
+     "on_benign_scenarios": 307,
+     "on_background": 120,
+     "duplicates_of_detected_scenario": 412,
+     "alerts_per_network": 4.757,
+     "alerts_per_1000_transactions": 18.246,
+     "background_alerts_per_network": 0.882
+    },
+    "unit_queue": {
+     "10": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     },
+     "25": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     },
+     "50": {
+      "precision": 0.14,
+      "recall": 0.175,
+      "hits": 7
+     },
+     "100": {
+      "precision": 0.07,
+      "recall": 0.175,
+      "hits": 7
+     }
+    },
+    "unit_account": {
+     "tp": 220,
+     "fp": 427,
+     "fn": 174,
+     "tn": 8949,
+     "precision": 0.34,
+     "recall": 0.5584,
+     "fpr": 0.0455
+    },
+    "by_family": {
+     "H1_crowdfunding": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.875,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 2.5,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 7,
+       "no_alert": 1
+      },
+      "by_variant": {
+       "crowdfunding": 1.0,
+       "group_purchase": 0.75
+      }
+     },
+     "H2_microfinance_hub": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 4.125,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "H3_tight_supplier_chain": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 6.125,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "tight": 1.0
+      }
+     },
+     "H4_reverse_chronology_chain": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 5.625,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "H5_payout_sweep": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 4.0,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "H6_reciprocal_trading": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 3.0,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "N1_merchant_settlement": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.75,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.125,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 6,
+       "no_alert": 2
+      },
+      "by_variant": {
+       "bursty": 1.0,
+       "small": 0.0,
+       "standard": 1.0
+      }
+     },
+     "N2_payroll": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 12.5,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "biweekly": 1.0,
+       "monthly": 1.0
+      }
+     },
+     "N3_supplier_payments": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 6.75,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "N4_family_remittance": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.375,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.375,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 5,
+       "alerted:account": 3
+      },
+      "by_variant": {
+       "pooling": 0.0,
+       "support": 0.6
+      }
+     },
+     "N5_group_reimbursement": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 0.75,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 8
+      },
+      "by_variant": {
+       "standard": 0.0
+      }
+     },
+     "N6_loan_repayment": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 2.5,
+      "abstained": 0,
+      "reasons": {
+       "alerted:account": 8
+      },
+      "by_variant": {
+       "family_lending": 1.0,
+       "personal": 1.0
+      }
+     },
+     "P1_mule_collection": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 5.375,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 8
+      },
+      "by_variant": {
+       "boundary": 1.0,
+       "repeated": 1.0,
+       "slow": 1.0,
+       "standard": 1.0
+      }
+     },
+     "P2_layering_chain": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 0.625,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 3.625,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 5,
+       "no_candidate": 3
+      },
+      "by_variant": {
+       "clean": 0.0,
+       "noisy": 0.5,
+       "same_day": 0.75,
+       "split": 1.0
+      }
+     },
+     "P3_coordinated_distribution": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 8.875,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 8
+      },
+      "by_variant": {
+       "boundary": 1.0,
+       "converge": 1.0,
+       "scatter": 1.0
+      }
+     },
+     "P4_circular_transfers": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 0.75,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 2.625,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 6,
+       "no_candidate": 2
+      },
+      "by_variant": {
+       "clean": 0.8333,
+       "noisy": 0.5
+      }
+     },
+     "P5_split_coordinated": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 10.0,
+      "abstained": 0,
+      "reasons": {
+       "detected:account": 8
+      },
+      "by_variant": {
+       "multi_source": 1.0,
+       "single_source": 1.0
+      }
+     }
+    },
+    "by_difficulty": {
+     "easy": {
+      "tp": 11,
+      "fp": 11,
+      "fn": 2,
+      "tn": 10,
+      "precision": 0.5,
+      "recall": 0.8462,
+      "f1": 0.6286,
+      "fpr": 0.5238,
+      "fnr": 0.1538
+     },
+     "hard": {
+      "tp": 6,
+      "fp": 47,
+      "fn": 1,
+      "tn": 3,
+      "precision": 0.1132,
+      "recall": 0.8571,
+      "f1": 0.2,
+      "fpr": 0.94,
+      "fnr": 0.1429
+     },
+     "medium": {
+      "tp": 18,
+      "fp": 22,
+      "fn": 2,
+      "tn": 3,
+      "precision": 0.45,
+      "recall": 0.9,
+      "f1": 0.6,
+      "fpr": 0.88,
+      "fnr": 0.1
+     }
+    },
+    "abstentions": {
+     "on_suspicious": 0,
+     "on_benign": 0
+    },
+    "latency_ms": {
+     "median": 2.88,
+     "p95": 5.76,
+     "max": 18.99,
+     "per_1000_transactions": 12.44
+    },
+    "partial_networks": 0,
+    "networks": 136,
+    "transactions": 35459
+   },
+   "B3_v1_structural_only": {
+    "unit_scenario": {
+     "tp": 31,
+     "fp": 66,
+     "fn": 9,
+     "tn": 30,
+     "precision": 0.3196,
+     "recall": 0.775,
+     "f1": 0.4526,
+     "fpr": 0.6875,
+     "fnr": 0.225,
+     "ci95": {
+      "precision": [
+       0.2718,
+       0.3673
+      ],
+      "recall": [
+       0.65,
+       0.9
+      ],
+      "f1": [
+       0.3852,
+       0.5147
+      ],
+      "fpr": [
+       0.5938,
+       0.7812
+      ]
+     }
+    },
+    "unit_alert": {
+     "raised": 763,
+     "true_alerts": 44,
+     "precision": 0.0577,
+     "on_benign_scenarios": 91,
+     "on_background": 628,
+     "duplicates_of_detected_scenario": 38,
+     "alerts_per_network": 5.61,
+     "alerts_per_1000_transactions": 21.518,
+     "background_alerts_per_network": 4.618
+    },
+    "unit_queue": {
+     "10": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     },
+     "25": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     },
+     "50": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     },
+     "100": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "hits": 0
+     }
+    },
+    "unit_account": {
+     "tp": 226,
+     "fp": 3530,
+     "fn": 168,
+     "tn": 5846,
+     "precision": 0.0602,
+     "recall": 0.5736,
+     "fpr": 0.3765
+    },
+    "by_family": {
+     "H1_crowdfunding": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 5.875,
+      "abstained": 0,
+      "reasons": {
+       "alerted:funnel": 8
+      },
+      "by_variant": {
+       "crowdfunding": 1.0,
+       "group_purchase": 1.0
+      }
+     },
+     "H2_microfinance_hub": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 6.875,
+      "abstained": 0,
+      "reasons": {
+       "alerted:funnel": 8
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "H3_tight_supplier_chain": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 4.0,
+      "abstained": 0,
+      "reasons": {
+       "alerted:chain": 5,
+       "alerted:chain+funnel": 3
+      },
+      "by_variant": {
+       "tight": 1.0
+      }
+     },
+     "H4_reverse_chronology_chain": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 4.75,
+      "abstained": 0,
+      "reasons": {
+       "alerted:chain": 8
+      },
+      "by_variant": {
+       "standard": 1.0
+      }
+     },
+     "H5_payout_sweep": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.375,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 4.75,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 5,
+       "alerted:funnel": 3
+      },
+      "by_variant": {
+       "standard": 0.375
+      }
+     },
+     "H6_reciprocal_trading": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.75,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 6.375,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 2,
+       "alerted:funnel": 4,
+       "alerted:chain": 1,
+       "alerted:chain+funnel": 1
+      },
+      "by_variant": {
+       "standard": 0.75
+      }
+     },
+     "N1_merchant_settlement": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 5.75,
+      "abstained": 0,
+      "reasons": {
+       "alerted:chain+funnel": 1,
+       "alerted:funnel": 7
+      },
+      "by_variant": {
+       "bursty": 1.0,
+       "small": 1.0,
+       "standard": 1.0
+      }
+     },
+     "N2_payroll": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.375,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 4.5,
+      "abstained": 0,
+      "reasons": {
+       "alerted:funnel": 3,
+       "no_alert": 5
+      },
+      "by_variant": {
+       "biweekly": 0.0,
+       "monthly": 0.6
+      }
+     },
+     "N3_supplier_payments": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.625,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 5.75,
+      "abstained": 0,
+      "reasons": {
+       "alerted:chain": 3,
+       "alerted:chain+funnel": 2,
+       "no_alert": 3
+      },
+      "by_variant": {
+       "standard": 0.625
+      }
+     },
+     "N4_family_remittance": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.375,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 5.5,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 5,
+       "alerted:funnel": 3
+      },
+      "by_variant": {
+       "pooling": 1.0,
+       "support": 0.0
+      }
+     },
+     "N5_group_reimbursement": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.375,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 5.25,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 5,
+       "alerted:funnel": 2,
+       "alerted:chain": 1
+      },
+      "by_variant": {
+       "standard": 0.375
+      }
+     },
+     "N6_loan_repayment": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.375,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 6.75,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 5,
+       "alerted:funnel": 3
+      },
+      "by_variant": {
+       "family_lending": 0.75,
+       "personal": 0.0
+      }
+     },
+     "P1_mule_collection": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 5.125,
+      "abstained": 0,
+      "reasons": {
+       "detected:funnel": 8
+      },
+      "by_variant": {
+       "boundary": 1.0,
+       "repeated": 1.0,
+       "slow": 1.0,
+       "standard": 1.0
+      }
+     },
+     "P2_layering_chain": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 7.75,
+      "abstained": 0,
+      "reasons": {
+       "detected:chain": 8
+      },
+      "by_variant": {
+       "clean": 1.0,
+       "noisy": 1.0,
+       "same_day": 1.0,
+       "split": 1.0
+      }
+     },
+     "P3_coordinated_distribution": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 0.375,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 4.5,
+      "abstained": 0,
+      "reasons": {
+       "detected:funnel": 3,
+       "no_candidate": 5
+      },
+      "by_variant": {
+       "boundary": 0.0,
+       "converge": 1.0,
+       "scatter": 0.0
+      }
+     },
+     "P4_circular_transfers": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 0.5,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 6.5,
+      "abstained": 0,
+      "reasons": {
+       "no_candidate": 4,
+       "detected:funnel": 1,
+       "detected:chain": 3
+      },
+      "by_variant": {
+       "clean": 0.3333,
+       "noisy": 1.0
+      }
+     },
+     "P5_split_coordinated": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 5.375,
+      "abstained": 0,
+      "reasons": {
+       "detected:funnel": 8
+      },
+      "by_variant": {
+       "multi_source": 1.0,
+       "single_source": 1.0
+      }
+     }
+    },
+    "by_difficulty": {
+     "easy": {
+      "tp": 9,
+      "fp": 6,
+      "fn": 4,
+      "tn": 15,
+      "precision": 0.6,
+      "recall": 0.6923,
+      "f1": 0.6429,
+      "fpr": 0.2857,
+      "fnr": 0.3077
+     },
+     "hard": {
+      "tp": 6,
+      "fp": 43,
+      "fn": 1,
+      "tn": 7,
+      "precision": 0.1224,
+      "recall": 0.8571,
+      "f1": 0.2142,
+      "fpr": 0.86,
+      "fnr": 0.1429
+     },
+     "medium": {
+      "tp": 16,
+      "fp": 17,
+      "fn": 4,
+      "tn": 8,
+      "precision": 0.4848,
+      "recall": 0.8,
+      "f1": 0.6037,
+      "fpr": 0.68,
+      "fnr": 0.2
+     }
+    },
+    "abstentions": {
+     "on_suspicious": 0,
+     "on_benign": 0
+    },
+    "latency_ms": {
+     "median": 9.21,
+     "p95": 33.82,
+     "max": 146.85,
+     "per_1000_transactions": 52.38
+    },
+    "partial_networks": 0,
+    "networks": 136,
+    "transactions": 35459
+   },
+   "B4_v1_structural_temporal": {
+    "unit_scenario": {
+     "tp": 24,
+     "fp": 34,
+     "fn": 16,
+     "tn": 62,
+     "precision": 0.4138,
+     "recall": 0.6,
+     "f1": 0.4898,
+     "fpr": 0.3542,
+     "fnr": 0.4,
+     "ci95": {
+      "precision": [
+       0.3279,
+       0.5102
+      ],
+      "recall": [
+       0.45,
+       0.75
+      ],
+      "f1": [
+       0.3838,
+       0.598
+      ],
+      "fpr": [
+       0.2604,
+       0.4583
+      ]
+     }
+    },
+    "unit_alert": {
+     "raised": 156,
+     "true_alerts": 31,
+     "precision": 0.1987,
+     "on_benign_scenarios": 36,
+     "on_background": 89,
+     "duplicates_of_detected_scenario": 9,
+     "alerts_per_network": 1.147,
+     "alerts_per_1000_transactions": 4.399,
+     "background_alerts_per_network": 0.654
+    },
+    "unit_queue": {
+     "10": {
+      "precision": 0.1,
+      "recall": 0.025,
+      "hits": 1
+     },
+     "25": {
+      "precision": 0.28,
+      "recall": 0.175,
+      "hits": 7
+     },
+     "50": {
+      "precision": 0.18,
+      "recall": 0.225,
+      "hits": 9
+     },
+     "100": {
+      "precision": 0.15,
+      "recall": 0.375,
+      "hits": 15
+     }
+    },
+    "unit_account": {
+     "tp": 162,
+     "fp": 904,
+     "fn": 232,
+     "tn": 8472,
+     "precision": 0.152,
+     "recall": 0.4112,
+     "fpr": 0.0964
+    },
+    "by_family": {
+     "H1_crowdfunding": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.375,
+      "abstained": 0,
+      "reasons": {
+       "alerted:funnel": 8
+      },
+      "by_variant": {
+       "crowdfunding": 1.0,
+       "group_purchase": 1.0
+      }
+     },
+     "H2_microfinance_hub": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.125,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.25,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 7,
+       "alerted:funnel": 1
+      },
+      "by_variant": {
+       "standard": 0.125
+      }
+     },
+     "H3_tight_supplier_chain": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.5,
+      "abstained": 0,
+      "reasons": {
+       "alerted:chain": 6,
+       "alerted:funnel": 1,
+       "alerted:chain+funnel": 1
+      },
+      "by_variant": {
+       "tight": 1.0
+      }
+     },
+     "H4_reverse_chronology_chain": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 0.625,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 8
+      },
+      "by_variant": {
+       "standard": 0.0
+      }
+     },
+     "H5_payout_sweep": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.25,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.875,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 6,
+       "alerted:funnel": 2
+      },
+      "by_variant": {
+       "standard": 0.25
+      }
+     },
+     "H6_reciprocal_trading": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.375,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.375,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 5,
+       "alerted:chain": 1,
+       "alerted:funnel": 2
+      },
+      "by_variant": {
+       "standard": 0.375
+      }
+     },
+     "N1_merchant_settlement": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.375,
+      "abstained": 0,
+      "reasons": {
+       "alerted:funnel": 8
+      },
+      "by_variant": {
+       "bursty": 1.0,
+       "small": 1.0,
+       "standard": 1.0
+      }
+     },
+     "N2_payroll": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 0.0,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 8
+      },
+      "by_variant": {
+       "biweekly": 0.0,
+       "monthly": 0.0
+      }
+     },
+     "N3_supplier_payments": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 0.75,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 8
+      },
+      "by_variant": {
+       "standard": 0.0
+      }
+     },
+     "N4_family_remittance": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.125,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 1.0,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 7,
+       "alerted:funnel": 1
+      },
+      "by_variant": {
+       "pooling": 0.3333,
+       "support": 0.0
+      }
+     },
+     "N5_group_reimbursement": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.375,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 0.875,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 5,
+       "alerted:funnel": 2,
+       "alerted:chain": 1
+      },
+      "by_variant": {
+       "standard": 0.375
+      }
+     },
+     "N6_loan_repayment": {
+      "label": "benign",
+      "networks": 8,
+      "rate": 0.0,
+      "rate_kind": "false_positive_rate",
+      "alerts_per_network": 0.625,
+      "abstained": 0,
+      "reasons": {
+       "no_alert": 8
+      },
+      "by_variant": {
+       "family_lending": 0.0,
+       "personal": 0.0
+      }
+     },
+     "P1_mule_collection": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 0.75,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 1.0,
+      "abstained": 2,
+      "reasons": {
+       "detected:funnel": 6,
+       "abstained": 2
+      },
+      "by_variant": {
+       "boundary": 0.0,
+       "repeated": 1.0,
+       "slow": 1.0,
+       "standard": 1.0
+      }
+     },
+     "P2_layering_chain": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 1.0,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 1.875,
+      "abstained": 0,
+      "reasons": {
+       "detected:chain": 8
+      },
+      "by_variant": {
+       "clean": 1.0,
+       "noisy": 1.0,
+       "same_day": 1.0,
+       "split": 1.0
+      }
+     },
+     "P3_coordinated_distribution": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 0.375,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 0.875,
+      "abstained": 0,
+      "reasons": {
+       "detected:funnel": 3,
+       "no_candidate": 5
+      },
+      "by_variant": {
+       "boundary": 0.0,
+       "converge": 1.0,
+       "scatter": 0.0
+      }
+     },
+     "P4_circular_transfers": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 0.5,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 2.0,
+      "abstained": 0,
+      "reasons": {
+       "no_candidate": 4,
+       "detected:funnel": 1,
+       "detected:chain": 3
+      },
+      "by_variant": {
+       "clean": 0.3333,
+       "noisy": 1.0
+      }
+     },
+     "P5_split_coordinated": {
+      "label": "suspicious",
+      "networks": 8,
+      "rate": 0.375,
+      "rate_kind": "detection_rate",
+      "alerts_per_network": 1.125,
+      "abstained": 0,
+      "reasons": {
+       "below_alert_band": 5,
+       "detected:funnel": 3
+      },
+      "by_variant": {
+       "multi_source": 0.0,
+       "single_source": 0.5
+      }
+     }
+    },
+    "by_difficulty": {
+     "easy": {
+      "tp": 9,
+      "fp": 3,
+      "fn": 4,
+      "tn": 18,
+      "precision": 0.75,
+      "recall": 0.6923,
+      "f1": 0.72,
+      "fpr": 0.1429,
+      "fnr": 0.3077
+     },
+     "hard": {
+      "tp": 4,
+      "fp": 24,
+      "fn": 3,
+      "tn": 26,
+      "precision": 0.1429,
+      "recall": 0.5714,
+      "f1": 0.2286,
+      "fpr": 0.48,
+      "fnr": 0.4286
+     },
+     "medium": {
+      "tp": 11,
+      "fp": 7,
+      "fn": 9,
+      "tn": 18,
+      "precision": 0.6111,
+      "recall": 0.55,
+      "f1": 0.5789,
+      "fpr": 0.28,
+      "fnr": 0.45
+     }
+    },
+    "abstentions": {
+     "on_suspicious": 2,
+     "on_benign": 0
+    },
+    "latency_ms": {
+     "median": 8.94,
+     "p95": 31.53,
+     "max": 158.63,
+     "per_1000_transactions": 52.13
+    },
+    "partial_networks": 0,
+    "networks": 136,
+    "transactions": 35459
+   }
+  }
+ },
+ "time_to_detection": {
+  "dev": {
+   "B3_v1_structural_only": {
+    "unit": "days of simulated event time from the scenario's first transfer to the first matching alert",
+    "detected_networks": 49,
+    "undetected_networks": 11,
+    "transient_detections": 0,
+    "median_days": 2,
+    "max_days": 7,
+    "by_family": {
+     "P1_mule_collection": {
+      "median_days": 0,
+      "n": 12
+     },
+     "P2_layering_chain": {
+      "median_days": 2,
+      "n": 12
+     },
+     "P3_coordinated_distribution": {
+      "median_days": 2,
+      "n": 5
+     },
+     "P4_circular_transfers": {
+      "median_days": 3,
+      "n": 8
+     },
+     "P5_split_coordinated": {
+      "median_days": 2,
+      "n": 12
+     }
+    }
+   },
+   "B4_v1_structural_temporal": {
+    "unit": "days of simulated event time from the scenario's first transfer to the first matching alert",
+    "detected_networks": 39,
+    "undetected_networks": 21,
+    "transient_detections": 4,
+    "median_days": 2,
+    "max_days": 8,
+    "by_family": {
+     "P1_mule_collection": {
+      "median_days": 2,
+      "n": 10
+     },
+     "P2_layering_chain": {
+      "median_days": 2,
+      "n": 12
+     },
+     "P3_coordinated_distribution": {
+      "median_days": 3,
+      "n": 3
+     },
+     "P4_circular_transfers": {
+      "median_days": 3,
+      "n": 8
+     },
+     "P5_split_coordinated": {
+      "median_days": 3,
+      "n": 6
+     }
+    }
+   }
+  },
+  "val": {
+   "B3_v1_structural_only": {
+    "unit": "days of simulated event time from the scenario's first transfer to the first matching alert",
+    "detected_networks": 31,
+    "undetected_networks": 9,
+    "transient_detections": 0,
+    "median_days": 2,
+    "max_days": 12,
+    "by_family": {
+     "P1_mule_collection": {
+      "median_days": 1,
+      "n": 8
+     },
+     "P2_layering_chain": {
+      "median_days": 1,
+      "n": 8
+     },
+     "P3_coordinated_distribution": {
+      "median_days": 2,
+      "n": 3
+     },
+     "P4_circular_transfers": {
+      "median_days": 2,
+      "n": 4
+     },
+     "P5_split_coordinated": {
+      "median_days": 2,
+      "n": 8
+     }
+    }
+   },
+   "B4_v1_structural_temporal": {
+    "unit": "days of simulated event time from the scenario's first transfer to the first matching alert",
+    "detected_networks": 24,
+    "undetected_networks": 16,
+    "transient_detections": 2,
+    "median_days": 2,
+    "max_days": 12,
+    "by_family": {
+     "P1_mule_collection": {
+      "median_days": 3,
+      "n": 6
+     },
+     "P2_layering_chain": {
+      "median_days": 1,
+      "n": 8
+     },
+     "P3_coordinated_distribution": {
+      "median_days": 3,
+      "n": 3
+     },
+     "P4_circular_transfers": {
+      "median_days": 2,
+      "n": 4
+     },
+     "P5_split_coordinated": {
+      "median_days": 3,
+      "n": 3
+     }
+    }
+   }
+  }
+ },
+ "examples": {
+  "dev": {
+   "B3_v1_structural_only": {
+    "false_positives": [
+     {
+      "network_id": "dev-H1_crowdfunding-000",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-001",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-002",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-003",
+      "family": "H1_crowdfunding",
+      "variant": "crowdfunding",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-004",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-005",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-006",
+      "family": "H1_crowdfunding",
+      "variant": "crowdfunding",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-007",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1030,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-008",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1030,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-009",
+      "family": "H1_crowdfunding",
+      "variant": "crowdfunding",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-010",
+      "family": "H1_crowdfunding",
+      "variant": "crowdfunding",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-011",
+      "family": "H1_crowdfunding",
+      "variant": "crowdfunding",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     }
+    ],
+    "false_negatives": [
+     {
+      "network_id": "dev-P3_coordinated_distribution-000",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P3_coordinated_distribution-001",
+      "family": "P3_coordinated_distribution",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P3_coordinated_distribution-003",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P3_coordinated_distribution-004",
+      "family": "P3_coordinated_distribution",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P3_coordinated_distribution-007",
+      "family": "P3_coordinated_distribution",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P3_coordinated_distribution-008",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P3_coordinated_distribution-011",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P4_circular_transfers-004",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P4_circular_transfers-008",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P4_circular_transfers-009",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P4_circular_transfers-011",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     }
+    ],
+    "false_positive_count": 95,
+    "false_negative_count": 11
+   },
+   "B4_v1_structural_temporal": {
+    "false_positives": [
+     {
+      "network_id": "dev-H1_crowdfunding-000",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2061,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-001",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2065,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-002",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2064,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-003",
+      "family": "H1_crowdfunding",
+      "variant": "crowdfunding",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2065,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-004",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2061,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-005",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2064,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-006",
+      "family": "H1_crowdfunding",
+      "variant": "crowdfunding",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2065,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-007",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2059,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-008",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2057,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-009",
+      "family": "H1_crowdfunding",
+      "variant": "crowdfunding",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2062,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-010",
+      "family": "H1_crowdfunding",
+      "variant": "crowdfunding",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2065,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H1_crowdfunding-011",
+      "family": "H1_crowdfunding",
+      "variant": "crowdfunding",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2065,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     }
+    ],
+    "false_negatives": [
+     {
+      "network_id": "dev-P1_mule_collection-000",
+      "family": "P1_mule_collection",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "abstained",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P1_mule_collection-006",
+      "family": "P1_mule_collection",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "abstained",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P3_coordinated_distribution-000",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P3_coordinated_distribution-001",
+      "family": "P3_coordinated_distribution",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P3_coordinated_distribution-002",
+      "family": "P3_coordinated_distribution",
+      "variant": "converge",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "below_alert_band",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P3_coordinated_distribution-003",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P3_coordinated_distribution-004",
+      "family": "P3_coordinated_distribution",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P3_coordinated_distribution-005",
+      "family": "P3_coordinated_distribution",
+      "variant": "converge",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "below_alert_band",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P3_coordinated_distribution-007",
+      "family": "P3_coordinated_distribution",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P3_coordinated_distribution-008",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P3_coordinated_distribution-011",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P4_circular_transfers-004",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     }
+    ],
+    "false_positive_count": 48,
+    "false_negative_count": 21
+   }
+  },
+  "val": {
+   "B3_v1_structural_only": {
+    "false_positives": [
+     {
+      "network_id": "val-H1_crowdfunding-000",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H1_crowdfunding-001",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1026,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H1_crowdfunding-002",
+      "family": "H1_crowdfunding",
+      "variant": "crowdfunding",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H1_crowdfunding-003",
+      "family": "H1_crowdfunding",
+      "variant": "crowdfunding",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H1_crowdfunding-004",
+      "family": "H1_crowdfunding",
+      "variant": "crowdfunding",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H1_crowdfunding-005",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1026,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H1_crowdfunding-006",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1030,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H1_crowdfunding-007",
+      "family": "H1_crowdfunding",
+      "variant": "crowdfunding",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H2_microfinance_hub-000",
+      "family": "H2_microfinance_hub",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_CONTRADICTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H2_microfinance_hub-001",
+      "family": "H2_microfinance_hub",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1026,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_CONTRADICTED",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H2_microfinance_hub-002",
+      "family": "H2_microfinance_hub",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_CONTRADICTED",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H2_microfinance_hub-003",
+      "family": "H2_microfinance_hub",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_CONTRADICTED",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     }
+    ],
+    "false_negatives": [
+     {
+      "network_id": "val-P3_coordinated_distribution-002",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P3_coordinated_distribution-003",
+      "family": "P3_coordinated_distribution",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P3_coordinated_distribution-004",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P3_coordinated_distribution-005",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P3_coordinated_distribution-006",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P4_circular_transfers-000",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P4_circular_transfers-001",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P4_circular_transfers-004",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P4_circular_transfers-007",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     }
+    ],
+    "false_positive_count": 66,
+    "false_negative_count": 9
+   },
+   "B4_v1_structural_temporal": {
+    "false_positives": [
+     {
+      "network_id": "val-H1_crowdfunding-000",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2064,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H1_crowdfunding-001",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2052,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H1_crowdfunding-002",
+      "family": "H1_crowdfunding",
+      "variant": "crowdfunding",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2065,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H1_crowdfunding-003",
+      "family": "H1_crowdfunding",
+      "variant": "crowdfunding",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2065,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H1_crowdfunding-004",
+      "family": "H1_crowdfunding",
+      "variant": "crowdfunding",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2065,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H1_crowdfunding-005",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2054,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H1_crowdfunding-006",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2056,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H1_crowdfunding-007",
+      "family": "H1_crowdfunding",
+      "variant": "crowdfunding",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2062,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H2_microfinance_hub-007",
+      "family": "H2_microfinance_hub",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2050,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H3_tight_supplier_chain-000",
+      "family": "H3_tight_supplier_chain",
+      "variant": "tight",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:chain",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "high",
+        "score": 2049,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_PATH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H3_tight_supplier_chain-001",
+      "family": "H3_tight_supplier_chain",
+      "variant": "tight",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:chain",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "high",
+        "score": 2048,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_PATH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H3_tight_supplier_chain-002",
+      "family": "H3_tight_supplier_chain",
+      "variant": "tight",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1039,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     }
+    ],
+    "false_negatives": [
+     {
+      "network_id": "val-P1_mule_collection-004",
+      "family": "P1_mule_collection",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "abstained",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P1_mule_collection-007",
+      "family": "P1_mule_collection",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "abstained",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P3_coordinated_distribution-002",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P3_coordinated_distribution-003",
+      "family": "P3_coordinated_distribution",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P3_coordinated_distribution-004",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P3_coordinated_distribution-005",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P3_coordinated_distribution-006",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P4_circular_transfers-000",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P4_circular_transfers-001",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P4_circular_transfers-004",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P4_circular_transfers-007",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P5_split_coordinated-000",
+      "family": "P5_split_coordinated",
+      "variant": "single_source",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "below_alert_band",
+      "alerts": []
+     }
+    ],
+    "false_positive_count": 34,
+    "false_negative_count": 16
+   }
+  }
+ }
+}
