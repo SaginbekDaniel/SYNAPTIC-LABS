@@ -4,7 +4,7 @@ import { collectErrors, seedAndAnalyse } from "./helpers";
 test("390px: no horizontal page overflow and primary actions reachable (UI-003)", async ({ page }) => {
   const errors = collectErrors(page);
   await seedAndAnalyse(page, "404");
-  for (const path of ["/", "/alerts", "/cases", "/lab", "/network"]) {
+  for (const path of ["/", "/alerts", "/cases", "/lab", "/network", "/evaluation"]) {
     await page.goto(path);
     await page.waitForLoadState("networkidle");
     const width = await page.evaluate(() => document.documentElement.scrollWidth);

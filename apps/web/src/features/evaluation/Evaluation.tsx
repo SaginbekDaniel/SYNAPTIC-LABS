@@ -211,10 +211,10 @@ function Headline({ report, split }: { report: BenchmarkReport; split: string })
   );
 }
 
-function MethodCell({ name, report, primary }: { name: string; report: BenchmarkReport; primary: string | null }) {
+function MethodCell({ name, report }: { name: string; report: BenchmarkReport }) {
   const m = report.methods.find((x) => x.name === name);
   return (
-    <th scope="row" className={name === primary ? "eval-primary" : undefined}>
+    <th scope="row">
       <span className="eval-method">{methodName(name)}</span>
       <span className="subtle eval-method__group">{m ? tDynamic("eval.group.", m.group) : ""}</span>
     </th>
@@ -225,7 +225,7 @@ function ScenarioTable({ rows, report, primary }: { rows: MethodSplitResult[]; r
   const ci = (s: ScenarioMetrics) => s.ci95;
   return (
     <div className="table-wrap">
-      <table className="table" data-testid="eval-scenario-table">
+      <table className="table eval-table" data-testid="eval-scenario-table">
         <caption className="visually-hidden">{t("eval.methods")}</caption>
         <thead>
           <tr>
@@ -256,8 +256,8 @@ function ScenarioTable({ rows, report, primary }: { rows: MethodSplitResult[]; r
         </thead>
         <tbody>
           {rows.map((r) => (
-            <tr key={r.method}>
-              <MethodCell name={r.method} report={report} primary={primary} />
+            <tr key={r.method} className={r.method === primary ? "eval-primary-row" : undefined}>
+              <MethodCell name={r.method} report={report} />
               <td className="right num">{r.scenario.tp}</td>
               <td className="right num">{r.scenario.fp}</td>
               <td className="right num">{r.scenario.fn}</td>
@@ -287,7 +287,7 @@ function QueueTable({ rows }: { rows: MethodSplitResult[] }) {
   const q = (r: MethodSplitResult, k: number) => r.queue.find((x) => x.k === k);
   return (
     <div className="table-wrap">
-      <table className="table">
+      <table className="table eval-table">
         <caption className="visually-hidden">{t("eval.queue")}</caption>
         <thead>
           <tr>
@@ -310,7 +310,9 @@ function QueueTable({ rows }: { rows: MethodSplitResult[] }) {
             <th scope="col" className="right">{t("eval.col.bgPerNet")}</th>
             <th scope="col" className="right">{t("eval.col.accPrecision")}</th>
             <th scope="col" className="right">{t("eval.col.accRecall")}</th>
-            <th scope="col" className="right">{t("eval.col.latency")}</th>
+            <th scope="col" className="right" title={t("eval.col.latencyHint")}>
+              {t("eval.col.latency")}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -340,7 +342,7 @@ function FamilyTable({ report, rows, primary }: { report: BenchmarkReport; rows:
   const rate = (r: MethodSplitResult, fam: string) => r.by_family.find((f) => f.family === fam);
   return (
     <div className="table-wrap">
-      <table className="table" data-testid="eval-family-table">
+      <table className="table eval-table" data-testid="eval-family-table">
         <caption className="visually-hidden">{t("eval.families")}</caption>
         <thead>
           <tr>
@@ -480,7 +482,7 @@ function ErrorsPanel({ report, split, method, onChange }: { report: BenchmarkRep
 function ExperimentTable({ rows, showMethod }: { rows: BenchmarkExperiment[]; showMethod: boolean }) {
   return (
     <div className="table-wrap">
-      <table className="table">
+      <table className="table eval-table">
         <caption className="visually-hidden">{showMethod ? t("eval.robustness") : t("eval.ablations")}</caption>
         <thead>
           <tr>

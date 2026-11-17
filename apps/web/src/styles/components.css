@@ -659,25 +659,44 @@
 .eval-method {
   display: block;
   font-weight: var(--fw-medium);
-  white-space: nowrap;
 }
 .eval-method__group {
   font-size: var(--fs-xs);
 }
-.table .eval-primary {
-  background: var(--accent-soft);
+/* Wide comparison tables scroll horizontally; the row label stays pinned so values keep context. */
+.eval-table thead th {
+  white-space: normal;
+  vertical-align: bottom;
+  min-width: 5rem;
 }
-.table th[scope="row"] {
+.eval-table th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--surface);
+}
+.eval-table thead th:first-child {
+  z-index: 2;
+}
+.eval-table th[scope="row"] {
+  white-space: normal;
+  overflow-wrap: break-word;
+  hyphens: auto;
   font-weight: var(--fw-medium);
   color: var(--text);
   text-align: left;
-  position: static;
+  min-width: 10rem;
+  max-width: 16rem;
 }
-.eval-group-row th {
+.eval-table .eval-primary,
+.eval-table tr.eval-primary-row > * {
+  background: var(--accent-soft);
+}
+.eval-group-row th,
+.eval-table .eval-group-row th:first-child {
   background: var(--surface-2);
   color: var(--text);
   font-weight: var(--fw-semibold);
-  position: static;
 }
 .eval-ci {
   font-size: var(--fs-xs);
@@ -740,4 +759,17 @@
 }
 .eval-kpis {
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+@media (max-width: 860px) {
+  .eval-table th[scope="row"] {
+    min-width: 8rem;
+    max-width: 9.5rem;
+  }
+  .eval-controls .select {
+    min-width: 0;
+    width: 100%;
+  }
+  .eval-controls .field {
+    flex: 1 1 100%;
+  }
 }
