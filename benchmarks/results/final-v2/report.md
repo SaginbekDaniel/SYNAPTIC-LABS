@@ -3,8 +3,8 @@
 > SYNTHETIC BENCHMARK. All networks, labels and metrics come from the NEXORA synthetic scenario generator, not from bank data. Results describe behaviour on this synthetic distribution only and are not estimates of real-world fraud detection accuracy.
 
 * Benchmark: `nexora-bench-v1`, master seed `2026`
-* Code: `167d4fb4a4325ae70722446f4100b9a35b271c92`
-* Created: 2026-11-17T06:36:11+00:00 · duration 75.5 s
+* Code: `bf35e95618db90410864c7a033244d0462393879`
+* Created: 2026-11-17T06:49:43+00:00 · duration 74.1 s
 * Host: Intel(R) Xeon(R) Processor @ 2.10GHz · Python 3.13.18 · networkx 3.7
 * Splits evaluated: dev, val, test
 
@@ -45,12 +45,12 @@ Matching rule: A prediction matches a scenario when >= 50% of its accounts belon
 
 | Method | Alerts | Alert precision | Alerts/network | Background alerts/network | P@10 | P@25 | R@25 | R@50 | Account precision | Account recall | Latency median / p95 ms |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| B0_volume | 777 | 0.385 | 3.809 | 0.574 | 0.200 | 0.160 | 0.067 | 0.133 | 0.385 | 0.549 | 2.070 / 4.120 |
-| B1_centrality | 6602 | 0.027 | 32.363 | 28.873 | 0.000 | 0.000 | 0.000 | 0.000 | 0.027 | 0.327 | 3.770 / 6.300 |
-| B2_static_rules | 984 | 0.355 | 4.824 | 0.912 | 0.000 | 0.000 | 0.000 | 0.167 | 0.355 | 0.640 | 2.600 / 5.830 |
-| B3_v1_structural_only | 1082 | 0.084 | 5.304 | 4.270 | 0.000 | 0.000 | 0.000 | 0.000 | 0.072 | 0.710 | 9.380 / 21.960 |
-| B4_v1_structural_temporal | 234 | 0.252 | 1.147 | 0.603 | 0.000 | 0.240 | 0.100 | 0.267 | 0.169 | 0.470 | 7.560 / 29.570 |
-| B5_v2_full | 191 | 0.513 | 0.936 | 0.206 | 0.500 | 0.320 | 0.133 | 0.367 | 0.379 | 0.727 | 13.880 / 47.180 |
+| B0_volume | 777 | 0.385 | 3.809 | 0.574 | 0.200 | 0.160 | 0.067 | 0.133 | 0.385 | 0.549 | 1.930 / 3.900 |
+| B1_centrality | 6602 | 0.027 | 32.363 | 28.873 | 0.000 | 0.000 | 0.000 | 0.000 | 0.027 | 0.327 | 4.290 / 8.160 |
+| B2_static_rules | 984 | 0.355 | 4.824 | 0.912 | 0.000 | 0.000 | 0.000 | 0.167 | 0.355 | 0.640 | 3.150 / 7.220 |
+| B3_v1_structural_only | 1082 | 0.084 | 5.304 | 4.270 | 0.000 | 0.000 | 0.000 | 0.000 | 0.072 | 0.710 | 8.980 / 24.450 |
+| B4_v1_structural_temporal | 234 | 0.252 | 1.147 | 0.603 | 0.000 | 0.240 | 0.100 | 0.267 | 0.169 | 0.470 | 9.100 / 31.590 |
+| B5_v2_full | 191 | 0.513 | 0.936 | 0.206 | 0.500 | 0.320 | 0.133 | 0.367 | 0.379 | 0.727 | 14.360 / 46.940 |
 
 ### By family (detection rate for suspicious, false-positive rate for benign)
 
@@ -91,12 +91,12 @@ Matching rule: A prediction matches a scenario when >= 50% of its accounts belon
 
 | Method | Alerts | Alert precision | Alerts/network | Background alerts/network | P@10 | P@25 | R@25 | R@50 | Account precision | Account recall | Latency median / p95 ms |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| B0_volume | 493 | 0.359 | 3.625 | 0.507 | 0.300 | 0.120 | 0.075 | 0.150 | 0.359 | 0.449 | 1.880 / 4.630 |
-| B1_centrality | 4527 | 0.026 | 33.287 | 29.956 | 0.000 | 0.000 | 0.000 | 0.000 | 0.026 | 0.294 | 4.100 / 7.640 |
-| B2_static_rules | 647 | 0.340 | 4.757 | 0.882 | 0.000 | 0.000 | 0.000 | 0.175 | 0.340 | 0.558 | 3.260 / 6.500 |
-| B3_v1_structural_only | 763 | 0.058 | 5.610 | 4.618 | 0.000 | 0.000 | 0.000 | 0.000 | 0.060 | 0.574 | 9.510 / 44.360 |
-| B4_v1_structural_temporal | 156 | 0.199 | 1.147 | 0.654 | 0.100 | 0.280 | 0.175 | 0.225 | 0.152 | 0.411 | 9.790 / 28.760 |
-| B5_v2_full | 112 | 0.464 | 0.824 | 0.206 | 0.600 | 0.520 | 0.325 | 0.625 | 0.385 | 0.662 | 14.740 / 39.850 |
+| B0_volume | 493 | 0.359 | 3.625 | 0.507 | 0.300 | 0.120 | 0.075 | 0.150 | 0.359 | 0.449 | 2.250 / 4.100 |
+| B1_centrality | 4527 | 0.026 | 33.287 | 29.956 | 0.000 | 0.000 | 0.000 | 0.000 | 0.026 | 0.294 | 4.200 / 8.780 |
+| B2_static_rules | 647 | 0.340 | 4.757 | 0.882 | 0.000 | 0.000 | 0.000 | 0.175 | 0.340 | 0.558 | 2.840 / 5.820 |
+| B3_v1_structural_only | 763 | 0.058 | 5.610 | 4.618 | 0.000 | 0.000 | 0.000 | 0.000 | 0.060 | 0.574 | 9.570 / 42.060 |
+| B4_v1_structural_temporal | 156 | 0.199 | 1.147 | 0.654 | 0.100 | 0.280 | 0.175 | 0.225 | 0.152 | 0.411 | 9.860 / 27.160 |
+| B5_v2_full | 112 | 0.464 | 0.824 | 0.206 | 0.600 | 0.520 | 0.325 | 0.625 | 0.385 | 0.662 | 12.210 / 38.760 |
 
 ### By family (detection rate for suspicious, false-positive rate for benign)
 
@@ -137,12 +137,12 @@ Matching rule: A prediction matches a scenario when >= 50% of its accounts belon
 
 | Method | Alerts | Alert precision | Alerts/network | Background alerts/network | P@10 | P@25 | R@25 | R@50 | Account precision | Account recall | Latency median / p95 ms |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| B0_volume | 746 | 0.369 | 3.657 | 0.564 | 0.500 | 0.240 | 0.100 | 0.133 | 0.369 | 0.497 | 1.970 / 4.780 |
-| B1_centrality | 6540 | 0.026 | 32.059 | 28.794 | 0.000 | 0.000 | 0.000 | 0.000 | 0.026 | 0.306 | 3.940 / 7.350 |
-| B2_static_rules | 935 | 0.370 | 4.583 | 0.799 | 0.000 | 0.000 | 0.000 | 0.183 | 0.370 | 0.626 | 3.460 / 7.540 |
-| B3_v1_structural_only | 1157 | 0.055 | 5.672 | 4.833 | 0.000 | 0.000 | 0.000 | 0.000 | 0.059 | 0.608 | 10.010 / 23.750 |
-| B4_v1_structural_temporal | 227 | 0.203 | 1.113 | 0.672 | 0.000 | 0.240 | 0.100 | 0.233 | 0.152 | 0.441 | 10.150 / 24.180 |
-| B5_v2_full | 158 | 0.481 | 0.775 | 0.196 | 0.500 | 0.400 | 0.167 | 0.317 | 0.366 | 0.640 | 14.540 / 44.670 |
+| B0_volume | 746 | 0.369 | 3.657 | 0.564 | 0.500 | 0.240 | 0.100 | 0.133 | 0.369 | 0.497 | 2.090 / 4.440 |
+| B1_centrality | 6540 | 0.026 | 32.059 | 28.794 | 0.000 | 0.000 | 0.000 | 0.000 | 0.026 | 0.306 | 3.570 / 6.320 |
+| B2_static_rules | 935 | 0.370 | 4.583 | 0.799 | 0.000 | 0.000 | 0.000 | 0.183 | 0.370 | 0.626 | 2.630 / 5.150 |
+| B3_v1_structural_only | 1157 | 0.055 | 5.672 | 4.833 | 0.000 | 0.000 | 0.000 | 0.000 | 0.059 | 0.608 | 9.170 / 19.380 |
+| B4_v1_structural_temporal | 227 | 0.203 | 1.113 | 0.672 | 0.000 | 0.240 | 0.100 | 0.233 | 0.152 | 0.441 | 10.110 / 23.050 |
+| B5_v2_full | 158 | 0.481 | 0.775 | 0.196 | 0.500 | 0.400 | 0.167 | 0.317 | 0.366 | 0.640 | 12.060 / 41.040 |
 
 ### By family (detection rate for suspicious, false-positive rate for benign)
 
@@ -222,5 +222,5 @@ Matching rule: A prediction matches a scenario when >= 50% of its accounts belon
 
 | Method | Transactions | Accounts | Formations | Wall time s | Partial |
 |---|---|---|---|---|---|
-| B5_v2_full | 55157 | 14549 | 1803 | 32.7 | cycle_budget_exceeded:KZT |
-| B4_v1 | 55157 | 14549 | 1157 | 15.65 | no |
+| B5_v2_full | 55157 | 14549 | 1803 | 33.0 | cycle_budget_exceeded:KZT |
+| B4_v1 | 55157 | 14549 | 1157 | 16.54 | no |

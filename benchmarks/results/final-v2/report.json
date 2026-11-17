@@ -3,14 +3,14 @@
  "disclaimer": "SYNTHETIC BENCHMARK. All networks, labels and metrics come from the NEXORA synthetic scenario generator, not from bank data. Results describe behaviour on this synthetic distribution only and are not estimates of real-world fraud detection accuracy.",
  "run": {
   "label": "final-v2",
-  "created_at": "2026-11-17T06:36:11+00:00",
-  "duration_s": 75.5,
+  "created_at": "2026-11-17T06:49:43+00:00",
+  "duration_s": 74.1,
   "splits_evaluated": [
    "dev",
    "val",
    "test"
   ],
-  "code_commit": "167d4fb4a4325ae70722446f4100b9a35b271c92",
+  "code_commit": "bf35e95618db90410864c7a033244d0462393879",
   "code_dirty": false,
   "python": "3.13.18",
   "networkx": "3.7",
@@ -599,10 +599,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 2.07,
-     "p95": 4.12,
-     "max": 7.52,
-     "per_1000_transactions": 8.25
+     "median": 1.93,
+     "p95": 3.9,
+     "max": 6.15,
+     "per_1000_transactions": 7.77
     },
     "partial_networks": 0,
     "networks": 204,
@@ -983,10 +983,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 3.77,
-     "p95": 6.3,
-     "max": 8.67,
-     "per_1000_transactions": 14.9
+     "median": 4.29,
+     "p95": 8.16,
+     "max": 11.2,
+     "per_1000_transactions": 17.19
     },
     "partial_networks": 0,
     "networks": 204,
@@ -1369,10 +1369,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 2.6,
-     "p95": 5.83,
-     "max": 29.25,
-     "per_1000_transactions": 12.19
+     "median": 3.15,
+     "p95": 7.22,
+     "max": 36.92,
+     "per_1000_transactions": 14.51
     },
     "partial_networks": 0,
     "networks": 204,
@@ -1763,10 +1763,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 9.38,
-     "p95": 21.96,
-     "max": 341.72,
-     "per_1000_transactions": 52.83
+     "median": 8.98,
+     "p95": 24.45,
+     "max": 372.64,
+     "per_1000_transactions": 53.24
     },
     "partial_networks": 0,
     "networks": 204,
@@ -2154,10 +2154,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 7.56,
-     "p95": 29.57,
-     "max": 281.78,
-     "per_1000_transactions": 43.12
+     "median": 9.1,
+     "p95": 31.59,
+     "max": 348.69,
+     "per_1000_transactions": 49.92
     },
     "partial_networks": 0,
     "networks": 204,
@@ -2549,10 +2549,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 13.88,
-     "p95": 47.18,
-     "max": 383.31,
-     "per_1000_transactions": 79.62
+     "median": 14.36,
+     "p95": 46.94,
+     "max": 376.68,
+     "per_1000_transactions": 80.39
     },
     "partial_networks": 0,
     "networks": 204,
@@ -2931,10 +2931,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 1.88,
-     "p95": 4.63,
-     "max": 6.64,
-     "per_1000_transactions": 8.09
+     "median": 2.25,
+     "p95": 4.1,
+     "max": 8.43,
+     "per_1000_transactions": 8.98
     },
     "partial_networks": 0,
     "networks": 136,
@@ -3311,10 +3311,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 4.1,
-     "p95": 7.64,
-     "max": 33.88,
-     "per_1000_transactions": 17.84
+     "median": 4.2,
+     "p95": 8.78,
+     "max": 39.38,
+     "per_1000_transactions": 18.83
     },
     "partial_networks": 0,
     "networks": 136,
@@ -3693,10 +3693,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 3.26,
-     "p95": 6.5,
-     "max": 23.62,
-     "per_1000_transactions": 14.57
+     "median": 2.84,
+     "p95": 5.82,
+     "max": 17.32,
+     "per_1000_transactions": 11.97
     },
     "partial_networks": 0,
     "networks": 136,
@@ -4086,10 +4086,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 9.51,
-     "p95": 44.36,
-     "max": 158.42,
-     "per_1000_transactions": 54.48
+     "median": 9.57,
+     "p95": 42.06,
+     "max": 139.91,
+     "per_1000_transactions": 53.88
     },
     "partial_networks": 0,
     "networks": 136,
@@ -4477,10 +4477,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 9.79,
-     "p95": 28.76,
-     "max": 173.98,
-     "per_1000_transactions": 55.45
+     "median": 9.86,
+     "p95": 27.16,
+     "max": 168.12,
+     "per_1000_transactions": 54.67
     },
     "partial_networks": 0,
     "networks": 136,
@@ -4870,10 +4870,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 14.74,
-     "p95": 39.85,
-     "max": 137.69,
-     "per_1000_transactions": 73.66
+     "median": 12.21,
+     "p95": 38.76,
+     "max": 130.22,
+     "per_1000_transactions": 68.53
     },
     "partial_networks": 0,
     "networks": 136,
@@ -5255,10 +5255,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 1.97,
-     "p95": 4.78,
-     "max": 38.2,
-     "per_1000_transactions": 8.77
+     "median": 2.09,
+     "p95": 4.44,
+     "max": 37.01,
+     "per_1000_transactions": 9.18
     },
     "partial_networks": 0,
     "networks": 204,
@@ -5640,10 +5640,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 3.94,
-     "p95": 7.35,
-     "max": 12.89,
-     "per_1000_transactions": 15.76
+     "median": 3.57,
+     "p95": 6.32,
+     "max": 10.65,
+     "per_1000_transactions": 13.98
     },
     "partial_networks": 0,
     "networks": 204,
@@ -6027,10 +6027,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 3.46,
-     "p95": 7.54,
-     "max": 38.1,
-     "per_1000_transactions": 15.38
+     "median": 2.63,
+     "p95": 5.15,
+     "max": 22.7,
+     "per_1000_transactions": 11.35
     },
     "partial_networks": 0,
     "networks": 204,
@@ -6419,10 +6419,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 10.01,
-     "p95": 23.75,
-     "max": 259.2,
-     "per_1000_transactions": 54.67
+     "median": 9.17,
+     "p95": 19.38,
+     "max": 218.15,
+     "per_1000_transactions": 50.14
     },
     "partial_networks": 0,
     "networks": 204,
@@ -6806,10 +6806,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 10.15,
-     "p95": 24.18,
-     "max": 246.28,
-     "per_1000_transactions": 54.72
+     "median": 10.11,
+     "p95": 23.05,
+     "max": 196.91,
+     "per_1000_transactions": 53.67
     },
     "partial_networks": 0,
     "networks": 204,
@@ -7197,10 +7197,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 14.54,
-     "p95": 44.67,
-     "max": 286.47,
-     "per_1000_transactions": 76.66
+     "median": 12.06,
+     "p95": 41.04,
+     "max": 226.79,
+     "per_1000_transactions": 64.57
     },
     "partial_networks": 0,
     "networks": 204,
@@ -7511,9 +7511,9 @@
       ]
      },
      {
-      "network_id": "dev-H1_crowdfunding-001",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
+      "network_id": "dev-H2_microfinance_hub-000",
+      "family": "H2_microfinance_hub",
+      "variant": "standard",
       "difficulty": "hard",
       "expected": "lookalike",
       "reason": "alerted:funnel",
@@ -7524,6 +7524,67 @@
         "score": 1035,
         "reasons": [
          "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_CONTRADICTED",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H3_tight_supplier_chain-000",
+      "family": "H3_tight_supplier_chain",
+      "variant": "tight",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:chain",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "medium",
+        "score": 1021,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_PATH_SUPPORTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H4_reverse_chronology_chain-000",
+      "family": "H4_reverse_chronology_chain",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "no_alert",
+      "reason": "alerted:chain",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "medium",
+        "score": 1021,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_CONTRADICTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H5_payout_sweep-003",
+      "family": "H5_payout_sweep",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1021,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
          "TEMPORAL_PASS_THROUGH_SUPPORTED",
          "NO_INDEPENDENT_CORROBORATION"
         ]
@@ -7531,11 +7592,41 @@
       ]
      },
      {
-      "network_id": "dev-H1_crowdfunding-002",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
+      "network_id": "dev-H6_reciprocal_trading-001",
+      "family": "H6_reciprocal_trading",
+      "variant": "standard",
       "difficulty": "hard",
-      "expected": "lookalike",
+      "expected": "no_alert",
+      "reason": "alerted:chain+funnel",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "medium",
+        "score": 1021,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_CONTRADICTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       },
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1021,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-N1_merchant_settlement-000",
+      "family": "N1_merchant_settlement",
+      "variant": "small",
+      "difficulty": "hard",
+      "expected": "no_alert",
       "reason": "alerted:funnel",
       "alerts": [
        {
@@ -7552,17 +7643,69 @@
       ]
      },
      {
-      "network_id": "dev-H1_crowdfunding-003",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
+      "network_id": "dev-N2_payroll-000",
+      "family": "N2_payroll",
+      "variant": "monthly",
+      "difficulty": "medium",
+      "expected": "no_alert",
       "reason": "alerted:funnel",
       "alerts": [
        {
         "kind": "funnel",
         "band": "medium",
-        "score": 1035,
+        "score": 1021,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_CONTRADICTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-N3_supplier_payments-000",
+      "family": "N3_supplier_payments",
+      "variant": "standard",
+      "difficulty": "medium",
+      "expected": "no_alert",
+      "reason": "alerted:chain+funnel",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "medium",
+        "score": 1021,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_CONTRADICTED",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       },
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1021,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_CONTRADICTED",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-N4_family_remittance-000",
+      "family": "N4_family_remittance",
+      "variant": "pooling",
+      "difficulty": "medium",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1026,
         "reasons": [
          "STRUCT_FUNNEL_FEEDERS",
          "TEMPORAL_PASS_THROUGH_SUPPORTED",
@@ -7573,60 +7716,20 @@
       ]
      },
      {
-      "network_id": "dev-H1_crowdfunding-004",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
+      "network_id": "dev-N5_group_reimbursement-000",
+      "family": "N5_group_reimbursement",
+      "variant": "standard",
+      "difficulty": "easy",
+      "expected": "no_alert",
       "reason": "alerted:funnel",
       "alerts": [
        {
         "kind": "funnel",
         "band": "medium",
-        "score": 1035,
+        "score": 1021,
         "reasons": [
          "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-005",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1035,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-006",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1035,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "TEMPORAL_CONTRADICTED",
          "COVERAGE_DAY_PRECISION",
          "NO_INDEPENDENT_CORROBORATION"
         ]
@@ -7634,101 +7737,20 @@
       ]
      },
      {
-      "network_id": "dev-H1_crowdfunding-007",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
+      "network_id": "dev-N6_loan_repayment-002",
+      "family": "N6_loan_repayment",
+      "variant": "family_lending",
+      "difficulty": "easy",
+      "expected": "no_alert",
       "reason": "alerted:funnel",
       "alerts": [
        {
         "kind": "funnel",
         "band": "medium",
-        "score": 1030,
+        "score": 1021,
         "reasons": [
          "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-008",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1030,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-009",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1035,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-010",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1035,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-011",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1035,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "TEMPORAL_CONTRADICTED",
          "NO_INDEPENDENT_CORROBORATION"
         ]
        }
@@ -7746,11 +7768,29 @@
       "alerts": []
      },
      {
+      "network_id": "dev-P4_circular_transfers-004",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
       "network_id": "dev-P3_coordinated_distribution-001",
       "family": "P3_coordinated_distribution",
       "variant": "boundary",
       "difficulty": "hard",
       "expected": "abstain",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P4_circular_transfers-008",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
       "reason": "no_candidate",
       "alerts": []
      },
@@ -7764,11 +7804,29 @@
       "alerts": []
      },
      {
+      "network_id": "dev-P4_circular_transfers-009",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
       "network_id": "dev-P3_coordinated_distribution-004",
       "family": "P3_coordinated_distribution",
       "variant": "boundary",
       "difficulty": "hard",
       "expected": "abstain",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P4_circular_transfers-011",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
       "reason": "no_candidate",
       "alerts": []
      },
@@ -7798,46 +7856,28 @@
       "expected": "detect",
       "reason": "no_candidate",
       "alerts": []
-     },
-     {
-      "network_id": "dev-P4_circular_transfers-004",
-      "family": "P4_circular_transfers",
-      "variant": "clean",
-      "difficulty": "easy",
-      "expected": "detect",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "dev-P4_circular_transfers-008",
-      "family": "P4_circular_transfers",
-      "variant": "clean",
-      "difficulty": "easy",
-      "expected": "detect",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "dev-P4_circular_transfers-009",
-      "family": "P4_circular_transfers",
-      "variant": "clean",
-      "difficulty": "easy",
-      "expected": "detect",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "dev-P4_circular_transfers-011",
-      "family": "P4_circular_transfers",
-      "variant": "clean",
-      "difficulty": "easy",
-      "expected": "detect",
-      "reason": "no_candidate",
-      "alerts": []
      }
     ],
     "false_positive_count": 95,
-    "false_negative_count": 11
+    "false_negative_count": 11,
+    "false_positives_by_family": {
+     "H1_crowdfunding": 12,
+     "H2_microfinance_hub": 12,
+     "H3_tight_supplier_chain": 12,
+     "H4_reverse_chronology_chain": 12,
+     "H5_payout_sweep": 4,
+     "H6_reciprocal_trading": 3,
+     "N1_merchant_settlement": 12,
+     "N2_payroll": 3,
+     "N3_supplier_payments": 9,
+     "N4_family_remittance": 4,
+     "N5_group_reimbursement": 9,
+     "N6_loan_repayment": 3
+    },
+    "false_negatives_by_family": {
+     "P3_coordinated_distribution": 7,
+     "P4_circular_transfers": 4
+    }
    },
    "B4_v1_structural_temporal": {
     "false_positives": [
@@ -7861,6 +7901,163 @@
       ]
      },
      {
+      "network_id": "dev-H2_microfinance_hub-006",
+      "family": "H2_microfinance_hub",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2053,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H3_tight_supplier_chain-000",
+      "family": "H3_tight_supplier_chain",
+      "variant": "tight",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:chain",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "high",
+        "score": 2047,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_PATH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H5_payout_sweep-003",
+      "family": "H5_payout_sweep",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2048,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H6_reciprocal_trading-001",
+      "family": "H6_reciprocal_trading",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1039,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-N1_merchant_settlement-000",
+      "family": "N1_merchant_settlement",
+      "variant": "small",
+      "difficulty": "hard",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2058,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-N3_supplier_payments-010",
+      "family": "N3_supplier_payments",
+      "variant": "standard",
+      "difficulty": "medium",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1037,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-N4_family_remittance-000",
+      "family": "N4_family_remittance",
+      "variant": "pooling",
+      "difficulty": "medium",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1041,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-N5_group_reimbursement-002",
+      "family": "N5_group_reimbursement",
+      "variant": "standard",
+      "difficulty": "easy",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1042,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
       "network_id": "dev-H1_crowdfunding-001",
       "family": "H1_crowdfunding",
       "variant": "group_purchase",
@@ -7880,9 +8077,9 @@
       ]
      },
      {
-      "network_id": "dev-H1_crowdfunding-002",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
+      "network_id": "dev-H2_microfinance_hub-009",
+      "family": "H2_microfinance_hub",
+      "variant": "standard",
       "difficulty": "hard",
       "expected": "lookalike",
       "reason": "alerted:funnel",
@@ -7890,7 +8087,7 @@
        {
         "kind": "funnel",
         "band": "high",
-        "score": 2064,
+        "score": 2050,
         "reasons": [
          "STRUCT_FUNNEL_FEEDERS",
          "TEMPORAL_PASS_THROUGH_SUPPORTED",
@@ -7900,175 +8097,21 @@
       ]
      },
      {
-      "network_id": "dev-H1_crowdfunding-003",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
+      "network_id": "dev-H3_tight_supplier_chain-001",
+      "family": "H3_tight_supplier_chain",
+      "variant": "tight",
       "difficulty": "hard",
       "expected": "lookalike",
-      "reason": "alerted:funnel",
+      "reason": "alerted:chain",
       "alerts": [
        {
-        "kind": "funnel",
+        "kind": "chain",
         "band": "high",
-        "score": 2065,
+        "score": 2047,
         "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_PATH_SUPPORTED",
          "COVERAGE_DAY_PRECISION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-004",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2061,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-005",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2064,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-006",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2065,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-007",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2059,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-008",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2057,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-009",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2062,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-010",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2065,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-011",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2065,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
         ]
        }
       ]
@@ -8077,15 +8120,6 @@
     "false_negatives": [
      {
       "network_id": "dev-P1_mule_collection-000",
-      "family": "P1_mule_collection",
-      "variant": "boundary",
-      "difficulty": "hard",
-      "expected": "abstain",
-      "reason": "abstained",
-      "alerts": []
-     },
-     {
-      "network_id": "dev-P1_mule_collection-006",
       "family": "P1_mule_collection",
       "variant": "boundary",
       "difficulty": "hard",
@@ -8103,12 +8137,57 @@
       "alerts": []
      },
      {
+      "network_id": "dev-P4_circular_transfers-004",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P5_split_coordinated-000",
+      "family": "P5_split_coordinated",
+      "variant": "multi_source",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "below_alert_band",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P1_mule_collection-006",
+      "family": "P1_mule_collection",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "abstained",
+      "alerts": []
+     },
+     {
       "network_id": "dev-P3_coordinated_distribution-001",
       "family": "P3_coordinated_distribution",
       "variant": "boundary",
       "difficulty": "hard",
       "expected": "abstain",
       "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P4_circular_transfers-008",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P5_split_coordinated-001",
+      "family": "P5_split_coordinated",
+      "variant": "multi_source",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "below_alert_band",
       "alerts": []
      },
      {
@@ -8121,6 +8200,24 @@
       "alerts": []
      },
      {
+      "network_id": "dev-P4_circular_transfers-009",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P5_split_coordinated-002",
+      "family": "P5_split_coordinated",
+      "variant": "multi_source",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "below_alert_band",
+      "alerts": []
+     },
+     {
       "network_id": "dev-P3_coordinated_distribution-003",
       "family": "P3_coordinated_distribution",
       "variant": "scatter",
@@ -8128,64 +8225,27 @@
       "expected": "detect",
       "reason": "no_candidate",
       "alerts": []
-     },
-     {
-      "network_id": "dev-P3_coordinated_distribution-004",
-      "family": "P3_coordinated_distribution",
-      "variant": "boundary",
-      "difficulty": "hard",
-      "expected": "abstain",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "dev-P3_coordinated_distribution-005",
-      "family": "P3_coordinated_distribution",
-      "variant": "converge",
-      "difficulty": "easy",
-      "expected": "detect",
-      "reason": "below_alert_band",
-      "alerts": []
-     },
-     {
-      "network_id": "dev-P3_coordinated_distribution-007",
-      "family": "P3_coordinated_distribution",
-      "variant": "boundary",
-      "difficulty": "hard",
-      "expected": "abstain",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "dev-P3_coordinated_distribution-008",
-      "family": "P3_coordinated_distribution",
-      "variant": "scatter",
-      "difficulty": "medium",
-      "expected": "detect",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "dev-P3_coordinated_distribution-011",
-      "family": "P3_coordinated_distribution",
-      "variant": "scatter",
-      "difficulty": "medium",
-      "expected": "detect",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "dev-P4_circular_transfers-004",
-      "family": "P4_circular_transfers",
-      "variant": "clean",
-      "difficulty": "easy",
-      "expected": "detect",
-      "reason": "no_candidate",
-      "alerts": []
      }
     ],
     "false_positive_count": 48,
-    "false_negative_count": 21
+    "false_negative_count": 21,
+    "false_positives_by_family": {
+     "H1_crowdfunding": 12,
+     "H2_microfinance_hub": 2,
+     "H3_tight_supplier_chain": 12,
+     "H5_payout_sweep": 3,
+     "H6_reciprocal_trading": 2,
+     "N1_merchant_settlement": 12,
+     "N3_supplier_payments": 1,
+     "N4_family_remittance": 3,
+     "N5_group_reimbursement": 1
+    },
+    "false_negatives_by_family": {
+     "P1_mule_collection": 2,
+     "P3_coordinated_distribution": 9,
+     "P4_circular_transfers": 4,
+     "P5_split_coordinated": 6
+    }
    },
    "B5_v2_full": {
     "false_positives": [
@@ -8209,6 +8269,152 @@
       ]
      },
      {
+      "network_id": "dev-H2_microfinance_hub-009",
+      "family": "H2_microfinance_hub",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1048,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION",
+         "BENIGN_CONTEXT",
+         "BAND_CAPPED_BY_EVIDENCE"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H3_tight_supplier_chain-000",
+      "family": "H3_tight_supplier_chain",
+      "variant": "tight",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:chain",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "high",
+        "score": 2045,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_PATH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-H5_payout_sweep-000",
+      "family": "H5_payout_sweep",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:fanout",
+      "alerts": [
+       {
+        "kind": "fanout",
+        "band": "high",
+        "score": 2060,
+        "reasons": [
+         "STRUCT_FANOUT_RECIPIENTS",
+         "TEMPORAL_ONWARD_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-N1_merchant_settlement-001",
+      "family": "N1_merchant_settlement",
+      "variant": "bursty",
+      "difficulty": "medium",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1056,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION",
+         "BENIGN_CONTEXT",
+         "BAND_CAPPED_BY_EVIDENCE"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-N3_supplier_payments-009",
+      "family": "N3_supplier_payments",
+      "variant": "standard",
+      "difficulty": "medium",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1034,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_UNAVAILABLE",
+         "COVERAGE_DOWNSTREAM_UNOBSERVED",
+         "BENIGN_CONTEXT",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-N4_family_remittance-000",
+      "family": "N4_family_remittance",
+      "variant": "pooling",
+      "difficulty": "medium",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1050,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION",
+         "BENIGN_CONTEXT",
+         "BAND_CAPPED_BY_EVIDENCE"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-N5_group_reimbursement-002",
+      "family": "N5_group_reimbursement",
+      "variant": "standard",
+      "difficulty": "easy",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2049,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
       "network_id": "dev-H1_crowdfunding-001",
       "family": "H1_crowdfunding",
       "variant": "group_purchase",
@@ -8228,195 +8434,64 @@
       ]
      },
      {
-      "network_id": "dev-H1_crowdfunding-002",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
+      "network_id": "dev-H3_tight_supplier_chain-001",
+      "family": "H3_tight_supplier_chain",
+      "variant": "tight",
       "difficulty": "hard",
       "expected": "lookalike",
-      "reason": "alerted:funnel",
+      "reason": "alerted:chain",
       "alerts": [
        {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2061,
+        "kind": "chain",
+        "band": "medium",
+        "score": 1038,
         "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_PATH_SUPPORTED",
          "COVERAGE_DAY_PRECISION"
         ]
        }
       ]
      },
      {
-      "network_id": "dev-H1_crowdfunding-003",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
+      "network_id": "dev-H5_payout_sweep-001",
+      "family": "H5_payout_sweep",
+      "variant": "standard",
       "difficulty": "hard",
       "expected": "lookalike",
+      "reason": "alerted:fanout",
+      "alerts": [
+       {
+        "kind": "fanout",
+        "band": "medium",
+        "score": 1047,
+        "reasons": [
+         "STRUCT_FANOUT_RECIPIENTS",
+         "TEMPORAL_SAME_DAY_AMBIGUOUS",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "dev-N1_merchant_settlement-007",
+      "family": "N1_merchant_settlement",
+      "variant": "bursty",
+      "difficulty": "medium",
+      "expected": "no_alert",
       "reason": "alerted:funnel",
       "alerts": [
        {
         "kind": "funnel",
-        "band": "high",
-        "score": 2053,
+        "band": "medium",
+        "score": 1054,
         "reasons": [
          "STRUCT_FUNNEL_FEEDERS",
          "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-004",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2060,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-005",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2061,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-006",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2062,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-007",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2063,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-008",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2058,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-009",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2058,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-010",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2061,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "dev-H1_crowdfunding-011",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2064,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+         "COVERAGE_DAY_PRECISION",
+         "BENIGN_CONTEXT",
+         "BAND_CAPPED_BY_EVIDENCE"
         ]
        }
       ]
@@ -8433,8 +8508,8 @@
       "alerts": []
      },
      {
-      "network_id": "dev-P1_mule_collection-006",
-      "family": "P1_mule_collection",
+      "network_id": "dev-P3_coordinated_distribution-001",
+      "family": "P3_coordinated_distribution",
       "variant": "boundary",
       "difficulty": "hard",
       "expected": "abstain",
@@ -8442,8 +8517,17 @@
       "alerts": []
      },
      {
-      "network_id": "dev-P3_coordinated_distribution-001",
-      "family": "P3_coordinated_distribution",
+      "network_id": "dev-P5_split_coordinated-008",
+      "family": "P5_split_coordinated",
+      "variant": "multi_source",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "below_alert_band",
+      "alerts": []
+     },
+     {
+      "network_id": "dev-P1_mule_collection-006",
+      "family": "P1_mule_collection",
       "variant": "boundary",
       "difficulty": "hard",
       "expected": "abstain",
@@ -8467,19 +8551,25 @@
       "expected": "abstain",
       "reason": "abstained",
       "alerts": []
-     },
-     {
-      "network_id": "dev-P5_split_coordinated-008",
-      "family": "P5_split_coordinated",
-      "variant": "multi_source",
-      "difficulty": "medium",
-      "expected": "detect",
-      "reason": "below_alert_band",
-      "alerts": []
      }
     ],
     "false_positive_count": 45,
-    "false_negative_count": 6
+    "false_negative_count": 6,
+    "false_positives_by_family": {
+     "H1_crowdfunding": 12,
+     "H2_microfinance_hub": 1,
+     "H3_tight_supplier_chain": 11,
+     "H5_payout_sweep": 12,
+     "N1_merchant_settlement": 3,
+     "N3_supplier_payments": 2,
+     "N4_family_remittance": 3,
+     "N5_group_reimbursement": 1
+    },
+    "false_negatives_by_family": {
+     "P1_mule_collection": 2,
+     "P3_coordinated_distribution": 3,
+     "P5_split_coordinated": 1
+    }
    }
   },
   "val": {
@@ -8489,150 +8579,6 @@
       "network_id": "val-H1_crowdfunding-000",
       "family": "H1_crowdfunding",
       "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1035,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-001",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1026,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-002",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1035,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-003",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1035,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-004",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1035,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-005",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1026,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-006",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1030,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-007",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
       "difficulty": "hard",
       "expected": "lookalike",
       "reason": "alerted:funnel",
@@ -8670,8 +8616,49 @@
       ]
      },
      {
-      "network_id": "val-H2_microfinance_hub-001",
-      "family": "H2_microfinance_hub",
+      "network_id": "val-H3_tight_supplier_chain-000",
+      "family": "H3_tight_supplier_chain",
+      "variant": "tight",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:chain",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "medium",
+        "score": 1021,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_PATH_SUPPORTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H4_reverse_chronology_chain-000",
+      "family": "H4_reverse_chronology_chain",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "no_alert",
+      "reason": "alerted:chain",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "medium",
+        "score": 1028,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_CONTRADICTED",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H5_payout_sweep-002",
+      "family": "H5_payout_sweep",
       "variant": "standard",
       "difficulty": "hard",
       "expected": "lookalike",
@@ -8680,7 +8667,28 @@
        {
         "kind": "funnel",
         "band": "medium",
-        "score": 1026,
+        "score": 1021,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H6_reciprocal_trading-001",
+      "family": "H6_reciprocal_trading",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1021,
         "reasons": [
          "STRUCT_FUNNEL_FEEDERS",
          "TEMPORAL_CONTRADICTED",
@@ -8691,17 +8699,87 @@
       ]
      },
      {
-      "network_id": "val-H2_microfinance_hub-002",
-      "family": "H2_microfinance_hub",
-      "variant": "standard",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
+      "network_id": "val-N1_merchant_settlement-000",
+      "family": "N1_merchant_settlement",
+      "variant": "bursty",
+      "difficulty": "medium",
+      "expected": "no_alert",
+      "reason": "alerted:chain+funnel",
       "alerts": [
        {
         "kind": "funnel",
         "band": "medium",
         "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       },
+       {
+        "kind": "chain",
+        "band": "medium",
+        "score": 1021,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_CONTRADICTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-N2_payroll-000",
+      "family": "N2_payroll",
+      "variant": "monthly",
+      "difficulty": "medium",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1021,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_CONTRADICTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-N3_supplier_payments-000",
+      "family": "N3_supplier_payments",
+      "variant": "standard",
+      "difficulty": "medium",
+      "expected": "no_alert",
+      "reason": "alerted:chain",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "medium",
+        "score": 1028,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_CONTRADICTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-N4_family_remittance-002",
+      "family": "N4_family_remittance",
+      "variant": "pooling",
+      "difficulty": "medium",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1021,
         "reasons": [
          "STRUCT_FUNNEL_FEEDERS",
          "TEMPORAL_CONTRADICTED",
@@ -8712,21 +8790,41 @@
       ]
      },
      {
-      "network_id": "val-H2_microfinance_hub-003",
-      "family": "H2_microfinance_hub",
+      "network_id": "val-N5_group_reimbursement-003",
+      "family": "N5_group_reimbursement",
       "variant": "standard",
-      "difficulty": "hard",
-      "expected": "lookalike",
+      "difficulty": "easy",
+      "expected": "no_alert",
       "reason": "alerted:funnel",
       "alerts": [
        {
         "kind": "funnel",
         "band": "medium",
-        "score": 1035,
+        "score": 1030,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_SAME_DAY_AMBIGUOUS",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-N6_loan_repayment-002",
+      "family": "N6_loan_repayment",
+      "variant": "family_lending",
+      "difficulty": "easy",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1021,
         "reasons": [
          "STRUCT_FUNNEL_FEEDERS",
          "TEMPORAL_CONTRADICTED",
-         "COVERAGE_DAY_PRECISION",
          "NO_INDEPENDENT_CORROBORATION"
         ]
        }
@@ -8744,42 +8842,6 @@
       "alerts": []
      },
      {
-      "network_id": "val-P3_coordinated_distribution-003",
-      "family": "P3_coordinated_distribution",
-      "variant": "boundary",
-      "difficulty": "hard",
-      "expected": "abstain",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "val-P3_coordinated_distribution-004",
-      "family": "P3_coordinated_distribution",
-      "variant": "scatter",
-      "difficulty": "medium",
-      "expected": "detect",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "val-P3_coordinated_distribution-005",
-      "family": "P3_coordinated_distribution",
-      "variant": "scatter",
-      "difficulty": "medium",
-      "expected": "detect",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "val-P3_coordinated_distribution-006",
-      "family": "P3_coordinated_distribution",
-      "variant": "scatter",
-      "difficulty": "medium",
-      "expected": "detect",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
       "network_id": "val-P4_circular_transfers-000",
       "family": "P4_circular_transfers",
       "variant": "clean",
@@ -8789,10 +8851,28 @@
       "alerts": []
      },
      {
+      "network_id": "val-P3_coordinated_distribution-003",
+      "family": "P3_coordinated_distribution",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
       "network_id": "val-P4_circular_transfers-001",
       "family": "P4_circular_transfers",
       "variant": "clean",
       "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P3_coordinated_distribution-004",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
       "expected": "detect",
       "reason": "no_candidate",
       "alerts": []
@@ -8807,6 +8887,15 @@
       "alerts": []
      },
      {
+      "network_id": "val-P3_coordinated_distribution-005",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
       "network_id": "val-P4_circular_transfers-007",
       "family": "P4_circular_transfers",
       "variant": "clean",
@@ -8814,10 +8903,37 @@
       "expected": "detect",
       "reason": "no_candidate",
       "alerts": []
+     },
+     {
+      "network_id": "val-P3_coordinated_distribution-006",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
      }
     ],
     "false_positive_count": 66,
-    "false_negative_count": 9
+    "false_negative_count": 9,
+    "false_positives_by_family": {
+     "H1_crowdfunding": 8,
+     "H2_microfinance_hub": 8,
+     "H3_tight_supplier_chain": 8,
+     "H4_reverse_chronology_chain": 8,
+     "H5_payout_sweep": 3,
+     "H6_reciprocal_trading": 6,
+     "N1_merchant_settlement": 8,
+     "N2_payroll": 3,
+     "N3_supplier_payments": 5,
+     "N4_family_remittance": 3,
+     "N5_group_reimbursement": 3,
+     "N6_loan_repayment": 3
+    },
+    "false_negatives_by_family": {
+     "P3_coordinated_distribution": 5,
+     "P4_circular_transfers": 4
+    }
    },
    "B4_v1_structural_temporal": {
     "false_positives": [
@@ -8833,143 +8949,6 @@
         "kind": "funnel",
         "band": "high",
         "score": 2064,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-001",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2052,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-002",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2065,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-003",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2065,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-004",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2065,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-005",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2054,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-006",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2056,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-007",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2062,
         "reasons": [
          "STRUCT_FUNNEL_FEEDERS",
          "TEMPORAL_PASS_THROUGH_SUPPORTED"
@@ -9016,6 +8995,124 @@
       ]
      },
      {
+      "network_id": "val-H5_payout_sweep-002",
+      "family": "H5_payout_sweep",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2048,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H6_reciprocal_trading-003",
+      "family": "H6_reciprocal_trading",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "no_alert",
+      "reason": "alerted:chain",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "medium",
+        "score": 1037,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_PATH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-N1_merchant_settlement-000",
+      "family": "N1_merchant_settlement",
+      "variant": "bursty",
+      "difficulty": "medium",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2064,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-N4_family_remittance-006",
+      "family": "N4_family_remittance",
+      "variant": "pooling",
+      "difficulty": "medium",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1042,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-N5_group_reimbursement-003",
+      "family": "N5_group_reimbursement",
+      "variant": "standard",
+      "difficulty": "easy",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1042,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_SAME_DAY_AMBIGUOUS",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H1_crowdfunding-001",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2052,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
       "network_id": "val-H3_tight_supplier_chain-001",
       "family": "H3_tight_supplier_chain",
       "variant": "tight",
@@ -9035,9 +9132,9 @@
       ]
      },
      {
-      "network_id": "val-H3_tight_supplier_chain-002",
-      "family": "H3_tight_supplier_chain",
-      "variant": "tight",
+      "network_id": "val-H5_payout_sweep-007",
+      "family": "H5_payout_sweep",
+      "variant": "standard",
       "difficulty": "hard",
       "expected": "lookalike",
       "reason": "alerted:funnel",
@@ -9045,7 +9142,26 @@
        {
         "kind": "funnel",
         "band": "medium",
-        "score": 1039,
+        "score": 1041,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H6_reciprocal_trading-004",
+      "family": "H6_reciprocal_trading",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1038,
         "reasons": [
          "STRUCT_FUNNEL_FEEDERS",
          "TEMPORAL_PASS_THROUGH_SUPPORTED",
@@ -9066,52 +9182,7 @@
       "alerts": []
      },
      {
-      "network_id": "val-P1_mule_collection-007",
-      "family": "P1_mule_collection",
-      "variant": "boundary",
-      "difficulty": "hard",
-      "expected": "abstain",
-      "reason": "abstained",
-      "alerts": []
-     },
-     {
       "network_id": "val-P3_coordinated_distribution-002",
-      "family": "P3_coordinated_distribution",
-      "variant": "scatter",
-      "difficulty": "medium",
-      "expected": "detect",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "val-P3_coordinated_distribution-003",
-      "family": "P3_coordinated_distribution",
-      "variant": "boundary",
-      "difficulty": "hard",
-      "expected": "abstain",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "val-P3_coordinated_distribution-004",
-      "family": "P3_coordinated_distribution",
-      "variant": "scatter",
-      "difficulty": "medium",
-      "expected": "detect",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "val-P3_coordinated_distribution-005",
-      "family": "P3_coordinated_distribution",
-      "variant": "scatter",
-      "difficulty": "medium",
-      "expected": "detect",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "val-P3_coordinated_distribution-006",
       "family": "P3_coordinated_distribution",
       "variant": "scatter",
       "difficulty": "medium",
@@ -9129,10 +9200,55 @@
       "alerts": []
      },
      {
+      "network_id": "val-P5_split_coordinated-000",
+      "family": "P5_split_coordinated",
+      "variant": "single_source",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "below_alert_band",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P1_mule_collection-007",
+      "family": "P1_mule_collection",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "abstained",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P3_coordinated_distribution-003",
+      "family": "P3_coordinated_distribution",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
       "network_id": "val-P4_circular_transfers-001",
       "family": "P4_circular_transfers",
       "variant": "clean",
       "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P5_split_coordinated-001",
+      "family": "P5_split_coordinated",
+      "variant": "single_source",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "below_alert_band",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P3_coordinated_distribution-004",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
       "expected": "detect",
       "reason": "no_candidate",
       "alerts": []
@@ -9147,26 +9263,42 @@
       "alerts": []
      },
      {
-      "network_id": "val-P4_circular_transfers-007",
-      "family": "P4_circular_transfers",
-      "variant": "clean",
-      "difficulty": "easy",
-      "expected": "detect",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "val-P5_split_coordinated-000",
+      "network_id": "val-P5_split_coordinated-003",
       "family": "P5_split_coordinated",
-      "variant": "single_source",
+      "variant": "multi_source",
       "difficulty": "medium",
       "expected": "detect",
       "reason": "below_alert_band",
       "alerts": []
+     },
+     {
+      "network_id": "val-P3_coordinated_distribution-005",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
      }
     ],
     "false_positive_count": 34,
-    "false_negative_count": 16
+    "false_negative_count": 16,
+    "false_positives_by_family": {
+     "H1_crowdfunding": 8,
+     "H2_microfinance_hub": 1,
+     "H3_tight_supplier_chain": 8,
+     "H5_payout_sweep": 2,
+     "H6_reciprocal_trading": 3,
+     "N1_merchant_settlement": 8,
+     "N4_family_remittance": 1,
+     "N5_group_reimbursement": 3
+    },
+    "false_negatives_by_family": {
+     "P1_mule_collection": 2,
+     "P3_coordinated_distribution": 5,
+     "P4_circular_transfers": 4,
+     "P5_split_coordinated": 5
+    }
    },
    "B5_v2_full": {
     "false_positives": [
@@ -9182,143 +9314,6 @@
         "kind": "funnel",
         "band": "high",
         "score": 2062,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-001",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2060,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-002",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2062,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-003",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2059,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-004",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2062,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-005",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2060,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-006",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2059,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "val-H1_crowdfunding-007",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2058,
         "reasons": [
          "STRUCT_FUNNEL_FEEDERS",
          "TEMPORAL_PASS_THROUGH_SUPPORTED"
@@ -9367,6 +9362,106 @@
       ]
      },
      {
+      "network_id": "val-H5_payout_sweep-000",
+      "family": "H5_payout_sweep",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:fanout",
+      "alerts": [
+       {
+        "kind": "fanout",
+        "band": "high",
+        "score": 2052,
+        "reasons": [
+         "STRUCT_FANOUT_RECIPIENTS",
+         "TEMPORAL_ONWARD_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H6_reciprocal_trading-003",
+      "family": "H6_reciprocal_trading",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "no_alert",
+      "reason": "alerted:chain",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "medium",
+        "score": 1037,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_PATH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-N4_family_remittance-006",
+      "family": "N4_family_remittance",
+      "variant": "pooling",
+      "difficulty": "medium",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2051,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-N5_group_reimbursement-003",
+      "family": "N5_group_reimbursement",
+      "variant": "standard",
+      "difficulty": "easy",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1042,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_SAME_DAY_AMBIGUOUS",
+         "COVERAGE_DAY_PRECISION",
+         "BENIGN_CONTEXT",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H1_crowdfunding-001",
+      "family": "H1_crowdfunding",
+      "variant": "group_purchase",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2060,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
       "network_id": "val-H3_tight_supplier_chain-001",
       "family": "H3_tight_supplier_chain",
       "variant": "tight",
@@ -9386,21 +9481,63 @@
       ]
      },
      {
-      "network_id": "val-H3_tight_supplier_chain-002",
-      "family": "H3_tight_supplier_chain",
-      "variant": "tight",
+      "network_id": "val-H5_payout_sweep-001",
+      "family": "H5_payout_sweep",
+      "variant": "standard",
       "difficulty": "hard",
       "expected": "lookalike",
+      "reason": "alerted:fanout",
+      "alerts": [
+       {
+        "kind": "fanout",
+        "band": "high",
+        "score": 2051,
+        "reasons": [
+         "STRUCT_FANOUT_RECIPIENTS",
+         "TEMPORAL_ONWARD_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-H6_reciprocal_trading-007",
+      "family": "H6_reciprocal_trading",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "no_alert",
       "reason": "alerted:funnel",
       "alerts": [
        {
         "kind": "funnel",
-        "band": "high",
-        "score": 2047,
+        "band": "medium",
+        "score": 1039,
         "reasons": [
          "STRUCT_FUNNEL_FEEDERS",
          "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION"
+         "BENIGN_CONTEXT"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "val-N5_group_reimbursement-005",
+      "family": "N5_group_reimbursement",
+      "variant": "standard",
+      "difficulty": "easy",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1047,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_SAME_DAY_AMBIGUOUS",
+         "COVERAGE_DAY_PRECISION",
+         "BENIGN_CONTEXT",
+         "NO_INDEPENDENT_CORROBORATION"
         ]
        }
       ]
@@ -9417,25 +9554,7 @@
       "alerts": []
      },
      {
-      "network_id": "val-P1_mule_collection-007",
-      "family": "P1_mule_collection",
-      "variant": "boundary",
-      "difficulty": "hard",
-      "expected": "abstain",
-      "reason": "abstained",
-      "alerts": []
-     },
-     {
       "network_id": "val-P2_layering_chain-002",
-      "family": "P2_layering_chain",
-      "variant": "noisy",
-      "difficulty": "medium",
-      "expected": "detect",
-      "reason": "below_alert_band",
-      "alerts": []
-     },
-     {
-      "network_id": "val-P2_layering_chain-005",
       "family": "P2_layering_chain",
       "variant": "noisy",
       "difficulty": "medium",
@@ -9462,6 +9581,24 @@
       "alerts": []
      },
      {
+      "network_id": "val-P1_mule_collection-007",
+      "family": "P1_mule_collection",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "abstained",
+      "alerts": []
+     },
+     {
+      "network_id": "val-P2_layering_chain-005",
+      "family": "P2_layering_chain",
+      "variant": "noisy",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "below_alert_band",
+      "alerts": []
+     },
+     {
       "network_id": "val-P5_split_coordinated-004",
       "family": "P5_split_coordinated",
       "variant": "multi_source",
@@ -9472,7 +9609,22 @@
      }
     ],
     "false_positive_count": 29,
-    "false_negative_count": 7
+    "false_negative_count": 7,
+    "false_positives_by_family": {
+     "H1_crowdfunding": 8,
+     "H2_microfinance_hub": 1,
+     "H3_tight_supplier_chain": 7,
+     "H5_payout_sweep": 8,
+     "H6_reciprocal_trading": 2,
+     "N4_family_remittance": 1,
+     "N5_group_reimbursement": 2
+    },
+    "false_negatives_by_family": {
+     "P1_mule_collection": 2,
+     "P2_layering_chain": 2,
+     "P3_coordinated_distribution": 1,
+     "P5_split_coordinated": 2
+    }
    }
   },
   "test": {
@@ -9500,11 +9652,176 @@
       ]
      },
      {
-      "network_id": "test-H1_crowdfunding-001",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
+      "network_id": "test-H2_microfinance_hub-000",
+      "family": "H2_microfinance_hub",
+      "variant": "standard",
       "difficulty": "hard",
       "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-H3_tight_supplier_chain-000",
+      "family": "H3_tight_supplier_chain",
+      "variant": "tight",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:chain",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "medium",
+        "score": 1021,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_PATH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-H4_reverse_chronology_chain-000",
+      "family": "H4_reverse_chronology_chain",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "no_alert",
+      "reason": "alerted:chain",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_CONTRADICTED",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-H5_payout_sweep-002",
+      "family": "H5_payout_sweep",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1021,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-H6_reciprocal_trading-000",
+      "family": "H6_reciprocal_trading",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "no_alert",
+      "reason": "alerted:chain",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "medium",
+        "score": 1021,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_CONTRADICTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-N1_merchant_settlement-000",
+      "family": "N1_merchant_settlement",
+      "variant": "standard",
+      "difficulty": "medium",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1035,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-N2_payroll-004",
+      "family": "N2_payroll",
+      "variant": "biweekly",
+      "difficulty": "medium",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1021,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_CONTRADICTED",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-N3_supplier_payments-001",
+      "family": "N3_supplier_payments",
+      "variant": "standard",
+      "difficulty": "medium",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1021,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_UNAVAILABLE",
+         "COVERAGE_DOWNSTREAM_UNOBSERVED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-N4_family_remittance-001",
+      "family": "N4_family_remittance",
+      "variant": "pooling",
+      "difficulty": "medium",
+      "expected": "no_alert",
       "reason": "alerted:funnel",
       "alerts": [
        {
@@ -9513,211 +9830,47 @@
         "score": 1030,
         "reasons": [
          "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "TEMPORAL_CONTRADICTED",
          "NO_INDEPENDENT_CORROBORATION"
         ]
        }
       ]
      },
      {
-      "network_id": "test-H1_crowdfunding-002",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
+      "network_id": "test-N5_group_reimbursement-000",
+      "family": "N5_group_reimbursement",
+      "variant": "standard",
+      "difficulty": "easy",
+      "expected": "no_alert",
       "reason": "alerted:funnel",
       "alerts": [
        {
         "kind": "funnel",
         "band": "medium",
-        "score": 1035,
+        "score": 1021,
         "reasons": [
          "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION",
+         "TEMPORAL_CONTRADICTED",
          "NO_INDEPENDENT_CORROBORATION"
         ]
        }
       ]
      },
      {
-      "network_id": "test-H1_crowdfunding-003",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
+      "network_id": "test-N6_loan_repayment-000",
+      "family": "N6_loan_repayment",
+      "variant": "family_lending",
+      "difficulty": "easy",
+      "expected": "no_alert",
       "reason": "alerted:funnel",
       "alerts": [
        {
         "kind": "funnel",
         "band": "medium",
-        "score": 1035,
+        "score": 1021,
         "reasons": [
          "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-004",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1035,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-005",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1035,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-006",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1035,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-007",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1035,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-008",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1035,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-009",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1035,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-010",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1035,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "NO_INDEPENDENT_CORROBORATION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-011",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "medium",
-        "score": 1035,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "TEMPORAL_CONTRADICTED",
          "NO_INDEPENDENT_CORROBORATION"
         ]
        }
@@ -9735,72 +9888,18 @@
       "alerts": []
      },
      {
-      "network_id": "test-P3_coordinated_distribution-001",
-      "family": "P3_coordinated_distribution",
-      "variant": "scatter",
-      "difficulty": "medium",
-      "expected": "detect",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "test-P3_coordinated_distribution-003",
-      "family": "P3_coordinated_distribution",
-      "variant": "boundary",
-      "difficulty": "hard",
-      "expected": "abstain",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "test-P3_coordinated_distribution-004",
-      "family": "P3_coordinated_distribution",
-      "variant": "boundary",
-      "difficulty": "hard",
-      "expected": "abstain",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "test-P3_coordinated_distribution-007",
-      "family": "P3_coordinated_distribution",
-      "variant": "boundary",
-      "difficulty": "hard",
-      "expected": "abstain",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "test-P3_coordinated_distribution-008",
-      "family": "P3_coordinated_distribution",
-      "variant": "scatter",
-      "difficulty": "medium",
-      "expected": "detect",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "test-P3_coordinated_distribution-010",
-      "family": "P3_coordinated_distribution",
-      "variant": "boundary",
-      "difficulty": "hard",
-      "expected": "abstain",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "test-P3_coordinated_distribution-011",
-      "family": "P3_coordinated_distribution",
-      "variant": "scatter",
-      "difficulty": "medium",
-      "expected": "detect",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
       "network_id": "test-P4_circular_transfers-002",
       "family": "P4_circular_transfers",
       "variant": "noisy",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "test-P3_coordinated_distribution-001",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
       "difficulty": "medium",
       "expected": "detect",
       "reason": "no_candidate",
@@ -9816,11 +9915,29 @@
       "alerts": []
      },
      {
+      "network_id": "test-P3_coordinated_distribution-003",
+      "family": "P3_coordinated_distribution",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
       "network_id": "test-P4_circular_transfers-004",
       "family": "P4_circular_transfers",
       "variant": "noisy",
       "difficulty": "medium",
       "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "test-P3_coordinated_distribution-004",
+      "family": "P3_coordinated_distribution",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
       "reason": "no_candidate",
       "alerts": []
      },
@@ -9832,10 +9949,64 @@
       "expected": "detect",
       "reason": "no_candidate",
       "alerts": []
+     },
+     {
+      "network_id": "test-P3_coordinated_distribution-007",
+      "family": "P3_coordinated_distribution",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "test-P4_circular_transfers-008",
+      "family": "P4_circular_transfers",
+      "variant": "noisy",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "test-P3_coordinated_distribution-008",
+      "family": "P3_coordinated_distribution",
+      "variant": "scatter",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "test-P4_circular_transfers-009",
+      "family": "P4_circular_transfers",
+      "variant": "clean",
+      "difficulty": "easy",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
      }
     ],
     "false_positive_count": 93,
-    "false_negative_count": 16
+    "false_negative_count": 16,
+    "false_positives_by_family": {
+     "H1_crowdfunding": 12,
+     "H2_microfinance_hub": 12,
+     "H3_tight_supplier_chain": 12,
+     "H4_reverse_chronology_chain": 12,
+     "H5_payout_sweep": 5,
+     "H6_reciprocal_trading": 5,
+     "N1_merchant_settlement": 12,
+     "N2_payroll": 1,
+     "N3_supplier_payments": 9,
+     "N4_family_remittance": 4,
+     "N5_group_reimbursement": 5,
+     "N6_loan_repayment": 4
+    },
+    "false_negatives_by_family": {
+     "P3_coordinated_distribution": 8,
+     "P4_circular_transfers": 8
+    }
    },
    "B4_v1_structural_temporal": {
     "false_positives": [
@@ -9860,6 +10031,103 @@
       ]
      },
      {
+      "network_id": "test-H2_microfinance_hub-000",
+      "family": "H2_microfinance_hub",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2052,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-H3_tight_supplier_chain-000",
+      "family": "H3_tight_supplier_chain",
+      "variant": "tight",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:chain",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "high",
+        "score": 2048,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_PATH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-H5_payout_sweep-002",
+      "family": "H5_payout_sweep",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2048,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-H6_reciprocal_trading-002",
+      "family": "H6_reciprocal_trading",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1043,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-N1_merchant_settlement-000",
+      "family": "N1_merchant_settlement",
+      "variant": "standard",
+      "difficulty": "medium",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2063,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
       "network_id": "test-H1_crowdfunding-001",
       "family": "H1_crowdfunding",
       "variant": "group_purchase",
@@ -9874,6 +10142,85 @@
         "reasons": [
          "STRUCT_FUNNEL_FEEDERS",
          "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-H3_tight_supplier_chain-001",
+      "family": "H3_tight_supplier_chain",
+      "variant": "tight",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:chain",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "high",
+        "score": 2047,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_PATH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-H5_payout_sweep-003",
+      "family": "H5_payout_sweep",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2048,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-H6_reciprocal_trading-007",
+      "family": "H6_reciprocal_trading",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1039,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-N1_merchant_settlement-001",
+      "family": "N1_merchant_settlement",
+      "variant": "standard",
+      "difficulty": "medium",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2062,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
         ]
        }
       ]
@@ -9897,212 +10244,11 @@
         ]
        }
       ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-003",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2065,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-004",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2064,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-005",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2065,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-006",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2062,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-007",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2065,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-008",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2064,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-009",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2061,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-010",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2065,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-011",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2065,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
      }
     ],
     "false_negatives": [
      {
       "network_id": "test-P1_mule_collection-001",
-      "family": "P1_mule_collection",
-      "variant": "boundary",
-      "difficulty": "hard",
-      "expected": "abstain",
-      "reason": "abstained",
-      "alerts": []
-     },
-     {
-      "network_id": "test-P1_mule_collection-007",
-      "family": "P1_mule_collection",
-      "variant": "boundary",
-      "difficulty": "hard",
-      "expected": "abstain",
-      "reason": "abstained",
-      "alerts": []
-     },
-     {
-      "network_id": "test-P1_mule_collection-008",
-      "family": "P1_mule_collection",
-      "variant": "boundary",
-      "difficulty": "hard",
-      "expected": "abstain",
-      "reason": "abstained",
-      "alerts": []
-     },
-     {
-      "network_id": "test-P1_mule_collection-010",
       "family": "P1_mule_collection",
       "variant": "boundary",
       "difficulty": "hard",
@@ -10120,12 +10266,66 @@
       "alerts": []
      },
      {
+      "network_id": "test-P4_circular_transfers-002",
+      "family": "P4_circular_transfers",
+      "variant": "noisy",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "test-P5_split_coordinated-000",
+      "family": "P5_split_coordinated",
+      "variant": "multi_source",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "below_alert_band",
+      "alerts": []
+     },
+     {
+      "network_id": "test-P1_mule_collection-007",
+      "family": "P1_mule_collection",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "abstained",
+      "alerts": []
+     },
+     {
       "network_id": "test-P3_coordinated_distribution-001",
       "family": "P3_coordinated_distribution",
       "variant": "scatter",
       "difficulty": "medium",
       "expected": "detect",
       "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "test-P4_circular_transfers-003",
+      "family": "P4_circular_transfers",
+      "variant": "noisy",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "no_candidate",
+      "alerts": []
+     },
+     {
+      "network_id": "test-P5_split_coordinated-001",
+      "family": "P5_split_coordinated",
+      "variant": "single_source",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "below_alert_band",
+      "alerts": []
+     },
+     {
+      "network_id": "test-P1_mule_collection-008",
+      "family": "P1_mule_collection",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "abstained",
       "alerts": []
      },
      {
@@ -10138,53 +10338,40 @@
       "alerts": []
      },
      {
-      "network_id": "test-P3_coordinated_distribution-004",
-      "family": "P3_coordinated_distribution",
-      "variant": "boundary",
-      "difficulty": "hard",
-      "expected": "abstain",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "test-P3_coordinated_distribution-005",
-      "family": "P3_coordinated_distribution",
-      "variant": "converge",
-      "difficulty": "easy",
-      "expected": "detect",
-      "reason": "below_alert_band",
-      "alerts": []
-     },
-     {
-      "network_id": "test-P3_coordinated_distribution-007",
-      "family": "P3_coordinated_distribution",
-      "variant": "boundary",
-      "difficulty": "hard",
-      "expected": "abstain",
-      "reason": "no_candidate",
-      "alerts": []
-     },
-     {
-      "network_id": "test-P3_coordinated_distribution-008",
-      "family": "P3_coordinated_distribution",
-      "variant": "scatter",
+      "network_id": "test-P4_circular_transfers-004",
+      "family": "P4_circular_transfers",
+      "variant": "noisy",
       "difficulty": "medium",
       "expected": "detect",
       "reason": "no_candidate",
       "alerts": []
      },
      {
-      "network_id": "test-P3_coordinated_distribution-010",
-      "family": "P3_coordinated_distribution",
-      "variant": "boundary",
-      "difficulty": "hard",
-      "expected": "abstain",
-      "reason": "no_candidate",
+      "network_id": "test-P5_split_coordinated-004",
+      "family": "P5_split_coordinated",
+      "variant": "multi_source",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "below_alert_band",
       "alerts": []
      }
     ],
     "false_positive_count": 42,
-    "false_negative_count": 28
+    "false_negative_count": 28,
+    "false_positives_by_family": {
+     "H1_crowdfunding": 12,
+     "H2_microfinance_hub": 1,
+     "H3_tight_supplier_chain": 12,
+     "H5_payout_sweep": 3,
+     "H6_reciprocal_trading": 2,
+     "N1_merchant_settlement": 12
+    },
+    "false_negatives_by_family": {
+     "P1_mule_collection": 4,
+     "P3_coordinated_distribution": 9,
+     "P4_circular_transfers": 8,
+     "P5_split_coordinated": 7
+    }
    },
    "B5_v2_full": {
     "false_positives": [
@@ -10209,6 +10396,86 @@
       ]
      },
      {
+      "network_id": "test-H2_microfinance_hub-000",
+      "family": "H2_microfinance_hub",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1043,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "BENIGN_CONTEXT"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-H3_tight_supplier_chain-000",
+      "family": "H3_tight_supplier_chain",
+      "variant": "tight",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:chain",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "high",
+        "score": 2045,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_PATH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-H5_payout_sweep-000",
+      "family": "H5_payout_sweep",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:fanout",
+      "alerts": [
+       {
+        "kind": "fanout",
+        "band": "high",
+        "score": 2059,
+        "reasons": [
+         "STRUCT_FANOUT_RECIPIENTS",
+         "TEMPORAL_ONWARD_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-N3_supplier_payments-001",
+      "family": "N3_supplier_payments",
+      "variant": "standard",
+      "difficulty": "medium",
+      "expected": "no_alert",
+      "reason": "alerted:funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "medium",
+        "score": 1034,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_UNAVAILABLE",
+         "COVERAGE_DOWNSTREAM_UNOBSERVED",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
       "network_id": "test-H1_crowdfunding-001",
       "family": "H1_crowdfunding",
       "variant": "group_purchase",
@@ -10223,6 +10490,46 @@
         "reasons": [
          "STRUCT_FUNNEL_FEEDERS",
          "TEMPORAL_PASS_THROUGH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-H3_tight_supplier_chain-001",
+      "family": "H3_tight_supplier_chain",
+      "variant": "tight",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:chain",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "medium",
+        "score": 1043,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_PATH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-H5_payout_sweep-001",
+      "family": "H5_payout_sweep",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:fanout",
+      "alerts": [
+       {
+        "kind": "fanout",
+        "band": "medium",
+        "score": 1047,
+        "reasons": [
+         "STRUCT_FANOUT_RECIPIENTS",
+         "TEMPORAL_SAME_DAY_AMBIGUOUS",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
         ]
        }
       ]
@@ -10248,6 +10555,56 @@
       ]
      },
      {
+      "network_id": "test-H3_tight_supplier_chain-002",
+      "family": "H3_tight_supplier_chain",
+      "variant": "tight",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:chain",
+      "alerts": [
+       {
+        "kind": "chain",
+        "band": "high",
+        "score": 2046,
+        "reasons": [
+         "STRUCT_CHAIN_PATH",
+         "TEMPORAL_PATH_SUPPORTED"
+        ]
+       }
+      ]
+     },
+     {
+      "network_id": "test-H5_payout_sweep-002",
+      "family": "H5_payout_sweep",
+      "variant": "standard",
+      "difficulty": "hard",
+      "expected": "lookalike",
+      "reason": "alerted:fanout+funnel",
+      "alerts": [
+       {
+        "kind": "funnel",
+        "band": "high",
+        "score": 2062,
+        "reasons": [
+         "STRUCT_FUNNEL_FEEDERS",
+         "TEMPORAL_PASS_THROUGH_SUPPORTED",
+         "COVERAGE_DAY_PRECISION"
+        ]
+       },
+       {
+        "kind": "fanout",
+        "band": "medium",
+        "score": 1047,
+        "reasons": [
+         "STRUCT_FANOUT_RECIPIENTS",
+         "TEMPORAL_SAME_DAY_AMBIGUOUS",
+         "COVERAGE_DAY_PRECISION",
+         "NO_INDEPENDENT_CORROBORATION"
+        ]
+       }
+      ]
+     },
+     {
       "network_id": "test-H1_crowdfunding-003",
       "family": "H1_crowdfunding",
       "variant": "crowdfunding",
@@ -10265,193 +10622,11 @@
         ]
        }
       ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-004",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2062,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-005",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2063,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-006",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2059,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-007",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2061,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-008",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2061,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-009",
-      "family": "H1_crowdfunding",
-      "variant": "group_purchase",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2059,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED",
-         "COVERAGE_DAY_PRECISION"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-010",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2062,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
-     },
-     {
-      "network_id": "test-H1_crowdfunding-011",
-      "family": "H1_crowdfunding",
-      "variant": "crowdfunding",
-      "difficulty": "hard",
-      "expected": "lookalike",
-      "reason": "alerted:funnel",
-      "alerts": [
-       {
-        "kind": "funnel",
-        "band": "high",
-        "score": 2059,
-        "reasons": [
-         "STRUCT_FUNNEL_FEEDERS",
-         "TEMPORAL_PASS_THROUGH_SUPPORTED"
-        ]
-       }
-      ]
      }
     ],
     "false_negatives": [
      {
       "network_id": "test-P1_mule_collection-001",
-      "family": "P1_mule_collection",
-      "variant": "boundary",
-      "difficulty": "hard",
-      "expected": "abstain",
-      "reason": "abstained",
-      "alerts": []
-     },
-     {
-      "network_id": "test-P1_mule_collection-007",
-      "family": "P1_mule_collection",
-      "variant": "boundary",
-      "difficulty": "hard",
-      "expected": "abstain",
-      "reason": "abstained",
-      "alerts": []
-     },
-     {
-      "network_id": "test-P1_mule_collection-008",
-      "family": "P1_mule_collection",
-      "variant": "boundary",
-      "difficulty": "hard",
-      "expected": "abstain",
-      "reason": "abstained",
-      "alerts": []
-     },
-     {
-      "network_id": "test-P1_mule_collection-010",
       "family": "P1_mule_collection",
       "variant": "boundary",
       "difficulty": "hard",
@@ -10478,6 +10653,24 @@
       "alerts": []
      },
      {
+      "network_id": "test-P5_split_coordinated-002",
+      "family": "P5_split_coordinated",
+      "variant": "multi_source",
+      "difficulty": "medium",
+      "expected": "detect",
+      "reason": "below_alert_band",
+      "alerts": []
+     },
+     {
+      "network_id": "test-P1_mule_collection-007",
+      "family": "P1_mule_collection",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "abstained",
+      "alerts": []
+     },
+     {
       "network_id": "test-P3_coordinated_distribution-003",
       "family": "P3_coordinated_distribution",
       "variant": "boundary",
@@ -10487,8 +10680,26 @@
       "alerts": []
      },
      {
+      "network_id": "test-P1_mule_collection-008",
+      "family": "P1_mule_collection",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "abstained",
+      "alerts": []
+     },
+     {
       "network_id": "test-P3_coordinated_distribution-004",
       "family": "P3_coordinated_distribution",
+      "variant": "boundary",
+      "difficulty": "hard",
+      "expected": "abstain",
+      "reason": "abstained",
+      "alerts": []
+     },
+     {
+      "network_id": "test-P1_mule_collection-010",
+      "family": "P1_mule_collection",
       "variant": "boundary",
       "difficulty": "hard",
       "expected": "abstain",
@@ -10512,19 +10723,23 @@
       "expected": "abstain",
       "reason": "abstained",
       "alerts": []
-     },
-     {
-      "network_id": "test-P5_split_coordinated-002",
-      "family": "P5_split_coordinated",
-      "variant": "multi_source",
-      "difficulty": "medium",
-      "expected": "detect",
-      "reason": "below_alert_band",
-      "alerts": []
      }
     ],
     "false_positive_count": 38,
-    "false_negative_count": 11
+    "false_negative_count": 11,
+    "false_positives_by_family": {
+     "H1_crowdfunding": 12,
+     "H2_microfinance_hub": 1,
+     "H3_tight_supplier_chain": 12,
+     "H5_payout_sweep": 12,
+     "N3_supplier_payments": 1
+    },
+    "false_negatives_by_family": {
+     "P1_mule_collection": 4,
+     "P2_layering_chain": 1,
+     "P3_coordinated_distribution": 5,
+     "P5_split_coordinated": 1
+    }
    }
   }
  },
@@ -10915,10 +11130,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 14.84,
-     "p95": 46.8,
-     "max": 274.98,
-     "per_1000_transactions": 77.12
+     "median": 14.33,
+     "p95": 42.23,
+     "max": 217.51,
+     "per_1000_transactions": 72.23
     },
     "partial_networks": 0,
     "networks": 204,
@@ -11315,10 +11530,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 14.45,
-     "p95": 40.62,
-     "max": 289.74,
-     "per_1000_transactions": 75.3
+     "median": 13.93,
+     "p95": 46.72,
+     "max": 282.92,
+     "per_1000_transactions": 76.14
     },
     "partial_networks": 0,
     "networks": 204,
@@ -11731,10 +11946,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 13.94,
-     "p95": 47.92,
-     "max": 275.47,
-     "per_1000_transactions": 73.85
+     "median": 14.86,
+     "p95": 49.8,
+     "max": 274.83,
+     "per_1000_transactions": 78.8
     },
     "partial_networks": 0,
     "networks": 204,
@@ -12140,10 +12355,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 13.61,
-     "p95": 42.54,
-     "max": 241.24,
-     "per_1000_transactions": 72.45
+     "median": 15.36,
+     "p95": 53.93,
+     "max": 244.99,
+     "per_1000_transactions": 81.22
     },
     "partial_networks": 0,
     "networks": 204,
@@ -12549,9 +12764,9 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 13.7,
-     "p95": 45.48,
-     "max": 297.21,
+     "median": 15.28,
+     "p95": 41.9,
+     "max": 260.72,
      "per_1000_transactions": 77.0
     },
     "partial_networks": 0,
@@ -12956,10 +13171,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 13.22,
-     "p95": 46.67,
-     "max": 323.88,
-     "per_1000_transactions": 76.4
+     "median": 13.71,
+     "p95": 41.66,
+     "max": 231.17,
+     "per_1000_transactions": 72.09
     },
     "partial_networks": 0,
     "networks": 204,
@@ -13359,10 +13574,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 7.7,
-     "p95": 24.99,
-     "max": 73.47,
-     "per_1000_transactions": 39.68
+     "median": 7.85,
+     "p95": 28.52,
+     "max": 67.97,
+     "per_1000_transactions": 40.08
     },
     "partial_networks": 0,
     "networks": 204,
@@ -13766,10 +13981,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 13.03,
-     "p95": 43.85,
-     "max": 210.86,
-     "per_1000_transactions": 67.77
+     "median": 14.1,
+     "p95": 47.16,
+     "max": 191.36,
+     "per_1000_transactions": 75.3
     },
     "partial_networks": 0,
     "networks": 204,
@@ -14169,10 +14384,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 10.88,
-     "p95": 27.18,
-     "max": 269.39,
-     "per_1000_transactions": 61.22
+     "median": 13.0,
+     "p95": 29.43,
+     "max": 290.09,
+     "per_1000_transactions": 65.88
     },
     "partial_networks": 0,
     "networks": 204,
@@ -14576,10 +14791,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 10.7,
-     "p95": 36.22,
-     "max": 282.84,
-     "per_1000_transactions": 63.85
+     "median": 10.9,
+     "p95": 30.93,
+     "max": 288.14,
+     "per_1000_transactions": 59.55
     },
     "partial_networks": 0,
     "networks": 204,
@@ -14982,10 +15197,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 17.48,
-     "p95": 44.83,
-     "max": 301.86,
-     "per_1000_transactions": 85.98
+     "median": 17.9,
+     "p95": 56.56,
+     "max": 294.44,
+     "per_1000_transactions": 100.86
     },
     "partial_networks": 0,
     "networks": 204,
@@ -15391,10 +15606,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 11.43,
-     "p95": 37.12,
-     "max": 283.49,
-     "per_1000_transactions": 65.04
+     "median": 12.7,
+     "p95": 38.32,
+     "max": 273.88,
+     "per_1000_transactions": 68.87
     },
     "partial_networks": 0,
     "networks": 204,
@@ -15809,10 +16024,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 12.58,
-     "p95": 41.59,
-     "max": 228.48,
-     "per_1000_transactions": 73.99
+     "median": 13.19,
+     "p95": 38.7,
+     "max": 175.53,
+     "per_1000_transactions": 73.32
     },
     "partial_networks": 0,
     "networks": 204,
@@ -16224,10 +16439,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 8.17,
-     "p95": 17.69,
-     "max": 231.15,
-     "per_1000_transactions": 52.4
+     "median": 8.83,
+     "p95": 21.45,
+     "max": 205.78,
+     "per_1000_transactions": 55.28
     },
     "partial_networks": 0,
     "networks": 204,
@@ -16646,10 +16861,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 10.9,
-     "p95": 31.48,
-     "max": 196.76,
-     "per_1000_transactions": 73.18
+     "median": 10.6,
+     "p95": 31.47,
+     "max": 193.44,
+     "per_1000_transactions": 70.62
     },
     "partial_networks": 0,
     "networks": 204,
@@ -17067,10 +17282,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 8.05,
-     "p95": 20.95,
-     "max": 157.37,
-     "per_1000_transactions": 54.63
+     "median": 7.32,
+     "p95": 15.09,
+     "max": 156.0,
+     "per_1000_transactions": 48.61
     },
     "partial_networks": 0,
     "networks": 204,
@@ -17488,10 +17703,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 14.84,
-     "p95": 38.45,
-     "max": 228.23,
-     "per_1000_transactions": 74.15
+     "median": 14.73,
+     "p95": 41.71,
+     "max": 205.73,
+     "per_1000_transactions": 77.82
     },
     "partial_networks": 0,
     "networks": 204,
@@ -17891,10 +18106,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 9.55,
-     "p95": 25.26,
-     "max": 313.81,
-     "per_1000_transactions": 52.63
+     "median": 9.84,
+     "p95": 25.61,
+     "max": 219.49,
+     "per_1000_transactions": 52.21
     },
     "partial_networks": 0,
     "networks": 204,
@@ -18297,10 +18512,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 14.74,
-     "p95": 45.07,
-     "max": 247.87,
-     "per_1000_transactions": 77.47
+     "median": 15.39,
+     "p95": 40.3,
+     "max": 236.95,
+     "per_1000_transactions": 78.39
     },
     "partial_networks": 0,
     "networks": 204,
@@ -18697,10 +18912,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 10.31,
-     "p95": 26.59,
-     "max": 246.23,
-     "per_1000_transactions": 55.95
+     "median": 9.8,
+     "p95": 24.94,
+     "max": 214.57,
+     "per_1000_transactions": 54.03
     },
     "partial_networks": 0,
     "networks": 204,
@@ -19103,10 +19318,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 14.87,
-     "p95": 48.12,
-     "max": 308.44,
-     "per_1000_transactions": 78.37
+     "median": 15.22,
+     "p95": 55.21,
+     "max": 311.91,
+     "per_1000_transactions": 81.53
     },
     "partial_networks": 0,
     "networks": 204,
@@ -19511,10 +19726,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 10.79,
-     "p95": 26.33,
-     "max": 282.32,
-     "per_1000_transactions": 57.09
+     "median": 11.11,
+     "p95": 28.18,
+     "max": 278.06,
+     "per_1000_transactions": 58.77
     },
     "partial_networks": 0,
     "networks": 204,
@@ -19924,10 +20139,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 14.96,
-     "p95": 51.23,
-     "max": 257.09,
-     "per_1000_transactions": 79.41
+     "median": 14.66,
+     "p95": 43.08,
+     "max": 276.05,
+     "per_1000_transactions": 77.44
     },
     "partial_networks": 0,
     "networks": 204,
@@ -20324,10 +20539,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 8.44,
-     "p95": 19.61,
-     "max": 201.08,
-     "per_1000_transactions": 45.69
+     "median": 9.13,
+     "p95": 19.55,
+     "max": 216.78,
+     "per_1000_transactions": 49.95
     },
     "partial_networks": 0,
     "networks": 204,
@@ -20728,10 +20943,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 38.33,
-     "p95": 123.62,
-     "max": 254.16,
-     "per_1000_transactions": 61.21
+     "median": 46.39,
+     "p95": 136.33,
+     "max": 359.05,
+     "per_1000_transactions": 71.27
     },
     "partial_networks": 19,
     "networks": 204,
@@ -21138,10 +21353,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 23.41,
-     "p95": 51.89,
-     "max": 308.43,
-     "per_1000_transactions": 33.22
+     "median": 23.83,
+     "p95": 50.35,
+     "max": 274.5,
+     "per_1000_transactions": 34.51
     },
     "partial_networks": 0,
     "networks": 204,
@@ -21559,10 +21774,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 9.12,
-     "p95": 24.66,
-     "max": 147.83,
-     "per_1000_transactions": 78.79
+     "median": 8.53,
+     "p95": 22.55,
+     "max": 141.94,
+     "per_1000_transactions": 75.08
     },
     "partial_networks": 0,
     "networks": 204,
@@ -21981,10 +22196,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 6.75,
-     "p95": 13.13,
-     "max": 109.09,
-     "per_1000_transactions": 57.46
+     "median": 6.94,
+     "p95": 16.41,
+     "max": 119.44,
+     "per_1000_transactions": 61.02
     },
     "partial_networks": 0,
     "networks": 204,
@@ -22409,10 +22624,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 9.13,
-     "p95": 32.33,
-     "max": 181.29,
-     "per_1000_transactions": 80.06
+     "median": 8.73,
+     "p95": 30.93,
+     "max": 184.84,
+     "per_1000_transactions": 79.05
     },
     "partial_networks": 0,
     "networks": 204,
@@ -22837,10 +23052,10 @@
      "on_benign": 0
     },
     "latency_ms": {
-     "median": 6.93,
-     "p95": 15.82,
-     "max": 135.3,
-     "per_1000_transactions": 60.89
+     "median": 6.73,
+     "p95": 15.62,
+     "max": 157.96,
+     "per_1000_transactions": 59.65
     },
     "partial_networks": 0,
     "networks": 204,
@@ -22885,7 +23100,7 @@
    "partial_reasons": [
     "cycle_budget_exceeded:KZT"
    ],
-   "wall_seconds": 32.7,
+   "wall_seconds": 33.0,
    "note": "single cold run including ingest validation; machine-dependent"
   },
   {
@@ -22896,7 +23111,7 @@
    "edges": 45845,
    "formations": 1157,
    "partial_reasons": [],
-   "wall_seconds": 15.65,
+   "wall_seconds": 16.54,
    "note": "single cold run including ingest validation; machine-dependent"
   }
  ]
