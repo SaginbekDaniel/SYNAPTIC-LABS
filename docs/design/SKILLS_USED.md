@@ -46,6 +46,18 @@ Run with `python3 -I scripts/search.py …` (isolated mode, no project data in q
 
 ## Web Design Guidelines — note on use
 
+**Release pass update:** the live rule list (`command.md`) was fetched and its checkable rules were
+run against `apps/web` (greps for `transition: all`, outline removal without replacement, zoom
+blocking, `...`, click handlers on non-interactive elements, select colours, `theme-color`,
+`translate="no"`, placeholders). Findings fixed: `theme-color` now follows the active theme;
+account identifiers carry `translate="no"`; the queue search placeholder ends with `…`; pagination
+is now in the URL. Checked and already compliant: no `transition: all`, every `outline: none` has a
+focus-ring replacement (`:focus-visible` box-shadow, `.search:focus-within`), no zoom blocking,
+`color-scheme` set per theme, tabular numbers, `overscroll-behavior: contain` on the scrolling context panel.
+The sheet backdrop `<div onClick>` is a click-outside dismiss with an Escape handler, not a control.
+
+The paragraph below describes the first redesign session.
+
 The skill's instructions are to fetch the live rule list from
 `raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md` before each review.
 That fetch was **not** performed in this session; the audit was run against the rule categories the

@@ -24,16 +24,47 @@ at 1440, 1280, 768 and 390 px, dark and light. Interaction counts start from the
 * Lab suite descriptions arrived in English from the API → localised in the catalogue with API fallback.
 * Tablet overview placed the priority list last → directly under the activity chart.
 
+## Release polish pass (second review)
+
+CI: run 44088061005 failed at `ruff format --check` on `src/nexora/application/queries.py:346`
+(a call split over three lines that fits the configured line length). Fixed by running the
+formatter; no logic change.
+
+Reviewed against the real stack (PostgreSQL, API, worker, Vite) with `demo-v1 · seed 2026` and a
+CSV-imported review dataset of 1 020 synthetic transfers (55 alerts, three 24–25-account funnels),
+in Chromium at 390, 768, 1280 and 1440 px, dark and light. Every screen was screenshotted full-page
+and checked programmatically for horizontal overflow and console errors (none).
+
+| Problem found | Root cause | Fix |
+|---|---|---|
+| Queue could misrepresent its results: it loaded at most 200 alerts and computed band counts, search and sort locally | The API had paging but no search, sort or facet counts, so the client worked around it | `GET /api/v1/alerts` gains `q` (case-insensitive substring of any member account, LIKE-escaped), `sort` (`priority`/`accounts`/`transfers`/`recent`, applied before paging) and `band_counts`/`kind_counts` facets over the whole filtered set (additive, backward compatible). The queue now requests 50 per page, keeps every filter, the search, the sort and the page in the URL, shows "1–50 из 55" / "Найдено: N" and a pager. The previous page stays visible (dimmed, `aria-busy`) while the next loads |
+| Analytics "alerts per kind" counted only the first 200 alerts | Same 200-item page | Uses `kind_counts` (limit 1) |
+| Overview priority list could empty out when many alerts were closed | It fetched the top 12 of all statuses and filtered closed ones client-side | Fetches open and in-case alerts (5 each) and merges them in the API's queue order |
+| 24-feeder funnel drawn as a ~1 000 px single column; fit-to-view shrank labels to ~5 px | `layoutFlow` stacked every source in one column | Groups larger than 8 wrap into staggered columns away from the hub; nodes and edges are unchanged |
+| On phones the graph was a thin strip in the portrait stage | Landscape layout in a ~330×380 stage | Below 768 px flow and chain layouts read top to bottom (positions only) |
+| Stage hint said details appear "справа" on stacked layouts, where they appear below | One hint for all layouts | Separate hint below 1 100 px |
+| 390 px queue: filter selects truncated ("Все стату…", "По приор…") and used 13 px text, which makes iOS Safari zoom on focus | Three selects in one row with a font-size override that beat the 16 px phone rule | Two selects per row, sort full width, 16 px |
+| Analytics column chart labels ran into each other ("КритическийВысокий") at 1280 px | Long single words in narrow columns | Hyphenation / break-word |
+| Temporal donut legend truncated status names | `nowrap` + ellipsis | Names wrap |
+| Light theme kept the dark `theme-color`, so the iOS/PWA toolbar stayed black | Static meta tag | Synced with the active `--canvas` token (inline script before paint and on every theme change) |
+
+Keyboard: verified in the browser that Tab reaches the graph controls, each "Показать транзакции"
+button and the "Все счета формации" disclosure; Enter on an account there opens it in the context
+panel, which is the same selection as clicking a canvas node.
+
 ## Known limitations (not fixed here)
 
-* The queue loads at most 200 alerts (API page limit); search and band counts apply to those.
-* On phones the graph is legible but small; focus mode (full screen) is the intended path.
-* Very large funnels (20+ feeders) form a dense column; labels shrink with zoom.
-* Canvas nodes are not individually keyboard-focusable; the "Все счета формации" list is the keyboard path to the same selection.
-* The Web Interface Guidelines rule list was not fetched live (see `SKILLS_USED.md`).
+* Canvas nodes are not individually keyboard-focusable; the account list is the keyboard path.
+* On phones a 25-account funnel fits the stage but labels are still small; pinch-zoom or focus mode
+  (full screen) is the intended way to read it.
+* Queue search matches account ids only (formation type has its own filter); it is a substring
+  match without an index, which is fine at demo scale but would need a trigram index for large data.
+* Docker images were not built in this environment; `docker compose config` validates, and the
+  same stack (PostgreSQL 16, migrations, API, worker, Vite) was run directly.
 
 ## Verification run
 
-* `npx tsc -b`, `npx vitest run` (22 tests), `npx vite build`
-* `npx playwright test` — 10 tests (5 existing journeys, 4 new redesign tests, 1 mobile overflow/order test)
-* `uv run ruff check src tests migrations`, `uv run mypy`, `uv run pytest` (incl. the new activity endpoint test)
+* `npx tsc -b`, `npx vitest run` (26 tests, adds queue-order merge and graph layout tests), `npx vite build`
+* `npx playwright test` — 11 tests (adds server-side queue search by member account)
+* `uv run ruff check src tests migrations`, `uv run ruff format --check src tests migrations`, `uv run mypy`, `uv run alembic upgrade head && uv run alembic check`, `uv run pytest` (99 tests, adds alert paging/search/sort/facet contract test)
+* `npm run gen:api` — regenerated and committed `openapi.json` and `src/lib/api-types.ts`
