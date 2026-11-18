@@ -1,9 +1,8 @@
 # Deploying NEXORA to Railway
 
-> **Status (2026-11-18): not deployed yet.** Everything below is implemented and verified locally
-> with the same images and topology (`docker compose`, CI job `containers`). The first real deploy
-> is blocked on the Railway account: creating the project failed with *"Your trial has expired.
-> Please select a plan to continue using Railway."* — see [Status and blockers](#status-and-blockers).
+> **Status (2026-11-18): deployed** to Railway project `nexora-ai-demo` (environment `production`)
+> at commit `dd4ab58`. What was verified on the live URL, and what was not, is in the
+> [deployment record](#deployment-record).
 
 The demo is **synthetic data only, with no banking integration**, behind a shared demo credential.
 It is a protected hackathon deployment, not bank-grade production (see [Security model](#security-model)).
@@ -225,19 +224,41 @@ hit cold starts.
 | `web` crash-loops, log says `refusing to start` | Gateway credentials missing or too short. Set them with `--stdin`, redeploy `web`. |
 | Every `/api` call returns `401 GATEWAY_TOKEN_REQUIRED` | `web` and `api` disagree on the token. `web` must reference `${{api.NEXORA_GATEWAY_TOKEN}}`; redeploy `web` after rotating. |
 | `502` from the gateway | API not up or not reachable: check `NEXORA_BIND_HOST=0.0.0.0`, `PORT=8000`, `railway logs --service api`. |
+| API deploy: build and migrations succeed, then "never became healthy", no requests in the access log | Bind address: use `NEXORA_BIND_HOST=0.0.0.0`, not `::`. |
 | API deploy fails in pre-deploy | Migration error; the old version keeps serving. Read the pre-deploy log, fix forward. |
 | `/health/ready` returns 503 `degraded` | Database unreachable or not migrated. Check `NEXORA_DATABASE_URL` reference and the pre-deploy log. |
 | Jobs stay `queued` | Worker not running: `railway logs --service worker`. |
-| `Your trial has expired` from the CLI | Activate a plan for the workspace. |
+| `Your trial has expired` from the CLI | Activate a plan for the workspace (the workspace id changes; re-run `railway link`). |
 
-## Status and blockers
+## Deployment record
 
-| Step | State |
+Deployed 2026-11-18 from commit `dd4ab58` with `scripts/railway/bootstrap.sh` and `deploy.sh`.
+Public entry point: `https://web-production-4593b103.up.railway.app` (the only domain in the project;
+verified through the Railway API that `api`, `worker` and `postgres` have no domain and no TCP proxy).
+
+| Check | Result |
 |---|---|
-| Images, gateway, IaC, scripts, CI, smoke test | Done, verified locally and in CI |
-| Railway CLI authenticated (CLI 5.75.0) | Done |
-| Create project | **Blocked:** `Your trial has expired. Please select a plan to continue using Railway.`. No Railway resources were created. |
-| GitHub source deploys | Not used: Railway's GitHub app has no access to this repository; code is uploaded with `railway up` instead. |
+| Services | `api`, `worker`, `web` deployed SUCCESS; PostgreSQL with a volume at `/var/lib/postgresql/data` |
+| Migrations | `0001 → 0002` applied by the `api` pre-deploy step on first deploy; `/health/ready` reports `migration: 0002` |
+| Anonymous access | `401` on `/`, `/alerts`, `/api/v1/datasets`, `/health/ready`, assets and a write (`POST /api/v1/lab/datasets`); a spoofed gateway token and wrong credentials also `401`; `/docs` and `/openapi.json` `404`; only `/healthz` is public |
+| Headers over HTTPS | HSTS, CSP, `X-Frame-Options: DENY` present |
+| Browser journey (`smoke/deployed.spec.ts`) | **Passed:** Lab → generate → worker analysis → Review Queue → investigation with evidence → case decision → audit after reload; light theme; 390 px; no console or CSP errors |
+| Worker | Claimed and published the job (worker log); job `succeeded` |
+| Persistence | Dataset, job and case readable through the API. After a redeploy of `api` (zero-downtime, both deployments SUCCESS) they were unchanged, readiness stayed `ok`, anonymous access stayed `401`, and the browser journey passed again |
+| Not covered by that run | The two `fetch`-based smoke checks (anonymous denial, readiness) could not run from the build sandbox because Node's HTTP client does not use its egress proxy (`getaddrinfo ENOTFOUND`); the same checks were done with `curl` and are listed above. `deploy-railway.yml` has not been run. |
 
-**Smallest action to unblock:** activate a Railway plan for the workspace in the Railway dashboard
-(Workspace settings → Plans), then run `scripts/railway/bootstrap.sh` and the smoke test above.
+**Defect found on the first real deploy.** With `NEXORA_BIND_HOST=::` the build and migrations
+succeeded and uvicorn reported listening on `[::]:8000`, but Railway's health probe never reached
+it (no request in the access log, six failed attempts, "never became healthy"). Fixed in `dd4ab58`
+by binding `0.0.0.0`; this environment resolves private names over IPv4 as well as IPv6.
+
+**Notes for operators.**
+
+* The CLI cannot stream build or deploy logs from sandboxed networks (GraphQL subscriptions are
+  refused with `400`); `deploy.sh` falls back to polling, and logs can be read with
+  `railway logs --service <name>` or the `deploymentLogs` GraphQL query.
+* Gateway credentials are generated by `bootstrap.sh` into `~/.config/nexora/railway-demo.env` on the
+  machine that ran it and set as `NEXORA_GATEWAY_USER` / `NEXORA_GATEWAY_PASSWORD` on `web`. If the
+  script ran on an ephemeral machine, read or reset them in the Railway dashboard (*web → Variables*).
+* Railway GitHub source deploys are not used (the Railway GitHub app has no access to this repository);
+  code is uploaded with `railway up`.

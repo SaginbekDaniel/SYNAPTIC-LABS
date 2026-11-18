@@ -6,6 +6,7 @@ No versions have been released yet; entries are grouped by merged pull request.
 ## [Unreleased]
 
 ### Added
+- Deployed to Railway (`nexora-ai-demo`): PostgreSQL, API, worker and gateway; see the deployment record in `docs/deployment/railway.md`.
 - Railway deployment: Infrastructure-as-Code definition (`.railway/railway.ts`) with an offline
   invariant check, bootstrap and ordered deploy scripts, and a manual, approval-gated GitHub
   Actions deployment that refuses commits without a green CI run.

@@ -21,9 +21,10 @@
 | Persistence + redeploy | recreate api/worker/web; row counts unchanged; smoke again | PASS |
 | Graceful worker stop | `docker compose stop worker` → "stopped after N jobs" | PASS |
 | CI | run 21 on `0497601` (test, deploy-config, containers) | PASS |
-| Railway deployment | `railway init` | **Not run** — account trial expired (see `docs/deployment/railway.md`) |
+| Railway deployment | `bootstrap.sh`, `deploy.sh` | api, worker, web **SUCCESS** at `dd4ab58` (first attempt failed the health check: IPv6 bind, fixed) |
+| Live smoke test | `playwright.smoke.config.ts` against the Railway URL | **3 passed** (journey, light theme, 390 px); 2 sandbox-network failures re-done with `curl` (see deployment record) |
 
-Defects found and fixed this session: CSP blocked Vite-inlined `data:` fonts (found by the smoke
+Defects found and fixed this session: Railway health probe could not reach an IPv6-only bind (`::`); CSP blocked Vite-inlined `data:` fonts (found by the smoke
 test); Fraud Lab dataset-selection race (also audit F-10 in PR #3 — fix taken verbatim from there).
 
 ## Session 2 — detectors-v2, peer statistics, benchmark, evaluation screen

@@ -60,12 +60,16 @@ dataset (seed 2026). The UI is in Russian, the jury's working language.
 
 ## Live demo
 
-**Not deployed yet.** The deployment is fully prepared — images, gateway, Railway
-Infrastructure-as-Code, scripts, CI, smoke test — and verified locally with the same images.
-Creating the Railway project is blocked because the owner's Railway trial has expired
-(details: [docs/deployment/railway.md](docs/deployment/railway.md#status-and-blockers)).
-When it is live, the URL will be listed here; access is by credentials shared privately, never in
-this repository.
+**https://web-production-4593b103.up.railway.app** — *Synthetic Data Only — No Banking Integration*
+
+The demo sits behind a shared username and password, so the page asks for credentials before it
+shows anything. They are not published here: ask the maintainers, or read them from the `web`
+service variables in the Railway project. Open **Лаборатория** → *Сгенерировать набор* →
+*Запустить анализ* → *Перейти к алертам*. Everyone shares one demo analyst identity, and any
+datasets created by earlier visitors stay in the database.
+
+Deployment record, what was verified and what was not:
+[docs/deployment/railway.md](docs/deployment/railway.md#deployment-record).
 
 ## Key features
 
@@ -209,7 +213,7 @@ in place, the known gaps, and how to report a vulnerability privately.
 | Done | Ingest, four structural detectors, temporal flow, peer statistics, coverage, risk policy v2, investigation UI, cases and audit, `bench-v1` |
 | Done | Production images, fail-closed gateway, Railway IaC, CI with production-image smoke test |
 | In review | [PR #3](https://github.com/SaginbekDaniel/SYNAPTIC-LABS/pull/3): competing-hypothesis engine, evaluation leakage fixes, sealed evaluation |
-| Blocked | Public Railway demo — needs an active Railway plan |
+| Done | Protected Railway demo (PostgreSQL, API, worker, gateway); see the deployment record |
 | Planned | Correlate alerts sharing a subject account; bridge/coordinator detector; named users via an identity-aware proxy |
 
 ## Contributing
