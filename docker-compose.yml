@@ -1,4 +1,13 @@
-# Local demo stack. Ports bind to 127.0.0.1 only: this is not a public deployment.
+# Local demo stack — same topology as the Railway deployment (docs/deployment/railway.md):
+# gateway (web) -> api -> postgres, plus worker, with migrations as a one-shot step.
+# Ports bind to 127.0.0.1 only: this is not a public deployment.
+x-app-env: &app_env
+  NEXORA_DATABASE_URL: postgresql+psycopg://nexora:${POSTGRES_PASSWORD:-nexora}@postgres:5432/nexora
+  NEXORA_CORS_ORIGINS: http://127.0.0.1:8080,http://localhost:8080
+  NEXORA_DEMO_ANALYST: ${NEXORA_DEMO_ANALYST:-demo-analyst}
+  # Requests must arrive through the gateway (or carry this header). Not a secret locally.
+  NEXORA_GATEWAY_TOKEN: ${NEXORA_GATEWAY_TOKEN:-local-gateway-token}
+
 services:
   postgres:
     image: postgres:16-alpine
@@ -18,10 +27,7 @@ services:
     image: nexora/app:local
     build: .
     command: ["alembic", "upgrade", "head"]
-    environment: &app_env
-      NEXORA_DATABASE_URL: postgresql+psycopg://nexora:${POSTGRES_PASSWORD:-nexora}@postgres:5432/nexora
-      NEXORA_CORS_ORIGINS: http://127.0.0.1:8080,http://localhost:8080
-      NEXORA_DEMO_ANALYST: ${NEXORA_DEMO_ANALYST:-demo-analyst}
+    environment: *app_env
     depends_on:
       postgres: {condition: service_healthy}
 
@@ -36,6 +42,7 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
+    # Direct API access for local debugging (/docs). Send X-Nexora-Gateway-Token for /api routes.
     ports: ["127.0.0.1:8000:8000"]
 
   worker:
@@ -46,12 +53,26 @@ services:
     depends_on:
       migrate: {condition: service_completed_successfully}
     restart: unless-stopped
+    # SIGTERM lets the worker finish the job in progress before exiting.
+    stop_grace_period: 60s
 
   web:
     image: nexora/web:local
     build: ./apps/web
+    environment:
+      NEXORA_API_UPSTREAM: api:8000
+      NEXORA_GATEWAY_TOKEN: ${NEXORA_GATEWAY_TOKEN:-local-gateway-token}
+      # Loopback-only stack: access control off unless you set basic + credentials in .env.
+      NEXORA_GATEWAY_AUTH: ${NEXORA_GATEWAY_AUTH:-off}
+      NEXORA_GATEWAY_USER: ${NEXORA_GATEWAY_USER:-}
+      NEXORA_GATEWAY_PASSWORD: ${NEXORA_GATEWAY_PASSWORD:-}
     depends_on:
       api: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
     ports: ["127.0.0.1:8080:8080"]
 
 volumes:

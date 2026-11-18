@@ -1,0 +1,63 @@
+#!/bin/sh
+# Sourced by the nginx image entrypoint before the templates are rendered.
+# Fails closed: unless access control is configured, or explicitly switched off, the gateway
+# refuses to start, so a misconfigured deployment never serves the demo unprotected.
+#
+#   NEXORA_GATEWAY_AUTH       basic (default) | off   ("off" is for the loopback-only local stack)
+#   NEXORA_GATEWAY_USER       Basic-auth user name                     (required for basic)
+#   NEXORA_GATEWAY_PASSWORD   Basic-auth password, >= 16 characters    (required for basic)
+#   NEXORA_API_UPSTREAM       host:port of the API on the private network (default api:8000)
+#   NEXORA_GATEWAY_TOKEN      shared secret forwarded to the API (optional; must match the API's)
+# Sourced, not executed: no `set -e/-u` (it would leak into the entrypoint); every step checks itself.
+
+mkdir -p /tmp/nexora || exit 1
+: "${NEXORA_API_UPSTREAM:=api:8000}"
+: "${NEXORA_GATEWAY_TOKEN:=}"
+export NEXORA_API_UPSTREAM NEXORA_GATEWAY_TOKEN
+
+# Listen on IPv6 too when available (Railway's network is dual-stack); a bare `listen [::]` fails
+# to start on hosts without IPv6.
+if [ -f /proc/net/if_inet6 ]; then
+  printf 'listen [::]:8080;\n' > /tmp/nexora/listen-ipv6.conf
+else
+  : > /tmp/nexora/listen-ipv6.conf
+fi
+
+mode="${NEXORA_GATEWAY_AUTH:-basic}"
+case "$mode" in
+  off)
+    echo "nexora-gateway: WARNING access control is OFF (NEXORA_GATEWAY_AUTH=off); never expose this publicly" >&2
+    printf 'auth_basic off;\n' > /tmp/nexora/auth.conf
+    ;;
+  basic)
+    user="${NEXORA_GATEWAY_USER:-}"
+    password="${NEXORA_GATEWAY_PASSWORD:-}"
+    if [ -z "$user" ] || [ -z "$password" ]; then
+      echo "nexora-gateway: refusing to start: set NEXORA_GATEWAY_USER and NEXORA_GATEWAY_PASSWORD" >&2
+      exit 1
+    fi
+    if [ "${#password}" -lt 16 ]; then
+      echo "nexora-gateway: refusing to start: NEXORA_GATEWAY_PASSWORD must be at least 16 characters" >&2
+      exit 1
+    fi
+    case "$user" in
+      *:*) echo "nexora-gateway: refusing to start: NEXORA_GATEWAY_USER must not contain ':'" >&2; exit 1 ;;
+    esac
+    # Salted SHA-512 crypt (BusyBox mkpasswd; verified by musl crypt() in Nginx). The password is
+    # read from stdin, never placed on a command line, and the plaintext is not written to disk.
+    hash="$(printf '%s' "$password" | mkpasswd -m sha512 -P 0)"
+    # shellcheck disable=SC2016  # '$6$' is the literal SHA-512 crypt prefix
+    case "$hash" in
+      '$6$'*) printf '%s:%s\n' "$user" "$hash" > /tmp/nexora/htpasswd ;;
+      *) echo "nexora-gateway: refusing to start: could not hash the gateway password" >&2; exit 1 ;;
+    esac
+    chmod 600 /tmp/nexora/htpasswd
+    printf 'auth_basic "NEXORA demo";\nauth_basic_user_file /tmp/nexora/htpasswd;\n' > /tmp/nexora/auth.conf
+    ;;
+  *)
+    echo "nexora-gateway: refusing to start: NEXORA_GATEWAY_AUTH must be 'basic' or 'off', got '$mode'" >&2
+    exit 1
+    ;;
+esac
+unset user password hash
+echo "nexora-gateway: access control=$mode upstream=$NEXORA_API_UPSTREAM gateway_token=$([ -n "$NEXORA_GATEWAY_TOKEN" ] && echo set || echo unset)" >&2
