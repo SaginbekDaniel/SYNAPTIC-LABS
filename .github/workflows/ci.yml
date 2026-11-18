@@ -94,11 +94,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
-      # Exercise the gateway exactly as deployed: access control on. CI-only throwaway credentials.
-      NEXORA_GATEWAY_AUTH: basic
-      NEXORA_GATEWAY_USER: ci
-      NEXORA_GATEWAY_PASSWORD: ci-only-throwaway-password
-      NEXORA_GATEWAY_TOKEN: ci-only-gateway-token
+      # Exercise the stack exactly as deployed: session sign-in, gateway token. CI-only throwaway values.
+      NEXORA_GATEWAY_AUTH: session
+      NEXORA_GATEWAY_TOKEN: ci-only-gateway-token-not-a-secret-0001
+      NEXORA_SMOKE_USER: ci.analyst
+      NEXORA_SMOKE_PASSWORD: ci-only-analyst-password
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
@@ -122,23 +122,35 @@ jobs:
         run: |
           test "$(docker run --rm --entrypoint id nexora/app:local -u)" != 0
           test "$(docker run --rm --entrypoint id nexora/web:local -u)" != 0
-      - name: Gateway refuses to start without credentials (fails closed)
+      - name: Gateway fails closed (no Basic credentials / no gateway token / unknown mode)
         run: |
-          if docker run --rm -e NEXORA_GATEWAY_AUTH=basic nexora/web:local; then
-            echo "gateway started without credentials" >&2; exit 1
-          fi
+          for args in "-e NEXORA_GATEWAY_AUTH=basic" "-e NEXORA_GATEWAY_AUTH=session" \
+                      "-e NEXORA_GATEWAY_AUTH=session -e NEXORA_GATEWAY_TOKEN=short" "-e NEXORA_GATEWAY_AUTH=bogus"; do
+            # shellcheck disable=SC2086
+            if timeout 20 docker run --rm $args nexora/web:local; then
+              echo "gateway started with: $args" >&2; exit 1
+            fi
+          done
+      - name: Rollback mode still works (Basic credential in front of the sign-in page)
+        run: |
+          docker run -d --name basic-gw -p 127.0.0.1:8081:8080 -e NEXORA_GATEWAY_AUTH=basic \
+            -e NEXORA_GATEWAY_USER=ci -e NEXORA_GATEWAY_PASSWORD=ci-only-throwaway-password nexora/web:local
+          for _ in $(seq 20); do curl -fs http://127.0.0.1:8081/healthz && break; sleep 1; done
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8081/)" = 401
+          test "$(curl -s -o /dev/null -w '%{http_code}' -u ci:ci-only-throwaway-password http://127.0.0.1:8081/)" = 200
+          docker rm -f basic-gw
       - name: Start the stack (compose, production images)
         run: |
           docker compose config -q
           docker compose up -d --no-build --wait --wait-timeout 180
+      - name: Provision the smoke-test analyst (operator CLI, password on stdin)
+        run: printf '%s\n' "$NEXORA_SMOKE_PASSWORD" | docker compose exec -T api python -m nexora.auth.cli create-user "$NEXORA_SMOKE_USER" --password-stdin
       - uses: actions/setup-node@v4
         with: {node-version: 22, cache: npm, cache-dependency-path: apps/web/package-lock.json}
       - name: Smoke test through the gateway
         working-directory: apps/web
         env:
           NEXORA_SMOKE_URL: http://127.0.0.1:8080
-          NEXORA_SMOKE_USER: ci
-          NEXORA_SMOKE_PASSWORD: ci-only-throwaway-password
         run: |
           npm ci
           npx playwright install --with-deps chromium

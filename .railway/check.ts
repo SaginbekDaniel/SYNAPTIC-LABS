@@ -28,7 +28,7 @@ const literal = (name: string, key: string) => {
 };
 
 // Secrets are references or preserved values, never committed literals.
-const SECRET = /(PASSWORD|TOKEN|SECRET|DATABASE_URL)$/;
+const SECRET = /(PASSWORD|TOKEN|SECRET|DATABASE_URL|PASSWORD_HASH)$/;
 for (const [name, svc] of services) {
   for (const [key, value] of Object.entries(svc.variables ?? {})) {
     if (SECRET.test(key)) check(value.type !== "literal", `${name}.${key} must not be a literal value`);
@@ -44,7 +44,12 @@ for (const name of ["worker", "web"]) check(!services.get(name)?.deploy?.preDepl
 
 check(literal("api", "NEXORA_EXPOSE_API_DOCS") === "false", "api does not expose /docs");
 check(literal("api", "NEXORA_CORS_ORIGINS") === "", "api allows no cross-origin callers");
-check(literal("web", "NEXORA_GATEWAY_AUTH") === "basic", "gateway enforces access control");
+// "session": the API authenticates every request; "basic" additionally keeps the shared credential in
+// front (staged rollout / rollback). "off" (no gateway token required) is never deployed.
+check(["session", "basic"].includes(literal("web", "NEXORA_GATEWAY_AUTH") ?? ""), "gateway mode is session or basic");
+// Sessions need HTTPS cookies in the deployment: the Secure flag may not be switched off.
+for (const name of ["api", "worker"]) check(!("NEXORA_SESSION_COOKIE_SECURE" in env(name)), `${name} keeps Secure session cookies`);
+check(!("NEXORA_DEMO_ANALYST" in env("api")), "no shared demo identity: audit actors come from sessions");
 const webToken = env("web").NEXORA_GATEWAY_TOKEN;
 check(
   webToken?.type === "reference" && webToken.resource === "service.api" && webToken.output === "NEXORA_GATEWAY_TOKEN",

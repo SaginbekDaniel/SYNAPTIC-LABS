@@ -4,7 +4,8 @@
 > at commit `dd4ab58`. What was verified on the live URL, and what was not, is in the
 > [deployment record](#deployment-record).
 
-The demo is **synthetic data only, with no banking integration**, behind a shared demo credential.
+The demo is **synthetic data only, with no banking integration**. Analysts sign in with named
+accounts on the NEXORA sign-in page; the API enforces a server-side session on every request.
 It is a protected hackathon deployment, not bank-grade production (see [Security model](#security-model)).
 
 ## Architecture
@@ -15,8 +16,8 @@ flowchart LR
   edge --> web
 
   subgraph project["Railway project nexora-ai-demo · private network (*.railway.internal)"]
-    web["web<br/>Nginx gateway · :8080<br/>Basic auth · CSP · rate limits<br/>SPA + /api proxy"]
-    api["api<br/>FastAPI · :8000<br/>pre-deploy: alembic upgrade head"]
+    web["web<br/>Nginx gateway · :8080<br/>CSP · rate limits · gateway token<br/>SPA + /api proxy"]
+    api["api<br/>FastAPI · :8000<br/>session auth on every /api route<br/>pre-deploy: alembic upgrade head"]
     worker["worker<br/>lease-based job runner"]
     db[("postgres<br/>Railway PostgreSQL<br/>persistent volume")]
     web -- "/api/*, /health/*<br/>+ X-Nexora-Gateway-Token" --> api
@@ -65,9 +66,11 @@ The script, from a clean checkout:
    `railway config apply --yes` — creates PostgreSQL, `api`, `worker`, `web`
    (it never deletes anything non-interactively without `--confirm-destructive`);
 3. generates secrets locally and sends them **over stdin** (never on a command line):
-   `NEXORA_GATEWAY_TOKEN` on `api` (once), `NEXORA_GATEWAY_USER` / `NEXORA_GATEWAY_PASSWORD` on `web`.
-   The gateway credentials are kept in `~/.config/nexora/railway-demo.env` (mode 0600) for you to
-   share through a password manager;
+   `NEXORA_GATEWAY_TOKEN` on `api` (once); the first analyst's **Argon2id hash** as
+   `NEXORA_BOOTSTRAP_USERNAME` / `NEXORA_BOOTSTRAP_PASSWORD_HASH` on `api` (the API creates the
+   account at start-up if it does not exist); the legacy `NEXORA_GATEWAY_USER` /
+   `NEXORA_GATEWAY_PASSWORD` on `web` (only used in `basic` mode). The generated passwords are kept in
+   `~/.config/nexora/railway-demo.env` (mode 0600) for you to share through a password manager;
 4. deploys the checked-out commit (`scripts/railway/deploy.sh`);
 5. generates the public `*.up.railway.app` domain for `web`.
 
@@ -118,6 +121,8 @@ Set by `.railway/railway.ts` (non-secret) or by `bootstrap.sh` (secret, via stdi
 |---|---|---|---|
 | `NEXORA_DATABASE_URL` | api, worker | `${{postgres.DATABASE_URL}}` | Private URL. `postgresql://` is mapped to psycopg 3 by the app. |
 | `NEXORA_GATEWAY_TOKEN` | api | secret, 64 hex | Required on every `/api` request. |
+| `NEXORA_BOOTSTRAP_USERNAME` / `_PASSWORD_HASH` | api | secret (Argon2id hash) | Optional one-time first analyst; remove once the account exists. |
+| `NEXORA_SESSION_IDLE_MINUTES` / `_ABSOLUTE_HOURS` | api | defaults `120` / `12` | Session lifetime. `NEXORA_SESSION_COOKIE_SECURE` stays at its default `true` (checked by `.railway/check.ts`). |
 | `NEXORA_GATEWAY_TOKEN` | web | `${{api.NEXORA_GATEWAY_TOKEN}}` | Reference: one value, one place. |
 | `NEXORA_EXPOSE_API_DOCS` | api | `false` | No `/docs`, `/redoc`, `/openapi.json`. |
 | `NEXORA_CORS_ORIGINS` | api | empty | Same-origin only. |
@@ -125,8 +130,8 @@ Set by `.railway/railway.ts` (non-secret) or by `bootstrap.sh` (secret, via stdi
 | `NEXORA_DB_POOL_SIZE` / `_MAX_OVERFLOW` | api, worker | `3` / `2` | ≤ 10 connections total. |
 | `NEXORA_WORKER_POLL_SECONDS` | worker | `2` | Idle polling interval. |
 | `NEXORA_API_UPSTREAM` | web | `${{api.RAILWAY_PRIVATE_DOMAIN}}:8000` | Re-resolved at runtime. |
-| `NEXORA_GATEWAY_AUTH` | web | `basic` | The gateway refuses to start without credentials. |
-| `NEXORA_GATEWAY_USER` / `_PASSWORD` | web | secrets | Password ≥ 16 characters. |
+| `NEXORA_GATEWAY_AUTH` | web | `session` (or `basic` for rollback) | `session` refuses to start without the gateway token; `basic` without credentials. |
+| `NEXORA_GATEWAY_USER` / `_PASSWORD` | web | secrets | Only read in `basic` mode. Password ≥ 16 characters. |
 | `PORT` | web | `8080` | Railway health checks use it. |
 
 All variables are documented in [`.env.example`](../../.env.example).
@@ -138,11 +143,17 @@ All variables are documented in [`.env.example`](../../.env.example).
 Implemented and tested (unit, integration, `smoke/deployed.spec.ts`, CI `containers` job):
 
 * One public entry point; API/worker/DB private. TLS at Railway's edge; HSTS when served over HTTPS.
-* HTTP Basic access control on every path except `/healthz` — HTML, assets, every API route
-  including writes, and `/health/ready`. The gateway **fails closed**: it exits at start if
-  credentials are missing, shorter than 16 characters, or the mode is unknown.
+* **Named accounts and server-side sessions.** Every `/api` route except `POST /auth/login` and
+  `GET /auth/session` requires a valid session cookie (`HttpOnly`, `Secure`, `SameSite=Strict`,
+  `__Host-` prefix; only its SHA-256 is stored), plus the session's CSRF token and a trusted origin on
+  writes. Sessions expire after 2 h idle / 12 h absolute and are revoked by sign-out. Sign-in is
+  throttled per name and per client, and rate-limited at the gateway. Details: [SECURITY.md](../../SECURITY.md).
+* The SPA's static files are public (they contain no data or secrets); all data comes from the API.
 * The API rejects `/api` requests without the gateway token (constant-time compare); a client
-  cannot supply its own token because the gateway overwrites the header.
+  cannot supply its own token because the gateway overwrites the header. The gateway **fails
+  closed**: in `session` mode it exits at start without a ≥ 32-character token; in `basic` mode
+  without credentials.
+* Readiness (`/health/ready`) is not proxied publicly; Railway probes the API on the private network.
 * No API documentation is served; error envelopes carry a request id, never stack traces.
 * CSP `script-src 'self'` plus the SHA-256 of the single inline script (computed at build),
   `frame-ancestors 'none'`, `nosniff`, Referrer-Policy, Permissions-Policy, COOP/CORP.
@@ -152,12 +163,8 @@ Implemented and tested (unit, integration, `smoke/deployed.spec.ts`, CI `contain
 
 Remaining risks (documented, not solved):
 
-* **One shared credential and one demo identity.** Every audit event is attributed to
-  `demo-analyst`. Anyone with the password can generate datasets and record case decisions.
-  For named users, put an identity-aware proxy in front (e.g. Cloudflare Access with a custom
-  domain) — the gateway's Basic layer can then be kept as a second factor or replaced.
-* Basic auth has no lockout; brute force is bounded only by rate limits and password entropy
-  (bootstrap generates ~260 bits).
+* **Local passwords, no MFA or roles.** Every analyst can do everything; there is no SSO. An
+  identity provider (OIDC) with MFA is the next step for anything beyond a demo (ADR 020).
 * Writes are rate-limited but not quota-limited; a credential holder could fill the database
   slowly. Monitor volume usage.
 * No WAF, intrusion detection, backup-restore drill, penetration test or compliance review.
@@ -167,18 +174,52 @@ Remaining risks (documented, not solved):
 | Check | How |
 |---|---|
 | Gateway live | `curl -fsS https://<domain>/healthz` → `ok` |
-| Access denied | `curl -o /dev/null -w '%{http_code}' https://<domain>/api/v1/datasets` → `401` |
-| DB + migration | `curl -fsS -u "$USER:$PASS" https://<domain>/health/ready` → `"status":"ok"` |
+| No Basic prompt | `curl -sI https://<domain>/ \| grep -i www-authenticate` → nothing (`session` mode) |
+| Access denied | `curl https://<domain>/api/v1/datasets` → `401 AUTH_REQUIRED` |
+| DB + migration | Railway deployment status of `api` (its health check is `/health/ready` on the private network) |
 | End to end | smoke test below |
 
 ```bash
-cd apps/web && NEXORA_SMOKE_URL=https://<domain> NEXORA_SMOKE_USER=analyst NEXORA_SMOKE_PASSWORD='<from credentials file>' npx playwright test -c playwright.smoke.config.ts
+cd apps/web && NEXORA_SMOKE_URL=https://<domain> NEXORA_SMOKE_USER=<analyst> NEXORA_SMOKE_PASSWORD='<its password>' npx playwright test -c playwright.smoke.config.ts
 ```
 
-It verifies anonymous denial (including a spoofed gateway token), readiness, the full journey
-(Lab → worker analysis → queue → investigation → evidence → case decision → audit after reload),
-light theme, 390 px layout, and zero console errors or CSP violations. It only adds synthetic data
-and never resets the database.
+It verifies the sign-in page instead of a Basic prompt, anonymous denial (including a spoofed
+gateway token), sign-in through the form, the full journey (Lab → worker analysis → queue →
+investigation → evidence → case decision → audit attributed to the analyst → reload), sign-out and
+replay of the revoked cookie, light theme, 390 px layout, and zero console errors or CSP violations.
+While the gateway still runs in `basic` mode, also pass `NEXORA_SMOKE_BASIC_USER` /
+`NEXORA_SMOKE_BASIC_PASSWORD`. It only adds synthetic data and never resets the database.
+
+## Authentication rollout and rollback
+
+Basic access control was replaced in two stages so the deployment was never unprotected:
+
+1. **Stage 1 — sessions behind Basic.** Deploy the API (migration `0003` runs in pre-deploy; the
+   first analyst is bootstrapped from its hash), the worker and the gateway in `basic` mode. Verify
+   with the smoke test plus `NEXORA_SMOKE_BASIC_*`: every API request now needs *both* layers.
+2. **Stage 2 — sessions only.** Set `NEXORA_GATEWAY_AUTH=session` on `web` and redeploy `web`
+   only. Verify with the smoke test (no Basic variables).
+
+**Rollback** of stage 2: set `NEXORA_GATEWAY_AUTH=basic` on `web` and redeploy `web` (the shared
+credential is still stored). Code rollback of stage 1 works too: migration `0003` only adds tables.
+
+## Analyst accounts
+
+There are no default accounts. Use the operator CLI inside the `api` service (`railway ssh --service api`)
+or locally against the database; passwords come from a prompt, stdin or `--generate`, never argv:
+
+```bash
+python -m nexora.auth.cli create-user alice --display-name "Alice A." --generate
+```
+
+```bash
+python -m nexora.auth.cli set-password alice --generate
+```
+
+`set-password`, `disable` and `revoke-sessions` end the user's sessions immediately. Without shell
+access, provision one account through `NEXORA_BOOTSTRAP_USERNAME` + `NEXORA_BOOTSTRAP_PASSWORD_HASH`
+(from `python -m nexora.auth.cli hash-password --generate`) and redeploy `api`; remove both variables
+afterwards.
 
 ## Operations
 
@@ -192,8 +233,9 @@ and never resets the database.
   (*postgres → Backups*), or take a logical dump through a temporary TCP proxy:
   `pg_dump --format=custom` — remove the proxy afterwards. All data is synthetic and can be
   regenerated from the Lab with the same seeds.
-* **Rotate the gateway password:** edit `~/.config/nexora/railway-demo.env`, re-run the two
-  `NEXORA_GATEWAY_*` lines of `bootstrap.sh` (or `railway variable set NEXORA_GATEWAY_PASSWORD --stdin --service web`), redeploy `web`.
+* **Rotate an analyst password:** `python -m nexora.auth.cli set-password <user> --generate`
+  (ends that user's sessions). The legacy Basic password (only used in `basic` mode):
+  `railway variable set NEXORA_GATEWAY_PASSWORD --stdin --service web`, redeploy `web`.
 * **Never** run `scripts/reset_disposable_db.py` against the Railway database; it drops the schema.
 
 ## Cost
@@ -221,7 +263,9 @@ hit cold starts.
 
 | Symptom | Cause / fix |
 |---|---|
-| `web` crash-loops, log says `refusing to start` | Gateway credentials missing or too short. Set them with `--stdin`, redeploy `web`. |
+| `web` crash-loops, log says `refusing to start` | `session` mode: gateway token missing/short (check the `${{api.NEXORA_GATEWAY_TOKEN}}` reference). `basic` mode: credentials missing or too short. |
+| Sign-in always says "Неверное имя пользователя или пароль" | No account yet: create one (Analyst accounts). Five failures lock that name for 15 minutes (`429`). |
+| Signed in, but every request returns `401 AUTH_REQUIRED` | The cookie is `Secure`: the site must be served over HTTPS (Railway domain). |
 | Every `/api` call returns `401 GATEWAY_TOKEN_REQUIRED` | `web` and `api` disagree on the token. `web` must reference `${{api.NEXORA_GATEWAY_TOKEN}}`; redeploy `web` after rotating. |
 | `502` from the gateway | API not up or not reachable: check `NEXORA_BIND_HOST=0.0.0.0`, `PORT=8000`, `railway logs --service api`. |
 | API deploy: build and migrations succeed, then "never became healthy", no requests in the access log | Bind address: use `NEXORA_BIND_HOST=0.0.0.0`, not `::`. |

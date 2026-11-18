@@ -1,12 +1,16 @@
 # Local demo stack — same topology as the Railway deployment (docs/deployment/railway.md):
 # gateway (web) -> api -> postgres, plus worker, with migrations as a one-shot step.
 # Ports bind to 127.0.0.1 only: this is not a public deployment.
+#
+# Sign-in needs an analyst account (none is created automatically). Once the stack is up:
+#   docker compose run --rm api python -m nexora.auth.cli create-user <name> --generate
 x-app-env: &app_env
   NEXORA_DATABASE_URL: postgresql+psycopg://nexora:${POSTGRES_PASSWORD:-nexora}@postgres:5432/nexora
   NEXORA_CORS_ORIGINS: http://127.0.0.1:8080,http://localhost:8080
-  NEXORA_DEMO_ANALYST: ${NEXORA_DEMO_ANALYST:-demo-analyst}
   # Requests must arrive through the gateway (or carry this header). Not a secret locally.
-  NEXORA_GATEWAY_TOKEN: ${NEXORA_GATEWAY_TOKEN:-local-gateway-token}
+  NEXORA_GATEWAY_TOKEN: ${NEXORA_GATEWAY_TOKEN:-local-only-gateway-token-not-a-secret}
+  # Plain HTTP on loopback: the session cookie cannot be Secure here. Railway keeps the default (true).
+  NEXORA_SESSION_COOKIE_SECURE: ${NEXORA_SESSION_COOKIE_SECURE:-false}
 
 services:
   postgres:
@@ -61,9 +65,10 @@ services:
     build: ./apps/web
     environment:
       NEXORA_API_UPSTREAM: api:8000
-      NEXORA_GATEWAY_TOKEN: ${NEXORA_GATEWAY_TOKEN:-local-gateway-token}
-      # Loopback-only stack: access control off unless you set basic + credentials in .env.
-      NEXORA_GATEWAY_AUTH: ${NEXORA_GATEWAY_AUTH:-off}
+      NEXORA_GATEWAY_TOKEN: ${NEXORA_GATEWAY_TOKEN:-local-only-gateway-token-not-a-secret}
+      # Same model as the deployment: the API authenticates every request (session sign-in page).
+      # "basic" adds the legacy shared Basic credential in front (set user + password in .env).
+      NEXORA_GATEWAY_AUTH: ${NEXORA_GATEWAY_AUTH:-session}
       NEXORA_GATEWAY_USER: ${NEXORA_GATEWAY_USER:-}
       NEXORA_GATEWAY_PASSWORD: ${NEXORA_GATEWAY_PASSWORD:-}
     depends_on:
