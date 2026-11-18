@@ -3,14 +3,12 @@ from __future__ import annotations
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Query, Response
-from sqlalchemy.orm import Session
 
 from nexora.api import schemas
-from nexora.api.deps import actor, get_session, parse_uuid, request_id
+from nexora.api.deps import SessionDep, actor, parse_uuid, request_id
 from nexora.application import case_service, queries
 
 router = APIRouter(prefix="/api/v1", tags=["cases"])
-SessionDep = Annotated[Session, Depends(get_session)]
 ActorDep = Annotated[str, Depends(actor)]
 RequestIdDep = Annotated[str, Depends(request_id)]
 
