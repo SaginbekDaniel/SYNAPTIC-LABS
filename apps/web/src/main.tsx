@@ -9,6 +9,7 @@ import "./styles/layout.css";
 import "./styles/components.css";
 import "./styles/charts.css";
 import "./styles/features.css";
+import "./styles/auth.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

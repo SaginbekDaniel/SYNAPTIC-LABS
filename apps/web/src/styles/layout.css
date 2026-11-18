@@ -104,8 +104,56 @@
 .rail__link.active svg {
   color: var(--accent);
 }
-.rail__footer {
+/* Signed-in identity + sign-out, pinned to the foot of the rail. */
+.account {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
   margin-top: auto;
+  padding: var(--s-3) var(--s-2) var(--s-2) var(--s-3);
+  border-top: 1px solid var(--line);
+}
+.account__avatar {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: var(--r-pill);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.02em;
+}
+.account__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+  line-height: 1.25;
+}
+.account__name,
+.account__id {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.account__name {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+}
+.account__id {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+.sheet__who {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rail__footer {
   padding: var(--s-3);
   font-size: var(--fs-xs);
   line-height: 1.45;
@@ -375,8 +423,14 @@
   .brand__text,
   .rail__text,
   .rail__group,
-  .rail__footer {
+  .rail__footer,
+  .account__text {
     display: none;
+  }
+  .account {
+    flex-direction: column;
+    gap: var(--s-2);
+    padding: var(--s-3) 0 0;
   }
   .rail__nav--tools {
     padding-top: var(--s-4);

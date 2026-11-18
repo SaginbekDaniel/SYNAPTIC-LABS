@@ -48,6 +48,9 @@ test("transaction → alert → evidence → case decision → audit survives re
   await page.reload();
   await expect(page.getByTestId("case-decision")).toContainText("Эскалирован");
   await expect(page.getByTestId("audit-log").locator("li")).toHaveCount(4);
+  // Every audit entry names the signed-in analyst (from the server session), not a shared demo identity.
+  const actors = await page.getByTestId("audit-log").locator("li").allTextContents();
+  expect(actors.every((a) => a.includes("e2e.analyst"))).toBe(true);
   expect(dialog).toBe(false);
   expect(errors).toEqual([]);
 });
