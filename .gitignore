@@ -24,3 +24,6 @@ apps/web/playwright-report/
 artifacts/
 *.log
 *.tsbuildinfo
+apps/pitch/test-results/
+apps/pitch/playwright-report/
+apps/pitch/tsconfig.tsbuildinfo
