@@ -9,6 +9,8 @@ claiming that a graph anomaly proves a crime.
 > Demo uses **synthetic data only**. No bank integration, no account blocking, no real
 > customer data. Priority is a triage ranking, not a fraud probability.
 
+**Interactive 3-minute pitch (React, static, synthetic data only): https://pitch-production-1554324d.up.railway.app** — source in [`apps/pitch/`](apps/pitch/README.md).
+
 ## What works today
 
 * Synthetic scenario lab (suspicious formations, legitimate lookalikes, hard negatives) and CSV import
