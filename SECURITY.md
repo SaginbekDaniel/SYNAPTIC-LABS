@@ -32,7 +32,7 @@ What is in place (see [docs/deployment/railway.md](docs/deployment/railway.md#se
 | Rate limits (reads 20 r/s, writes 30/min per client), 21 MiB body limit, CSV row limit | gateway config, `NEXORA_MAX_*` |
 | API docs disabled in the deployment; error envelopes without stack traces | `NEXORA_EXPOSE_API_DOCS=false`, API error handlers |
 | Non-root containers; secrets only in Railway variables, set over stdin | Dockerfiles, `scripts/railway/bootstrap.sh` |
-| CodeQL, dependency review, Dependabot | `.github/` |
+| CodeQL, Dependabot (dependency review can be added once the repository's Dependency graph is enabled) | `.github/` |
 
 What is **not** in place — and why this must not hold real data:
 

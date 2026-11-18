@@ -16,7 +16,7 @@ No versions have been released yet; entries are grouped by merged pull request.
 - Worker stops cooperatively on SIGTERM after finishing the job in progress.
 - Deployed smoke test (`apps/web/playwright.smoke.config.ts`) and a CI job that builds the
   production images and runs it through the gateway with access control on.
-- CodeQL, dependency review, Dependabot, issue/PR templates, `SECURITY.md`, `CONTRIBUTING.md`,
+- CodeQL, Dependabot, issue/PR templates, `SECURITY.md`, `CONTRIBUTING.md`,
   Makefile, deployment and architecture documentation.
 
 ### Changed
