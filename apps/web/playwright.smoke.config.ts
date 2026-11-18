@@ -4,13 +4,15 @@ import { defineConfig, devices } from "@playwright/test";
  * Smoke test against an already-running NEXORA gateway (local Docker stack or a cloud deployment).
  * It starts nothing and resets nothing: it only adds synthetic datasets and one case decision.
  *
- *   NEXORA_SMOKE_URL        base URL, e.g. https://<service>.up.railway.app  (default http://127.0.0.1:8080)
- *   NEXORA_SMOKE_USER       gateway user      } omit both when the gateway runs with
- *   NEXORA_SMOKE_PASSWORD   gateway password  } NEXORA_GATEWAY_AUTH=off (local stack)
+ *   NEXORA_SMOKE_URL             base URL, e.g. https://<service>.up.railway.app  (default http://127.0.0.1:8080)
+ *   NEXORA_SMOKE_USER            analyst account } signs in on the NEXORA sign-in page
+ *   NEXORA_SMOKE_PASSWORD        its password    } (create with python -m nexora.auth.cli)
+ *   NEXORA_SMOKE_BASIC_USER      only while the gateway runs NEXORA_GATEWAY_AUTH=basic:
+ *   NEXORA_SMOKE_BASIC_PASSWORD  the shared Basic credential in front of the sign-in page
  *   NEXORA_SMOKE_SCREENSHOTS  directory to write README screenshots to (optional)
  */
-const user = process.env.NEXORA_SMOKE_USER;
-const password = process.env.NEXORA_SMOKE_PASSWORD;
+const user = process.env.NEXORA_SMOKE_BASIC_USER;
+const password = process.env.NEXORA_SMOKE_BASIC_PASSWORD;
 
 export default defineConfig({
   testDir: "smoke",

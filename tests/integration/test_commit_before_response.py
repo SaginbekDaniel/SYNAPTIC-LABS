@@ -21,7 +21,23 @@ from nexora.api.main import create_app
 pytestmark = pytest.mark.integration
 
 
-def test_created_dataset_is_committed_before_the_response_starts(settings, db_url):
+def test_created_dataset_is_committed_before_the_response_starts(settings, db_url, factory):
+    from nexora.auth import service
+    from tests.auth_helpers import ANALYST, ANALYST_PASSWORD, ensure_user
+
+    ensure_user(factory)
+    with factory() as s:
+        signed_in = service.sign_in(
+            s,
+            settings,
+            username=ANALYST,
+            password=ANALYST_PASSWORD,
+            client="test",
+            previous_token=None,
+            request_id=None,
+        )
+        s.commit()
+    cookie = f"__Host-nexora_session={signed_in.token}".encode()
     app = create_app(settings)
     engine = create_engine(db_url)
     body = json.dumps({"suite": "funnel-only-v1", "seed": 4242}).encode()
@@ -50,7 +66,12 @@ def test_created_dataset_is_committed_before_the_response_starts(settings, db_ur
         "path": "/api/v1/lab/datasets",
         "raw_path": b"/api/v1/lab/datasets",
         "query_string": b"",
-        "headers": [(b"content-type", b"application/json"), (b"host", b"test")],
+        "headers": [
+            (b"content-type", b"application/json"),
+            (b"host", b"test"),
+            (b"cookie", cookie),
+            (b"x-csrf-token", signed_in.principal.csrf_token.encode()),
+        ],
         "client": ("127.0.0.1", 1),
         "server": ("test", 80),
     }

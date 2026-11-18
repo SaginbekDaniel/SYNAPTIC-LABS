@@ -95,6 +95,7 @@ def test_evaluation_serves_artifact_and_hides_manifests(client, settings, tmp_pa
 def test_downgrade_refuses_to_discard_published_v2_analyses(client, settings, db_url):
     from alembic import command
     from alembic.config import Config
+    from alembic.script import ScriptDirectory
     from sqlalchemy import create_engine, text
 
     _create_and_analyse(client, settings, seed=1001, suite="bench-v1")
@@ -102,6 +103,7 @@ def test_downgrade_refuses_to_discard_published_v2_analyses(client, settings, db
     cfg.set_main_option("sqlalchemy.url", db_url)
     with pytest.raises(Exception, match="ck_formations_kind"):
         command.downgrade(cfg, "0001")
+    head = ScriptDirectory.from_config(cfg).get_current_head()
     with create_engine(db_url).connect() as conn:  # transactional DDL: still at head, rows intact
-        assert conn.execute(text("SELECT version_num FROM alembic_version")).scalar_one() == "0002"
+        assert conn.execute(text("SELECT version_num FROM alembic_version")).scalar_one() == head
         assert conn.execute(text("SELECT count(*) FROM formations WHERE kind = 'fan_out'")).scalar_one() > 0

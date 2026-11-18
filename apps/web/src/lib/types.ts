@@ -28,3 +28,6 @@ export const FORMATION_KINDS: readonly FormationKind[] = ["funnel", "fan_out", "
 export type EvaluationReport = S["EvaluationReport"];
 export type MethodSummary = S["MethodSummary"];
 export type Activity = S["Activity"];
+export type AuthSession = S["AuthSession"];
+export type AuthUser = S["AuthUser"];
+export type SessionState = S["SessionState"];

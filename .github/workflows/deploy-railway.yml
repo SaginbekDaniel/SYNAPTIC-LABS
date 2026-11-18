@@ -2,8 +2,9 @@
 #
 # Setup (owner, once): create the GitHub environment "railway-demo" with required reviewers, and add
 #   secret   RAILWAY_TOKEN           Railway *project* token for the demo environment
-#   secret   NEXORA_SMOKE_USER       gateway user      (same values as on the Railway web service)
-#   secret   NEXORA_SMOKE_PASSWORD   gateway password
+#   secret   NEXORA_SMOKE_USER       analyst account for the smoke test (create with nexora.auth.cli)
+#   secret   NEXORA_SMOKE_PASSWORD   its password
+#   secret   NEXORA_SMOKE_BASIC_USER / _PASSWORD   only while the gateway runs NEXORA_GATEWAY_AUTH=basic
 #   variable NEXORA_DEMO_URL         https://<generated>.up.railway.app
 # See docs/deployment/railway.md.
 name: deploy-railway
@@ -70,6 +71,8 @@ jobs:
           NEXORA_SMOKE_URL: ${{ vars.NEXORA_DEMO_URL }}
           NEXORA_SMOKE_USER: ${{ secrets.NEXORA_SMOKE_USER }}
           NEXORA_SMOKE_PASSWORD: ${{ secrets.NEXORA_SMOKE_PASSWORD }}
+          NEXORA_SMOKE_BASIC_USER: ${{ secrets.NEXORA_SMOKE_BASIC_USER }}
+          NEXORA_SMOKE_BASIC_PASSWORD: ${{ secrets.NEXORA_SMOKE_BASIC_PASSWORD }}
         run: |
           npm ci
           npx playwright install --with-deps chromium

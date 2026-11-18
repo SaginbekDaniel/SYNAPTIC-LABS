@@ -1,0 +1,432 @@
+/* ================================================================ sign-in
+ * Two columns on wide screens (brand + network | sign-in panel), one column below lg (1100px).
+ * Tokens only; the network illustration animates only when the user has not asked for reduced motion.
+ */
+.auth {
+  position: relative;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(460px, 0.8fr);
+  /* Full-bleed light, content capped so very wide screens do not pull the two halves apart. */
+  padding-inline: max(0px, calc((100% - 1600px) / 2));
+  background:
+    radial-gradient(60rem 40rem at 18% 30%, var(--auth-light-1), transparent 70%),
+    radial-gradient(40rem 32rem at 70% 85%, var(--auth-light-2), transparent 70%),
+    var(--canvas);
+}
+
+/* ---- brand column ---- */
+.auth__brand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+  min-width: 0;
+  padding: var(--s-8) var(--s-12) var(--s-10);
+}
+.auth__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+}
+.auth__lockup {
+  padding: 0;
+}
+/* The rail hides .brand__text in compact layouts; the sign-in lockup always shows the name. */
+.auth__lockup .brand__text {
+  display: flex;
+}
+.auth__theme {
+  position: absolute;
+  top: var(--s-8);
+  right: max(var(--s-8), calc((100% - 1600px) / 2 + var(--s-8)));
+}
+.auth__hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  max-width: 36rem;
+  margin-top: var(--s-10);
+  animation: auth-rise var(--dur-3) var(--ease) both;
+}
+.auth__headline {
+  font-size: var(--fs-display);
+  font-weight: var(--fw-semibold);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+.auth__sub {
+  max-width: 30rem;
+  color: var(--text-2);
+  font-size: var(--fs-lg);
+  letter-spacing: 0.01em;
+}
+.auth__viz {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  min-height: 260px;
+  max-height: 560px;
+}
+.auth__points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-6);
+  list-style: none;
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+.auth__points li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+.auth__points svg {
+  color: var(--cyan);
+}
+
+/* ---- sign-in column ---- */
+.auth__side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--s-10) var(--s-8);
+  outline: none;
+}
+.auth__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  width: min(100%, 440px);
+  padding: var(--s-8);
+  border: 1px solid var(--glass-line);
+  border-radius: var(--r-xl);
+  background: var(--glass);
+  box-shadow: var(--shadow-glass);
+  -webkit-backdrop-filter: blur(18px) saturate(1.15);
+  backdrop-filter: blur(18px) saturate(1.15);
+  animation: auth-rise var(--dur-3) var(--ease) both;
+}
+.auth__panel--checking {
+  min-height: 420px;
+  align-items: center;
+  justify-content: center;
+}
+.auth__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+.auth__title {
+  font-size: var(--fs-2xl);
+  letter-spacing: var(--tracking-display);
+}
+.auth__subtitle {
+  color: var(--text-2);
+}
+/* Live region stays in the DOM so screen readers announce errors when they appear. */
+.auth__error-slot:empty {
+  display: none;
+}
+.auth__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+/* 16px text: iOS Safari zooms the page when a smaller input receives focus. */
+.auth__input {
+  width: 100%;
+  min-height: var(--touch-min);
+  font-size: var(--fs-lg);
+}
+.field__error {
+  color: var(--ev-contradicted);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+}
+.auth__password {
+  position: relative;
+  display: flex;
+}
+.auth__password .auth__input {
+  padding-right: calc(var(--touch-min) + var(--s-1));
+}
+.auth__reveal {
+  position: absolute;
+  inset: 0 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: var(--touch-min);
+  border: 0;
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  background: transparent;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: color var(--dur-1) var(--ease);
+}
+.auth__reveal:hover {
+  color: var(--text);
+}
+.auth__reveal:focus-visible {
+  border-radius: var(--r-sm);
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+.auth__caps {
+  color: var(--band-medium);
+}
+.auth__submit {
+  margin-top: var(--s-2);
+  font-size: var(--fs-lg);
+}
+.auth__submit:disabled {
+  opacity: 0.75;
+  cursor: progress;
+}
+.auth__spinner {
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--line-strong);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: auth-spin 0.8s linear infinite;
+}
+.auth__spinner--inline {
+  width: 16px;
+  height: 16px;
+  border-color: rgb(255 255 255 / 0.35);
+  border-top-color: var(--text-on-fill);
+}
+.auth__footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--line);
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  text-align: center;
+  text-wrap: balance;
+}
+.auth__footer svg {
+  flex: none;
+  color: var(--ev-supported);
+}
+
+@keyframes auth-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes auth-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---- network illustration ---- */
+.netviz {
+  width: 100%;
+  height: 100%;
+  max-width: 720px;
+  overflow: visible;
+}
+.netviz__mesh path {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+.netviz__paths path {
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 4 8;
+  opacity: 0.75;
+}
+.netviz__paths path,
+.netviz__packets path {
+  stroke: var(--g-subject);
+}
+.netviz__paths [data-from="entry"],
+.netviz__packets [data-from="entry"],
+.netviz__paths [data-from="relay"],
+.netviz__packets [data-from="relay"] {
+  stroke: var(--g-entry);
+}
+.netviz__paths [data-from="exit"],
+.netviz__packets [data-from="exit"] {
+  stroke: var(--g-exit);
+}
+.netviz__packets path {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 0.1 99.9;
+  stroke-dashoffset: 0;
+  opacity: 0; /* static frame (reduced motion): paths only, no frozen dots */
+}
+.netviz__node {
+  fill: var(--g-node);
+  stroke: var(--canvas);
+  stroke-width: 2;
+}
+[data-role="mesh"] .netviz__node {
+  fill: var(--neutral-series);
+  stroke-width: 0;
+  opacity: 0.6;
+}
+[data-role="hub"] .netviz__node {
+  fill: var(--g-subject);
+}
+[data-role="entry"] .netviz__node,
+[data-role="relay"] .netviz__node {
+  fill: var(--g-entry);
+}
+[data-role="exit"] .netviz__node,
+[data-role="far"] .netviz__node {
+  fill: var(--g-exit);
+}
+.netviz__pulse {
+  fill: none;
+  stroke: var(--g-subject);
+  stroke-width: 1.5;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+[data-role="entry"] .netviz__pulse {
+  stroke: var(--g-entry);
+}
+[data-role="exit"] .netviz__pulse {
+  stroke: var(--g-exit);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .netviz__paths path {
+    animation: netviz-flow 2.4s linear infinite;
+  }
+  .netviz__packets path {
+    animation: netviz-packet 3.2s var(--ease) infinite;
+  }
+  .netviz__pulse {
+    animation: netviz-pulse 3.3s var(--ease) infinite;
+  }
+  .netviz__glow {
+    animation: netviz-breathe 6s ease-in-out infinite alternate;
+  }
+}
+@keyframes netviz-flow {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+@keyframes netviz-packet {
+  0% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+  10%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: -100;
+    opacity: 0;
+  }
+}
+@keyframes netviz-pulse {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(3.2);
+  }
+}
+@keyframes netviz-breathe {
+  to {
+    opacity: 0.6;
+  }
+}
+
+/* ---- responsive ---- */
+@media (max-width: 1279px) {
+  .auth__brand {
+    padding-inline: var(--s-8);
+  }
+}
+
+/* Below lg: one column — compact brand header with the network as a band, then the form. */
+@media (max-width: 1099px) {
+  .auth {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+  }
+  .auth__brand {
+    gap: var(--s-4);
+    padding: max(var(--s-5), env(safe-area-inset-top)) var(--s-6) 0;
+  }
+  .auth__theme {
+    position: static;
+  }
+  .auth__hero {
+    margin-top: var(--s-4);
+    max-width: 40rem;
+  }
+  .auth__viz {
+    flex: none;
+    display: flex;
+    justify-content: center;
+    height: 200px;
+    min-height: 0;
+  }
+  /* Size by the band's height so the whole network fits instead of being cropped. */
+  .auth__viz .netviz {
+    width: auto;
+    height: 100%;
+  }
+  .auth__points {
+    display: none;
+  }
+  .auth__side {
+    justify-content: flex-start;
+    padding: var(--s-2) var(--s-6) max(var(--s-8), env(safe-area-inset-bottom));
+  }
+  .auth__panel--checking {
+    min-height: 280px;
+  }
+}
+
+@media (max-width: 599px) {
+  .auth__brand {
+    padding-inline: var(--s-4);
+  }
+  .auth__hero {
+    gap: var(--s-2);
+  }
+  .auth__headline {
+    font-size: 1.75rem;
+  }
+  .auth__sub {
+    font-size: var(--fs-md);
+  }
+  .auth__viz {
+    height: 150px;
+  }
+  .auth__side {
+    padding-inline: var(--s-4);
+  }
+  .auth__panel {
+    gap: var(--s-4);
+    padding: var(--s-6) var(--s-5);
+    border-radius: var(--r-lg);
+  }
+  .auth__title {
+    font-size: var(--fs-xl);
+  }
+}

@@ -3,11 +3,17 @@
 # Fails closed: unless access control is configured, or explicitly switched off, the gateway
 # refuses to start, so a misconfigured deployment never serves the demo unprotected.
 #
-#   NEXORA_GATEWAY_AUTH       basic (default) | off   ("off" is for the loopback-only local stack)
+#   NEXORA_GATEWAY_AUTH       session (default) | basic | off
+#     session  The API authenticates every /api request with a server-side session (named users,
+#              sign-in page in the SPA). No browser Basic prompt. Requires NEXORA_GATEWAY_TOKEN, so
+#              the API only ever accepts requests that came through this gateway.
+#     basic    Additionally puts a shared HTTP Basic credential in front of everything except
+#              /healthz (the previous deployment model; kept for staged rollout and rollback).
+#     off      No gateway token required (loopback-only local stack). The API still requires sessions.
 #   NEXORA_GATEWAY_USER       Basic-auth user name                     (required for basic)
 #   NEXORA_GATEWAY_PASSWORD   Basic-auth password, >= 16 characters    (required for basic)
 #   NEXORA_API_UPSTREAM       host:port of the API on the private network (default api:8000)
-#   NEXORA_GATEWAY_TOKEN      shared secret forwarded to the API (optional; must match the API's)
+#   NEXORA_GATEWAY_TOKEN      shared secret forwarded to the API (must match the API's; >= 32 chars for session)
 # Sourced, not executed: no `set -e/-u` (it would leak into the entrypoint); every step checks itself.
 
 mkdir -p /tmp/nexora || exit 1
@@ -23,10 +29,17 @@ else
   : > /tmp/nexora/listen-ipv6.conf
 fi
 
-mode="${NEXORA_GATEWAY_AUTH:-basic}"
+mode="${NEXORA_GATEWAY_AUTH:-session}"
 case "$mode" in
   off)
-    echo "nexora-gateway: WARNING access control is OFF (NEXORA_GATEWAY_AUTH=off); never expose this publicly" >&2
+    echo "nexora-gateway: WARNING gateway access control is OFF (NEXORA_GATEWAY_AUTH=off); never expose this publicly" >&2
+    printf 'auth_basic off;\n' > /tmp/nexora/auth.conf
+    ;;
+  session)
+    if [ "${#NEXORA_GATEWAY_TOKEN}" -lt 32 ]; then
+      echo "nexora-gateway: refusing to start: session mode needs NEXORA_GATEWAY_TOKEN (>= 32 characters, same value as the API)" >&2
+      exit 1
+    fi
     printf 'auth_basic off;\n' > /tmp/nexora/auth.conf
     ;;
   basic)
@@ -55,7 +68,7 @@ case "$mode" in
     printf 'auth_basic "NEXORA demo";\nauth_basic_user_file /tmp/nexora/htpasswd;\n' > /tmp/nexora/auth.conf
     ;;
   *)
-    echo "nexora-gateway: refusing to start: NEXORA_GATEWAY_AUTH must be 'basic' or 'off', got '$mode'" >&2
+    echo "nexora-gateway: refusing to start: NEXORA_GATEWAY_AUTH must be 'session', 'basic' or 'off', got '$mode'" >&2
     exit 1
     ;;
 esac

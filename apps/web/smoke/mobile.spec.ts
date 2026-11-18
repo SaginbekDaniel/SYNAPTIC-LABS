@@ -1,8 +1,12 @@
 import { expect, test } from "@playwright/test";
-import { collectErrors } from "../e2e/helpers";
+import { collectErrors, signIn } from "../e2e/helpers";
 
-test("390px: core screens fit the viewport", async ({ page }) => {
+test("390px: sign-in and core screens fit the viewport", async ({ page }) => {
+  test.skip(!process.env.NEXORA_SMOKE_USER, "set NEXORA_SMOKE_USER and NEXORA_SMOKE_PASSWORD");
   const errors = collectErrors(page);
+  await page.goto("/");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  await signIn(page, process.env.NEXORA_SMOKE_USER, process.env.NEXORA_SMOKE_PASSWORD);
   for (const path of ["/", "/alerts", "/lab", "/evaluation"]) {
     await page.goto(path);
     await page.waitForLoadState("networkidle");
