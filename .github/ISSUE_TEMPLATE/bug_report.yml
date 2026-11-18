@@ -1,0 +1,39 @@
+name: Bug report
+description: Something in NEXORA behaves incorrectly
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use synthetic data only. Never paste real account numbers, transactions, credentials or
+        gateway passwords. Security issues: see SECURITY.md instead.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations: {required: true}
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include the synthetic suite and seed from the Fraud Lab if relevant.
+      placeholder: |
+        1. Fraud Lab → demo-v1, seed 2026 → Generate → Run analysis
+        2. Review Queue → …
+    validations: {required: true}
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where
+      options: [Local dev (vite + uvicorn), Local docker compose, Railway demo, CI]
+    validations: {required: true}
+  - type: input
+    id: commit
+    attributes:
+      label: Commit SHA
+  - type: textarea
+    id: logs
+    attributes:
+      label: Request id, API error envelope or logs
+      description: The `request_id` from an error message helps find the server log line.
+      render: text

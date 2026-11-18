@@ -1,0 +1,18 @@
+* text=auto eol=lf
+
+# Shell scripts must keep LF to run inside Linux containers.
+*.sh    text eol=lf
+*.envsh text eol=lf
+
+# Generated files: collapsed in diffs, excluded from language statistics.
+apps/web/src/lib/api-types.ts linguist-generated=true
+apps/web/openapi.json         linguist-generated=true
+uv.lock                       linguist-generated=true -diff
+**/package-lock.json          linguist-generated=true -diff
+benchmarks/results/*.json     linguist-generated=true
+
+# Binary assets.
+*.png binary
+*.jpg binary
+*.webp binary
+*.woff2 binary

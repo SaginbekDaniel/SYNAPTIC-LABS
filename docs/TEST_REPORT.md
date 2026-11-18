@@ -1,5 +1,31 @@
 # Test report
 
+## Session 3 — deployment readiness, gateway hardening, repository
+
+- Date (UTC): 2026-11-18 · Python 3.13 · Node 22.23 · PostgreSQL 16 (local) · Docker 29.10 · Railway CLI 5.75.0
+- Config unchanged: `detectors-v2`, `risk-policy-v2`. Data: synthetic only.
+
+| Gate | Command | Result |
+|---|---|---|
+| Python lint / format / types | `ruff check`, `ruff format --check`, `mypy` | PASS |
+| Migrations | `alembic upgrade head` + `alembic check` | PASS |
+| Python unit + integration | `uv run pytest` | **117 passed** (99 before; + deployment settings, gateway token, commit-before-response) |
+| OpenAPI client in sync | `npm run gen:api` + `git diff --exit-code` | PASS (no schema change) |
+| Web types / unit / build | `tsc -b`, `vitest run`, `vite build` | PASS, **26 passed** |
+| Browser E2E | `npx playwright test` | **12 passed** (new: dataset selection regression, fails on the old code) |
+| Railway definition | `cd .railway && npm run check` | PASS; mutation test (docs on, literal password, no migration) → 3 violations reported |
+| Shell / workflows | `shellcheck`, `actionlint` | PASS |
+| Production images | build both; `id -u` ≠ 0; gateway without credentials exits 1 | PASS |
+| Gateway behaviour | curl matrix: 401 on `/`, assets, `/api` reads and writes, `/health/ready`; 200 `/healthz`; docs 404; writes 429 after burst | PASS |
+| Smoke through gateway, auth on | `npx playwright test -c playwright.smoke.config.ts` | **5 passed**; zero console errors / CSP violations |
+| Persistence + redeploy | recreate api/worker/web; row counts unchanged; smoke again | PASS |
+| Graceful worker stop | `docker compose stop worker` → "stopped after N jobs" | PASS |
+| CI | run 21 on `0497601` (test, deploy-config, containers) | PASS |
+| Railway deployment | `railway init` | **Not run** — account trial expired (see `docs/deployment/railway.md`) |
+
+Defects found and fixed this session: CSP blocked Vite-inlined `data:` fonts (found by the smoke
+test); Fraud Lab dataset-selection race (also audit F-10 in PR #3 — fix taken verbatim from there).
+
 ## Session 2 — detectors-v2, peer statistics, benchmark, evaluation screen
 
 - Date (UTC): 2026-11-17 · Python 3.13.18 · Node 22.23.4 · PostgreSQL 16.15 (local) · Chromium via Playwright 1.63.0
