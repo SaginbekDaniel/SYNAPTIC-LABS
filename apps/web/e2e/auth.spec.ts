@@ -155,6 +155,9 @@ test("an ended session sends the analyst to sign in and back to where they were"
   await page.goto("/login");
   await signIn(page);
   await expect(page).toHaveURL("/");
+  // Let the overview finish loading first: an in-flight request would otherwise already be the one
+  // that discovers the ended session (correct behaviour, but it races the navigation below).
+  await page.waitForLoadState("networkidle");
   // The server-side session disappears (expiry, revocation); the next API call is rejected.
   await page.context().clearCookies();
   await page.getByRole("navigation", { name: "Инструменты" }).getByRole("link", { name: "Лаборатория" }).click();
