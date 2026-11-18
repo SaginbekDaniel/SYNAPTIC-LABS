@@ -14,9 +14,9 @@ from __future__ import annotations
 import argparse
 import logging
 import os
+import signal
 import socket
 import threading
-import time
 import traceback
 import uuid
 from typing import Any
@@ -144,6 +144,45 @@ def drain(factory: sessionmaker[Session], *, config: AnalysisConfig | None = Non
     return count
 
 
+def install_stop_signals(stop: threading.Event) -> None:
+    """Translate SIGTERM/SIGINT into a cooperative stop.
+
+    Platforms (Docker, Railway) send SIGTERM before SIGKILL on redeploy. The loop finishes the job it
+    is computing and exits instead of abandoning it; a job interrupted by SIGKILL is still recovered
+    when its lease expires.
+    """
+
+    def _request_stop(signum: int, _frame: Any) -> None:
+        log.info("received signal %s; finishing the current job, then stopping", signum)
+        stop.set()
+
+    for sig in (signal.SIGTERM, signal.SIGINT):
+        signal.signal(sig, _request_stop)
+
+
+def serve(
+    factory: sessionmaker[Session],
+    *,
+    owner: str,
+    stop: threading.Event,
+    poll: float,
+    config: AnalysisConfig | None = None,
+) -> int:
+    """Process jobs until ``stop`` is set. Returns the number of jobs processed."""
+    processed = 0
+    while not stop.is_set():
+        try:
+            if run_once(factory, owner=owner, config=config) is None:
+                stop.wait(poll)
+            else:
+                processed += 1
+        except Exception:
+            log.exception("worker loop error; backing off")
+            stop.wait(poll * 5)
+    log.info("worker %s stopped after %s jobs", owner, processed)
+    return processed
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="NEXORA analysis worker")
     parser.add_argument("--once", action="store_true", help="process queued jobs then exit")
@@ -158,14 +197,9 @@ def main() -> None:
     if args.once:
         log.info("processed %s jobs", drain(factory))
         return
-    poll = get_settings().worker_poll_seconds
-    while True:
-        try:
-            if run_once(factory, owner=owner) is None:
-                time.sleep(poll)
-        except Exception:
-            log.exception("worker loop error; backing off")
-            time.sleep(poll * 5)
+    stop = threading.Event()
+    install_stop_signals(stop)
+    serve(factory, owner=owner, stop=stop, poll=get_settings().worker_poll_seconds)
 
 
 if __name__ == "__main__":

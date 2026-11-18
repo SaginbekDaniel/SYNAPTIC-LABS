@@ -1,9 +1,20 @@
+# The Python image only needs: pyproject.toml, uv.lock, README.md, src/, configs/, migrations/,
+# alembic.ini and benchmarks/results/. Everything else is excluded to keep the build context small
+# (and `railway up` uploads small).
 .git
+.github
 .venv
+.env
+.env.*
 **/__pycache__
-**/node_modules
-apps/web/dist
+**/*.pyc
 .mypy_cache
 .ruff_cache
 .pytest_cache
-.env
+apps
+docs
+tests
+scripts
+.railway
+NEXORA_AI_MASTER_SPEC_CLAUDE_CODE.md
+docker-compose.yml

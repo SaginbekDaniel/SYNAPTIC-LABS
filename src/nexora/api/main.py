@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hmac
 import logging
 import uuid
 from typing import Any
@@ -25,6 +26,10 @@ from nexora.settings import Settings, get_settings
 
 log = logging.getLogger("nexora.api")
 
+GATEWAY_TOKEN_HEADER = "X-Nexora-Gateway-Token"
+# Paths reachable without the gateway token: liveness/readiness for the platform's health checks.
+_UNGATED_PREFIXES = ("/health/",)
+
 
 def _envelope(
     status: int, code: str, message: str, request_id: str | None, details: dict[str, Any] | None = None
@@ -44,10 +49,15 @@ def create_app(settings: Settings | None = None, config: AnalysisConfig | None =
         description=(
             "Explainable, coverage-aware fraud-network investigation. DEMO MODE: synthetic data, no bank integration."
         ),
+        docs_url="/docs" if settings.expose_api_docs else None,
+        redoc_url="/redoc" if settings.expose_api_docs else None,
+        openapi_url="/openapi.json" if settings.expose_api_docs else None,
     )
     app.state.settings = settings
     app.state.session_factory = session_factory(settings.database_url)
     app.state.analysis_config = config or default_config()
+
+    gateway_token = settings.gateway_token
 
     app.add_middleware(
         CORSMiddleware,
@@ -62,6 +72,10 @@ def create_app(settings: Settings | None = None, config: AnalysisConfig | None =
         incoming = request.headers.get("X-Request-ID", "")
         rid = incoming if 0 < len(incoming) <= 64 and incoming.isprintable() else f"req-{uuid.uuid4().hex[:16]}"
         request.state.request_id = rid
+        if gateway_token and not request.url.path.startswith(_UNGATED_PREFIXES):
+            presented = request.headers.get(GATEWAY_TOKEN_HEADER, "")
+            if not hmac.compare_digest(presented.encode(), gateway_token.encode()):
+                return _envelope(401, "GATEWAY_TOKEN_REQUIRED", "request did not arrive through the gateway", rid)
         response = await call_next(request)
         response.headers["X-Request-ID"] = rid
         return response

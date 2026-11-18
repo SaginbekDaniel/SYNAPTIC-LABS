@@ -2,15 +2,13 @@ from __future__ import annotations
 
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, Query
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Query
 
 from nexora.api import schemas
-from nexora.api.deps import get_session, parse_uuid
+from nexora.api.deps import SessionDep, parse_uuid
 from nexora.application import queries
 
 router = APIRouter(prefix="/api/v1", tags=["alerts"])
-SessionDep = Annotated[Session, Depends(get_session)]
 
 
 @router.get("/alerts", response_model=schemas.AlertPage)

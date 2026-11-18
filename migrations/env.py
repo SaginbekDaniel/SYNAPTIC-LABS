@@ -6,13 +6,17 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from nexora.persistence.orm import Base
-from nexora.settings import get_settings
+from nexora.settings import get_settings, normalize_database_url
 
 config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 if not config.get_main_option("sqlalchemy.url"):
-    config.set_main_option("sqlalchemy.url", get_settings().database_url)
+    # ConfigParser interpolates "%"; escape it so percent-encoded passwords survive.
+    config.set_main_option("sqlalchemy.url", get_settings().database_url.replace("%", "%%"))
+else:
+    configured = normalize_database_url(config.get_main_option("sqlalchemy.url") or "")
+    config.set_main_option("sqlalchemy.url", configured.replace("%", "%%"))
 target_metadata = Base.metadata
 
 

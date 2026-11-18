@@ -1,0 +1,76 @@
+# Manual, approval-gated deployment of a commit that already passed CI.
+#
+# Setup (owner, once): create the GitHub environment "railway-demo" with required reviewers, and add
+#   secret   RAILWAY_TOKEN           Railway *project* token for the demo environment
+#   secret   NEXORA_SMOKE_USER       gateway user      (same values as on the Railway web service)
+#   secret   NEXORA_SMOKE_PASSWORD   gateway password
+#   variable NEXORA_DEMO_URL         https://<generated>.up.railway.app
+# See docs/deployment/railway.md.
+name: deploy-railway
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Commit SHA or branch to deploy (must have a successful ci run)
+        required: true
+        default: claude/brave-dirac-c80nwq
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: deploy-railway
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Commit passed CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      sha: ${{ steps.ci.outputs.sha }}
+    steps:
+      - id: ci
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REF: ${{ inputs.ref }}
+        run: |
+          sha="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${REF}" --jq .sha)"
+          ok="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/ci.yml/runs?head_sha=${sha}&status=success" --jq '.total_count')"
+          if [ "${ok}" = "0" ]; then
+            echo "::error::${sha} has no successful ci run; refusing to deploy"
+            exit 1
+          fi
+          echo "sha=${sha}" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    name: Deploy to Railway and smoke test
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    environment:
+      name: railway-demo
+      url: ${{ vars.NEXORA_DEMO_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.verify.outputs.sha }}
+      - uses: actions/setup-node@v4
+        with: {node-version: 22, cache: npm, cache-dependency-path: apps/web/package-lock.json}
+      - name: Install Railway CLI
+        run: npm install --global @railway/cli@5.75.0
+      - name: Deploy api → worker → web
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: scripts/railway/deploy.sh
+      - name: Smoke test the public URL
+        working-directory: apps/web
+        env:
+          NEXORA_SMOKE_URL: ${{ vars.NEXORA_DEMO_URL }}
+          NEXORA_SMOKE_USER: ${{ secrets.NEXORA_SMOKE_USER }}
+          NEXORA_SMOKE_PASSWORD: ${{ secrets.NEXORA_SMOKE_PASSWORD }}
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npx playwright test -c playwright.smoke.config.ts

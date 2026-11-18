@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { api } from "../lib/api";
 import type { Dataset } from "../lib/types";
 import { useApi, type ApiState } from "../lib/useApi";
@@ -35,7 +35,15 @@ export function DatasetProvider({ children }: { children: ReactNode }) {
   const [activeId, setActive] = useState<string | null>(readStored);
   const list = useApi("datasets", (signal) => api.get<{ items: Dataset[]; total: number }>("/api/v1/datasets", { limit: 50 }, signal));
 
+  // The list snapshot that was current when a dataset was explicitly selected. A dataset created a
+  // moment ago is not in that snapshot yet; falling back against it would silently replace the
+  // user's fresh selection with the previous newest dataset (race fixed in the deep audit).
+  const listData = useRef(list.data);
+  listData.current = list.data;
+  const selectedAgainst = useRef<typeof list.data | null>(null);
+
   const setActiveId = useCallback((id: string) => {
+    selectedAgainst.current = listData.current ?? null;
     setActive(id);
     writeStored(id);
   }, []);
@@ -45,7 +53,10 @@ export function DatasetProvider({ children }: { children: ReactNode }) {
     const items = list.data?.items;
     if (!items) return;
     if (items.length === 0) return;
-    if (!activeId || !items.some((d) => d.id === activeId)) setActiveId(items[0]!.id);
+    if (activeId && items.some((d) => d.id === activeId)) return;
+    if (activeId && selectedAgainst.current === list.data) return; // wait for the refreshed list
+    selectedAgainst.current = null;
+    setActiveId(items[0]!.id);
   }, [list.data, activeId, setActiveId]);
 
   const active = useMemo(() => list.data?.items.find((d) => d.id === activeId) ?? null, [list.data, activeId]);

@@ -1,0 +1,27 @@
+name: Feature request
+description: Propose an analytical capability or product improvement
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Analyst problem
+      description: What can an analyst not do, or not trust, today?
+    validations: {required: true}
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+    validations: {required: true}
+  - type: textarea
+    id: evidence
+    attributes:
+      label: How would we know it works?
+      description: Benchmark protocol, test, or acceptance check. Metrics must come from an executed run.
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Project rules
+      options:
+        - label: Works on synthetic data only and takes no automatic action against customers
+          required: true
