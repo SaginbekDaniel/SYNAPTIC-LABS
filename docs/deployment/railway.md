@@ -122,7 +122,7 @@ Set by `.railway/railway.ts` (non-secret) or by `bootstrap.sh` (secret, via stdi
 | `NEXORA_GATEWAY_TOKEN` | web | `${{api.NEXORA_GATEWAY_TOKEN}}` | Reference: one value, one place. |
 | `NEXORA_EXPOSE_API_DOCS` | api | `false` | No `/docs`, `/redoc`, `/openapi.json`. |
 | `NEXORA_CORS_ORIGINS` | api | empty | Same-origin only. |
-| `NEXORA_BIND_HOST` / `PORT` | api | `::` / `8000` | Dual-stack listener for private networking. |
+| `NEXORA_BIND_HOST` / `PORT` | api | `0.0.0.0` / `8000` | IPv4. Binding `::` made Railway's health probe fail (first deploy). |
 | `NEXORA_DB_POOL_SIZE` / `_MAX_OVERFLOW` | api, worker | `3` / `2` | ≤ 10 connections total. |
 | `NEXORA_WORKER_POLL_SECONDS` | worker | `2` | Idle polling interval. |
 | `NEXORA_API_UPSTREAM` | web | `${{api.RAILWAY_PRIVATE_DOMAIN}}:8000` | Re-resolved at runtime. |
@@ -224,7 +224,7 @@ hit cold starts.
 |---|---|
 | `web` crash-loops, log says `refusing to start` | Gateway credentials missing or too short. Set them with `--stdin`, redeploy `web`. |
 | Every `/api` call returns `401 GATEWAY_TOKEN_REQUIRED` | `web` and `api` disagree on the token. `web` must reference `${{api.NEXORA_GATEWAY_TOKEN}}`; redeploy `web` after rotating. |
-| `502` from the gateway | API not up or not listening on IPv6: check `NEXORA_BIND_HOST=::`, `PORT=8000`, `railway logs --service api`. |
+| `502` from the gateway | API not up or not reachable: check `NEXORA_BIND_HOST=0.0.0.0`, `PORT=8000`, `railway logs --service api`. |
 | API deploy fails in pre-deploy | Migration error; the old version keeps serving. Read the pre-deploy log, fix forward. |
 | `/health/ready` returns 503 `degraded` | Database unreachable or not migrated. Check `NEXORA_DATABASE_URL` reference and the pre-deploy log. |
 | Jobs stay `queued` | Worker not running: `railway logs --service worker`. |

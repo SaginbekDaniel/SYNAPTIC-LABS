@@ -33,5 +33,5 @@ COPY benchmarks/results ./benchmarks/results
 USER 10001
 EXPOSE 8000
 # exec hands PID 1 to uvicorn so SIGTERM triggers its graceful shutdown.
-# NEXORA_BIND_HOST="::" listens on IPv6 + IPv4 (Railway private networking); PORT follows the platform.
+# NEXORA_BIND_HOST overrides the bind address (default 0.0.0.0); PORT follows the platform.
 CMD ["sh", "-c", "exec uvicorn nexora.api.main:app --host \"${NEXORA_BIND_HOST:-0.0.0.0}\" --port \"${PORT:-8000}\" --timeout-graceful-shutdown 20 --no-server-header"]

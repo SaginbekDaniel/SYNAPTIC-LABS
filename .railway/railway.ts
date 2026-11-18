@@ -41,8 +41,10 @@ export default defineRailway(() => {
       ...appEnv,
       NEXORA_GATEWAY_TOKEN: preserve(),
       PORT: "8000",
-      // Listen on IPv6 + IPv4 for Railway private networking.
-      NEXORA_BIND_HOST: "::",
+      // IPv4. Verified on the first deploy: with "::" Railway's health probe never reached uvicorn (no
+      // request in the access log) and the deploy failed. This environment resolves private names to
+      // IPv4 as well as IPv6, so 0.0.0.0 serves both the probe and the gateway.
+      NEXORA_BIND_HOST: "0.0.0.0",
       // Same-origin behind the gateway: no cross-origin callers, no public API documentation.
       NEXORA_CORS_ORIGINS: "",
       NEXORA_EXPOSE_API_DOCS: "false",
