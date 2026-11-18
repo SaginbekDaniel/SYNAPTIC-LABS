@@ -10,7 +10,9 @@ from nexora.settings import get_settings, normalize_database_url
 
 config = context.config
 if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+    # Keep loggers created before migrations ran (in-process callers such as tests or tooling):
+    # the default would silently disable the application's own loggers.
+    fileConfig(config.config_file_name, disable_existing_loggers=False)
 if not config.get_main_option("sqlalchemy.url"):
     # ConfigParser interpolates "%"; escape it so percent-encoded passwords survive.
     config.set_main_option("sqlalchemy.url", get_settings().database_url.replace("%", "%%"))

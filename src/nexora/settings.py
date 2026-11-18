@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 
-from pydantic import field_validator
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # The only SQLAlchemy dialect+driver NEXORA installs (psycopg 3). Hosted PostgreSQL providers
@@ -37,13 +37,29 @@ class Settings(BaseSettings):
     db_pool_size: int = 5
     db_max_overflow: int = 5
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
-    demo_analyst: str = "demo-analyst"  # DEMO MODE identity — not production authentication
     # Serve /docs, /redoc and /openapi.json. Disable in any internet-reachable deployment.
     expose_api_docs: bool = True
     # Shared secret the gateway (Nginx) attaches to every proxied request. When set, every /api route
     # rejects requests without it, so the API stays closed even if it is accidentally given a public
     # domain. Empty disables the check (local development, tests).
     gateway_token: str = ""
+    # --- Authentication (server-side sessions; see nexora.auth) ---------------------------------
+    # A session ends after this much inactivity, and in any case this long after sign-in.
+    session_idle_minutes: int = Field(default=120, ge=5, le=24 * 60)
+    session_absolute_hours: int = Field(default=12, ge=1, le=7 * 24)
+    # Secure cookies need HTTPS (Railway's edge). Only the plain-HTTP local stack turns this off;
+    # with it on the cookie also gets the __Host- prefix (no Domain, Path=/, Secure enforced by browsers).
+    session_cookie_secure: bool = True
+    # Extra origins allowed to send state-changing requests, comma separated (e.g. the public URL).
+    # The request's own origin (Host + forwarded scheme) and the CORS origins are always trusted.
+    trusted_origins: str = ""
+    # Brute-force protection: failed sign-ins counted per user name and per client within a window.
+    login_window_minutes: int = Field(default=15, ge=1, le=24 * 60)
+    login_max_failures_per_user: int = Field(default=5, ge=1, le=1000)
+    login_max_failures_per_client: int = Field(default=30, ge=1, le=10000)
+    # One-time operator bootstrap (python -m nexora.auth.cli bootstrap): an Argon2id hash, never a password.
+    bootstrap_username: str = ""
+    bootstrap_password_hash: str = ""
     max_upload_bytes: int = 20 * 1024 * 1024
     max_csv_rows: int = 200_000
     graph_max_depth: int = 3

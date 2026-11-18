@@ -5,7 +5,7 @@ from __future__ import annotations
 import datetime as dt
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, SecretStr
 
 Money = str  # decimal string of integer minor units
 
@@ -413,7 +413,6 @@ class Health(Model):
     migration: str | None
     queue: dict[str, int]
     demo_mode: bool
-    actor: str
 
 
 # -- Evaluation (persisted benchmark artifact; synthetic data only) ----------------------
@@ -566,3 +565,30 @@ class EvaluationReport(Model):
     examples: ErrorExamples | None = None
     runtime_seconds: float
     limitations: list[str]
+
+
+# -- Authentication ---------------------------------------------------------------------------
+class LoginRequest(Model):
+    # SecretStr keeps the password out of reprs, logs and validation error output.
+    username: str = Field(min_length=1, max_length=256)
+    password: SecretStr = Field(min_length=1, max_length=1024)
+
+
+class AuthUser(Model):
+    username: str
+    display_name: str
+
+
+class AuthSession(Model):
+    user: AuthUser
+    # Send back as X-CSRF-Token on every POST. Bound to this session; useless without its cookie.
+    csrf_token: str
+    expires_at: dt.datetime
+    idle_timeout_seconds: int
+
+
+class SessionState(Model):
+    """Session bootstrap for the web client: answers anonymous callers with 200 instead of 401."""
+
+    authenticated: bool
+    session: AuthSession | None = None
