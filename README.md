@@ -51,6 +51,8 @@ exists" and "an analyst should look at this first":
 <details>
 <summary>Light theme and 390 px mobile</summary>
 
+<img src="docs/assets/screenshots/sign-in.webp" alt="NEXORA sign-in page, dark theme" width="720"> <img src="docs/assets/screenshots/mobile-sign-in.webp" alt="Sign-in on a 390 px phone" width="240">
+
 <img src="docs/assets/screenshots/review-queue-light.webp" alt="Review Queue in the light theme" width="720"> <img src="docs/assets/screenshots/mobile-investigation.webp" alt="Investigation on a 390 px phone" width="240">
 
 </details>

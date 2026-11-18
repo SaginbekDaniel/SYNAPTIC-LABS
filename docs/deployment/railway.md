@@ -1,8 +1,8 @@
 # Deploying NEXORA to Railway
 
 > **Status (2026-11-18): deployed** to Railway project `nexora-ai-demo` (environment `production`)
-> at commit `dd4ab58`. What was verified on the live URL, and what was not, is in the
-> [deployment record](#deployment-record).
+> at commit `f29ae56` with named-account sign-in (`NEXORA_GATEWAY_AUTH=session`). What was verified
+> on the live URL, and what was not, is in the [deployment record](#deployment-record).
 
 The demo is **synthetic data only, with no banking integration**. Analysts sign in with named
 accounts on the NEXORA sign-in page; the API enforces a server-side session on every request.
@@ -275,6 +275,32 @@ hit cold starts.
 | `Your trial has expired` from the CLI | Activate a plan for the workspace (the workspace id changes; re-run `railway link`). |
 
 ## Deployment record
+
+### 2026-11-18 — named accounts and the NEXORA sign-in page (commit `f29ae56`)
+
+Rolled out in the two stages described in [Authentication rollout and rollback](#authentication-rollout-and-rollback),
+after a green CI run on the commit (unit, integration, browser E2E, production images + gateway smoke).
+
+| Step | Observed |
+|---|---|
+| First analyst | Password generated locally; only its Argon2id hash set as `NEXORA_BOOTSTRAP_*` on `api` over stdin |
+| Stage 1 deploy (`deploy.sh`) | `api`, `worker`, `web` all SUCCESS at `f29ae56` (checked through the Railway API); gateway still `basic` |
+| Stage 1 boundary | Anonymous `/` and `/api/*` → `401`; **with** the Basic credential but no session: `/api/v1/datasets` → `401 AUTH_REQUIRED`, `/api/v1/auth/session` → `authenticated: false`, `/health/ready` → `404` |
+| Stage 1 smoke (with Basic) | 4/4 passed: sign-in through the form (so migration `0003` and the bootstrap ran), worker analysis, case decision, audit attributed to the analyst, reload, sign-out, revoked-cookie replay refused, light theme, 390 px |
+| Clean-up | `NEXORA_BOOTSTRAP_*` and the obsolete `NEXORA_DEMO_ANALYST` deleted from `api`/`worker` (each delete redeployed the same image) |
+| Stage 2 | `NEXORA_GATEWAY_AUTH=session` on `web`; `web` redeployed SUCCESS |
+| Stage 2 boundary | `/` → `200` with **no `WWW-Authenticate` header** (no browser Basic prompt), CSP + HSTS present; anonymous `/api/v1/datasets` and writes → `401`; spoofed gateway token → `401`; `/docs`, `/openapi.json`, `/health/ready` → `404`; cross-site sign-in (`Origin: https://evil.example`) → `403` |
+| Stage 2 smoke | 4/4 passed against `https://web-production-4593b103.up.railway.app`, including `Secure` + `__Host-` + `HttpOnly` + `SameSite=Strict` cookie checks over HTTPS and zero console errors / CSP violations |
+
+Not verified on the live URL: idle/absolute expiry and brute-force lockout (covered by integration
+tests, not exercised against production to avoid locking out the demo account); `deploy-railway.yml`
+has still not been run. During stage 1, between the `api` and `web` deploys (about one minute), the
+previous SPA could not load data because it had no sign-in page.
+
+The analyst credential is not stored in the repository; the operator holds it. Rotate it with
+`python -m nexora.auth.cli set-password nexora.analyst --generate`.
+
+### 2026-11-18 — first deployment (commit `dd4ab58`)
 
 Deployed 2026-11-18 from commit `dd4ab58` with `scripts/railway/bootstrap.sh` and `deploy.sh`.
 Public entry point: `https://web-production-4593b103.up.railway.app` (the only domain in the project;

@@ -90,7 +90,9 @@ export default defineRailway(() => {
       PORT: "8080",
       NEXORA_API_UPSTREAM: { value: "${{api.RAILWAY_PRIVATE_DOMAIN}}:8000" },
       NEXORA_GATEWAY_TOKEN: api.env.NEXORA_GATEWAY_TOKEN,
-      NEXORA_GATEWAY_AUTH: "basic",
+      // Stage 2 of the authentication rollout: no shared Basic credential in front; the API
+      // authenticates every request. Rollback: "basic" (the credential is still preserved below).
+      NEXORA_GATEWAY_AUTH: "session",
       NEXORA_GATEWAY_USER: preserve(),
       NEXORA_GATEWAY_PASSWORD: preserve(),
     },
