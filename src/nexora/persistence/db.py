@@ -8,12 +8,21 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from nexora.settings import get_settings
+from nexora.settings import get_settings, normalize_database_url
 
 
 @lru_cache(maxsize=4)
 def get_engine(url: str | None = None) -> Engine:
-    return create_engine(url or get_settings().database_url, pool_pre_ping=True, future=True)
+    settings = get_settings()
+    return create_engine(
+        normalize_database_url(url or settings.database_url),
+        pool_pre_ping=True,
+        pool_size=settings.db_pool_size,
+        max_overflow=settings.db_max_overflow,
+        # Hosted databases and proxies drop idle connections; recycle before that happens.
+        pool_recycle=300,
+        future=True,
+    )
 
 
 def session_factory(url: str | None = None) -> sessionmaker[Session]:
