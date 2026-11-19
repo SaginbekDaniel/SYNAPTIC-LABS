@@ -20,6 +20,8 @@ SYNAPTIC LABS · ITU Hackathon 2026 (Bank CenterCredit case) · prototype
 > any bank, holds no customer data, and blocks nothing. A priority is a triage order, not a
 > probability of fraud, and a detected pattern is not proof of wrongdoing.
 
+**Interactive 3-minute pitch (React, static, synthetic data only): https://pitch-production-1554324d.up.railway.app** — source in [`apps/pitch/`](apps/pitch/README.md).
+
 ![Investigation of a collection funnel: formation graph, priority and the reasons behind it](docs/assets/screenshots/investigation.webp)
 
 ## Why NEXORA exists
