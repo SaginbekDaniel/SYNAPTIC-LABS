@@ -31,3 +31,6 @@ export type Activity = S["Activity"];
 export type AuthSession = S["AuthSession"];
 export type AuthUser = S["AuthUser"];
 export type SessionState = S["SessionState"];
+export type HypothesisAssessment = S["HypothesisAssessment"];
+export type HypothesisItem = S["HypothesisItem"];
+export type HypothesisTestItem = S["HypothesisTestItem"];

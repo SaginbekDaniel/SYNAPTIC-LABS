@@ -270,6 +270,24 @@ def publish(
                 for a in out.assessments
             ],
         )
+    if out.hypotheses:
+        session.execute(
+            insert(orm.HypothesisAssessmentRow),
+            [
+                {
+                    "id": uuid.UUID(h.id),
+                    "snapshot_id": snapshot_id,
+                    "formation_id": uuid.UUID(h.formation_id),
+                    "registry_version": h.registry_version,
+                    "config_sha256": h.config_sha256,
+                    "verdict": h.verdict,
+                    "hypotheses": [e.as_dict() for e in h.hypotheses],
+                    "evidence_ids": list(h.evidence_ids),
+                    "unavailable_information": list(h.unavailable_information),
+                }
+                for h in out.hypotheses
+            ],
+        )
     _upsert_alerts(session, dataset_id, snapshot_id, out, config)
     return snapshot_id
 

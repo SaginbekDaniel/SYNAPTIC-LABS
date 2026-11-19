@@ -8,6 +8,7 @@ import type { AccountSummary, AlertDetail, EvidenceItem, ReasonCode, Transaction
 import { useApi } from "../../lib/useApi";
 import { evidenceForReason, groupReasons, limitationsOf } from "./evidence";
 import { accountFlows } from "./formationGraph";
+import { CompetingExplanations } from "./Hypotheses";
 
 export type Selection = { type: "account"; id: string } | { type: "edge"; edge: GraphEdgeSpec } | null;
 
@@ -89,7 +90,7 @@ export function SummaryView({
   roles: Map<string, NodeRole>;
   onSelectAccount: (id: string) => void;
 }) {
-  const groups = groupReasons(alert);
+  const groups = groupReasons(alert, { withVerdict: !alert.hypotheses });
   const limitations = limitationsOf(alert);
   const requests = alert.coverage.data_requests;
   return (
@@ -98,6 +99,8 @@ export function SummaryView({
         <h2 className="ctx__title">{t("alert.why")}</h2>
         <Hypothesis alert={alert} />
       </section>
+
+      {alert.hypotheses && <CompetingExplanations assessment={alert.hypotheses} />}
 
       <section className="ctx__section" data-testid="reasons">
         <h3 className="ctx__label ctx__label--supports">{t("alert.supports")}</h3>

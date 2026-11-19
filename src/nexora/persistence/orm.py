@@ -248,6 +248,32 @@ class RiskAssessmentRow(Base):
     )
 
 
+class HypothesisAssessmentRow(Base):
+    """Competing explanations for one formation (hypotheses-v1). Insert-only, like every snapshot output."""
+
+    __tablename__ = "hypothesis_assessments"
+    id: Mapped[uuid.UUID] = _uuid()
+    snapshot_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("graph_snapshots.id", ondelete="RESTRICT"), nullable=False
+    )
+    formation_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("formations.id", ondelete="RESTRICT"), nullable=False, unique=True
+    )
+    registry_version: Mapped[str] = mapped_column(Text, nullable=False)
+    config_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    verdict: Mapped[str] = mapped_column(Text, nullable=False)
+    hypotheses: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, nullable=False)
+    evidence_ids: Mapped[list[str]] = mapped_column(JSONB, nullable=False)
+    unavailable_information: Mapped[list[str]] = mapped_column(JSONB, nullable=False)
+    __table_args__ = (
+        CheckConstraint(
+            "verdict IN ('suspicious_explanation_favoured','benign_explanation_favoured','inconclusive',"
+            "'insufficient_data')",
+            name="ck_hypothesis_verdict",
+        ),
+    )
+
+
 class Alert(Base):
     __tablename__ = "alerts"
     id: Mapped[uuid.UUID] = _uuid()

@@ -20,6 +20,7 @@ from nexora.analytics.config import AnalysisConfig
 from nexora.analytics.coverage import assess_coverage
 from nexora.analytics.evidence_validation import EvidenceIntegrityError, validate_evidence
 from nexora.analytics.graph_builder import GRAPH_VERSION, CurrencyGraph, GraphSnapshotData, build_snapshot
+from nexora.analytics.hypotheses import engine as hyp_mod
 from nexora.analytics.statistical import peer as peer_mod
 from nexora.analytics.structural import chain as chain_mod
 from nexora.analytics.structural import cycle as cycle_mod
@@ -32,6 +33,7 @@ from nexora.domain.analysis import (
     EvidenceKind,
     Formation,
     FormationKind,
+    HypothesisAssessment,
     ReasonCode,
     RiskAssessment,
     Signal,
@@ -53,6 +55,7 @@ class AnalysisOutput:
     evidence: list[Evidence] = field(default_factory=list)
     signals: list[Signal] = field(default_factory=list)
     assessments: list[RiskAssessment] = field(default_factory=list)
+    hypotheses: list[HypothesisAssessment] = field(default_factory=list)
     quarantined: list[dict[str, str]] = field(default_factory=list)
     partial_reasons: list[str] = field(default_factory=list)
 
@@ -134,6 +137,7 @@ class _Structure:
     has_downstream: bool
     coverage_members: tuple[str, ...]
     peer: bool  # evaluate account-level peer statistics for the subject (hub-type formations)
+    two_way: tuple[str, ...] = ()  # counterparties excluded as returning (two-way relationships)
 
 
 class _Builder:
@@ -151,6 +155,11 @@ class _Builder:
             policy_version=config.policy_version,
         )
         self._peer_index: dict[str, peer_mod.PeerIndex] = {}
+        hcfg = config.detectors.get("hypotheses")
+        self._hypotheses = (
+            hyp_mod.HypothesisEngine(hcfg, snapshot.transfers) if _enabled(hcfg) and hcfg is not None else None
+        )
+        self._hypothesis_kinds = frozenset(hcfg.get("kinds", ()) if hcfg else ())
 
     # -- helpers -----------------------------------------------------------------
     def _transfers(self, ids: tuple[str, ...] | list[str]) -> list[ObservedTransfer]:
@@ -365,6 +374,26 @@ class _Builder:
             reasons.append(peer_reason)
             features["peer_status"] = peer_sig.status
         reasons.extend(self._coverage_reasons(coverage, st.subject))
+        hypothesis: HypothesisAssessment | None = None
+        if self._hypotheses is not None and st.kind in self._hypothesis_kinds:
+            assert self.snapshot.window_start is not None and self.snapshot.window_end is not None
+            hypothesis, hyp_evidence = self._hypotheses.evaluate(
+                cg,
+                hyp_mod.HubContext(
+                    formation_id=st.fid,
+                    kind=st.kind,
+                    subject=st.subject,
+                    counterparties=st.entry_ids if st.kind == "funnel" else st.exit_ids,
+                    two_way_counterparties=st.two_way,
+                    temporal_status=flow.status,
+                    temporal_evidence_id=temporal_ev.id,
+                    peer_status=peer[1].status if peer is not None else None,
+                    peer_evidence_id=peer[0].id if peer is not None else None,
+                    window=(self.snapshot.window_start, self.snapshot.window_end),
+                ),
+            )
+            evidence.extend(hyp_evidence)
+            features["hypothesis_verdict"] = hypothesis.verdict
         formation = Formation(
             id=st.fid,
             kind=st.kind,
@@ -394,8 +423,11 @@ class _Builder:
             reasons=reasons,
             policy=self.config.risk_policy,
             policy_sha256=self.config.policy_sha256,
+            hypothesis=hypothesis,
         )
         self.out.formations.append(formation)
+        if hypothesis is not None:
+            self.out.hypotheses.append(hypothesis)
         self.out.evidence.extend(evidence)
         self.out.signals.extend(signals)
         self.out.assessments.append(assessment)
@@ -481,6 +513,7 @@ class _Builder:
                     has_downstream=bool(cand.downstream),
                     coverage_members=(*members, *cand.downstream),
                     peer=True,
+                    two_way=cand.returning_feeders,
                 ),
             )
 
@@ -569,6 +602,7 @@ class _Builder:
                     has_downstream=cand.onward_count > 0,
                     coverage_members=(*cand.sources, dist, *recipients),
                     peer=True,
+                    two_way=cand.returning_recipients,
                 ),
             )
 
@@ -728,4 +762,5 @@ def run_analysis(
     out.evidence.sort(key=lambda e: e.id)
     out.signals.sort(key=lambda s: s.id)
     out.assessments.sort(key=lambda a: a.id)
+    out.hypotheses.sort(key=lambda h: h.id)
     return out

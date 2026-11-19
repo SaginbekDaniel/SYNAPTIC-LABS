@@ -167,6 +167,13 @@ def parse_record(
             observed = date.fromisoformat(date_raw.strip())
         except ValueError:
             return issue("DATE_INVALID", "observed_date", "observed_date must be YYYY-MM-DD")
+    if observed is not None and occurred_at is not None and abs((occurred_at.date() - observed).days) > 1:
+        # The posting date may differ from the UTC date of the timestamp by one day (time zones),
+        # never more: ordering uses the timestamp while lags use the date, so a wider gap would let
+        # the two disagree about chronology.
+        return issue(
+            "DATE_TIMESTAMP_MISMATCH", "observed_date", "observed_date contradicts occurred_at by more than one day"
+        )
     if observed is None:
         if occurred_at is None:
             return issue("DATE_MISSING", "observed_date", "either observed_date or occurred_at is required")

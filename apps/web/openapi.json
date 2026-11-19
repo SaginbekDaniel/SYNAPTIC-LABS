@@ -1,6 +1,39 @@
 {
   "components": {
     "schemas": {
+      "AbstentionMetrics": {
+        "additionalProperties": false,
+        "properties": {
+          "rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate"
+          },
+          "suspicious_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suspicious Share"
+          }
+        },
+        "required": [
+          "rate",
+          "suspicious_share"
+        ],
+        "title": "AbstentionMetrics",
+        "type": "object"
+      },
       "AccountFormation": {
         "additionalProperties": false,
         "properties": {
@@ -256,6 +289,16 @@
           "formation": {
             "$ref": "#/components/schemas/FormationDetail"
           },
+          "hypotheses": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HypothesisAssessment"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "id": {
             "title": "Id",
             "type": "string"
@@ -347,6 +390,17 @@
             "title": "Flagged",
             "type": "integer"
           },
+          "networks_with_duplicates": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Networks With Duplicates"
+          },
           "per_dataset": {
             "anyOf": [
               {
@@ -357,6 +411,17 @@
               }
             ],
             "title": "Per Dataset"
+          },
+          "per_flagged_network": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Per Flagged Network"
           },
           "precision": {
             "anyOf": [
@@ -2204,6 +2269,180 @@
         "title": "Health",
         "type": "object"
       },
+      "HypothesisAssessment": {
+        "additionalProperties": false,
+        "description": "Competing explanations for the formation. Observations, not conclusions about a crime.",
+        "properties": {
+          "config_sha256": {
+            "title": "Config Sha256",
+            "type": "string"
+          },
+          "evidence_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidence Ids",
+            "type": "array"
+          },
+          "hypotheses": {
+            "items": {
+              "$ref": "#/components/schemas/HypothesisItem"
+            },
+            "title": "Hypotheses",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "registry_version": {
+            "title": "Registry Version",
+            "type": "string"
+          },
+          "unavailable_information": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Unavailable Information",
+            "type": "array"
+          },
+          "verdict": {
+            "enum": [
+              "suspicious_explanation_favoured",
+              "benign_explanation_favoured",
+              "inconclusive",
+              "insufficient_data"
+            ],
+            "title": "Verdict",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "registry_version",
+          "config_sha256",
+          "verdict",
+          "hypotheses",
+          "evidence_ids",
+          "unavailable_information"
+        ],
+        "title": "HypothesisAssessment",
+        "type": "object"
+      },
+      "HypothesisItem": {
+        "additionalProperties": false,
+        "properties": {
+          "consistent_groups": {
+            "title": "Consistent Groups",
+            "type": "integer"
+          },
+          "hypothesis_id": {
+            "title": "Hypothesis Id",
+            "type": "string"
+          },
+          "inconsistent_groups": {
+            "title": "Inconsistent Groups",
+            "type": "integer"
+          },
+          "polarity": {
+            "enum": [
+              "suspicious",
+              "legitimate"
+            ],
+            "title": "Polarity",
+            "type": "string"
+          },
+          "required_data": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Required Data",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "supported",
+              "weakened",
+              "refuted",
+              "not_established",
+              "untestable"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "tests": {
+            "items": {
+              "$ref": "#/components/schemas/HypothesisTestItem"
+            },
+            "title": "Tests",
+            "type": "array"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "hypothesis_id",
+          "version",
+          "polarity",
+          "status",
+          "consistent_groups",
+          "inconsistent_groups",
+          "tests",
+          "required_data"
+        ],
+        "title": "HypothesisItem",
+        "type": "object"
+      },
+      "HypothesisTestItem": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidence Ids",
+            "type": "array"
+          },
+          "expected": {
+            "title": "Expected",
+            "type": "string"
+          },
+          "group": {
+            "title": "Group",
+            "type": "string"
+          },
+          "observation": {
+            "additionalProperties": true,
+            "title": "Observation",
+            "type": "object"
+          },
+          "result": {
+            "enum": [
+              "consistent",
+              "inconsistent",
+              "unavailable"
+            ],
+            "title": "Result",
+            "type": "string"
+          },
+          "test_id": {
+            "title": "Test Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "test_id",
+          "group",
+          "observation",
+          "expected",
+          "result",
+          "evidence_ids"
+        ],
+        "title": "HypothesisTestItem",
+        "type": "object"
+      },
       "ImportIssue": {
         "additionalProperties": false,
         "properties": {
@@ -2335,6 +2574,32 @@
           "report"
         ],
         "title": "ImportResult",
+        "type": "object"
+      },
+      "IntegrityMetrics": {
+        "additionalProperties": false,
+        "properties": {
+          "partial_analysis_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Partial Analysis Rate"
+          },
+          "quarantined_formations": {
+            "title": "Quarantined Formations",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "partial_analysis_rate",
+          "quarantined_formations"
+        ],
+        "title": "IntegrityMetrics",
         "type": "object"
       },
       "Job": {
@@ -2526,6 +2791,16 @@
       "MethodSummary": {
         "additionalProperties": false,
         "properties": {
+          "abstention": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AbstentionMetrics"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "alerts": {
             "$ref": "#/components/schemas/AlertMetrics"
           },
@@ -2539,6 +2814,16 @@
           "datasets": {
             "title": "Datasets",
             "type": "integer"
+          },
+          "integrity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/IntegrityMetrics"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "latency_ms": {
             "$ref": "#/components/schemas/LatencyMs"
@@ -2725,6 +3010,28 @@
       "QueueMetrics": {
         "additionalProperties": false,
         "properties": {
+          "distinct_p_at_10": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Distinct P At 10"
+          },
+          "distinct_p_at_5": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Distinct P At 5"
+          },
           "p_at_10": {
             "anyOf": [
               {
