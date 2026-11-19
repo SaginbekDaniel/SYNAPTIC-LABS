@@ -4,10 +4,93 @@ type ErrorExample = NonNullable<EvaluationReport["examples"]>["false_positives"]
 
 export const SPLIT_ORDER = ["holdout", "validation", "dev"] as const;
 
-/** Metric in [0, 1] (or null when undefined for a method) → "53,3 %" / "—". */
-export function pct(value: number | null | undefined): string {
-  if (value === null || value === undefined) return "—";
-  return `${(Math.round(value * 1000) / 10).toLocaleString("ru-RU", { maximumFractionDigits: 1 })} %`;
+/**
+ * A displayed benchmark metric. The artifact stores every ratio rounded to 4 decimals, so
+ * rounding a stored ratio again to one percent decimal can produce a wrong digit
+ * (73/92 = 79.348 % is stored as 0.7935 → "79,4 %"). Ratios are therefore shown from their
+ * integer counts whenever the artifact has them; a ratio with no counts behind it (queue
+ * means over datasets) is shown exactly as stored, at the 2 percent decimals it holds.
+ */
+export type Metric =
+  | { kind: "count"; num: number; den: number }
+  | { kind: "stored"; ratio: number }
+  | { kind: "none" };
+
+const NONE: Metric = { kind: "none" };
+const STORED_DECIMALS = 4;
+
+export function countMetric(num: number, den: number): Metric {
+  return den > 0 ? { kind: "count", num, den } : NONE;
+}
+
+export function storedMetric(ratio: number | null | undefined): Metric {
+  return ratio === null || ratio === undefined ? NONE : { kind: "stored", ratio };
+}
+
+/**
+ * Integer numerator behind a stored ratio whose denominator is known. A 4-decimal ratio
+ * identifies its numerator uniquely while den < 10^4 (neighbouring numerators are more than
+ * 10^-4 apart); the candidate is verified to round back to the stored value, else the
+ * stored ratio is kept as is.
+ */
+export function recoveredMetric(ratio: number | null | undefined, den: number): Metric {
+  if (ratio === null || ratio === undefined) return NONE;
+  if (den <= 0 || den >= 10 ** STORED_DECIMALS) return storedMetric(ratio);
+  const num = Math.round(ratio * den);
+  const half = 0.5 / 10 ** STORED_DECIMALS + Number.EPSILON;
+  return num >= 0 && num <= den && Math.abs(num / den - ratio) <= half ? countMetric(num, den) : storedMetric(ratio);
+}
+
+/** The metric as a fraction in [0, 1] for bar geometry, or null when undefined. */
+export function metricValue(m: Metric): number | null {
+  return m.kind === "count" ? m.num / m.den : m.kind === "stored" ? m.ratio : null;
+}
+
+/** "79,3 %" from counts (rounded once), "48,28 %" for a stored-only ratio, "—" when undefined. */
+export function formatMetric(m: Metric): string {
+  // Integer arithmetic for counts: num·1000/den is exact at a true tie, so rounding happens once.
+  if (m.kind === "count") return percent(Math.round((m.num * 1000) / m.den) / 10, 1);
+  if (m.kind === "stored") return percent(Math.round(m.ratio * 10 ** STORED_DECIMALS) / 100, STORED_DECIMALS - 2);
+  return "—";
+}
+
+// Fixed decimals: a column of metrics stays aligned and "60,00 %" says the value is known to 0.01.
+function percent(value: number, digits: number): string {
+  return `${value.toLocaleString("ru-RU", { minimumFractionDigits: digits, maximumFractionDigits: digits })} %`;
+}
+
+export interface MethodMetrics {
+  precision: Metric;
+  recall: Metric;
+  f1: Metric;
+  fpr: Metric;
+  highFpr: Metric;
+  alertPrecision: Metric;
+  /** Queue metrics are means over datasets: no counts exist behind them. */
+  p5: Metric;
+  /** Distinct planted networks among the first five alerts (audit L-02); "none" in older artifacts. */
+  p5Distinct: Metric;
+  r5: Metric;
+  /** Alerts per dataset, from the alert count (the stored value is rounded to 2 decimals). */
+  alertsPerDataset: number | null;
+}
+
+/** Every percentage the Evaluation screen shows for one method, from counts where they exist. */
+export function methodMetrics(s: MethodSummary): MethodMetrics {
+  const { tp, fp, fn, tn, legitimate } = s.scenario;
+  return {
+    precision: countMetric(tp, tp + fp),
+    recall: countMetric(tp, tp + fn),
+    // F1 = 2tp / (2tp + fp + fn); the stored f1 is derived from the already rounded P and R.
+    f1: countMetric(2 * tp, 2 * tp + fp + fn),
+    fpr: countMetric(fp, fp + tn),
+    highFpr: recoveredMetric(s.scenario.high_band_fpr, legitimate),
+    alertPrecision: recoveredMetric(s.alerts.precision, s.alerts.flagged),
+    p5: storedMetric(s.queue.p_at_5),
+    p5Distinct: storedMetric(s.queue.distinct_p_at_5),
+    r5: storedMetric(s.queue.recall_at_5),
+    alertsPerDataset: s.datasets > 0 ? s.alerts.flagged / s.datasets : null,
+  };
 }
 
 export function num(value: number | null | undefined, digits = 1): string {

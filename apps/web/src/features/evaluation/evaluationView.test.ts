@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
-import type { MethodSummary } from "../../lib/types";
-import { familyRows, isLegitimateFamily, num, pct } from "./evaluationView";
+import type { EvaluationReport, MethodSummary } from "../../lib/types";
+import bench from "../../../../../benchmarks/results/bench-v1.json";
+import { countMetric, familyRows, formatMetric, isLegitimateFamily, methodMetrics, metricValue, num, recoveredMetric, storedMetric } from "./evaluationView";
+
+// The committed benchmark run: the numbers the Evaluation screen serves.
+const artifact = bench as unknown as EvaluationReport;
 
 function summary(byFamily: Record<string, { total: number; flagged: number }>): MethodSummary {
   return {
@@ -15,9 +19,10 @@ function summary(byFamily: Record<string, { total: number; flagged: number }>): 
 
 describe("evaluation view helpers", () => {
   it("formats ratios and never invents a value for missing metrics", () => {
-    expect(pct(0.5333)).toBe("53,3 %");
-    expect(pct(1)).toBe("100 %");
-    expect(pct(null)).toBe("—");
+    expect(formatMetric(countMetric(8, 15))).toBe("53,3 %");
+    expect(formatMetric(countMetric(7, 7))).toBe("100,0 %");
+    expect(formatMetric(countMetric(0, 0))).toBe("—");
+    expect(formatMetric(storedMetric(null))).toBe("—");
     expect(num(undefined)).toBe("—");
   });
   it("separates legitimate look-alikes from suspicious families", () => {
@@ -29,6 +34,69 @@ describe("evaluation view helpers", () => {
     );
     expect(rows.suspicious).toEqual([{ family: "S4_circular_flow", total: 7, flagged: { a: 7, b: 5 } }]);
     expect(rows.legitimate[0]?.flagged).toEqual({ a: 8, b: 0 });
+  });
+});
+
+describe("benchmark metrics are rounded once, from counts", () => {
+  const holdoutV2 = artifact.results.holdout!.nexora_v2!;
+
+  it("shows NEXORA v2 holdout recall as 73/92 = 79,3 %, not the re-rounded stored 0.7935", () => {
+    expect(holdoutV2.scenario.recall).toBe(0.7935);
+    const m = methodMetrics(holdoutV2);
+    expect(m.recall).toEqual({ kind: "count", num: 73, den: 92 });
+    expect(formatMetric(m.recall)).toBe("79,3 %");
+    // F1 = 2·73 / (2·73 + 48 + 19) = 68,545 %; the stored f1 (0.6855, from rounded P and R) would show 68,6 %.
+    expect(formatMetric(m.f1)).toBe("68,5 %");
+    expect(formatMetric(m.precision)).toBe("60,3 %");
+    expect(formatMetric(m.fpr)).toBe("37,5 %");
+  });
+
+  it("matches the counts for every summary in the committed artifact", () => {
+    const summaries: MethodSummary[] = [
+      ...Object.values(artifact.results).flatMap((r) => Object.values(r)),
+      ...Object.values(artifact.ablations).flatMap((r) => Object.values(r)),
+      ...(artifact.robustness ? [artifact.robustness.base, ...artifact.robustness.perturbations.map((p) => p.summary)] : []),
+      ...(artifact.sensitivity?.variants.map((v) => v.summary) ?? []),
+    ];
+    expect(summaries.length).toBeGreaterThan(20);
+    for (const s of summaries) {
+      const { tp, fp, fn, tn } = s.scenario;
+      const m = methodMetrics(s);
+      expect(metricValue(m.recall)).toBeCloseTo(tp / (tp + fn), 12);
+      expect(metricValue(m.fpr)).toBeCloseTo(fp / (fp + tn), 12);
+      // Ratios with a known denominator resolve to an exact count that rounds back to the stored value.
+      for (const [metric, stored] of [
+        [m.highFpr, s.scenario.high_band_fpr],
+        [m.alertPrecision, s.alerts.precision],
+      ] as const) {
+        if (stored === null) expect(metric.kind).toBe("none");
+        else {
+          expect(metric.kind).toBe("count");
+          expect(metricValue(metric)).toBeCloseTo(stored, 4);
+        }
+      }
+    }
+  });
+
+  it("recovers the numerator of a stored ratio only when it is unique and consistent", () => {
+    // 0.0625 is stored for 8/128; 0.3474 for 99/285.
+    expect(recoveredMetric(0.0625, 128)).toEqual({ kind: "count", num: 8, den: 128 });
+    expect(recoveredMetric(0.3474, 285)).toEqual({ kind: "count", num: 99, den: 285 });
+    // No numerator over 7 rounds to 0.5: keep the stored value rather than invent a count.
+    expect(recoveredMetric(0.5, 7)).toEqual({ kind: "stored", ratio: 0.5 });
+    expect(recoveredMetric(null, 7)).toEqual({ kind: "none" });
+  });
+
+  it("shows ratios without counts (queue means) at the precision the artifact holds", () => {
+    // 0.4775 may be a mean anywhere in [0.47745, 0.47755): one decimal would be a guess.
+    expect(formatMetric(storedMetric(0.4775))).toBe("47,75 %");
+    expect(formatMetric(storedMetric(0.4828))).toBe("48,28 %");
+    expect(formatMetric(storedMetric(0.6))).toBe("60,00 %");
+    expect(methodMetrics(holdoutV2).p5).toEqual({ kind: "stored", ratio: holdoutV2.queue.p_at_5 });
+  });
+
+  it("derives alerts per dataset from the alert count", () => {
+    expect(methodMetrics(holdoutV2).alertsPerDataset).toBe(holdoutV2.alerts.flagged / holdoutV2.datasets);
   });
 });
 
