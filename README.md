@@ -60,6 +60,8 @@ dataset (seed 2026). The UI is in Russian, the jury's working language.
 
 ## Live demo
 
+**Jury pitch (interactive, static, synthetic data only):** https://pitch-production-1554324d.up.railway.app — source in [`apps/pitch/`](apps/pitch/README.md).
+
 **https://web-production-4593b103.up.railway.app** — *Synthetic Data Only — No Banking Integration*
 
 The demo sits behind a shared username and password, so the page asks for credentials before it
