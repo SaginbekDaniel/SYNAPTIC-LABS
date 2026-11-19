@@ -129,7 +129,7 @@ Benchmark `bench-v1`, holdout split (30 datasets), from the committed artifact
 
 | | NEXORA v1 | NEXORA v2 | Best simple baseline |
 |---|---:|---:|---|
-| Planted suspicious networks flagged (scenario recall) | 60.9 % | 79.4 % | monitoring rules: 95.7 %, at 42.6 alerts per dataset |
+| Planted suspicious networks flagged (scenario recall) | 60.9 % | 79.3 % | monitoring rules: 95.7 %, at 42.6 alerts per dataset |
 | Legitimate networks reaching *high* priority | 43.8 % | 6.3 % | — (baselines have no bands) |
 | Planted fraud among the first 5 alerts (P@5) | 31.3 % | 48.3 % | turnover ranking: 34.0 % |
 | Planted networks found in the first 5 alerts (Recall@5) | 45.8 % | 73.6 % | monitoring rules: 43.6 % |
