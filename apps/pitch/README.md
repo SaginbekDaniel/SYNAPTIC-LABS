@@ -1,10 +1,10 @@
-# NEXORA AI — interactive pitch
+# NEXORA — jury pitch
 
-A seven-slide, ~3 minute React presentation for the hackathon jury, independent of the product (`apps/web`, the API, the
-worker and PostgreSQL are untouched). It is a static site: no backend, no API calls, no analytics, no third-party
-requests. Everything shown is public project information and **synthetic** data.
+A seven-slide, three-minute React presentation for the hackathon jury, independent of the product (`apps/web`, the
+API, the worker and PostgreSQL are untouched). It is a static site: no backend, no API calls, no analytics, no
+third-party requests. Everything shown is public project information and **synthetic** data.
 
-**Live:** https://pitch-production-1554324d.up.railway.app
+**Live:** https://pitch-production-1554324d.up.railway.app (redeploy after merging to publish this version)
 
 ## Run
 
@@ -18,55 +18,57 @@ Quality gates (also run by `.github/workflows/pitch.yml`):
 npm run lint && npx tsc -b && npm test && npm run build && npm run test:e2e
 ```
 
-Deep links: `#/3` (slide 3) or `#/3/7` (slide 3, reveal state 7). Keys: `→ ↓ Space` next · `←` back ·
-`Shift+→` next slide · `1–7` jump · `O` overview · `N` presenter notes + timer · `F` fullscreen · `R` restart · `?` help.
-Touch: swipe. `prefers-reduced-motion` is honoured.
+Deep links: `#/6` (slide 6) or `#/6/2` (slide 6, state 2). Keys: `→ ↓ Space` next · `←` back ·
+`Shift+→` next slide · `1–7` jump · `O` overview · `N` presenter notes + timer · `F` fullscreen · `R` restart ·
+`?` help. Touch: swipe. `prefers-reduced-motion` is honoured.
+
+## Story (180 s, 16 states)
+
+One idea per slide, stated as its headline. Slides 2, 3 and 5 follow **one case** — collection funnel `··7530`
+from the synthetic `demo-v1` dataset — from problem to method to the real product screen.
+
+| # | Headline (the one idea) | States | Time | What the visual proves |
+|---|---|---:|---:|---|
+| 01 | Network investigation with evidence that can be checked | 1 | 10 s | Name, purpose, scope |
+| 02 | A rule sees an account and cannot tell a scheme from a business | 2 | 25 s | Two identical account alerts → two networks of the same shape: a mule funnel and a merchant |
+| 03 | Shape is only a reason to look; time and context decide | 3 | 35 s | Structure → chronology (81,9 %) → peers (not an outlier); priority, not probability |
+| 04 | Every conclusion traces back to source transactions | 2 | 20 s | The six real pipeline stages, then three principles |
+| 05 | The analyst gets a case with evidence, not an alert | 3 | 30 s | Real screens at native resolution: queue → investigation → decision and audit |
+| 06 | A 4,5× shorter queue than the rules — at the cost of recall | 3 | 40 s | Gain (alerts, legitimate networks) → cost (recall −16,4 pp) → where the 19 misses are |
+| 07 | First pilot step: offline replay on the bank's history | 2 | 20 s | Three-stage path, what the bank provides → QR and links |
 
 ## Design system
 
-* Fixed 1920×1080 canvas scaled to fit (letterboxed, never clipped) with an **80 px safe area on every side**.
-  Presentation chrome lives in the bottom margin and never covers content. An e2e test checks every element of
-  every one of the 30 reveal states against the safe area.
-* All colours, sizes, radii and durations are tokens in `src/styles/tokens.css`. No text is smaller than 22 canvas px
-  (also enforced by a test).
-* Onest + JetBrains Mono, self-hosted (`@fontsource-variable`), the same families as the product.
-* Motion is state-driven: a reveal state fully determines the picture; animation only interpolates between states,
-  so back/forward/deep links are deterministic.
-
-## Narrative (for the jury, not for engineers)
-
-| # | Slide | Question it answers |
-|---|---|---|
-| 01 | Проблема | Why rule-based monitoring misses schemes that live in the links between accounts |
-| 02 | Решение | What NEXORA does, as the real six-stage pipeline |
-| 03 | Инновация | What is new: chronology, peer context, competing hypotheses, traceable evidence |
-| 04 | Работающий продукт | That it exists: real screens, live demo, open code |
-| 05 | Проверено на отложенной выборке | Is it better than what a bank runs today, and what does it cost |
-| 06 | Ценность для банка | Who in the bank gains what, and a safe three-stage path to a pilot |
-| 07 | Итог | One line to remember, QR to the repository, link to the demo |
-
-Repository-internal language ("PR №3", "main", "v2") is kept off the slides; work that is not merged is called
-"в разработке" / "следующая версия", which is what it is.
+* Fixed 1920×1080 canvas scaled to fit (letterboxed, never clipped). Content grid: 120 px side margins, an 80 px
+  hard safe area enforced by an e2e test on every element of every state; presentation chrome lives below it.
+* All colours, sizes, spacing, radii and durations are tokens in `src/styles/tokens.css`. Flat dark surfaces; one
+  brand accent (the product's violet); everything else is semantic: grey = monitoring rules, violet = NEXORA,
+  amber = cost or caution, cyan/pink = money into/out of a central account (the product graph's hues).
+* Type scale 168 / 56 / 44 / 34 / 32 / 28 / 24 / 22 px; headlines are one line; nothing is smaller than 22 canvas
+  px (e2e-tested on all states). Onest + JetBrains Mono, self-hosted, the product's families.
+* Motion is state-driven and explanatory (edges drawn in date order, bars grow, the product screen scrolls like
+  an analyst would); back/forward/deep links are deterministic. No glow, glass or gradient text.
 
 ## Where the facts come from
 
 | Slide | Source |
 |---|---|
-| 02, 03 | `README.md`, `docs/ARCHITECTURE.md`, `docs/architecture/HYPOTHESIS_ENGINE.md` (PR #3), `apps/web/src/lib/i18n.ts` |
-| 04 | Real product screenshots (`docs/design/screenshots/after/*`, `docs/assets/screenshots/*`), cropped. Synthetic `demo-v1` data. Live demo URL from the root `README.md`. |
-| 05 | Main figures: `src/data/bench-excerpt.json` — verbatim holdout excerpt of `benchmarks/results/bench-v1.json` (in `main`, clean tree), NEXORA v2 against baseline B1 "monitoring rules". Regenerate with `node scripts/extract-bench.mjs`; `bench.test.ts` fails if the excerpt drifts from the artifact and pins every displayed number. The "в разработке" line: `src/data/sealed-excerpt.json` (sealed-v1, PR #3). |
-| 06 | Properties of the prototype (`CLAUDE.md`, `docs/LIMITATIONS.md`) and the pilot path from the spec's Q&A section. No savings, timelines or accuracy are projected. |
-| 07 | QR code generated by `scripts/gen-qr.mjs` from `src/data/links.ts` (a test checks they match). |
+| 02, 03 | Case `··7530` copied from the product's investigation screen (`docs/design/screenshots/after/investigation-1440-dark.webp`) into `src/data/funnel.ts`. The merchant network on 02 is labelled as an illustration. |
+| 04 | `docs/ARCHITECTURE.md`, root `README.md`, `CLAUDE.md` invariants. |
+| 05 | Real screenshots of the production build (`public/shots/`), synthetic `demo-v1` data, shown at ≤ 1:1 (tested). |
+| 06 | `src/data/bench-excerpt.json` — verbatim holdout excerpt of `benchmarks/results/bench-v1.json`; regenerate with `node scripts/extract-bench.mjs`. `bench.test.ts` fails if the excerpt drifts and pins every displayed number. |
+| 07 | Pilot path from the spec's Q&A section; QR from `scripts/gen-qr.mjs` (a test checks it matches the link). |
 
 ## Content integrity (what is deliberately *not* claimed)
 
-* Slide 5 shows the **cost** next to the gain: NEXORA finds fewer planted networks than the rules (79,4 % vs 95,7 %);
-  boundary-limited ones are surfaced as "недостаточно данных" instead.
-* **PR #3 (hypothesis engine v3, sealed-v1) is not merged into `main`.** Slides 2, 3 and 5 label it "в разработке".
-* The animations on slides 1–3 are **illustrations**, not product output; slide 1 says so on screen. Slide 3's
-  hypothesis scoring reproduces the documented rules (`src/data/hypotheses.ts`, tested) and never produces a probability.
-* No bank integration, no real-data accuracy, no production-readiness claim. Slide 5 carries the synthetic-data
-  disclaimer on every state. The demo credentials are never shown on a slide.
+* **Percentages are computed from confusion counts.** Recall is 73/92 = 79,3 %; the artifact's pre-rounded
+  `0.7935` would round again to 79,4 %, which earlier versions showed.
+* **Metrics withdrawn after the PR #3 audit are not shown**: recall including "insufficient evidence"
+  abstentions (label leak L-01) and P@5 (duplicate alerts, L-02). The slide says on screen that the holdout was
+  read during development (L-03) and that the data is synthetic. An e2e test asserts these numbers never appear.
+* The unmerged hypothesis engine and its sealed evaluation (PR #3) are not presented.
+* No bank integration, savings, timelines, real-data accuracy or production readiness is claimed; an e2e test
+  scans every state for such claims.
 
 ## Deploy (Railway, static service `pitch`)
 

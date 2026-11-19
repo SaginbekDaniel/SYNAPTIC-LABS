@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="488" viewBox="0 0 880 488" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" role="img" aria-label="NEXORA vs per-account monitoring rules, bench-v1 holdout">
+<rect width="880" height="488" rx="12" fill="#ffffff"/>
+<rect x="24" y="26" width="12" height="12" rx="3" fill="#9198a1"/><text x="44" y="37" font-size="14" fill="#59636e">Per-account monitoring rules (B1)</text>
+<rect x="290" y="26" width="12" height="12" rx="3" fill="#6447d8"/><text x="310" y="37" font-size="14" fill="#59636e">NEXORA (risk-policy-v2)</text>
+<line x1="24" x2="856" y1="70" y2="70" stroke="#d1d9e0"/>
+<text x="24" y="100" font-size="17" font-weight="600" fill="#1f2328">Alerts per dataset<tspan dx="10" font-size="13" font-weight="400" fill="#59636e">lower is better</tspan></text>
+<text x="24" y="133" font-size="14" fill="#59636e">Rules</text>
+<rect x="150" y="120" width="444.6" height="18" rx="3" fill="#9198a1"/>
+<text x="712" y="135" font-size="18" font-weight="650" text-anchor="end" fill="#59636e">42.6</text>
+<text x="24" y="167" font-size="14" fill="#59636e">NEXORA</text>
+<rect x="150" y="154" width="99.2" height="18" rx="3" fill="#6447d8"/>
+<text x="712" y="169" font-size="18" font-weight="650" text-anchor="end" fill="#1f2328">9.5</text>
+<line x1="24" x2="856" y1="198" y2="198" stroke="#d1d9e0"/>
+<text x="24" y="228" font-size="17" font-weight="600" fill="#1f2328">Legitimate networks flagged<tspan dx="10" font-size="13" font-weight="400" fill="#59636e">lower is better</tspan></text>
+<text x="24" y="261" font-size="14" fill="#59636e">Rules</text>
+<rect x="150" y="248" width="378.4" height="18" rx="3" fill="#9198a1"/>
+<text x="712" y="263" font-size="18" font-weight="650" text-anchor="end" fill="#59636e">80.5 %</text>
+<text x="728" y="262" font-size="13" fill="#59636e">103 of 128</text>
+<text x="24" y="295" font-size="14" fill="#59636e">NEXORA</text>
+<rect x="150" y="282" width="176.2" height="18" rx="3" fill="#6447d8"/>
+<text x="712" y="297" font-size="18" font-weight="650" text-anchor="end" fill="#1f2328">37.5 %</text>
+<text x="728" y="296" font-size="13" fill="#59636e">48 of 128</text>
+<line x1="24" x2="856" y1="326" y2="326" stroke="#d1d9e0"/>
+<text x="24" y="356" font-size="17" font-weight="600" fill="#1f2328">Suspicious networks found (recall)<tspan dx="10" font-size="13" font-weight="400" fill="#59636e">higher is better</tspan></text>
+<text x="856" y="356" font-size="14" font-weight="600" text-anchor="end" fill="#9a6700">−16.4 pp: the cost of a shorter queue</text>
+<text x="24" y="389" font-size="14" fill="#59636e">Rules</text>
+<rect x="150" y="376" width="449.8" height="18" rx="3" fill="#9198a1"/>
+<text x="712" y="391" font-size="18" font-weight="650" text-anchor="end" fill="#59636e">95.7 %</text>
+<text x="728" y="390" font-size="13" fill="#59636e">88 of 92</text>
+<text x="24" y="423" font-size="14" fill="#59636e">NEXORA</text>
+<rect x="150" y="410" width="372.7" height="18" rx="3" fill="#9a6700"/>
+<text x="712" y="425" font-size="18" font-weight="650" text-anchor="end" fill="#1f2328">79.3 %</text>
+<text x="728" y="424" font-size="13" fill="#59636e">73 of 92</text>
+<text x="24" y="472" font-size="12" fill="#59636e">bench-v1 holdout · 30 synthetic datasets · 220 planted networks · commit 58440cc · not a result on bank data</text>
+</svg>

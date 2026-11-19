@@ -1,15 +1,26 @@
 import excerpt from "./bench-excerpt.json";
 
 /**
- * Slide 5: NEXORA (risk-policy-v2, in main) against classic per-account monitoring rules (baseline B1) on the
- * frozen holdout split of the committed benchmark run. bench-excerpt.json is a verbatim copy produced by
- * scripts/extract-bench.mjs; nothing here is typed in by hand, rounding is the only transformation.
+ * Results slide: NEXORA (risk-policy-v2) against per-account monitoring rules (baseline B1) on the holdout split
+ * of the committed benchmark run. bench-excerpt.json is a verbatim copy produced by scripts/extract-bench.mjs.
+ *
+ * Every percentage is computed from the confusion counts (tp/fn/fp/tn), never from the artifact's pre-rounded
+ * ratios: 73/92 = 79.35 % is 79,3 %, whereas rounding the stored 0.7935 again would give 79,4 %.
+ *
+ * Deliberately NOT exported (see docs, PR #3 audit): surfaced recall (boundary abstentions leak labels in bench-v1,
+ * L-01) and P@K (counts duplicate alerts on one network, L-02).
  */
 const nx = excerpt.results.nexora_v2;
 const rules = excerpt.results.B1_rules;
 
-export const pct = (x: number) => Math.round(x * 1000) / 10; // 0.8047 -> 80.5
+/** Share in percent, one decimal, half-up on the exact ratio. */
+export const share = (num: number, den: number) => Math.round((num / den) * 1000) / 10;
+/** Russian decimal comma. */
 export const dec = (n: number, d = 1) => n.toFixed(d).replace(".", ",");
+
+interface Counts { tp: number; fp: number; fn: number; tn: number }
+const recallOf = (s: Counts) => share(s.tp, s.tp + s.fn);
+const fprOf = (s: Counts) => share(s.fp, s.fp + s.tn);
 
 export const BENCH = {
   datasets: excerpt.datasets,
@@ -17,52 +28,41 @@ export const BENCH = {
   suspicious: nx.scenario.suspicious,
   legitimate: nx.scenario.legitimate,
   alertsPerDataset: { rules: rules.alerts.per_dataset, nexora: nx.alerts.per_dataset },
-  fpr: { rules: pct(rules.scenario.fpr), nexora: pct(nx.scenario.fpr) },
-  recall: { rules: pct(rules.scenario.recall), nexora: pct(nx.scenario.recall) },
-  surfacedRecall: pct(nx.scenario.surfaced_recall),
-  p5: { rules: pct(rules.queue.p_at_5), nexora: pct(nx.queue.p_at_5) },
-  highBandFpr: pct(nx.scenario.high_band_fpr),
+  /** legitimate networks with at least one alert in the queue */
+  legitFlagged: {
+    rules: { n: rules.scenario.fp, of: rules.scenario.fp + rules.scenario.tn, pct: fprOf(rules.scenario) },
+    nexora: { n: nx.scenario.fp, of: nx.scenario.fp + nx.scenario.tn, pct: fprOf(nx.scenario) },
+  },
+  /** planted suspicious networks flagged (recall) — "insufficient evidence" is NOT counted as found */
+  recall: {
+    rules: { n: rules.scenario.tp, of: rules.scenario.tp + rules.scenario.fn, pct: recallOf(rules.scenario) },
+    nexora: { n: nx.scenario.tp, of: nx.scenario.tp + nx.scenario.fn, pct: recallOf(nx.scenario) },
+  },
 };
 
 /** How many times shorter NEXORA's queue is than the rules' queue, one decimal. */
 export const WORKLOAD_RATIO = Math.round((BENCH.alertsPerDataset.rules / BENCH.alertsPerDataset.nexora) * 10) / 10;
 
-/** Share of the rules' review queue that NEXORA removes, in percent (rounded to whole). */
-export const WORKLOAD_CUT = Math.round((1 - BENCH.alertsPerDataset.nexora / BENCH.alertsPerDataset.rules) * 100);
+/** Recall given up, in percentage points (positive number). */
+export const RECALL_COST = Math.round((BENCH.recall.rules.pct - BENCH.recall.nexora.pct) * 10) / 10;
 
-export type FamilyKind = "legit" | "suspicious";
-export interface Family {
-  id: string;
-  kind: FamilyKind;
-  label: string;
-  total: number;
-  rules: number; // scenarios flagged by monitoring rules
-  nexora: number; // scenarios flagged by NEXORA
-  nexoraSurfaced: number; // flagged + shown as "insufficient evidence"
-}
+export interface Miss { id: string; label: string; missed: number; total: number; abstained: number }
 
-/** Russian names for the synthetic scenario families. Order = display order (legitimate first). */
-const LABELS: Record<string, [FamilyKind, string]> = {
-  N1_payroll: ["legit", "Зарплатные выплаты"],
-  N6_loan_repayments: ["legit", "Погашение займов"],
-  N4_reimbursement: ["legit", "Возмещение расходов"],
-  N8_reverse_chronology_chain: ["legit", "Обратная хронология"],
-  N3_supplier_payments: ["legit", "Оплата поставщикам"],
-  N5_family_remittance: ["legit", "Семейные переводы"],
-  N2_merchant_settlement: ["legit", "Расчёты с мерчантами"],
-  N7_treasury_sweep: ["legit", "Казначейские переводы"],
-  S3_coordinated_distribution: ["suspicious", "Скоординированная раздача"],
-  S4_circular_flow: ["suspicious", "Круговой поток"],
-  S5_scatter_gather: ["suspicious", "Раздача и сбор"],
-  S3_distribution_terminal: ["suspicious", "Раздача на конечный счёт"],
-  S2_layering_chain: ["suspicious", "Цепочка транзитных счетов"],
-  H_same_day_chain: ["suspicious", "Цепочка в один день"],
-  S1_collection_funnel: ["suspicious", "Воронка сбора"],
-  S1_collection_funnel_boundary: ["suspicious", "Воронка на границе данных"],
+const MISS_LABELS: Record<string, string> = {
+  S1_collection_funnel: "Воронка сбора",
+  S1_collection_funnel_boundary: "Воронка на границе выгрузки",
+  S2_layering_chain: "Цепочка транзитных счетов",
+  H_same_day_chain: "Цепочка в пределах одного дня",
 };
 
-export const FAMILIES: Family[] = Object.entries(LABELS).map(([id, [kind, label]]) => {
-  const n = nx.by_family[id as keyof typeof nx.by_family];
-  const r = rules.by_family[id as keyof typeof rules.by_family];
-  return { id, kind, label, total: n.total, rules: r.flagged, nexora: n.flagged, nexoraSurfaced: n.surfaced };
-});
+/**
+ * Where NEXORA's misses are: every suspicious family with at least one planted network not flagged.
+ * `abstained` = shown to the analyst as "insufficient evidence" (not counted as found).
+ */
+export const MISSES: Miss[] = Object.entries(nx.by_family)
+  .filter(([id]) => /^(S|H)/.test(id))
+  .map(([id, f]) => ({ id, label: MISS_LABELS[id] ?? id, total: f.total, missed: f.total - f.flagged, abstained: f.surfaced - f.flagged }))
+  .filter((f) => f.missed > 0)
+  .sort((a, b) => b.missed - a.missed || a.id.localeCompare(b.id));
+
+export const MISSED_TOTAL = MISSES.reduce((a, f) => a + f.missed, 0);

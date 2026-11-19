@@ -1,105 +1,93 @@
 import { m } from "motion/react";
-import { BENCH, FAMILIES, WORKLOAD_CUT, WORKLOAD_RATIO, dec, type Family } from "../data/bench";
-import { METRICS } from "../data/results";
-import { CountUp, Fade, Reveal, SlideHeader } from "../ui/primitives";
+import { EASE, Head } from "../ui/primitives";
 import type { SlideProps } from "../ui/types";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+/** Real screenshots (1440 px wide, product build, synthetic demo-v1). Shown at ≤ 1:1, never upscaled. */
+const SRC_W = 1440, VIEW_H = 900;
+const FRAME_W = 1100;
+const S = FRAME_W / SRC_W; // 0.76
+const FRAME_H = VIEW_H * S;
 
-/**
- * One dot per synthetic scenario. A filled dot = the method put that scenario in the analyst's queue.
- * For legitimate families a filled dot is a false alarm (risk), for suspicious ones it is a catch (ok).
- * A ring = NEXORA showed it as "insufficient evidence" instead of raising it. Shape, not colour alone.
- */
-function Dots({ f, n, ring = 0, active }: { f: Family; n: number; ring?: number; active: boolean }) {
-  const tone = f.kind === "legit" ? "risk" : "ok";
-  return (
-    <span className="dots" aria-hidden="true">
-      {Array.from({ length: f.total }, (_, i) => {
-        const cls = i < n ? `dot fill ${tone}` : i < n + ring ? "dot ring" : "dot";
-        return <m.i key={i} className={cls} initial={false} animate={{ opacity: active ? 1 : 0.18, scale: active ? 1 : 0.6 }} transition={{ duration: 0.35, delay: active ? i * 0.012 : 0, ease: EASE }} />;
-      })}
-    </span>
-  );
+interface View {
+  key: string;
+  tab: string;
+  img: "queue" | "investigation";
+  offset: number; // vertical scroll position in source px
+  marks: { x: number; y: number; text: string }[]; // source px, relative to the visible window
 }
 
-function Group({ kind, title, active }: { kind: Family["kind"]; title: string; active: boolean }) {
-  const rows = FAMILIES.filter((f) => f.kind === kind);
+const VIEWS: View[] = [
+  {
+    key: "queue", tab: "Очередь", img: "queue", offset: 0,
+    marks: [
+      { x: 300, y: 440, text: "Сети переводов, а не отдельные платежи" },
+      { x: 905, y: 405, text: "Приоритет — очерёдность работы, не вероятность мошенничества" },
+      { x: 1045, y: 480, text: "Предпросмотр: форма сети и основания до открытия дела" },
+    ],
+  },
+  {
+    key: "case", tab: "Расследование", img: "investigation", offset: 0,
+    marks: [
+      { x: 590, y: 545, text: "Граф только из транзакций-доказательств, толщина — сумма" },
+      { x: 990, y: 296, text: "Почему это подозрительно — каждое основание раскрывается до транзакций" },
+      { x: 1000, y: 688, text: "Отдельный блок: чего система не знает" },
+    ],
+  },
+  {
+    key: "decision", tab: "Решение", img: "investigation", offset: 1100,
+    marks: [
+      { x: 248, y: 282, text: "Исходные транзакции с идентификаторами" },
+      { x: 1004, y: 90, text: "Действие и обоснование фиксирует аналитик" },
+      { x: 1004, y: 650, text: "Журнал аудита только на добавление" },
+    ],
+  },
+];
+
+export function Slide5({ step, setStep }: SlideProps) {
+  const v = VIEWS[step];
   return (
-    <div className={`atlas-group ${active ? "on" : ""}`} role="rowgroup">
-      <div className={`atlas-gh ${kind}`} role="row"><span role="rowheader">{title}</span></div>
-      {rows.map((f) => (
-        <div className="atlas-row" key={f.id} role="row">
-          <span className="atlas-name" role="rowheader">{f.label}</span>
-          <span role="cell" aria-label={`Правила: ${f.rules} из ${f.total}`}><Dots f={f} n={f.rules} active={active} /></span>
-          <span role="cell" aria-label={`NEXORA: ${f.nexora} из ${f.total}${f.nexoraSurfaced > f.nexora ? `, ещё ${f.nexoraSurfaced - f.nexora} — «недостаточно данных»` : ""}`}>
-            <Dots f={f} n={f.nexora} ring={f.nexoraSurfaced - f.nexora} active={active} />
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
+    <section className="slide s5" aria-labelledby="h-5">
+      <Head index={5} />
+      <div className="slide-body s5-body">
+        <figure className="s5-frame" style={{ width: FRAME_W, height: FRAME_H }}>
+          {(["queue", "investigation"] as const).map((img) => (
+            <m.img
+              key={img} src={`./shots/${img}.webp`} alt={img === "queue" ? "Экран «Проверки»: очередь сетей с предпросмотром" : "Экран расследования воронки ··7530"}
+              width={SRC_W} draggable={false} decoding="async"
+              style={{ width: FRAME_W }}
+              initial={false}
+              animate={{ opacity: v.img === img ? 1 : 0, y: img === "investigation" ? -(v.img === img ? v.offset : 0) * S : 0 }}
+              transition={{ opacity: { duration: 0.45 }, y: { duration: 0.9, ease: EASE } }}
+              aria-hidden={v.img !== img}
+            />
+          ))}
+          {v.marks.map((mk, i) => (
+            <m.span
+              key={`${v.key}-${i}`} className="s5-mark mono" aria-hidden="true"
+              style={{ left: mk.x * S, top: mk.y * S }}
+              initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.55 + i * 0.12, duration: 0.35, ease: EASE }}
+            >{i + 1}</m.span>
+          ))}
+        </figure>
 
-function Kpi({ when, label, from, to, unit, note, good }: { when: boolean; label: string; from: number; to: number; unit: string; note: string; good: boolean }) {
-  return (
-    <Fade when={when} className="kpi">
-      <span className="label up">{label}</span>
-      <div className="kpi-num mono">
-        <span className="from">{dec(from)}{unit}</span>
-        <span className="arrow" aria-hidden="true">→</span>
-        <b className={good ? "good" : "cost"}><CountUp from={from} to={to} active={when} suffix={unit} /></b>
-      </div>
-      <p className="small">{note}</p>
-    </Fade>
-  );
-}
-
-export function Slide5({ step }: SlideProps) {
-  const on = (i: number) => step >= i;
-  const sealedFpr = METRICS[0];
-  return (
-    <section className="slide" aria-labelledby="h-5">
-      <Reveal><SlideHeader index={5} /></Reveal>
-      <div className="slide-inner s5">
-        <Reveal delay={0.1}><h2 id="h-5" className="h1 s5-title">Тревог в {dec(WORKLOAD_RATIO)} раза меньше, <span className="grad">чем у правил мониторинга</span></h2></Reveal>
-
-        <div className="s5-grid">
-          <div className="glass atlas" role="table" aria-label="Каждая точка — синтетический сценарий; закрашенная — попал в очередь аналитика">
-            <div className="atlas-row atlas-head" role="row">
-              <span role="columnheader">{BENCH.datasets} наборов · {BENCH.legitimate + BENCH.suspicious} сценариев</span>
-              <span role="columnheader">Правила мониторинга</span>
-              <span role="columnheader" className="nx">NEXORA</span>
-            </div>
-            <Group kind="legit" title={`Легитимные двойники · ${BENCH.legitimate}`} active={on(0)} />
-            <Group kind="suspicious" title={`Подозрительные сети · ${BENCH.suspicious}`} active={on(1)} />
-            <div className="atlas-legend" aria-hidden="true">
-              <span><i className="dot fill risk" />ложная тревога</span>
-              <span><i className="dot fill ok" />сеть найдена</span>
-              <span><i className="dot ring" />«недостаточно данных»</span>
-              <span><i className="dot" />не в очереди</span>
-            </div>
+        <div className="s5-side">
+          <div className="s5-tabs" role="group" aria-label="Экраны продукта">
+            {VIEWS.map((x, i) => (
+              <button key={x.key} className={`s5-tab ${i === step ? "on" : ""}`} aria-pressed={i === step} onClick={() => setStep(i)}>
+                {x.tab}
+              </button>
+            ))}
           </div>
-
-          <div className="s5-side">
-            <Kpi when={on(0)} label="Алертов на набор данных" from={BENCH.alertsPerDataset.rules} to={BENCH.alertsPerDataset.nexora} unit="" good
-              note={`Очередь короче на ${WORKLOAD_CUT} %. Легитимных сетей в ней: ${dec(BENCH.fpr.rules)} → ${dec(BENCH.fpr.nexora)} %`} />
-            <Kpi when={on(1)} label="Найдено подозрительных сетей" from={BENCH.recall.rules} to={BENCH.recall.nexora} unit=" %" good={false}
-              note={`Цена сдержанности. С пометкой «недостаточно данных» — ${dec(BENCH.surfacedRecall)} %`} />
-            <Kpi when={on(2)} label="Реальные сети в первых пяти" from={BENCH.p5.rules} to={BENCH.p5.nexora} unit=" %" good
-              note={`В высоком приоритете легитимных сетей ${dec(BENCH.highBandFpr)} %`} />
-          </div>
-        </div>
-
-        <div className="s5-foot">
-          <div className="disclaimer" role="note">
-            <span className="chip warn">Важно</span>
-            <b>Синтетические данные команды — это не точность на данных банка</b>
-          </div>
-          <Fade when={on(3)} className="s5-next">
-            <span className="chip violet">В разработке</span>
-            <span className="small">Следующая версия движка, закрытая выборка: ложные {dec(sealedFpr.before)} % → {dec(sealedFpr.after)} %, полнота не ниже</span>
-          </Fade>
+          <ol className="s5-notes" key={v.key}>
+            {v.marks.map((mk, i) => (
+              <m.li key={i} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 + i * 0.12, duration: 0.4, ease: EASE }}>
+                <span className="s5-mark mono static" aria-hidden="true">{i + 1}</span>
+                <span className="body t-1">{mk.text}</span>
+              </m.li>
+            ))}
+          </ol>
+          <p className="label s5-src">Реальные экраны развёрнутого прототипа. Демо-набор demo-v1, данные синтетические.</p>
         </div>
       </div>
     </section>

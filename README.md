@@ -1,183 +1,183 @@
 <div align="center">
 
-# NEXORA AI
+# NEXORA
 
-**Explainable financial-network intelligence for fraud and AML investigation**
+**Network investigation for bank anti-fraud and AML analysts.**<br>
+NEXORA finds suspicious networks of transfers, checks whether time and context support them,<br>
+and shows the analyst every source transaction behind each claim. The decision stays with a human.
 
-Turns raw transfers into evidence-backed, time-consistent, coverage-aware network investigations —
-and leaves the decision to a human analyst.
+[Live demo](https://web-production-4593b103.up.railway.app) ·
+[Jury pitch](https://pitch-production-1554324d.up.railway.app) ·
+[Benchmark](#evidence-a-reproducible-benchmark) ·
+[Architecture](#architecture) ·
+[Quick start](#quick-start) ·
+[Docs](docs/README.md)
 
 [![ci](https://github.com/SaginbekDaniel/SYNAPTIC-LABS/actions/workflows/ci.yml/badge.svg)](https://github.com/SaginbekDaniel/SYNAPTIC-LABS/actions/workflows/ci.yml)
-![Python 3.12–3.13](https://img.shields.io/badge/python-3.12%20%7C%203.13-3776AB)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6)
 
-SYNAPTIC LABS · ITU Hackathon 2026 (Bank CenterCredit case) · prototype
+<sub>SYNAPTIC LABS · ITU Hackathon 2026 (Bank CenterCredit case) · prototype on synthetic data, no bank integration</sub>
 
 </div>
 
-> [!IMPORTANT]
-> **Synthetic data only — no banking integration.** NEXORA is not connected to Bank CenterCredit or
-> any bank, holds no customer data, and blocks nothing. A priority is a triage order, not a
-> probability of fraud, and a detected pattern is not proof of wrongdoing.
+<br>
 
-![Investigation of a collection funnel: formation graph, priority and the reasons behind it](docs/assets/screenshots/investigation.webp)
+![Investigation of collection funnel ··7530: the formation graph, the reasons it is suspicious, and what the system does not know](docs/assets/screenshots/investigation.webp)
 
-## Why NEXORA exists
+<p align="center"><sub>Investigation screen of the deployed prototype · synthetic <code>demo-v1</code> dataset</sub></p>
 
-Transaction monitoring rules look at one transfer or one account at a time. Money-mule and
-layering schemes are built to pass those checks: many small, individually ordinary transfers that
-only look wrong **together** — five accounts feeding one collector, a chain of pass-through hops,
-a loop that returns to its start.
+## The problem
 
-Graph tools find such shapes easily — and drown analysts in them, because payroll, merchant
-settlement and treasury sweeps have the same shapes. NEXORA's job is the part between "a shape
-exists" and "an analyst should look at this first":
+Transaction monitoring rules score **one account at a time**: "five senders in three days", "pass-through
+volume", "large amount". A money-mule collection funnel trips those rules — and so does a merchant receiving
+card settlements, a payroll run or a treasury sweep, because at the account level they look the same.
 
-* Is the **chronology** consistent — could money received actually have funded what was sent on,
-  given the dates and amounts?
-* Is the account **unusual against its peers**, or typical for its activity level?
-* What **could the system not see** — dates without times, an account at the edge of the data?
-* Which **source transactions** prove each claim, so the analyst can verify instead of trust?
+So banks face a trade-off: tune rules to catch schemes and the queue fills with legitimate businesses; tune them
+for a short queue and schemes slip through. Each alert reaches the analyst as an account, not as a story, and the
+network around it has to be rebuilt by hand.
 
-## Product tour
+## How NEXORA works
+
+NEXORA treats the **network**, not the account, as the unit of review, and asks three questions about it:
+
+| | Question | Example from the screen above |
+|---|---|---|
+| **Structure** | Is there a funnel, fan-out, layering chain or cycle? This only says *where to look*. | 5 accounts → `··7530` → 2 accounts |
+| **Chronology** | Could the money that came in have funded what went out, given dates and amounts? | 81.9 % of inflows are compatible with the outflow, 3–5 days later |
+| **Peer context** | Is the account unusual against accounts with similar activity, or typical? | Above the median of 77 peers, but not an outlier — reported as a limit, not as evidence |
+
+The result is a **priority for the review queue** (0–100), not a probability of fraud. When the data cannot
+decide — dates without times, an account at the edge of the export — NEXORA says so and names the data that
+would decide it.
+
+```mermaid
+flowchart LR
+  A["Transfers<br/>CSV or synthetic generator"] --> B["Validate<br/>integer money · dedup · quarantine"]
+  B --> C["Graph snapshot<br/>accounts = nodes, transfers = edges"]
+  C --> D["Structural detectors<br/>funnel · fan-out · chain · cycle"]
+  D --> E["Signals<br/>temporal max-flow · peers · coverage"]
+  E --> F["Evidence check<br/>every figure recomputes from source rows"]
+  F --> G["Risk policy<br/>bands · gates · abstention"]
+  G --> H["Review queue"]
+  H --> I["Analyst decision<br/>append-only audit"]
+```
+
+The pipeline (`nexora.analytics`) is pure and deterministic: no web or database framework, content-derived ids,
+**no language model anywhere in the evidence path**, and no automatic action against a customer.
+
+## The product
 
 | | |
 |---|---|
-| ![Overview](docs/assets/screenshots/overview.webp) | ![Review Queue](docs/assets/screenshots/review-queue.webp) |
-| **Overview** — what needs attention, by priority band, with transfer activity. | **Review Queue** — server-side paging, search by any member account, preview before opening. |
-| ![Evaluation](docs/assets/screenshots/evaluation.webp) | ![Fraud Lab](docs/assets/screenshots/fraud-lab.webp) |
+| ![Review queue: networks in review order with a preview](docs/assets/screenshots/review-queue.webp) | ![Overview: what needs attention, by priority band](docs/assets/screenshots/overview.webp) |
+| **Review queue** — networks in review order; search by any member account; preview before opening. | **Overview** — what needs attention, by priority band, with transfer activity. |
+| ![Evaluation: the committed benchmark run against baselines](docs/assets/screenshots/evaluation.webp) | ![Fraud Lab: generate a synthetic suite and run the real worker](docs/assets/screenshots/fraud-lab.webp) |
 | **Evaluation** — the committed benchmark run, every split, against simple baselines. | **Fraud Lab** — generate a synthetic scenario suite and run the real worker on it. |
 
 <details>
 <summary>Light theme and 390 px mobile</summary>
-
-<img src="docs/assets/screenshots/review-queue-light.webp" alt="Review Queue in the light theme" width="720"> <img src="docs/assets/screenshots/mobile-investigation.webp" alt="Investigation on a 390 px phone" width="240">
-
+<br>
+<img src="docs/assets/screenshots/review-queue-light.webp" alt="Review queue in the light theme" width="640">
+<img src="docs/assets/screenshots/mobile-investigation.webp" alt="Investigation on a 390 px phone" width="200">
 </details>
 
-Screenshots are captured from the production build (`docker compose`) on a synthetic `demo-v1`
-dataset (seed 2026). The UI is in Russian, the jury's working language.
+**Try it.** The [live demo](https://web-production-4593b103.up.railway.app) is behind a shared login (ask the
+maintainers; credentials are not published). Open **Лаборатория** → *Сгенерировать набор* → *Запустить анализ* →
+*Перейти к алертам*. The UI is in Russian, the jury's working language. Everything is synthetic.
 
-## Live demo
+## Evidence: a reproducible benchmark
 
-**Jury pitch (interactive, static, synthetic data only):** https://pitch-production-1554324d.up.railway.app — source in [`apps/pitch/`](apps/pitch/README.md).
+NEXORA against **per-account monitoring rules** (baseline B1: fan-in/out velocity, large amount, pass-through) on
+the holdout split of `bench-v1` — 30 synthetic datasets with 220 planted networks (92 suspicious, 128 legitimate
+look-alikes such as payroll, merchant settlement and treasury sweeps).
 
-**https://web-production-4593b103.up.railway.app** — *Synthetic Data Only — No Banking Integration*
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/benchmark-dark.svg">
+  <img alt="Alerts per dataset 42.6 vs 9.5; legitimate networks flagged 80.5 % vs 37.5 %; recall 95.7 % vs 79.3 %" src="docs/assets/readme/benchmark-light.svg" width="880">
+</picture>
 
-The demo sits behind a shared username and password, so the page asks for credentials before it
-shows anything. They are not published here: ask the maintainers, or read them from the `web`
-service variables in the Railway project. Open **Лаборатория** → *Сгенерировать набор* →
-*Запустить анализ* → *Перейти к алертам*. Everyone shares one demo analyst identity, and any
-datasets created by earlier visitors stay in the database.
+**The trade-off is real.** NEXORA's queue is 4.5× shorter and flags far fewer legitimate networks, but it finds
+fewer planted schemes: 73 of 92 against the rules' 88 of 92. 17 of its 19 misses are collection funnels; 8 of
+those sit at the edge of the export and are shown to the analyst as *insufficient evidence* — they are **not**
+counted as found.
 
-Deployment record, what was verified and what was not:
-[docs/deployment/railway.md](docs/deployment/railway.md#deployment-record).
-
-## Key features
-
-| | |
-|---|---|
-| **Network detection** | Collection funnels, coordinated fan-out, layering chains and time-checked cycles over a directed transfer graph with exact integer money and string account ids (including ids > 2⁵³). |
-| **Temporal verification** | Capacity-constrained max-flow over dated transfers: *supported*, *possible but ambiguous* (same day), or *contradicted* (money sent before it arrived). |
-| **Peer statistics** | Turnover concentration against an activity-matched cohort — corroboration **or** counter-evidence. |
-| **Coverage awareness** | Abstains with `insufficient_evidence` at data boundaries and says which data would decide it. |
-| **Risk prioritisation** | Versioned policy (`risk-policy-v2`): at most one credit per signal family, named evidence gates; legitimate-looking hubs are capped, never silently cleared. |
-| **Evidence provenance** | Every claim links to the source transactions it recomputes from; evidence that does not recompute is quarantined, not shown. |
-| **Investigation & cases** | Queue → hypothesis → reasons → highlighted transfers → formation graph → case decision with optimistic concurrency. |
-| **Audit** | Append-only audit trail enforced by a PostgreSQL trigger. |
-| **Reproducible evaluation** | Deterministic synthetic benchmark with frozen splits, baselines, ablations and robustness checks. |
-
-## How it works
-
-```mermaid
-flowchart LR
-  A["Transfers<br/>CSV or synthetic Lab"] --> B["Validate & dedup<br/>integer money · date vs time precision"]
-  B --> C[("PostgreSQL")]
-  C --> D["Worker job<br/>lease · heartbeat · retry"]
-  D --> E["Graph snapshot"]
-  E --> F["Structural detectors<br/>funnel · fan-out · chain · cycle"]
-  F --> G["Temporal max-flow<br/>+ peer statistics<br/>+ coverage"]
-  G --> H["Evidence validation<br/>recompute from source rows"]
-  H --> I["Risk policy<br/>bands · gates · abstention"]
-  I --> C
-  C --> J["Review Queue → Investigation → Case decision + audit"]
-```
-
-The analysis pipeline (`nexora.analytics`) is pure and deterministic: no web or database
-framework, content-derived ids, so re-running an analysis changes nothing. The worker computes
-outside any database transaction and publishes atomically after re-checking its lease.
-No LLM is involved anywhere in the evidence pipeline.
-
-More: [architecture diagrams](docs/architecture/system.md) · [architecture and invariants](docs/ARCHITECTURE.md) · [interfaces](docs/INTERFACES.md).
-
-## Architecture
-
-| Layer | Technology |
-|---|---|
-| Web | React 18, TypeScript, Vite, Cytoscape.js; served by an unprivileged Nginx gateway |
-| API | FastAPI, Pydantic v2 — typed DTOs, uniform error envelope, OpenAPI-generated TypeScript client |
-| Analysis | Python 3.13, NetworkX, exact integer arithmetic |
-| Jobs | PostgreSQL-backed lease worker (`FOR UPDATE SKIP LOCKED`), at-least-once with idempotent publish |
-| Storage | PostgreSQL 16 via SQLAlchemy 2 + Alembic; `NUMERIC(38,0)` money, FK-enforced evidence links |
-| Delivery | Docker, Docker Compose, GitHub Actions, Railway (Infrastructure as Code) |
-
-## Evaluation
-
-All measurements are on **synthetic data generated by the same team that wrote the detectors**.
-They show behaviour on our scenarios, not accuracy on real bank data.
-
-Benchmark `bench-v1`, holdout split (30 datasets), from the committed artifact
-[`benchmarks/results/bench-v1.json`](benchmarks/results/bench-v1.json):
-
-| | NEXORA v1 | NEXORA v2 | Best simple baseline |
-|---|---:|---:|---|
-| Planted suspicious networks flagged (scenario recall) | 60.9 % | 79.4 % | monitoring rules: 95.7 %, at 42.6 alerts per dataset |
-| Legitimate networks reaching *high* priority | 43.8 % | 6.3 % | — (baselines have no bands) |
-| Planted fraud among the first 5 alerts (P@5) | 31.3 % | 48.3 % | turnover ranking: 34.0 % |
-| Planted networks found in the first 5 alerts (Recall@5) | 45.8 % | 73.6 % | monitoring rules: 43.6 % |
+| Metric (holdout) | Definition | Rules | NEXORA |
+|---|---|---:|---:|
+| Alerts per dataset | review items at band *medium* or above | 42.6 | 9.5 |
+| Legitimate networks flagged | legitimate planted networks with ≥ 1 alert | 80.5 % (103/128) | 37.5 % (48/128) |
+| Recall | suspicious planted networks flagged; abstentions excluded | 95.7 % (88/92) | 79.3 % (73/92) |
 
 > [!WARNING]
-> A later audit (open [PR #3](https://github.com/SaginbekDaniel/SYNAPTIC-LABS/pull/3), not merged)
-> found that these numbers are **optimistic**: the `bench-v1` holdout had been read during v2
-> development; every boundary abstention in `bench-v1` was planted fraud (a label leak); and P@K
-> counts duplicate alerts on one network. PR #3 adds a separately written, sealed evaluation with a
-> pre-registered protocol. Its numbers come from a different generator and protocol and must not be
-> compared with the table above.
+> **Read these numbers as behaviour on our own scenarios, not as accuracy on bank data.**
+> * All data is synthetic and generated by the same team that wrote the detectors.
+> * An audit ([PR #3](https://github.com/SaginbekDaniel/SYNAPTIC-LABS/pull/3), not merged) found that this
+>   holdout had already been read during v2 development, that every boundary abstention in `bench-v1` was planted
+>   fraud (a label leak), and that P@K counts duplicate alerts on one network. The table therefore omits
+>   abstention-inclusive recall and P@K, and the figures above are likely optimistic.
+> * PR #3 adds a separately written, sealed evaluation with a pre-registered protocol; its numbers come from a
+>   different generator and must not be compared with this table.
 
-Full tables, negative results and error examples: [docs/EVALUATION.md](docs/EVALUATION.md).
-What does not work: [docs/LIMITATIONS.md](docs/LIMITATIONS.md). Reproduce:
+Every percentage is computed from the confusion counts in
+[`benchmarks/results/bench-v1.json`](benchmarks/results/bench-v1.json) (commit `58440cc`, config hash, dataset
+hashes recorded). Reproduce the run and the chart:
 
 ```bash
 uv run python scripts/run_benchmark.py
 ```
 
+```bash
+python3 scripts/render_readme_figures.py
+```
+
+Full tables, ablations, negative results and error examples: [docs/EVALUATION.md](docs/EVALUATION.md).
+
+## Architecture
+
+```mermaid
+flowchart LR
+  user(["Analyst"]) --> gw["Gateway · Nginx<br/>auth, fail-closed"]
+  gw --> web["Web · React + TypeScript"]
+  gw --> api["API · FastAPI"]
+  api --> db[("PostgreSQL 16")]
+  worker["Worker<br/>lease · heartbeat · retry"] --> db
+  worker --> core["nexora.analytics<br/>pure, deterministic pipeline"]
+```
+
+A modular monolith with one durable, database-backed job queue. The API never runs analysis in a request; the
+worker computes outside any transaction and publishes atomically after re-checking its lease.
+
+| Layer | Technology |
+|---|---|
+| Web | React 18, TypeScript, Vite, Cytoscape.js; OpenAPI-generated client |
+| API | FastAPI, Pydantic v2; typed DTOs and one error envelope |
+| Analysis | Python 3.13, NetworkX, exact integer arithmetic |
+| Jobs | PostgreSQL lease worker (`FOR UPDATE SKIP LOCKED`), at-least-once with idempotent publish |
+| Storage | PostgreSQL 16, SQLAlchemy 2, Alembic; `NUMERIC(38,0)` money, FK-enforced evidence links |
+| Delivery | Docker Compose, GitHub Actions, Railway as code |
+
+**Engineering decisions that matter for a bank**
+
+* **Money is integer minor units** end to end (`NUMERIC(38,0)`, decimal strings in JSON, `BigInt` in TypeScript) — never floats.
+* **Account and transaction ids are opaque strings**, so ids longer than 2⁵³ survive the browser intact.
+* **Day-precision records never get a clock time.** Two transfers on the same day have an unknown order, and the chronology check reports *ambiguous* rather than guessing.
+* **Analysis ids are content-derived (UUIDv5).** Re-running an analysis on the same data changes nothing.
+* **Evidence that does not recompute from its source rows is quarantined**, never shown.
+* **The audit trail is append-only**, enforced by a PostgreSQL trigger, and written in the same transaction as the decision.
+* **Synthetic ground truth never enters the runtime database** or the detectors' input.
+
+More: [system diagrams](docs/architecture/system.md) · [architecture and invariants](docs/ARCHITECTURE.md) ·
+[interfaces](docs/INTERFACES.md) · [decisions](docs/ADR/0001-decisions.md).
+
 ## Quick start
 
-Requires Docker with Compose v2.
+Requires Docker with Compose v2. Everything binds to `127.0.0.1`.
 
 ```bash
 docker compose up --build -d --wait
 ```
 
-Open http://127.0.0.1:8080 → **Лаборатория** → *Сгенерировать набор* → *Запустить анализ* →
-*Перейти к алертам*. Everything binds to `127.0.0.1`.
+Open http://127.0.0.1:8080 → **Лаборатория** → *Сгенерировать набор* → *Запустить анализ* → *Перейти к алертам*.
 
-Development servers with hot reload, test databases and troubleshooting:
-[docs/development/local-setup.md](docs/development/local-setup.md).
-
-## Cloud deployment
-
-One public HTTPS entry point (the gateway); API, worker and PostgreSQL stay on Railway's private
-network. Access control fails closed, migrations run once per deploy before the new API serves,
-and deploys are manual, approval-gated and limited to commits with green CI.
-
-```bash
-scripts/railway/bootstrap.sh
-```
-
-Guide, security model, costs and rollback: [docs/deployment/railway.md](docs/deployment/railway.md).
-
-## Development
+For development with hot reload (Python via `uv`, web via `npm`):
 
 ```bash
 make setup
@@ -187,49 +187,86 @@ make setup
 make check
 ```
 
-`make help` lists every target; each runs exactly the command CI runs. Testing strategy:
-[docs/development/testing.md](docs/development/testing.md). Contribution rules:
-[CONTRIBUTING.md](CONTRIBUTING.md).
+`make help` lists every target; each runs exactly what CI runs. Local databases, environment variables and
+troubleshooting: [docs/development/local-setup.md](docs/development/local-setup.md). Cloud deployment (one
+public gateway, private API/worker/database, approval-gated deploys):
+[docs/deployment/railway.md](docs/deployment/railway.md).
 
-## Documentation
+## Repository
 
-| | |
+```text
+src/nexora/
+  domain/        money, transfers, chronology, ids — stdlib only
+  ingest/        CSV adapter, row validation, quarantine, dedup
+  analytics/     graph snapshot, detectors, temporal flow, peers, risk — no web/DB framework
+  evaluation/    synthetic generator (labels kept separate) and benchmark harness
+  application/   use cases: ingest, analysis jobs and publish, cases, read models
+  persistence/   SQLAlchemy models and sessions
+  api/ worker/   HTTP layer and the lease-based job runner
+apps/web/        analyst UI (React + TypeScript)
+apps/pitch/      the jury presentation (static React site)
+migrations/      Alembic schema history
+benchmarks/      committed benchmark artifact
+scripts/         benchmark runner, README figures, OpenAPI export, Railway tooling
+docs/            architecture, evaluation, limitations, deployment, design, research
+```
+
+## Quality and testing
+
+| Gate | Command |
 |---|---|
-| [docs/README.md](docs/README.md) | Index of all documentation |
-| [Architecture diagrams](docs/architecture/system.md) · [ARCHITECTURE.md](docs/ARCHITECTURE.md) | Components, data flow, job processing, case lifecycle, invariants |
-| [Railway deployment](docs/deployment/railway.md) | Topology, setup, variables, security, operations, cost |
-| [EVALUATION.md](docs/EVALUATION.md) · [LIMITATIONS.md](docs/LIMITATIONS.md) | Benchmark results and honest scope |
-| [Design](docs/design/DESIGN_DIRECTION.md) · [Research](docs/research/GITHUB_LANDSCAPE.md) · [ADRs](docs/ADR/0001-decisions.md) | Design system, prior-art research, decisions |
+| Python lint, types, tests (unit + PostgreSQL integration) | `uv run ruff check src tests migrations && uv run mypy && uv run pytest` |
+| Web types, unit and end-to-end tests | `cd apps/web && npx tsc -b && npx vitest run && npx playwright test` |
+| API contract stays in sync | `make openapi` regenerates `apps/web/openapi.json` and `src/lib/api-types.ts` |
+| Production images | CI builds the images and smoke-tests the running stack |
 
-## Security
+Strategy and what each layer covers: [docs/development/testing.md](docs/development/testing.md).
 
-The demo uses a **shared demo identity**: every audit event is attributed to one configured analyst,
-and there is no SSO or role model. The cloud deployment is protected by a fail-closed gateway, but it
-is a hackathon deployment, not a bank-grade system. See [SECURITY.md](SECURITY.md) for the controls
-in place, the known gaps, and how to report a vulnerability privately.
+## Security and scope
+
+* **Synthetic data only.** Not connected to Bank CenterCredit or any bank; holds no customer data.
+* **Nothing is automated against customers.** NEXORA blocks nothing and sends nothing; it orders a review queue.
+* **Demo identity.** Every action is attributed to one configured demo analyst; there is no SSO or role model yet.
+* The cloud deployment is behind a fail-closed gateway and keeps the API, worker and database on a private network,
+  but it is a hackathon deployment, not a bank-grade system.
+
+Controls, known gaps and private vulnerability reporting: [SECURITY.md](SECURITY.md).
+
+## Limitations of the current MVP
+
+* **Legitimate hubs still alert, at medium.** Merchant settlement and treasury sweeps are flagged; peer counter-evidence keeps them out of the high band, but they are not cleared.
+* **Family remittances look like distributions.** Nothing in transfer data alone separates them; KYC or MCC data would.
+* **Slow funnels are missed.** Onward transfers later than the 7-day temporal window fall below the alert band.
+* **Alerts are not yet correlated** by shared subject account, so one hub can appear as both a funnel and a fan-out.
+* **Batch analysis** of a snapshot, not real-time scoring.
+
+Full list: [docs/LIMITATIONS.md](docs/LIMITATIONS.md).
 
 ## Roadmap
 
 | Status | Item |
 |---|---|
 | Done | Ingest, four structural detectors, temporal flow, peer statistics, coverage, risk policy v2, investigation UI, cases and audit, `bench-v1` |
-| Done | Production images, fail-closed gateway, Railway IaC, CI with production-image smoke test |
+| Done | Production images, fail-closed gateway, Railway as code, protected cloud demo |
 | In review | [PR #3](https://github.com/SaginbekDaniel/SYNAPTIC-LABS/pull/3): competing-hypothesis engine, evaluation leakage fixes, sealed evaluation |
-| Done | Protected Railway demo (PostgreSQL, API, worker, gateway); see the deployment record |
-| Planned | Correlate alerts sharing a subject account; bridge/coordinator detector; named users via an identity-aware proxy |
+| Next | Offline replay on a bank's de-identified history and closed cases — the first honest measurement on real data |
+| Planned | Correlate alerts by shared account; bridge/coordinator detector; named users via an identity-aware proxy |
 
-## Contributing
+## The pitch
 
-Issues and pull requests are welcome — read [CONTRIBUTING.md](CONTRIBUTING.md) first (money is
-integer minor units, ids are opaque strings, no synthetic labels in the runtime path).
+[![The jury presentation: problem, method, product and results slides](docs/assets/readme/pitch-preview.webp)](https://pitch-production-1554324d.up.railway.app)
 
-## License
+A three-minute interactive deck for the jury (Russian), built as a static React site in
+[`apps/pitch/`](apps/pitch/README.md). Every benchmark figure on it is read from the committed artifact and pinned
+by tests.
 
-No license has been chosen yet, so default copyright applies: the code is published for review,
-not licensed for reuse. The maintainers will add a `LICENSE` file when they decide.
+## Contributing, license, acknowledgements
 
-## Acknowledgements
+Issues and pull requests are welcome — read [CONTRIBUTING.md](CONTRIBUTING.md) first.
 
-Built by SYNAPTIC LABS for the ITU Hackathon 2026 Bank CenterCredit case. Uses open-source work
-including FastAPI, SQLAlchemy, Alembic, NetworkX, React, Vite and Cytoscape.js; third-party
-licences are reviewed in [docs/research/LICENSE_MATRIX.md](docs/research/LICENSE_MATRIX.md).
+No license has been chosen yet, so default copyright applies: the code is published for review, not licensed for
+reuse.
+
+Built by SYNAPTIC LABS for the ITU Hackathon 2026 Bank CenterCredit case, on FastAPI, SQLAlchemy, Alembic,
+NetworkX, React, Vite and Cytoscape.js; licences reviewed in
+[docs/research/LICENSE_MATRIX.md](docs/research/LICENSE_MATRIX.md).

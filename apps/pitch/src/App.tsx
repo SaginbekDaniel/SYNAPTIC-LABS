@@ -126,7 +126,7 @@ export function App() {
   return (
     <LazyMotion features={domAnimation} strict>
     <MotionConfig reducedMotion="user">
-      <h1 className="sr-only">NEXORA AI — интерактивная презентация</h1>
+      <h1 className="sr-only">NEXORA — презентация для жюри</h1>
       <div className="app" onMouseMove={wake} onFocus={wake}>
         <div className="stage-area" ref={stage.ref} onPointerDown={onPointerDown} onPointerUp={onPointerUp} data-testid="stage">
           <div
@@ -140,12 +140,12 @@ export function App() {
                 className="slide-layer"
                 custom={d}
                 variants={{
-                  enter: (dir: number) => ({ opacity: 0, x: dir * 90, scale: 0.985 }),
-                  center: { opacity: 1, x: 0, scale: 1 },
-                  exit: (dir: number) => ({ opacity: 0, x: dir * -90, scale: 1.01 }),
+                  enter: (dir: number) => ({ opacity: 0, x: dir * 40 }),
+                  center: { opacity: 1, x: 0 },
+                  exit: (dir: number) => ({ opacity: 0, x: dir * -40 }),
                 }}
                 initial="enter" animate="center" exit="exit"
-                transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 data-slide={pos.slide + 1}
               >
                 <View step={pos.step} setStep={(n) => deck.go({ slide: pos.slide, step: n })} />

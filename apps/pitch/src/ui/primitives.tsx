@@ -2,12 +2,12 @@ import { type ReactNode, useEffect, useState } from "react";
 import { animate, m, useReducedMotion } from "motion/react";
 import { SLIDES } from "../data/notes";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+export const EASE = [0.22, 1, 0.36, 1] as const;
 
 /** Fade-up entrance. Under reduced motion the translate is dropped by MotionConfig; opacity remains. */
-export function Reveal({ children, delay = 0, y = 28, className, style }: { children: ReactNode; delay?: number; y?: number; className?: string; style?: React.CSSProperties }) {
+export function Reveal({ children, delay = 0, y = 20, className, style }: { children: ReactNode; delay?: number; y?: number; className?: string; style?: React.CSSProperties }) {
   return (
-    <m.div className={className} style={style} initial={{ opacity: 0, y }} animate={{ opacity: 1, y: 0 }} transition={{ delay, duration: 0.75, ease: EASE }}>
+    <m.div className={className} style={style} initial={{ opacity: 0, y }} animate={{ opacity: 1, y: 0 }} transition={{ delay, duration: 0.6, ease: EASE }}>
       {children}
     </m.div>
   );
@@ -22,15 +22,22 @@ export function Fade({ when, children, className, delay = 0 }: { when: boolean; 
   );
 }
 
-/** Slide number + eyebrow; the eyebrow text comes from data/notes.ts (single source). */
-export function SlideHeader({ index }: { index: number }) {
-  const eyebrow = SLIDES[index - 1].eyebrow;
+/**
+ * Slide head: number + eyebrow, then the slide's single idea as its h2. Text comes from data/notes.ts
+ * (single source for slide, overview, notes drawer and screen-reader announcement).
+ */
+export function Head({ index, children }: { index: number; children?: ReactNode }) {
+  const s = SLIDES[index - 1];
   return (
-    <div className="eyebrow">
-      <b>{String(index).padStart(2, "0")}</b>
-      <i />
-      <span>{eyebrow}</span>
-    </div>
+    <header className="slide-head">
+      <Reveal y={12}>
+        <div className="eyebrow"><b>{String(index).padStart(2, "0")}</b><span>{s.eyebrow}</span></div>
+      </Reveal>
+      <Reveal y={18} delay={0.06}>
+        <h2 className="h1" id={`h-${index}`}>{s.headline}</h2>
+      </Reveal>
+      {children}
+    </header>
   );
 }
 
@@ -55,7 +62,7 @@ export function CountUp({ from = 0, to, active, decimals = 1, suffix = "", durat
 
 /** Status glyphs always pair colour with a distinct shape (never colour alone). */
 export function StatusIcon({ kind, size = 30 }: { kind: "supported" | "ambiguous" | "contradicted" | "unavailable"; size?: number }) {
-  const c = { supported: "var(--ok)", ambiguous: "var(--warn)", contradicted: "var(--risk)", unavailable: "var(--text-3)" }[kind];
+  const c = { supported: "var(--ok)", ambiguous: "var(--amber)", contradicted: "var(--risk)", unavailable: "var(--text-3)" }[kind];
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flex: "none" }}>
       <circle cx="12" cy="12" r="10" strokeDasharray={kind === "unavailable" ? "2 3.5" : undefined} />

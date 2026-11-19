@@ -1,64 +1,100 @@
 import { m } from "motion/react";
-import { Fade, Reveal, SlideHeader } from "../ui/primitives";
+import { BENCH, MISSED_TOTAL, MISSES, RECALL_COST, dec } from "../data/bench";
+import { EASE, Head } from "../ui/primitives";
 import type { SlideProps } from "../ui/types";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+interface Row {
+  key: string;
+  title: string;
+  better: string;
+  max: number;
+  rules: { v: number; sub?: string };
+  nexora: { v: number; sub?: string };
+  unit: string;
+  cost?: boolean;
+}
 
-/** What changes for each role in the bank. Only properties the prototype already has; no projected savings. */
-const ROLES = [
-  {
-    who: "Аналитик антифрода и AML",
-    points: ["Очередь сетей вместо россыпи отдельных алертов", "Каждый вывод — со ссылкой на переводы-источники", "Явно сказано, чего система не знает"],
-  },
-  {
-    who: "Комплаенс и риск",
-    points: ["Детерминированные правила, без генеративного ИИ в доказательствах: результат воспроизводим", "Решение и обоснование — в журнале только на добавление", "Никаких автоматических действий против клиентов"],
-  },
-  {
-    who: "ИТ и информационная безопасность",
-    points: ["Работает на выгрузке переводов, без доступа к АБС", "Python, PostgreSQL, React, Docker — развёрнут в облаке", "Суммы и идентификаторы без потери точности"],
-  },
+const pctRow = (x: { n: number; of: number; pct: number }) => ({ v: x.pct, sub: `${x.n} из ${x.of}` });
+
+const ROWS: Row[] = [
+  { key: "alerts", title: "Алертов на один набор данных", better: "меньше — лучше", max: 45, unit: "", rules: { v: BENCH.alertsPerDataset.rules }, nexora: { v: BENCH.alertsPerDataset.nexora } },
+  { key: "legit", title: "Легитимных сетей попало в очередь", better: "меньше — лучше", max: 100, unit: " %", rules: pctRow(BENCH.legitFlagged.rules), nexora: pctRow(BENCH.legitFlagged.nexora) },
+  { key: "recall", title: "Найдено подозрительных сетей", better: "полнота · больше — лучше", max: 100, unit: " %", rules: pctRow(BENCH.recall.rules), nexora: pctRow(BENCH.recall.nexora), cost: true },
 ];
 
-const STAGES = [
-  { n: "01", name: "Офлайн-реплей", text: "Обезличенная история переводов и закрытые кейсы банка. Первая честная оценка на реальных данных." },
-  { n: "02", name: "Теневой режим", text: "Рядом с текущим мониторингом, без влияния на клиентов. Сравниваем очереди и время разбора." },
-  { n: "03", name: "Аналитик в контуре", text: "NEXORA формирует очередь, решение остаётся за аналитиком, каждое действие — в журнале." },
-];
-
-const NEEDS = ["Обезличенная выгрузка переводов", "Разметка закрытых расследований", "Атрибуты KYC и MCC — чтобы отличать легитимных двойников", "Согласование контура с ИБ"];
+function Bar({ label, v, max, unit, sub, kind, delay }: { label: string; v: number; max: number; unit: string; sub?: string; kind: "rules" | "nexora"; delay: number }) {
+  return (
+    <div className={`s6-bar ${kind}`}>
+      <span className="s6-who small">{label}</span>
+      <div className="s6-track">
+        <m.i initial={{ scaleX: 0 }} animate={{ scaleX: v / max }} transition={{ delay, duration: 0.9, ease: EASE }} />
+      </div>
+      <span className="s6-val num">{dec(v)}{unit}</span>
+      <span className="s6-sub label">{sub ?? ""}</span>
+    </div>
+  );
+}
 
 export function Slide6({ step }: SlideProps) {
   return (
-    <section className="slide" aria-labelledby="h-6">
-      <Reveal><SlideHeader index={6} /></Reveal>
-      <div className="slide-inner s6p">
-        <Reveal delay={0.1}><h2 id="h-6" className="h1 s6p-title">Что получает банк <span className="grad">и как дойти до пилота</span></h2></Reveal>
+    <section className="slide s6" aria-labelledby="h-6">
+      <Head index={6} />
+      <div className="slide-body s6-body">
+        <div className="s6-chart">
+          {ROWS.map((r, i) => {
+            const on = !r.cost || step >= 1;
+            return (
+              <m.div
+                key={r.key} className={`s6-row ${r.cost ? "cost" : ""}`} data-row={r.key}
+                initial={false} animate={{ opacity: on ? 1 : 0 }} transition={{ duration: 0.4 }} aria-hidden={!on}
+              >
+                <div className="s6-row-h">
+                  <h3 className="h3">{r.title}</h3>
+                  <span className="label">{r.better}</span>
+                  {r.cost && on && (
+                    <m.span className="tag amber s6-delta" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}>
+                      −{dec(RECALL_COST)} п. п.
+                    </m.span>
+                  )}
+                </div>
+                {on && <>
+                  <Bar label="Правила" kind="rules" v={r.rules.v} sub={r.rules.sub} max={r.max} unit={r.unit} delay={0.2 + i * 0.08} />
+                  <Bar label="NEXORA" kind="nexora" v={r.nexora.v} sub={r.nexora.sub} max={r.max} unit={r.unit} delay={0.35 + i * 0.08} />
+                </>}
+              </m.div>
+            );
+          })}
+        </div>
 
-        <ul className="roles">
-          {ROLES.map((r, i) => (
-            <m.li key={r.who} className="glass role" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 + i * 0.12, duration: 0.6, ease: EASE }}>
-              <h3 className="h3">{r.who}</h3>
-              <ul>{r.points.map((p) => <li key={p}>{p}</li>)}</ul>
-            </m.li>
-          ))}
-        </ul>
-
-        <Fade when={step >= 1} className="pilot">
-          <ol className="stages" aria-label="Этапы пилота">
-            {STAGES.map((s, i) => (
-              <m.li key={s.n} initial={false} animate={{ opacity: step >= 1 ? 1 : 0, x: step >= 1 ? 0 : -20 }} transition={{ delay: step >= 1 ? 0.15 + i * 0.15 : 0, duration: 0.55, ease: EASE }}>
-                <span className="mono">{s.n}</span>
-                <b>{s.name}</b>
-                <p>{s.text}</p>
-              </m.li>
-            ))}
-          </ol>
-          <div className="needs">
-            <span className="label up">Что нужно от банка</span>
-            <ul>{NEEDS.map((n) => <li key={n}>{n}</li>)}</ul>
-          </div>
-        </Fade>
+        <aside className="s6-side">
+          <section className="s6-method" aria-label="Методика">
+            <h3 className="label caps">Как измеряли</h3>
+            <dl>
+              <div><dt className="num">{BENCH.datasets}</dt><dd className="small">наборов отложенной выборки</dd></div>
+              <div><dt className="num">{BENCH.suspicious + BENCH.legitimate}</dt><dd className="small">сетей: {BENCH.suspicious} подозрительных, {BENCH.legitimate} легитимных</dd></div>
+            </dl>
+            <p className="label">Против правил мониторинга по счёту. bench-v1, коммит <span className="mono">{BENCH.commit}</span>, воспроизводится одной командой.</p>
+          </section>
+          <m.section
+            className="s6-miss" aria-label="Где пропуски" aria-hidden={step < 2}
+            initial={false} animate={{ opacity: step >= 2 ? 1 : 0, y: step >= 2 ? 0 : 12 }} transition={{ duration: 0.5, ease: EASE }}
+          >
+            <h3 className="label caps">Где {MISSED_TOTAL} пропусков NEXORA</h3>
+            <ul>
+              {MISSES.map((f) => (
+                <li key={f.id}>
+                  <span className="num">{f.missed}</span>
+                  <span className="small t-1">{f.label}</span>
+                  {f.abstained > 0 && <span className="label s6-abst">показаны как «недостаточно данных»</span>}
+                </li>
+              ))}
+            </ul>
+          </m.section>
+        </aside>
+      </div>
+      <div className="slide-foot s6-foot">
+        <span className="tag amber">Ограничения</span>
+        <span className="label">Данные синтетические и созданы командой — это не точность на данных банка. Аудит показал, что эту выборку просматривали при разработке версии, поэтому оценка скорее оптимистична.</span>
       </div>
     </section>
   );
