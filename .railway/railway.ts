@@ -15,7 +15,15 @@
  * Secrets are never written here. They are set once with `railway variable set KEY --stdin`
  * (scripts/railway/bootstrap.sh) and kept by preserve():
  *   api  NEXORA_GATEWAY_TOKEN              gateway ↔ API secret; web references the api's value
- *   web  NEXORA_GATEWAY_USER / _PASSWORD   demo access credentials
+ *   api  NEXORA_BOOTSTRAP_USERNAME / _PASSWORD_HASH
+ *                                          optional one-time first analyst (Argon2id hash, never a
+ *                                          password); remove once the account exists
+ *   web  NEXORA_GATEWAY_USER / _PASSWORD   legacy shared Basic credential (only for NEXORA_GATEWAY_AUTH=basic)
+ *
+ * Authentication: named analysts sign in on the SPA; the API enforces a server-side session on every
+ * /api route (src/nexora/api/deps.py). NEXORA_GATEWAY_AUTH selects whether the gateway additionally
+ * puts the shared Basic credential in front ("basic") or not ("session"); see the rollout in
+ * docs/deployment/railway.md.
  */
 import { defineRailway, group, postgres, preserve, project, service } from "railway/iac";
 
@@ -28,7 +36,6 @@ export default defineRailway(() => {
   const appEnv = {
     // Railway's private PostgreSQL URL (postgresql://…); NEXORA rewrites it to the psycopg 3 driver.
     NEXORA_DATABASE_URL: db.env.DATABASE_URL,
-    NEXORA_DEMO_ANALYST: "demo-analyst",
     // Two pools (api + worker) × (3 + 2) stays far below PostgreSQL's 100 connections.
     NEXORA_DB_POOL_SIZE: "3",
     NEXORA_DB_MAX_OVERFLOW: "2",
@@ -40,6 +47,8 @@ export default defineRailway(() => {
     env: {
       ...appEnv,
       NEXORA_GATEWAY_TOKEN: preserve(),
+      NEXORA_BOOTSTRAP_USERNAME: preserve(),
+      NEXORA_BOOTSTRAP_PASSWORD_HASH: preserve(),
       PORT: "8000",
       // IPv4. Verified on the first deploy: with "::" Railway's health probe never reached uvicorn (no
       // request in the access log) and the deploy failed. This environment resolves private names to
@@ -81,7 +90,9 @@ export default defineRailway(() => {
       PORT: "8080",
       NEXORA_API_UPSTREAM: { value: "${{api.RAILWAY_PRIVATE_DOMAIN}}:8000" },
       NEXORA_GATEWAY_TOKEN: api.env.NEXORA_GATEWAY_TOKEN,
-      NEXORA_GATEWAY_AUTH: "basic",
+      // Stage 2 of the authentication rollout: no shared Basic credential in front; the API
+      // authenticates every request. Rollback: "basic" (the credential is still preserved below).
+      NEXORA_GATEWAY_AUTH: "session",
       NEXORA_GATEWAY_USER: preserve(),
       NEXORA_GATEWAY_PASSWORD: preserve(),
     },

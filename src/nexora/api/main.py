@@ -5,9 +5,11 @@ from __future__ import annotations
 import hmac
 import logging
 import uuid
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from typing import Any
 
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -18,8 +20,10 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from nexora import __version__
 from nexora.analytics.config import AnalysisConfig, default_config
 from nexora.api import schemas
-from nexora.api.routes import alerts, analysis, cases, datasets, evaluation
-from nexora.application.errors import AppError
+from nexora.api.deps import enforce_authentication, presented_token
+from nexora.api.routes import alerts, analysis, auth, cases, datasets, evaluation
+from nexora.application.errors import AppError, TooManyRequests
+from nexora.auth.service import AUTH_REQUIRED, bootstrap_from_settings
 from nexora.persistence import orm
 from nexora.persistence.db import session_factory
 from nexora.settings import Settings, get_settings
@@ -32,18 +36,45 @@ _UNGATED_PREFIXES = ("/health/",)
 
 
 def _envelope(
-    status: int, code: str, message: str, request_id: str | None, details: dict[str, Any] | None = None
+    status: int,
+    code: str,
+    message: str,
+    request_id: str | None,
+    details: dict[str, Any] | None = None,
+    headers: dict[str, str] | None = None,
 ) -> JSONResponse:
     return JSONResponse(
         status_code=status,
         content={"error": {"code": code, "message": message, "request_id": request_id, "details": details or {}}},
-        headers={"X-Request-ID": request_id or ""},
+        headers={"X-Request-ID": request_id or "", **(headers or {})},
     )
+
+
+def _bootstrap_operator_account(app: FastAPI) -> None:
+    """Provision the first analyst from NEXORA_BOOTSTRAP_* (an Argon2id hash) on platforms without
+    shell access. Idempotent and a no-op when unset; a failure is logged and never blocks startup."""
+    settings: Settings = app.state.settings
+    if not (settings.bootstrap_username or settings.bootstrap_password_hash):
+        return
+    try:
+        with app.state.session_factory() as s:
+            outcome = bootstrap_from_settings(s, settings)
+            s.commit()
+        log.info("operator account bootstrap: %s", outcome)
+    except Exception as exc:  # e.g. a concurrent replica created it first, or a malformed hash
+        log.warning("operator account bootstrap skipped: %s", type(exc).__name__)
 
 
 def create_app(settings: Settings | None = None, config: AnalysisConfig | None = None) -> FastAPI:
     settings = settings or get_settings()
+
+    @asynccontextmanager
+    async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+        _bootstrap_operator_account(app)
+        yield
+
     app = FastAPI(
+        lifespan=lifespan,
         title="NEXORA AI API",
         version=__version__,
         description=(
@@ -52,6 +83,8 @@ def create_app(settings: Settings | None = None, config: AnalysisConfig | None =
         docs_url="/docs" if settings.expose_api_docs else None,
         redoc_url="/redoc" if settings.expose_api_docs else None,
         openapi_url="/openapi.json" if settings.expose_api_docs else None,
+        # Authentication is enforced for every /api route by default; see deps.enforce_authentication.
+        dependencies=[Depends(enforce_authentication)],
     )
     app.state.settings = settings
     app.state.session_factory = session_factory(settings.database_url)
@@ -63,7 +96,7 @@ def create_app(settings: Settings | None = None, config: AnalysisConfig | None =
         CORSMiddleware,
         allow_origins=[o.strip() for o in settings.cors_origins.split(",") if o.strip()],
         allow_methods=["GET", "POST"],
-        allow_headers=["Content-Type", "X-Request-ID"],
+        allow_headers=["Content-Type", "X-Request-ID", "X-CSRF-Token"],
         expose_headers=["X-Request-ID", "Location"],
     )
 
@@ -78,13 +111,21 @@ def create_app(settings: Settings | None = None, config: AnalysisConfig | None =
                 return _envelope(401, "GATEWAY_TOKEN_REQUIRED", "request did not arrive through the gateway", rid)
         response = await call_next(request)
         response.headers["X-Request-ID"] = rid
+        if request.url.path.startswith("/api/"):
+            # Investigation data and session responses must never be stored by browsers or proxies.
+            response.headers["Cache-Control"] = "no-store"
         return response
 
     @app.exception_handler(AppError)
     async def app_error(request: Request, exc: AppError) -> JSONResponse:
-        return _envelope(
-            exc.status_code, exc.code, exc.message, getattr(request.state, "request_id", None), exc.details
+        headers = {"Retry-After": str(exc.retry_after_seconds)} if isinstance(exc, TooManyRequests) else None
+        response = _envelope(
+            exc.status_code, exc.code, exc.message, getattr(request.state, "request_id", None), exc.details, headers
         )
+        if exc.code == AUTH_REQUIRED and presented_token(request) is not None:
+            # Expired, revoked or malformed: tell the browser to drop the dead cookie.
+            auth.clear_session_cookie(response, settings)
+        return response
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(request: Request, exc: RequestValidationError) -> JSONResponse:
@@ -147,11 +188,10 @@ def create_app(settings: Settings | None = None, config: AnalysisConfig | None =
             "migration": migration,
             "queue": {k: int(v) for k, v in queue.items()},
             "demo_mode": True,
-            "actor": settings.demo_analyst,
         }
         return JSONResponse(status_code=200 if body["status"] == "ok" else 503, content=body)
 
-    for module in (datasets, analysis, alerts, cases, evaluation):
+    for module in (auth, datasets, analysis, alerts, cases, evaluation):
         app.include_router(module.router)
     return app
 

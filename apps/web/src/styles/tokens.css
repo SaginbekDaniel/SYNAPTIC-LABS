@@ -89,6 +89,7 @@
   --fs-xl: 1.25rem; /* 20 */
   --fs-2xl: 1.625rem; /* 26 — page title */
   --fs-3xl: 2.125rem; /* 34 — key figures */
+  --fs-display: clamp(2rem, 1.1rem + 2.6vw, 3.25rem); /* sign-in headline only */
   --lh-tight: 1.2;
   --lh: 1.5;
   --fw-regular: 400;
@@ -120,6 +121,13 @@
   --shadow-panel: none;
   --shadow-pop: 0 18px 48px rgb(0 0 0 / 0.55), 0 0 0 1px var(--line-strong);
   --focus-ring: 0 0 0 2px var(--canvas), 0 0 0 4px var(--accent);
+
+  /* ---- Sign-in surface: one translucent panel over a softly lit canvas ---- */
+  --glass: rgb(16 17 26 / 0.74);
+  --glass-line: rgb(255 255 255 / 0.09);
+  --shadow-glass: 0 24px 64px rgb(0 0 0 / 0.5), inset 0 1px 0 rgb(255 255 255 / 0.05);
+  --auth-light-1: rgb(124 92 230 / 0.22);
+  --auth-light-2: rgb(98 211 219 / 0.1);
 
   /* ---- Components & layout ---- */
   --control-h: 36px;
@@ -203,6 +211,11 @@
   --g-label-bg: #fafafd;
 
   --shadow-panel: 0 1px 2px rgb(17 18 40 / 0.04), 0 0 0 1px var(--line);
+  --glass: rgb(255 255 255 / 0.8);
+  --glass-line: rgb(17 18 40 / 0.09);
+  --shadow-glass: 0 24px 56px rgb(17 18 40 / 0.12), 0 1px 2px rgb(17 18 40 / 0.06);
+  --auth-light-1: rgb(100 71 216 / 0.12);
+  --auth-light-2: rgb(11 135 144 / 0.08);
   --shadow-pop: 0 16px 40px rgb(17 18 40 / 0.16), 0 0 0 1px var(--line);
 }
 

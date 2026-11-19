@@ -342,3 +342,53 @@ class AnalysisJob(Base):
         CheckConstraint("attempt_count >= 0", name="ck_jobs_attempts"),
         Index("ix_analysis_jobs_claim", "status", "created_at"),
     )
+
+
+# -- Authentication (migration 0003) --------------------------------------------------------------
+class User(Base):
+    """A named analyst account. Only an Argon2id hash of the password is stored."""
+
+    __tablename__ = "users"
+    id: Mapped[uuid.UUID] = _uuid()
+    # Normalised (NFKC, case-folded) sign-in name; also the identity written to audit events.
+    username: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
+    display_name: Mapped[str] = mapped_column(Text, nullable=False)
+    password_hash: Mapped[str] = mapped_column(Text, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="true")
+    created_at: Mapped[dt.datetime] = _now()
+    password_changed_at: Mapped[dt.datetime] = _now()
+    last_login_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    __table_args__ = (
+        CheckConstraint("username = lower(username) AND length(username) BETWEEN 3 AND 64", name="ck_users_username"),
+    )
+
+
+class AuthSession(Base):
+    """Server-side session. The browser holds a random opaque token; only its SHA-256 is stored."""
+
+    __tablename__ = "auth_sessions"
+    id: Mapped[uuid.UUID] = _uuid()
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    token_hash: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
+    created_at: Mapped[dt.datetime] = _now()
+    last_seen_at: Mapped[dt.datetime] = _now()
+    expires_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    revoked_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    revoked_reason: Mapped[str | None] = mapped_column(Text)
+    __table_args__ = (Index("ix_auth_sessions_expires", "expires_at"),)
+
+
+class LoginAttempt(Base):
+    """Sign-in attempts for brute-force throttling. The submitted name is stored only as a keyed
+    digest: people sometimes type a password into the user-name field."""
+
+    __tablename__ = "login_attempts"
+    id: Mapped[int] = mapped_column(BigInteger, Identity(always=True), primary_key=True)
+    username_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    client: Mapped[str] = mapped_column(Text, nullable=False)
+    succeeded: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    created_at: Mapped[dt.datetime] = _now()
+    __table_args__ = (
+        Index("ix_login_attempts_user", "username_digest", "created_at"),
+        Index("ix_login_attempts_client", "client", "created_at"),
+    )

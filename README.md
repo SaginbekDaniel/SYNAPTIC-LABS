@@ -51,6 +51,8 @@ exists" and "an analyst should look at this first":
 <details>
 <summary>Light theme and 390 px mobile</summary>
 
+<img src="docs/assets/screenshots/sign-in.webp" alt="NEXORA sign-in page, dark theme" width="720"> <img src="docs/assets/screenshots/mobile-sign-in.webp" alt="Sign-in on a 390 px phone" width="240">
+
 <img src="docs/assets/screenshots/review-queue-light.webp" alt="Review Queue in the light theme" width="720"> <img src="docs/assets/screenshots/mobile-investigation.webp" alt="Investigation on a 390 px phone" width="240">
 
 </details>
@@ -62,11 +64,12 @@ dataset (seed 2026). The UI is in Russian, the jury's working language.
 
 **https://web-production-4593b103.up.railway.app** — *Synthetic Data Only — No Banking Integration*
 
-The demo sits behind a shared username and password, so the page asks for credentials before it
-shows anything. They are not published here: ask the maintainers, or read them from the `web`
-service variables in the Railway project. Open **Лаборатория** → *Сгенерировать набор* →
-*Запустить анализ* → *Перейти к алертам*. Everyone shares one demo analyst identity, and any
-datasets created by earlier visitors stay in the database.
+The demo opens on the NEXORA sign-in page. Analysts sign in with a **named account**; there are
+no published or default credentials — accounts are created by an operator
+(`python -m nexora.auth.cli create-user`, see [SECURITY.md](SECURITY.md)). After signing in, open
+**Лаборатория** → *Сгенерировать набор* → *Запустить анализ* → *Перейти к алертам*. Every case
+decision is attributed to the signed-in analyst. Datasets created by earlier visitors stay in the
+database.
 
 Deployment record, what was verified and what was not:
 [docs/deployment/railway.md](docs/deployment/railway.md#deployment-record).
@@ -201,9 +204,10 @@ make check
 
 ## Security
 
-The demo uses a **shared demo identity**: every audit event is attributed to one configured analyst,
-and there is no SSO or role model. The cloud deployment is protected by a fail-closed gateway, but it
-is a hackathon deployment, not a bank-grade system. See [SECURITY.md](SECURITY.md) for the controls
+Analysts sign in with named accounts (Argon2id password hashes, server-side sessions in PostgreSQL,
+HttpOnly `SameSite=Strict` cookies, CSRF and origin checks, brute-force throttling); the API rejects
+every unauthenticated request and audit events carry the session's identity. There is no SSO, MFA or
+role model, and it is a hackathon deployment, not a bank-grade system. See [SECURITY.md](SECURITY.md) for the controls
 in place, the known gaps, and how to report a vulnerability privately.
 
 ## Roadmap
@@ -212,6 +216,7 @@ in place, the known gaps, and how to report a vulnerability privately.
 |---|---|
 | Done | Ingest, four structural detectors, temporal flow, peer statistics, coverage, risk policy v2, investigation UI, cases and audit, `bench-v1` |
 | Done | Production images, fail-closed gateway, Railway IaC, CI with production-image smoke test |
+| Done | Named analyst accounts, server-side sessions, NEXORA sign-in page (replaces the shared Basic prompt) |
 | In review | [PR #3](https://github.com/SaginbekDaniel/SYNAPTIC-LABS/pull/3): competing-hypothesis engine, evaluation leakage fixes, sealed evaluation |
 | Done | Protected Railway demo (PostgreSQL, API, worker, gateway); see the deployment record |
 | Planned | Correlate alerts sharing a subject account; bridge/coordinator detector; named users via an identity-aware proxy |

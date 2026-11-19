@@ -26,6 +26,9 @@ map $request_method $nexora_write_key {
   DELETE  $binary_remote_addr;
 }
 limit_req_zone $nexora_write_key zone=nexora_writes:10m rate=30r/m;
+# Sign-in: slow enough to make online guessing impractical before the API's own per-name and
+# per-client lockout (nexora.auth.service) even engages.
+limit_req_zone $binary_remote_addr zone=nexora_login:10m rate=10r/m;
 limit_req_status 429;
 
 # HSTS only when the edge terminated TLS.
@@ -59,7 +62,8 @@ server {
   gzip_min_length 1024;
   gzip_types text/css application/javascript application/json image/svg+xml;
 
-  # Access control for everything below except /healthz (rendered by 10-nexora-gateway.envsh).
+  # Gateway access control (rendered by 10-nexora-gateway.envsh): Basic in "basic" mode, otherwise
+  # none here — the API authenticates every /api request with its server-side session.
   include /tmp/nexora/auth.conf;
   include /etc/nginx/nexora/security-headers.conf;
 
@@ -86,15 +90,20 @@ server {
     proxy_set_header Authorization "";
     proxy_connect_timeout 5s;
     proxy_read_timeout 60s;
+
+    # Inherits the proxy headers above; `set` and limit_req must be repeated in a nested location.
+    location = /api/v1/auth/login {
+      limit_req zone=nexora_login burst=5 nodelay;
+      limit_req zone=nexora_api burst=40 nodelay;
+      set $nexora_api http://${NEXORA_API_UPSTREAM};
+      proxy_pass $nexora_api;
+    }
   }
 
-  # Readiness (database, migration, queue) through the gateway, for authenticated operators.
+  # Readiness (database, migration, queue) is for the platform's private health check of the API
+  # service, not for the internet.
   location /health/ {
-    limit_req zone=nexora_api burst=10 nodelay;
-    set $nexora_api http://${NEXORA_API_UPSTREAM};
-    proxy_pass $nexora_api;
-    proxy_set_header X-Request-ID $request_id;
-    proxy_set_header Authorization "";
+    return 404;
   }
 
   # API docs are not served by the gateway (and are disabled in the deployed API).

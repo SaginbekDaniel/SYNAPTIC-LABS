@@ -5,7 +5,8 @@
 * Not connected to Bank CenterCredit or any bank. All data is **synthetic**.
 * Not a real-time authorisation/blocking system. It is batch snapshot analysis triggered by jobs.
 * Not proof of fraud or money laundering: outputs are review candidates for a human analyst.
-* Authentication is **demo mode**: every request acts as `NEXORA_DEMO_ANALYST`. No SSO, no RBAC.
+* Authentication is named accounts with local passwords and server-side sessions. No SSO, no MFA, no
+  role model (every analyst can do everything), no self-service password reset (operator CLI only).
 
 ## Evaluation limits
 

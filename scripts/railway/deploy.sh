@@ -17,8 +17,15 @@ SHA="$(git rev-parse HEAD)"
 ENV_ARGS=()
 if [ -n "${RAILWAY_ENVIRONMENT_NAME:-}" ]; then ENV_ARGS=(--environment "$RAILWAY_ENVIRONMENT_NAME"); fi
 
-latest_status() { # <service> -> status of the newest deployment
-  railway deployment list --service "$1" --limit 1 --json "${ENV_ARGS[@]}" | python3 -c '
+latest_status() { # <service> -> status of the newest deployment ("UNKNOWN" if the API is unreachable)
+  local json attempt
+  for attempt in 1 2 3; do
+    # Transient connection resets from the Railway API must not abort a half-finished rollout.
+    if json="$(railway deployment list --service "$1" --limit 1 --json "${ENV_ARGS[@]}" 2>/dev/null)"; then break; fi
+    json=""; sleep $((attempt * 3))
+  done
+  [ -n "$json" ] || { echo UNKNOWN; return 0; }
+  printf '%s' "$json" | python3 -c '
 import json, sys
 data = json.load(sys.stdin)
 items = data if isinstance(data, list) else data.get("deployments", data.get("items", []))

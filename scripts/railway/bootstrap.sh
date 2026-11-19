@@ -2,7 +2,7 @@
 # One-time setup of the NEXORA demo on Railway (docs/deployment/railway.md).
 #
 # Requires: Railway CLI >= 5.63 signed in (`railway login`, or RAILWAY_API_TOKEN for an account /
-# workspace token), an active Railway plan, Node 22 and openssl.
+# workspace token), an active Railway plan, Node 22, openssl and uv (to hash the first password).
 #
 #   scripts/railway/bootstrap.sh
 #
@@ -38,9 +38,14 @@ echo "==> secrets"
 umask 077
 mkdir -p "$(dirname "$CREDENTIALS")"
 if [ ! -f "$CREDENTIALS" ]; then
+  # Legacy shared Basic credential: only used if the gateway is switched back to NEXORA_GATEWAY_AUTH=basic.
   password="$(openssl rand -base64 33 | tr -d '/+=\n')"
   printf 'NEXORA_GATEWAY_USER=analyst\nNEXORA_GATEWAY_PASSWORD=%s\n' "$password" > "$CREDENTIALS"
   unset password
+fi
+if ! grep -q '^NEXORA_ANALYST_USER=' "$CREDENTIALS"; then
+  # First named analyst for the sign-in page. Only its Argon2id hash leaves this machine.
+  printf 'NEXORA_ANALYST_USER=analyst.one\nNEXORA_ANALYST_PASSWORD=%s\n' "$(openssl rand -base64 24 | tr -d '/+=\n')" >> "$CREDENTIALS"
 fi
 # shellcheck disable=SC1090
 . "$CREDENTIALS"
@@ -49,7 +54,14 @@ if ! has_variable api NEXORA_GATEWAY_TOKEN; then
 fi
 set_secret web NEXORA_GATEWAY_USER "$NEXORA_GATEWAY_USER"
 set_secret web NEXORA_GATEWAY_PASSWORD "$NEXORA_GATEWAY_PASSWORD"
-echo "    gateway credentials: $CREDENTIALS (keep it private; share through a password manager)"
+if ! has_variable api NEXORA_BOOTSTRAP_PASSWORD_HASH; then
+  # The API creates this account at start-up if it does not exist (nexora.auth.service.bootstrap_from_settings).
+  hash="$(printf '%s\n' "$NEXORA_ANALYST_PASSWORD" | uv run --quiet python -m nexora.auth.cli hash-password --password-stdin)"
+  set_secret api NEXORA_BOOTSTRAP_USERNAME "$NEXORA_ANALYST_USER"
+  set_secret api NEXORA_BOOTSTRAP_PASSWORD_HASH "$hash"
+  unset hash
+fi
+echo "    credentials: $CREDENTIALS (keep it private; share through a password manager)"
 
 scripts/railway/deploy.sh
 

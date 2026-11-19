@@ -1,5 +1,20 @@
 import { expect, type Page } from "@playwright/test";
 
+// Test-only password for accounts created in the disposable E2E database (scripts/e2e_stack.sh).
+export const E2E_PASSWORD = process.env.NEXORA_E2E_PASSWORD ?? "e2e-only-password-disposable-db";
+export const E2E_USER = "e2e.analyst";
+export const E2E_SECOND_USER = "e2e.second";
+export const AUTH_STATE = "e2e/.auth/analyst.json";
+
+/** Sign in through the real form (the page must be on, or redirected to, /login). */
+export async function signIn(page: Page, username = E2E_USER, password = E2E_PASSWORD) {
+  await expect(page.getByTestId("login-panel")).toBeVisible();
+  await page.getByTestId("login-username").fill(username);
+  await page.getByTestId("login-password").fill(password);
+  await page.getByTestId("login-submit").click();
+  await expect(page).not.toHaveURL(/\/login/);
+}
+
 /** Generate a synthetic suite through the UI and wait for the real worker to publish it. */
 export async function seedAndAnalyse(page: Page, seed: string, suite = "demo-v1") {
   await page.goto("/lab");

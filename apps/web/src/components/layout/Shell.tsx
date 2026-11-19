@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { signOut, useAuth } from "../../app/auth";
 import { useDataset } from "../../app/dataset";
-import { setTheme, useTheme, type ThemeChoice } from "../../app/theme";
 import { formatDate, formatDateTime } from "../../lib/format";
 import { t, type MessageKey } from "../../lib/i18n";
 import { Icon, type IconName } from "../ui/icons";
 import { SimulationBadge } from "../ui";
+import { ThemeSwitch } from "./ThemeSwitch";
 
 interface NavItem {
   to: string;
@@ -34,26 +35,6 @@ function RailLink({ item }: { item: NavItem }) {
       <Icon name={item.icon} size={20} />
       <span className="rail__text">{t(item.key)}</span>
     </NavLink>
-  );
-}
-
-const THEMES: { value: ThemeChoice; icon: IconName; key: MessageKey }[] = [
-  { value: "dark", icon: "moon", key: "theme.dark" },
-  { value: "light", icon: "sun", key: "theme.light" },
-  { value: "system", icon: "monitor", key: "theme.system" },
-];
-
-function ThemeSwitch() {
-  const { choice } = useTheme();
-  return (
-    <div className="theme-switch" role="group" aria-label={t("theme.label")}>
-      {THEMES.map((o) => (
-        <button key={o.value} type="button" aria-pressed={choice === o.value} onClick={() => setTheme(o.value)} title={t(o.key)}>
-          <Icon name={o.icon} size={16} />
-          <span className="visually-hidden">{t(o.key)}</span>
-        </button>
-      ))}
-    </div>
   );
 }
 
@@ -94,6 +75,45 @@ function DatasetContext() {
   );
 }
 
+function initials(name: string): string {
+  const parts = name.trim().split(/[\s._@-]+/).filter(Boolean);
+  return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase() || "?";
+}
+
+function useSignOut(): [boolean, () => void] {
+  const [busy, setBusy] = useState(false);
+  return [
+    busy,
+    () => {
+      if (busy) return;
+      setBusy(true);
+      // The route guard sends the user to the sign-in page once the store reports signed_out.
+      void signOut();
+    },
+  ];
+}
+
+/** Signed-in identity and sign-out, at the foot of the navigation rail. */
+function Account() {
+  const { user } = useAuth();
+  const [busy, out] = useSignOut();
+  if (!user) return null;
+  return (
+    <div className="account" role="group" aria-label={t("account.label")} data-testid="account">
+      <span className="account__avatar" aria-hidden="true" title={t("account.signedInAs", { name: user.display_name })}>
+        {initials(user.display_name)}
+      </span>
+      <span className="account__text">
+        <span className="account__name">{user.display_name}</span>
+        <span className="account__id">{user.username}</span>
+      </span>
+      <button type="button" className="icon-btn account__out" onClick={out} disabled={busy} title={t("account.signOut")} aria-label={t("account.signOut")} data-testid="sign-out">
+        <Icon name="signOut" size={18} />
+      </button>
+    </div>
+  );
+}
+
 /** Phone overflow sheet: tools and theme, reached from the fifth tab. */
 function MoreSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -126,8 +146,24 @@ function MoreSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
           <span>{t("theme.label")}</span>
           <ThemeSwitch />
         </div>
+        <SheetAccount />
         <p className="sheet__note">{t("app.disclaimer")}</p>
       </div>
+    </div>
+  );
+}
+
+function SheetAccount() {
+  const { user } = useAuth();
+  const [busy, out] = useSignOut();
+  if (!user) return null;
+  return (
+    <div className="sheet__row">
+      <span className="sheet__who">{t("account.signedInAs", { name: user.display_name })}</span>
+      <button type="button" className="btn btn--sm" onClick={out} disabled={busy} data-testid="sheet-sign-out">
+        <Icon name="signOut" size={16} />
+        {t("account.signOut")}
+      </button>
     </div>
   );
 }
@@ -176,6 +212,7 @@ export function Shell() {
             <RailLink key={i.to} item={i} />
           ))}
         </nav>
+        <Account />
         <p className="rail__footer">{t("app.disclaimer")}</p>
       </aside>
 

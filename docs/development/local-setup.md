@@ -10,16 +10,26 @@ Requires Docker with Compose v2.
 docker compose up --build -d --wait
 ```
 
-Open http://127.0.0.1:8080 → **Лаборатория** (Fraud Lab) → *Сгенерировать набор* → *Запустить анализ*
-→ *Перейти к алертам*.
+Create an analyst account (the password is generated and printed once; nothing is created by default):
+
+```bash
+docker compose run --rm api python -m nexora.auth.cli create-user analyst --generate
+```
+
+Open http://127.0.0.1:8080, sign in, then **Лаборатория** (Fraud Lab) → *Сгенерировать набор* →
+*Запустить анализ* → *Перейти к алертам*.
 
 * Same topology as the cloud: gateway (`web`) → `api` → `postgres`, plus `worker`; migrations run
   once in the `migrate` service before the API starts.
-* Every port binds to `127.0.0.1`. Gateway access control is **off** by default for this reason.
-  To try it, set `NEXORA_GATEWAY_AUTH=basic`, `NEXORA_GATEWAY_USER` and a ≥ 16-character
-  `NEXORA_GATEWAY_PASSWORD` in `.env` (copy `.env.example`) and restart `web`.
+* Every port binds to `127.0.0.1`. The gateway runs in `session` mode like the deployment: the API
+  authenticates every request. Because this stack is plain HTTP, the session cookie is not `Secure`
+  here (`NEXORA_SESSION_COOKIE_SECURE=false`); the deployment keeps it `Secure`. To try the legacy
+  shared Basic credential in front, set `NEXORA_GATEWAY_AUTH=basic`, `NEXORA_GATEWAY_USER` and a
+  ≥ 16-character `NEXORA_GATEWAY_PASSWORD` in `.env` (copy `.env.example`) and restart `web`.
 * API docs: http://127.0.0.1:8000/docs. Direct API calls need the header
-  `X-Nexora-Gateway-Token: local-gateway-token` (the compose default).
+  `X-Nexora-Gateway-Token: local-only-gateway-token-not-a-secret` (the compose default) **and** a
+  session: `POST /api/v1/auth/login` returns the cookie and the `csrf_token` to send as
+  `X-CSRF-Token` on writes.
 * Stop with `docker compose down` (data kept) or `docker compose down -v` (data dropped).
 
 ## B. Development servers (hot reload)
@@ -70,5 +80,7 @@ environment variables or `.env` (see `.env.example`); defaults match the command
 | `/health/ready` → 503, `migration: null` | Run `make migrate`. |
 | Jobs stay `queued` | The worker is not running (`make worker`). |
 | Integration tests are skipped | PostgreSQL not reachable at `NEXORA_TEST_DATABASE_URL`. |
-| `web` container exits with `refusing to start` | Gateway auth is `basic` without valid credentials; see section A. |
+| `web` container exits with `refusing to start` | `session` mode without a ≥ 32-character `NEXORA_GATEWAY_TOKEN`, or `basic` without valid credentials; see section A. |
+| Sign-in fails with "Не удалось выполнить вход" in development | The page's origin is not trusted for writes: add it to `NEXORA_CORS_ORIGINS` (or `NEXORA_TRUSTED_ORIGINS`). |
+| Sign-in works but the next request is anonymous (plain HTTP) | Secure cookie over HTTP: set `NEXORA_SESSION_COOKIE_SECURE=false` for local HTTP only. |
 | Port 5432 in use (compose) | Compose maps PostgreSQL to `127.0.0.1:5433`. |
