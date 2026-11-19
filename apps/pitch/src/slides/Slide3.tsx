@@ -148,7 +148,7 @@ export function Slide3({ step, setStep }: SlideProps) {
 
   return (
     <section className="slide" aria-labelledby="h-3">
-      <Reveal><SlideHeader index={3} eyebrow="Intelligence engine" /></Reveal>
+      <Reveal><SlideHeader index={3} /></Reveal>
       <div className="slide-inner s3">
         <Reveal delay={0.1}>
           <h2 id="h-3" className="h1 s3-title">Не просто обнаруживаем. <span className="grad">Проверяем гипотезы</span></h2>
@@ -227,7 +227,7 @@ export function Slide3({ step, setStep }: SlideProps) {
             )}
             {item.id === "hyp" && (
               <>
-                <div className="chips"><span className="chip violet">Hypothesis Engine</span><span className="chip warn">PR №3 · не в main</span></div>
+                <div className="chips"><span className="chip violet">Hypothesis Engine</span><span className="chip warn">В разработке</span></div>
                 <div className="seg wrap" role="group" aria-label="Объяснение">
                   <button className="btn" aria-pressed={hyp === "suspicious"} onClick={() => setHyp("suspicious")}>Подозрительное</button>
                   <button className="btn" aria-pressed={hyp === "legit"} onClick={() => setHyp("legit")}>Легитимное</button>

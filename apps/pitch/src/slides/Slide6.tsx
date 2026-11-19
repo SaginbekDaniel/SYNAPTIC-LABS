@@ -1,78 +1,64 @@
-import { useMemo } from "react";
-import { m, useReducedMotion } from "motion/react";
-import { Reveal, SlideHeader } from "../ui/primitives";
+import { m } from "motion/react";
+import { Fade, Reveal, SlideHeader } from "../ui/primitives";
 import type { SlideProps } from "../ui/types";
 
-const W = 1920, H = 1080;
+const EASE = [0.22, 1, 0.36, 1] as const;
 
-/** Deterministic pseudo-random (LCG) so the background is identical on every load. */
-function field() {
-  let s = 20261118;
-  const rnd = () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
-  const nodes = Array.from({ length: 44 }, () => ({ x: rnd() * W, y: rnd() * H, r: 3 + rnd() * 4 }));
-  const edges: [number, number][] = [];
-  nodes.forEach((a, i) => {
-    nodes
-      .map((b, j) => ({ j, d: Math.hypot(a.x - b.x, a.y - b.y) }))
-      .filter((o) => o.j > i && o.d < 330)
-      .sort((p, q) => p.d - q.d)
-      .slice(0, 2)
-      .forEach((o) => edges.push([i, o.j]));
-  });
-  return { nodes, edges };
-}
+/** What changes for each role in the bank. Only properties the prototype already has; no projected savings. */
+const ROLES = [
+  {
+    who: "Аналитик антифрода и AML",
+    points: ["Очередь сетей вместо россыпи отдельных алертов", "Каждый вывод — со ссылкой на переводы-источники", "Явно сказано, чего система не знает"],
+  },
+  {
+    who: "Комплаенс и риск",
+    points: ["Детерминированные правила, без генеративного ИИ в доказательствах: результат воспроизводим", "Решение и обоснование — в журнале только на добавление", "Никаких автоматических действий против клиентов"],
+  },
+  {
+    who: "ИТ и информационная безопасность",
+    points: ["Работает на выгрузке переводов, без доступа к АБС", "Python, PostgreSQL, React, Docker — развёрнут в облаке", "Суммы и идентификаторы без потери точности"],
+  },
+];
 
-const PILLARS = ["Объяснимость", "Доказательства", "Решение аналитика"];
+const STAGES = [
+  { n: "01", name: "Офлайн-реплей", text: "Обезличенная история переводов и закрытые кейсы банка. Первая честная оценка на реальных данных." },
+  { n: "02", name: "Теневой режим", text: "Рядом с текущим мониторингом, без влияния на клиентов. Сравниваем очереди и время разбора." },
+  { n: "03", name: "Аналитик в контуре", text: "NEXORA формирует очередь, решение остаётся за аналитиком, каждое действие — в журнале." },
+];
 
-export function Slide6(props: SlideProps) {
-  void props;
-  const reduced = useReducedMotion();
-  const { nodes, edges } = useMemo(field, []);
-  const pulses = edges.filter((_, i) => i % 6 === 0).slice(0, 8);
+const NEEDS = ["Обезличенная выгрузка переводов", "Разметка закрытых расследований", "Атрибуты KYC и MCC — чтобы отличать легитимных двойников", "Согласование контура с ИБ"];
 
+export function Slide6({ step }: SlideProps) {
   return (
-    <section className="slide s6" aria-labelledby="h-6">
-      <svg className="s6-bg" viewBox={`0 0 ${W} ${H}`} aria-hidden="true">
-        <g className="drift">
-          {edges.map(([a, b], i) => (
-            <line key={i} x1={nodes[a].x} y1={nodes[a].y} x2={nodes[b].x} y2={nodes[b].y} stroke="rgb(165 139 245 / 0.16)" strokeWidth="1.5" />
-          ))}
-          {nodes.map((n, i) => (
-            <circle key={i} cx={n.x} cy={n.y} r={n.r} fill={i % 5 === 0 ? "var(--cyan)" : "var(--violet)"} opacity="0.55" />
-          ))}
-          {!reduced && pulses.map(([a, b], i) => (
-            <m.circle
-              key={i} r="5" fill="var(--cyan)"
-              initial={{ cx: nodes[a].x, cy: nodes[a].y, opacity: 0 }}
-              animate={{ cx: [nodes[a].x, nodes[b].x], cy: [nodes[a].y, nodes[b].y], opacity: [0, 1, 1, 0] }}
-              transition={{ duration: 3.2, delay: i * 0.55, repeat: Infinity, repeatDelay: 1.5, ease: "linear" }}
-            />
-          ))}
-        </g>
-      </svg>
+    <section className="slide" aria-labelledby="h-6">
+      <Reveal><SlideHeader index={6} /></Reveal>
+      <div className="slide-inner s6p">
+        <Reveal delay={0.1}><h2 id="h-6" className="h1 s6p-title">Что получает банк <span className="grad">и как дойти до пилота</span></h2></Reveal>
 
-      <Reveal><SlideHeader index={6} eyebrow="The finale" /></Reveal>
-      <div className="slide-inner s6-inner">
-        <div className="wm-wrap">
-          <span className="wm wm-glow" aria-hidden="true">NEXORA&nbsp;AI</span>
-          <m.h2
-            id="h-6" className="wm wm-main"
-            aria-label="NEXORA AI"
-            initial={{ clipPath: "inset(0 100% 0 0)", scale: 1.04 }} animate={{ clipPath: "inset(0 0% 0 0)", scale: 1 }}
-            transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-          >
-            NEXORA&nbsp;AI
-          </m.h2>
-        </div>
-        <Reveal delay={0.9}><p className="s6-head">От подозрения — к проверяемому расследованию</p></Reveal>
-        <ul className="pillars" aria-label="Три опоры">
-          {PILLARS.map((p, i) => (
-            <m.li key={p} className="glass" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2 + i * 0.18, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
-              <span className="mono">{String(i + 1).padStart(2, "0")}</span>{p}
+        <ul className="roles">
+          {ROLES.map((r, i) => (
+            <m.li key={r.who} className="glass role" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 + i * 0.12, duration: 0.6, ease: EASE }}>
+              <h3 className="h3">{r.who}</h3>
+              <ul>{r.points.map((p) => <li key={p}>{p}</li>)}</ul>
             </m.li>
           ))}
         </ul>
-        <Reveal delay={1.9}><p className="label s6-note">Прототип на синтетических данных · без интеграции с банком · SYNAPTIC LABS · ITU Hackathon 2026</p></Reveal>
+
+        <Fade when={step >= 1} className="pilot">
+          <ol className="stages" aria-label="Этапы пилота">
+            {STAGES.map((s, i) => (
+              <m.li key={s.n} initial={false} animate={{ opacity: step >= 1 ? 1 : 0, x: step >= 1 ? 0 : -20 }} transition={{ delay: step >= 1 ? 0.15 + i * 0.15 : 0, duration: 0.55, ease: EASE }}>
+                <span className="mono">{s.n}</span>
+                <b>{s.name}</b>
+                <p>{s.text}</p>
+              </m.li>
+            ))}
+          </ol>
+          <div className="needs">
+            <span className="label up">Что нужно от банка</span>
+            <ul>{NEEDS.map((n) => <li key={n}>{n}</li>)}</ul>
+          </div>
+        </Fade>
       </div>
     </section>
   );

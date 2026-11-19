@@ -73,7 +73,7 @@ export function Slide1({ step }: SlideProps) {
 
   return (
     <section className="slide" aria-labelledby="h-1">
-      <Reveal><SlideHeader index={1} eyebrow="The problem" /></Reveal>
+      <Reveal><SlideHeader index={1} /></Reveal>
       <div className="slide-inner s1">
         <div className="s1-left">
           <Reveal delay={0.1}>

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { STEP_COUNTS, SLIDE_COUNT, clampPos, globalIndex, next, nextSlide, parseHash, prev, prevSlide, toHash } from "./deck";
 
 describe("deck navigation", () => {
-  it("has exactly six slides", () => expect(SLIDE_COUNT).toBe(6));
+  it("has exactly seven slides", () => expect(SLIDE_COUNT).toBe(7));
 
   it("walks every step forward and ends on the last state", () => {
     let p = { slide: 0, step: 0 };
@@ -14,7 +14,7 @@ describe("deck navigation", () => {
       moves++;
     }
     expect(moves).toBe(STEP_COUNTS.reduce((a, b) => a + b, 0) - 1);
-    expect(p).toEqual({ slide: 5, step: 0 });
+    expect(p).toEqual({ slide: SLIDE_COUNT - 1, step: 0 });
   });
 
   it("going back from a slide start lands on the finished state of the previous slide", () => {
@@ -24,7 +24,7 @@ describe("deck navigation", () => {
   it("is a no-op at both ends", () => {
     const start = { slide: 0, step: 0 };
     expect(prev(start)).toBe(start);
-    const end = { slide: 5, step: 0 };
+    const end = { slide: SLIDE_COUNT - 1, step: 0 };
     expect(next(end)).toBe(end);
   });
 
@@ -35,7 +35,7 @@ describe("deck navigation", () => {
 
   it("round-trips the URL hash and clamps garbage", () => {
     expect(parseHash(toHash({ slide: 2, step: 4 }))).toEqual({ slide: 2, step: 4 });
-    expect(parseHash("#/99/99")).toEqual({ slide: 5, step: 0 });
+    expect(parseHash("#/99/99")).toEqual({ slide: SLIDE_COUNT - 1, step: 0 });
     expect(parseHash("nonsense")).toEqual({ slide: 0, step: 0 });
     expect(clampPos({ slide: -3, step: 77 })).toEqual({ slide: 0, step: 3 });
   });

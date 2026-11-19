@@ -1,5 +1,6 @@
 import { type ReactNode, useEffect, useState } from "react";
 import { animate, m, useReducedMotion } from "motion/react";
+import { SLIDES } from "../data/notes";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -21,7 +22,9 @@ export function Fade({ when, children, className, delay = 0 }: { when: boolean; 
   );
 }
 
-export function SlideHeader({ index, eyebrow }: { index: number; eyebrow: string }) {
+/** Slide number + eyebrow; the eyebrow text comes from data/notes.ts (single source). */
+export function SlideHeader({ index }: { index: number }) {
+  const eyebrow = SLIDES[index - 1].eyebrow;
   return (
     <div className="eyebrow">
       <b>{String(index).padStart(2, "0")}</b>

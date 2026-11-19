@@ -2,7 +2,7 @@
 export interface Pos { slide: number; step: number }
 
 /** Reveal states per slide (see data/notes.ts for what each one shows). */
-export const STEP_COUNTS = [4, 6, 8, 5, 4, 1] as const;
+export const STEP_COUNTS = [4, 6, 8, 5, 4, 2, 1] as const;
 export const SLIDE_COUNT = STEP_COUNTS.length;
 export const TOTAL_STEPS = STEP_COUNTS.reduce((a, b) => a + b, 0);
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, m } from "motion/react";
 import { viewFor, type Rect } from "../engine/zoom";
+import { DEMO_URL, REPO_URL } from "../data/links";
 import { Reveal, SlideHeader } from "../ui/primitives";
 import type { SlideProps } from "../ui/types";
 
@@ -56,7 +57,6 @@ const SCREENS: Screen[] = [
   },
 ];
 
-const REPO = "https://github.com/SaginbekDaniel/SYNAPTIC-LABS";
 
 export function Slide4({ step, setStep }: SlideProps) {
   const sc = SCREENS[step];
@@ -67,7 +67,7 @@ export function Slide4({ step, setStep }: SlideProps) {
 
   return (
     <section className="slide" aria-labelledby="h-4">
-      <Reveal><SlideHeader index={4} eyebrow="Real product" /></Reveal>
+      <Reveal><SlideHeader index={4} /></Reveal>
       <div className="slide-inner s4">
         <Reveal delay={0.1}><h2 id="h-4" className="h1 s4-title">От сигнала <span className="grad">до расследования</span></h2></Reveal>
 
@@ -117,8 +117,11 @@ export function Slide4({ step, setStep }: SlideProps) {
               {sel !== null && <button className="btn" onClick={() => setSel(null)}>Весь экран</button>}
             </div>
             <div className="s4-link">
-              <span className="small">Публичного развёртывания продукта пока нет. Запуск и код — в репозитории.</span>
-              <a className="btn" href={REPO} target="_blank" rel="noopener noreferrer">Репозиторий на GitHub ↗</a>
+              <span className="small">Продукт развёрнут в облаке. Доступ к демо выдаём жюри, код открыт.</span>
+              <div className="s4-links">
+                <a className="btn" href={DEMO_URL} target="_blank" rel="noopener noreferrer">Живое демо ↗</a>
+                <a className="btn" href={REPO_URL} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+              </div>
             </div>
           </div>
         </div>
