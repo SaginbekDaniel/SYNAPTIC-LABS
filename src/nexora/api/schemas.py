@@ -337,6 +337,81 @@ class Neighborhood(Model):
     edges: list[GraphEdge]
 
 
+GraphMode = Literal["overview", "local"]
+TemporalStatus = Literal["supported", "possible_ambiguous", "contradicted", "unavailable"]
+
+
+class GraphFormationRef(Model):
+    formation_id: str
+    role: Literal["subject", "entry", "exit", "member"]
+
+
+class InvestigationNode(Model):
+    account_id: str
+    hop: int | None = Field(description="Hops from the centre (local mode); null in overview mode")
+    is_boundary: bool
+    formations: list[GraphFormationRef]
+    band: Band | None = Field(description="Strongest stored band among this account's formations; null if none")
+    priority: int | None
+
+
+class InvestigationEdge(Model):
+    """Observed transfers aggregated per (sender, receiver, currency) — eligible snapshot rows only."""
+
+    kind: Literal["observed_transfer"]
+    sender: str
+    receiver: str
+    currency: str
+    amount_minor: Money
+    n_transactions: int
+    first_date: dt.date
+    last_date: dt.date
+    evidence_formation_ids: list[str] = Field(
+        description="Formations whose evidence cites at least one transaction on this edge"
+    )
+    temporal_statuses: list[TemporalStatus] = Field(
+        description="Distinct temporal statuses of those formations; the edge has no status of its own"
+    )
+
+
+class InvestigationFormation(Model):
+    id: str
+    kind: FormationKind
+    currency: str
+    subject_account_id: str
+    account_count: int
+    band: Band
+    priority: int | None
+    temporal_status: TemporalStatus | None
+    alert_id: str | None
+
+
+class GraphLimits(Model):
+    max_nodes: int
+    max_edges: int
+    max_formations: int
+    truncated: bool
+    reasons: list[str]
+
+
+class InvestigationGraph(Model):
+    snapshot_id: str
+    dataset_id: str
+    graph_version: str
+    policy_version: str
+    config_sha256: str
+    input_manifest_sha256: str
+    computed_at: dt.datetime
+    view_version: str
+    mode: GraphMode
+    center: str | None
+    found: bool
+    formations: list[InvestigationFormation]
+    nodes: list[InvestigationNode]
+    edges: list[InvestigationEdge]
+    limits: GraphLimits
+
+
 class ActivityDay(Model):
     date: dt.date
     transactions: int

@@ -6,8 +6,8 @@ from fastapi import APIRouter, Depends, Query, Request, Response
 
 from nexora.api import schemas
 from nexora.api.deps import SessionDep, actor, parse_uuid
-from nexora.application import analysis_service, queries
-from nexora.application.errors import NotFound
+from nexora.application import analysis_service, graph_view, queries
+from nexora.application.errors import Invalid, NotFound
 from nexora.persistence import orm
 
 router = APIRouter(prefix="/api/v1", tags=["analysis"])
@@ -65,6 +65,59 @@ def neighborhood(
         max_nodes=min(max_nodes, s.graph_max_nodes),
         max_edges=s.graph_max_edges,
     )
+
+
+@router.get("/snapshots/{snapshot_id}/graph", response_model=schemas.InvestigationGraph, tags=["graph"])
+def investigation_graph(
+    snapshot_id: str,
+    request: Request,
+    session: SessionDep,
+    mode: schemas.GraphMode = "overview",
+    account_id: str | None = Query(None, min_length=1, max_length=128),
+    depth: int = Query(1, ge=1, le=2),
+    max_nodes: int = Query(200, ge=1),
+    max_formations: int = Query(25, ge=1),
+    band: Annotated[list[schemas.Band] | None, Query(max_length=5)] = None,
+    kind: Annotated[list[schemas.FormationKind] | None, Query(max_length=4)] = None,
+) -> Any:
+    """Bounded investigation graph from a published snapshot (graph-view-v1).
+
+    ``overview``: top formations by stored band/priority, whole formations only, with the observed
+    transfers among their accounts. ``local``: the 1–2 hop transfer neighbourhood of ``account_id``.
+    Requested budgets are clamped to server caps; ``limits`` reports the effective values and why the
+    view was truncated. Risk fields are stored assessments — nothing is scored in this request.
+    """
+    s = request.app.state.settings
+    budget = graph_view.GraphBudget(
+        max_nodes=min(max_nodes, s.graph_max_nodes),
+        max_edges=s.graph_max_edges,
+        max_formations=min(max_formations, s.graph_max_formations),
+    )
+    sid = parse_uuid(snapshot_id, "snapshot_id")
+    bands = list(band) if band else None
+    kinds = list(kind) if kind else None
+    if mode == "local":
+        if not account_id:
+            raise Invalid("ACCOUNT_REQUIRED", "local mode requires account_id")
+        return graph_view.local(session, sid, account_id, min(depth, s.graph_max_depth), budget, bands, kinds)
+    return graph_view.overview(session, sid, budget, bands, kinds)
+
+
+@router.get("/snapshots/{snapshot_id}/edge-transactions", response_model=schemas.TransactionPage, tags=["graph"])
+def edge_transactions(
+    snapshot_id: str,
+    session: SessionDep,
+    sender: str = Query(min_length=1, max_length=128),
+    receiver: str = Query(min_length=1, max_length=128),
+    currency: str = Query(pattern="^[A-Z]{3}$"),
+    limit: int = Query(100, ge=1, le=500),
+    offset: int = Query(0, ge=0),
+) -> Any:
+    """The source transfers aggregated into one directed graph edge — same eligibility as the edge."""
+    rows, total = graph_view.edge_transactions(
+        session, parse_uuid(snapshot_id, "snapshot_id"), sender, receiver, currency, limit, offset
+    )
+    return {"items": [queries.tx_dict(t) for t in rows], "total": total, "limit": limit, "offset": offset}
 
 
 @router.get("/snapshots/{snapshot_id}/activity", response_model=schemas.Activity, tags=["graph"])

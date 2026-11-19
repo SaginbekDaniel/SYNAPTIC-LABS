@@ -65,6 +65,7 @@ class Settings(BaseSettings):
     graph_max_depth: int = 3
     graph_max_nodes: int = 300
     graph_max_edges: int = 1500
+    graph_max_formations: int = 40
     job_lease_seconds: int = 120
     job_max_attempts: int = 3
     worker_poll_seconds: float = 1.0

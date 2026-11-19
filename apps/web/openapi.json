@@ -2184,6 +2184,68 @@
         "title": "GraphEdge",
         "type": "object"
       },
+      "GraphFormationRef": {
+        "additionalProperties": false,
+        "properties": {
+          "formation_id": {
+            "title": "Formation Id",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "subject",
+              "entry",
+              "exit",
+              "member"
+            ],
+            "title": "Role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "formation_id",
+          "role"
+        ],
+        "title": "GraphFormationRef",
+        "type": "object"
+      },
+      "GraphLimits": {
+        "additionalProperties": false,
+        "properties": {
+          "max_edges": {
+            "title": "Max Edges",
+            "type": "integer"
+          },
+          "max_formations": {
+            "title": "Max Formations",
+            "type": "integer"
+          },
+          "max_nodes": {
+            "title": "Max Nodes",
+            "type": "integer"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "max_nodes",
+          "max_edges",
+          "max_formations",
+          "truncated",
+          "reasons"
+        ],
+        "title": "GraphLimits",
+        "type": "object"
+      },
       "GraphNode": {
         "additionalProperties": false,
         "properties": {
@@ -2600,6 +2662,353 @@
           "quarantined_formations"
         ],
         "title": "IntegrityMetrics",
+        "type": "object"
+      },
+      "InvestigationEdge": {
+        "additionalProperties": false,
+        "description": "Observed transfers aggregated per (sender, receiver, currency) \u2014 eligible snapshot rows only.",
+        "properties": {
+          "amount_minor": {
+            "title": "Amount Minor",
+            "type": "string"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "evidence_formation_ids": {
+            "description": "Formations whose evidence cites at least one transaction on this edge",
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidence Formation Ids",
+            "type": "array"
+          },
+          "first_date": {
+            "format": "date",
+            "title": "First Date",
+            "type": "string"
+          },
+          "kind": {
+            "const": "observed_transfer",
+            "title": "Kind",
+            "type": "string"
+          },
+          "last_date": {
+            "format": "date",
+            "title": "Last Date",
+            "type": "string"
+          },
+          "n_transactions": {
+            "title": "N Transactions",
+            "type": "integer"
+          },
+          "receiver": {
+            "title": "Receiver",
+            "type": "string"
+          },
+          "sender": {
+            "title": "Sender",
+            "type": "string"
+          },
+          "temporal_statuses": {
+            "description": "Distinct temporal statuses of those formations; the edge has no status of its own",
+            "items": {
+              "enum": [
+                "supported",
+                "possible_ambiguous",
+                "contradicted",
+                "unavailable"
+              ],
+              "type": "string"
+            },
+            "title": "Temporal Statuses",
+            "type": "array"
+          }
+        },
+        "required": [
+          "kind",
+          "sender",
+          "receiver",
+          "currency",
+          "amount_minor",
+          "n_transactions",
+          "first_date",
+          "last_date",
+          "evidence_formation_ids",
+          "temporal_statuses"
+        ],
+        "title": "InvestigationEdge",
+        "type": "object"
+      },
+      "InvestigationFormation": {
+        "additionalProperties": false,
+        "properties": {
+          "account_count": {
+            "title": "Account Count",
+            "type": "integer"
+          },
+          "alert_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alert Id"
+          },
+          "band": {
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low",
+              "insufficient_evidence"
+            ],
+            "title": "Band",
+            "type": "string"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "funnel",
+              "chain",
+              "fan_out",
+              "cycle"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "priority": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priority"
+          },
+          "subject_account_id": {
+            "title": "Subject Account Id",
+            "type": "string"
+          },
+          "temporal_status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "supported",
+                  "possible_ambiguous",
+                  "contradicted",
+                  "unavailable"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temporal Status"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "currency",
+          "subject_account_id",
+          "account_count",
+          "band",
+          "priority",
+          "temporal_status",
+          "alert_id"
+        ],
+        "title": "InvestigationFormation",
+        "type": "object"
+      },
+      "InvestigationGraph": {
+        "additionalProperties": false,
+        "properties": {
+          "center": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Center"
+          },
+          "computed_at": {
+            "format": "date-time",
+            "title": "Computed At",
+            "type": "string"
+          },
+          "config_sha256": {
+            "title": "Config Sha256",
+            "type": "string"
+          },
+          "dataset_id": {
+            "title": "Dataset Id",
+            "type": "string"
+          },
+          "edges": {
+            "items": {
+              "$ref": "#/components/schemas/InvestigationEdge"
+            },
+            "title": "Edges",
+            "type": "array"
+          },
+          "formations": {
+            "items": {
+              "$ref": "#/components/schemas/InvestigationFormation"
+            },
+            "title": "Formations",
+            "type": "array"
+          },
+          "found": {
+            "title": "Found",
+            "type": "boolean"
+          },
+          "graph_version": {
+            "title": "Graph Version",
+            "type": "string"
+          },
+          "input_manifest_sha256": {
+            "title": "Input Manifest Sha256",
+            "type": "string"
+          },
+          "limits": {
+            "$ref": "#/components/schemas/GraphLimits"
+          },
+          "mode": {
+            "enum": [
+              "overview",
+              "local"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "nodes": {
+            "items": {
+              "$ref": "#/components/schemas/InvestigationNode"
+            },
+            "title": "Nodes",
+            "type": "array"
+          },
+          "policy_version": {
+            "title": "Policy Version",
+            "type": "string"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          },
+          "view_version": {
+            "title": "View Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "snapshot_id",
+          "dataset_id",
+          "graph_version",
+          "policy_version",
+          "config_sha256",
+          "input_manifest_sha256",
+          "computed_at",
+          "view_version",
+          "mode",
+          "center",
+          "found",
+          "formations",
+          "nodes",
+          "edges",
+          "limits"
+        ],
+        "title": "InvestigationGraph",
+        "type": "object"
+      },
+      "InvestigationNode": {
+        "additionalProperties": false,
+        "properties": {
+          "account_id": {
+            "title": "Account Id",
+            "type": "string"
+          },
+          "band": {
+            "anyOf": [
+              {
+                "enum": [
+                  "critical",
+                  "high",
+                  "medium",
+                  "low",
+                  "insufficient_evidence"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Strongest stored band among this account's formations; null if none",
+            "title": "Band"
+          },
+          "formations": {
+            "items": {
+              "$ref": "#/components/schemas/GraphFormationRef"
+            },
+            "title": "Formations",
+            "type": "array"
+          },
+          "hop": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Hops from the centre (local mode); null in overview mode",
+            "title": "Hop"
+          },
+          "is_boundary": {
+            "title": "Is Boundary",
+            "type": "boolean"
+          },
+          "priority": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priority"
+          }
+        },
+        "required": [
+          "account_id",
+          "hop",
+          "is_boundary",
+          "formations",
+          "band",
+          "priority"
+        ],
+        "title": "InvestigationNode",
         "type": "object"
       },
       "Job": {
@@ -5116,6 +5525,268 @@
           }
         },
         "summary": "Activity",
+        "tags": [
+          "analysis",
+          "graph"
+        ]
+      }
+    },
+    "/api/v1/snapshots/{snapshot_id}/edge-transactions": {
+      "get": {
+        "description": "The source transfers aggregated into one directed graph edge \u2014 same eligibility as the edge.",
+        "operationId": "edge_transactions_api_v1_snapshots__snapshot_id__edge_transactions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "snapshot_id",
+            "required": true,
+            "schema": {
+              "title": "Snapshot Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sender",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "title": "Sender",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "receiver",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "title": "Receiver",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "currency",
+            "required": true,
+            "schema": {
+              "pattern": "^[A-Z]{3}$",
+              "title": "Currency",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Edge Transactions",
+        "tags": [
+          "analysis",
+          "graph"
+        ]
+      }
+    },
+    "/api/v1/snapshots/{snapshot_id}/graph": {
+      "get": {
+        "description": "Bounded investigation graph from a published snapshot (graph-view-v1).\n\n``overview``: top formations by stored band/priority, whole formations only, with the observed\ntransfers among their accounts. ``local``: the 1\u20132 hop transfer neighbourhood of ``account_id``.\nRequested budgets are clamped to server caps; ``limits`` reports the effective values and why the\nview was truncated. Risk fields are stored assessments \u2014 nothing is scored in this request.",
+        "operationId": "investigation_graph_api_v1_snapshots__snapshot_id__graph_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "snapshot_id",
+            "required": true,
+            "schema": {
+              "title": "Snapshot Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "mode",
+            "required": false,
+            "schema": {
+              "default": "overview",
+              "enum": [
+                "overview",
+                "local"
+              ],
+              "title": "Mode",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "account_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 128,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Account Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "depth",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "maximum": 2,
+              "minimum": 1,
+              "title": "Depth",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "max_nodes",
+            "required": false,
+            "schema": {
+              "default": 200,
+              "minimum": 1,
+              "title": "Max Nodes",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "max_formations",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "minimum": 1,
+              "title": "Max Formations",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "band",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "enum": [
+                      "critical",
+                      "high",
+                      "medium",
+                      "low",
+                      "insufficient_evidence"
+                    ],
+                    "type": "string"
+                  },
+                  "maxItems": 5,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Band"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "enum": [
+                      "funnel",
+                      "chain",
+                      "fan_out",
+                      "cycle"
+                    ],
+                    "type": "string"
+                  },
+                  "maxItems": 4,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvestigationGraph"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Investigation Graph",
         "tags": [
           "analysis",
           "graph"

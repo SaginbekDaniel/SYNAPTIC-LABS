@@ -4,13 +4,13 @@ from __future__ import annotations
 
 import datetime as dt
 import uuid
-from collections import deque
 from typing import Any
 
 from sqlalchemy import case as sql_case
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
+from nexora.application import graph_view
 from nexora.application.case_service import TRANSITIONS
 from nexora.application.errors import Invalid, NotFound
 from nexora.persistence import orm
@@ -395,12 +395,7 @@ def get_transaction(session: Session, tx_id: uuid.UUID) -> dict[str, Any]:
 
 
 def _eligible_in_snapshot(snap: orm.GraphSnapshot) -> list[Any]:
-    return [
-        orm.Transaction.dataset_id == snap.dataset_id,
-        orm.Transaction.ingest_seq <= snap.max_ingest_seq,
-        orm.Transaction.status == "posted",
-        orm.Transaction.sender_account_id != orm.Transaction.receiver_account_id,
-    ]
+    return graph_view.eligible(snap)
 
 
 def activity(session: Session, snapshot_id: uuid.UUID) -> dict[str, Any]:
@@ -505,56 +500,9 @@ def neighborhood(
     session: Session, snapshot_id: uuid.UUID, account_id: str, depth: int, max_nodes: int, max_edges: int
 ) -> dict[str, Any]:
     snap = get_snapshot(session, snapshot_id)
-    base = _eligible_in_snapshot(snap)
+    seen, edges, truncated = graph_view.bfs_neighborhood(session, snap, account_id, depth, max_nodes, max_edges)
     dataset = session.get(orm.Dataset, snap.dataset_id)
     boundary = set((dataset.coverage_contract if dataset else {}).get("boundary_account_ids") or [])
-    agg = (
-        select(
-            orm.Transaction.sender_account_id,
-            orm.Transaction.receiver_account_id,
-            orm.Transaction.currency,
-            func.sum(orm.Transaction.amount_minor),
-            func.count(),
-            func.min(orm.Transaction.observed_date),
-            func.max(orm.Transaction.observed_date),
-        )
-        .where(*base)
-        .group_by(orm.Transaction.sender_account_id, orm.Transaction.receiver_account_id, orm.Transaction.currency)
-    )
-    seen = {account_id: 0}
-    queue: deque[str] = deque([account_id])
-    edges: dict[tuple[str, str, str], dict[str, Any]] = {}
-    truncated = False
-    while queue:
-        node = queue.popleft()
-        d = seen[node]
-        if d >= depth:
-            continue
-        rows = session.execute(
-            agg.where(or_(orm.Transaction.sender_account_id == node, orm.Transaction.receiver_account_id == node))
-        ).all()
-        for snd, rcv, cur, total, n, first, last in sorted(rows, key=lambda r: (-int(r[3]), r[0], r[1])):
-            other = rcv if snd == node else snd
-            if other not in seen:
-                if len(seen) >= max_nodes:
-                    truncated = True
-                    continue
-                seen[other] = d + 1
-                queue.append(other)
-            key = (snd, rcv, cur)
-            if key not in edges:
-                if len(edges) >= max_edges:
-                    truncated = True
-                    continue
-                edges[key] = {
-                    "sender": snd,
-                    "receiver": rcv,
-                    "currency": cur,
-                    "amount_minor": str(int(total)),
-                    "n_transactions": int(n),
-                    "first_date": first,
-                    "last_date": last,
-                }
     found = len(seen) > 1 or bool(edges)
     return {
         "snapshot_id": str(snapshot_id),

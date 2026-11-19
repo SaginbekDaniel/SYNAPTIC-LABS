@@ -420,6 +420,51 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/snapshots/{snapshot_id}/edge-transactions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Edge Transactions
+         * @description The source transfers aggregated into one directed graph edge — same eligibility as the edge.
+         */
+        get: operations["edge_transactions_api_v1_snapshots__snapshot_id__edge_transactions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/snapshots/{snapshot_id}/graph": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Investigation Graph
+         * @description Bounded investigation graph from a published snapshot (graph-view-v1).
+         *
+         *     ``overview``: top formations by stored band/priority, whole formations only, with the observed
+         *     transfers among their accounts. ``local``: the 1–2 hop transfer neighbourhood of ``account_id``.
+         *     Requested budgets are clamped to server caps; ``limits`` reports the effective values and why the
+         *     view was truncated. Risk fields are stored assessments — nothing is scored in this request.
+         */
+        get: operations["investigation_graph_api_v1_snapshots__snapshot_id__graph_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/snapshots/{snapshot_id}/neighborhood": {
         parameters: {
             query?: never;
@@ -1268,6 +1313,29 @@ export interface components {
             /** Sender */
             sender: string;
         };
+        /** GraphFormationRef */
+        GraphFormationRef: {
+            /** Formation Id */
+            formation_id: string;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "subject" | "entry" | "exit" | "member";
+        };
+        /** GraphLimits */
+        GraphLimits: {
+            /** Max Edges */
+            max_edges: number;
+            /** Max Formations */
+            max_formations: number;
+            /** Max Nodes */
+            max_nodes: number;
+            /** Reasons */
+            reasons: string[];
+            /** Truncated */
+            truncated: boolean;
+        };
         /** GraphNode */
         GraphNode: {
             /** Account Id */
@@ -1419,6 +1487,133 @@ export interface components {
             partial_analysis_rate: number | null;
             /** Quarantined Formations */
             quarantined_formations: number;
+        };
+        /**
+         * InvestigationEdge
+         * @description Observed transfers aggregated per (sender, receiver, currency) — eligible snapshot rows only.
+         */
+        InvestigationEdge: {
+            /** Amount Minor */
+            amount_minor: string;
+            /** Currency */
+            currency: string;
+            /**
+             * Evidence Formation Ids
+             * @description Formations whose evidence cites at least one transaction on this edge
+             */
+            evidence_formation_ids: string[];
+            /**
+             * First Date
+             * Format: date
+             */
+            first_date: string;
+            /**
+             * Kind
+             * @constant
+             */
+            kind: "observed_transfer";
+            /**
+             * Last Date
+             * Format: date
+             */
+            last_date: string;
+            /** N Transactions */
+            n_transactions: number;
+            /** Receiver */
+            receiver: string;
+            /** Sender */
+            sender: string;
+            /**
+             * Temporal Statuses
+             * @description Distinct temporal statuses of those formations; the edge has no status of its own
+             */
+            temporal_statuses: ("supported" | "possible_ambiguous" | "contradicted" | "unavailable")[];
+        };
+        /** InvestigationFormation */
+        InvestigationFormation: {
+            /** Account Count */
+            account_count: number;
+            /** Alert Id */
+            alert_id: string | null;
+            /**
+             * Band
+             * @enum {string}
+             */
+            band: "critical" | "high" | "medium" | "low" | "insufficient_evidence";
+            /** Currency */
+            currency: string;
+            /** Id */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "funnel" | "chain" | "fan_out" | "cycle";
+            /** Priority */
+            priority: number | null;
+            /** Subject Account Id */
+            subject_account_id: string;
+            /** Temporal Status */
+            temporal_status: ("supported" | "possible_ambiguous" | "contradicted" | "unavailable") | null;
+        };
+        /** InvestigationGraph */
+        InvestigationGraph: {
+            /** Center */
+            center: string | null;
+            /**
+             * Computed At
+             * Format: date-time
+             */
+            computed_at: string;
+            /** Config Sha256 */
+            config_sha256: string;
+            /** Dataset Id */
+            dataset_id: string;
+            /** Edges */
+            edges: components["schemas"]["InvestigationEdge"][];
+            /** Formations */
+            formations: components["schemas"]["InvestigationFormation"][];
+            /** Found */
+            found: boolean;
+            /** Graph Version */
+            graph_version: string;
+            /** Input Manifest Sha256 */
+            input_manifest_sha256: string;
+            limits: components["schemas"]["GraphLimits"];
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "overview" | "local";
+            /** Nodes */
+            nodes: components["schemas"]["InvestigationNode"][];
+            /** Policy Version */
+            policy_version: string;
+            /** Snapshot Id */
+            snapshot_id: string;
+            /** View Version */
+            view_version: string;
+        };
+        /** InvestigationNode */
+        InvestigationNode: {
+            /** Account Id */
+            account_id: string;
+            /**
+             * Band
+             * @description Strongest stored band among this account's formations; null if none
+             */
+            band: ("critical" | "high" | "medium" | "low" | "insufficient_evidence") | null;
+            /** Formations */
+            formations: components["schemas"]["GraphFormationRef"][];
+            /**
+             * Hop
+             * @description Hops from the centre (local mode); null in overview mode
+             */
+            hop: number | null;
+            /** Is Boundary */
+            is_boundary: boolean;
+            /** Priority */
+            priority: number | null;
         };
         /** Job */
         Job: {
@@ -2672,6 +2867,82 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Activity"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    edge_transactions_api_v1_snapshots__snapshot_id__edge_transactions_get: {
+        parameters: {
+            query: {
+                sender: string;
+                receiver: string;
+                currency: string;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                snapshot_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TransactionPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    investigation_graph_api_v1_snapshots__snapshot_id__graph_get: {
+        parameters: {
+            query?: {
+                mode?: "overview" | "local";
+                account_id?: string | null;
+                depth?: number;
+                max_nodes?: number;
+                max_formations?: number;
+                band?: ("critical" | "high" | "medium" | "low" | "insufficient_evidence")[] | null;
+                kind?: ("funnel" | "chain" | "fan_out" | "cycle")[] | null;
+            };
+            header?: never;
+            path: {
+                snapshot_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvestigationGraph"];
                 };
             };
             /** @description Validation Error */
