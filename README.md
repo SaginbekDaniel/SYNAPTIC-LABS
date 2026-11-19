@@ -50,15 +50,20 @@ decide — dates without times, an account at the edge of the export — NEXORA 
 would decide it.
 
 ```mermaid
-flowchart LR
-  A["Transfers<br/>CSV or synthetic generator"] --> B["Validate<br/>integer money · dedup · quarantine"]
-  B --> C["Graph snapshot<br/>accounts = nodes, transfers = edges"]
-  C --> D["Structural detectors<br/>funnel · fan-out · chain · cycle"]
-  D --> E["Signals<br/>temporal max-flow · peers · coverage"]
-  E --> F["Evidence check<br/>every figure recomputes from source rows"]
-  F --> G["Risk policy<br/>bands · gates · abstention"]
-  G --> H["Review queue"]
-  H --> I["Analyst decision<br/>append-only audit"]
+flowchart TB
+  subgraph ingest["1 · Ingest"]
+    direction LR
+    A["Transfers<br/>CSV or synthetic generator"] --> B["Validate<br/>integer money · dedup · quarantine"]
+  end
+  subgraph analyse["2 · Analyse (pure core)"]
+    direction LR
+    C["Graph snapshot"] --> D["Detectors<br/>funnel · fan-out<br/>chain · cycle"] --> E["Signals<br/>chronology · peers<br/>coverage"] --> F["Evidence check<br/>recomputes from<br/>source rows"] --> G["Risk policy<br/>bands · gates"]
+  end
+  subgraph review["3 · Review"]
+    direction LR
+    H["Queue by priority"] --> I["Analyst decision<br/>append-only audit"]
+  end
+  ingest --> analyse --> review
 ```
 
 The pipeline (`nexora.analytics`) is pure and deterministic: no web or database framework, content-derived ids,
