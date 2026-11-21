@@ -60,7 +60,11 @@ def git_state() -> dict[str, Any]:
     def is_output(path: str) -> bool:  # porcelain may report an untracked output directory
         return any(out == path or out.startswith(path.rstrip("/") + "/") for out in OUTPUTS)
 
-    dirty = [line[3:] for line in run("status", "--porcelain").splitlines() if not is_output(line[3:])]
+    # Porcelain lines are "XY path"; X may be a space, so the output must not be stripped first.
+    porcelain = subprocess.run(
+        ["git", "status", "--porcelain"], cwd=ROOT, capture_output=True, text=True, check=False
+    ).stdout
+    dirty = [line[3:] for line in porcelain.splitlines() if line and not is_output(line[3:])]
     return {"commit": run("rev-parse", "HEAD"), "dirty": bool(dirty), "dirty_paths": dirty[:20]}
 
 
