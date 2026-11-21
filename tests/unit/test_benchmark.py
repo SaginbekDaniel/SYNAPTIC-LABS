@@ -84,15 +84,45 @@ def test_summary_counts_scenarios_not_items():
     assert (sc["tp"], sc["fp"], sc["fn"]) == (1, 1, len(susp) - 1)
     assert sc["precision"] == 0.5 and sc["recall"] == round(1 / len(susp), 4)
     assert sc["high_band_fpr"] == 0.0  # the legitimate hit is only medium
+    assert (sc["tp_high"], sc["fp_high"]) == (1, 0)
+    assert sc["high_band_recall"] == round(sc["tp_high"] / len(susp), 4)
+    assert sc["f1"] == round(2 / (2 + 1 + len(susp) - 1), 4)
     assert s["alerts"] == {
         "flagged": 4,
         "per_dataset": 4.0,
+        "relevant": 2,
         "precision": 0.5,
         "unmatched": 1,
         "per_flagged_network": 1.5,  # hit: 2 alerts, legitimate: 1
         "networks_with_duplicates": 0.5,
     }
     assert s["queue"]["p_at_5"] == 0.5
+
+
+def test_f1_is_computed_from_counts_not_rounded_ratios():
+    # tp=73, fp=48, fn=19: exact F1 = 146/213 = 0.685446…; from the rounded P (0.6033) and
+    # R (0.7935) it would come out as 0.6855.
+    ds = generate("bench-v1", 1000)
+    ev = b.evaluate_items(ds, [], 0.0, 0)
+    ev.truth = [ScenarioTruth(f"s{i}", "S1", "suspicious", "easy", [f"a{i}", f"b{i}"], [], "") for i in range(92)] + [
+        ScenarioTruth(f"n{i}", "N1", "legitimate", "easy", [f"c{i}", f"d{i}"], [], "") for i in range(60)
+    ]
+    hits = [*ev.truth[:73], *ev.truth[92 : 92 + 48]]
+    ev.items = [
+        b.ReviewItem(t.accounts[0], frozenset(t.accounts), 1.0, band="medium", item_id=t.scenario_id) for t in hits
+    ]
+    ev.matches = [b.match(i, ev.truth) for i in ev.items]
+    sc = b.summarize([ev])["scenario"]
+    assert (sc["tp"], sc["fp"], sc["fn"]) == (73, 48, 19)
+    assert sc["f1"] == 0.6854
+    assert (sc["tp_high"], sc["fp_high"]) == (0, 0)
+
+
+def test_unbanded_methods_have_no_high_band_counts():
+    ds = generate("bench-v1", 1000)
+    items = [b.ReviewItem(f"acc{i}", frozenset({f"acc{i}"}), float(i), item_id=f"acc{i}") for i in range(3)]
+    sc = b.summarize([b.evaluate_items(ds, items, 0.0, 0)])["scenario"]
+    assert sc["tp_high"] is None and sc["fp_high"] is None and sc["high_band_recall"] is None
 
 
 def test_equal_budget_baseline_flags_top_n_only():

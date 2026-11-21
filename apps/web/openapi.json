@@ -434,6 +434,17 @@
             ],
             "title": "Precision"
           },
+          "relevant": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relevant"
+          },
           "unmatched": {
             "title": "Unmatched",
             "type": "integer"
@@ -3708,6 +3719,17 @@
             "title": "Fp",
             "type": "integer"
           },
+          "fp_high": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fp High"
+          },
           "fpr": {
             "anyOf": [
               {
@@ -3789,6 +3811,17 @@
           "tp": {
             "title": "Tp",
             "type": "integer"
+          },
+          "tp_high": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tp High"
           }
         },
         "required": [

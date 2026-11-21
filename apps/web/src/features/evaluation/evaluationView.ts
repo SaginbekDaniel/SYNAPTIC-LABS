@@ -41,6 +41,15 @@ export function recoveredMetric(ratio: number | null | undefined, den: number): 
   return num >= 0 && num <= den && Math.abs(num / den - ratio) <= half ? countMetric(num, den) : storedMetric(ratio);
 }
 
+/**
+ * A ratio whose numerator the artifact emits as an integer (bench-harness artifacts after
+ * `tp_high` / `fp_high` / `alerts.relevant` were added). Artifacts written before that only
+ * carry the rounded ratio, so the numerator is recovered from it as a fallback.
+ */
+export function numeratorMetric(num: number | null | undefined, den: number, ratio: number | null | undefined): Metric {
+  return num === null || num === undefined ? recoveredMetric(ratio, den) : countMetric(num, den);
+}
+
 /** The metric as a fraction in [0, 1] for bar geometry, or null when undefined. */
 export function metricValue(m: Metric): number | null {
   return m.kind === "count" ? m.num / m.den : m.kind === "stored" ? m.ratio : null;
@@ -81,11 +90,11 @@ export function methodMetrics(s: MethodSummary): MethodMetrics {
   return {
     precision: countMetric(tp, tp + fp),
     recall: countMetric(tp, tp + fn),
-    // F1 = 2tp / (2tp + fp + fn); the stored f1 is derived from the already rounded P and R.
+    // F1 = 2tp / (2tp + fp + fn), rounded once here rather than re-rounding the stored 4-decimal f1.
     f1: countMetric(2 * tp, 2 * tp + fp + fn),
     fpr: countMetric(fp, fp + tn),
-    highFpr: recoveredMetric(s.scenario.high_band_fpr, legitimate),
-    alertPrecision: recoveredMetric(s.alerts.precision, s.alerts.flagged),
+    highFpr: numeratorMetric(s.scenario.fp_high, legitimate, s.scenario.high_band_fpr),
+    alertPrecision: numeratorMetric(s.alerts.relevant, s.alerts.flagged, s.alerts.precision),
     p5: storedMetric(s.queue.p_at_5),
     p5Distinct: storedMetric(s.queue.distinct_p_at_5),
     r5: storedMetric(s.queue.recall_at_5),

@@ -541,6 +541,10 @@ class ScenarioMetrics(Model):
     fpr: float | None
     fnr: float | None
     surfaced_recall: float | None
+    # Numerators of the high-band ratios; None for unbanded methods and for artifacts
+    # produced before these counts were emitted.
+    tp_high: int | None = None
+    fp_high: int | None = None
     high_band_recall: float | None
     high_band_fpr: float | None
 
@@ -548,6 +552,8 @@ class ScenarioMetrics(Model):
 class AlertMetrics(Model):
     flagged: int
     per_dataset: float | None
+    # Flagged items matching a suspicious scenario (numerator of precision); absent in older artifacts.
+    relevant: int | None = None
     precision: float | None
     unmatched: int
     # Audit additions (optional so artifacts written before them still validate).

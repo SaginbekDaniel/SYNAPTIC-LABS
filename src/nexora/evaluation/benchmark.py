@@ -352,12 +352,6 @@ def _ratio(num: int, den: int) -> float | None:
     return None if den == 0 else round(num / den, 4)
 
 
-def _f1(p: float | None, r: float | None) -> float | None:
-    if p is None or r is None or p + r == 0:
-        return None if p is None or r is None else 0.0
-    return round(2 * p * r / (p + r), 4)
-
-
 def _mean(values: Iterable[float | None]) -> float | None:
     vals = [v for v in values if v is not None]
     return round(statistics.fmean(vals), 4) if vals else None
@@ -447,17 +441,21 @@ def summarize(evals: list[DatasetEval]) -> dict[str, Any]:
             "tn": tn,
             "precision": precision,
             "recall": recall,
-            "f1": _f1(precision, recall),
+            # From counts, not from the rounded precision/recall: F1 = 2tp / (2tp + fp + fn).
+            "f1": _ratio(2 * tp, 2 * tp + fp + fn),
             "fpr": _ratio(fp, legit_total),
             "fnr": _ratio(fn, susp_total),
             "surfaced_recall": _ratio(surfaced, susp_total),
             # Only meaningful for methods that assign bands (NEXORA); None for account rankings.
+            "tp_high": tp_high if banded else None,
+            "fp_high": fp_high if banded else None,
             "high_band_recall": _ratio(tp_high, susp_total) if banded else None,
             "high_band_fpr": _ratio(fp_high, legit_total) if banded else None,
         },
         "alerts": {
             "flagged": flagged_items,
             "per_dataset": round(flagged_items / len(evals), 2) if evals else None,
+            "relevant": relevant_flagged,
             "precision": _ratio(relevant_flagged, flagged_items),
             "unmatched": unmatched_flagged,
             "per_flagged_network": _mean(float(c) for c in dup_counts),
