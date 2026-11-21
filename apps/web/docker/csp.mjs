@@ -13,7 +13,11 @@ const hashes = [...html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/scrip
 
 const csp = [
   "default-src 'self'",
-  `script-src 'self' ${hashes.join(" ")}`.trim(),
+  // 'wasm-unsafe-eval' permits compiling WebAssembly only (the optional, self-hosted hand-landmark
+  // model in /vendor/mediapipe). It does not permit eval() or new Function().
+  `script-src 'self' 'wasm-unsafe-eval' ${hashes.join(" ")}`.trim(),
+  // The landmark worker is a same-origin module script.
+  "worker-src 'self'",
   // React and Cytoscape set inline style attributes.
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
@@ -32,7 +36,9 @@ process.stdout.write(
     'add_header X-Content-Type-Options "nosniff" always;',
     'add_header X-Frame-Options "DENY" always;',
     'add_header Referrer-Policy "same-origin" always;',
-    'add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()" always;',
+    // Camera: this origin only, and only after the analyst opts in to gesture control (the browser
+    // still asks). Everything else stays disabled.
+    'add_header Permissions-Policy "camera=(self), microphone=(), geolocation=(), payment=(), usb=()" always;',
     'add_header Cross-Origin-Opener-Policy "same-origin" always;',
     'add_header Cross-Origin-Resource-Policy "same-origin" always;',
     // Only meaningful over HTTPS; $nexora_hsts is empty for plain-HTTP local requests.

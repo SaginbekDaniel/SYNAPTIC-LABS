@@ -2212,6 +2212,11 @@
       "GraphLimits": {
         "additionalProperties": false,
         "properties": {
+          "formations_total": {
+            "description": "Formations matching the filters (overview) or touching the view (local)",
+            "title": "Formations Total",
+            "type": "integer"
+          },
           "max_edges": {
             "title": "Max Edges",
             "type": "integer"
@@ -2240,6 +2245,7 @@
           "max_nodes",
           "max_edges",
           "max_formations",
+          "formations_total",
           "truncated",
           "reasons"
         ],

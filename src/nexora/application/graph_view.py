@@ -213,6 +213,7 @@ def _assemble(
     boundary: set[str],
     budget: GraphBudget,
     truncation: list[str],
+    formations_total: int,
 ) -> dict[str, Any]:
     by_id = {f["id"]: f for f in formations}
     membership: dict[str, list[dict[str, str]]] = {}
@@ -270,6 +271,7 @@ def _assemble(
             "max_nodes": budget.max_nodes,
             "max_edges": budget.max_edges,
             "max_formations": budget.max_formations,
+            "formations_total": formations_total,
             "truncated": bool(truncation),
             "reasons": truncation,
         },
@@ -323,7 +325,17 @@ def overview(
     else:
         evidence = {}
     return _assemble(
-        snap, "overview", None, accounts, edges, chosen, evidence, _boundary(session, snap), budget, truncation
+        snap,
+        "overview",
+        None,
+        accounts,
+        edges,
+        chosen,
+        evidence,
+        _boundary(session, snap),
+        budget,
+        truncation,
+        len(ranked),
     )
 
 
@@ -356,6 +368,7 @@ def local(
         _boundary(session, snap),
         budget,
         truncation,
+        len(touching),
     )
 
 

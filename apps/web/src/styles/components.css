@@ -157,7 +157,12 @@
   color: var(--text-2);
   font-size: var(--fs-sm);
 }
-.chip--active {
+.chip:hover {
+  border-color: var(--text-3);
+  color: var(--text);
+}
+.chip--active,
+.chip[aria-pressed="true"] {
   border-color: transparent;
   background: var(--accent-soft);
   color: var(--accent);
@@ -218,6 +223,10 @@
   background-position: calc(100% - 17px) 55%, calc(100% - 12px) 55%;
   background-size: 5px 5px;
   background-repeat: no-repeat;
+}
+.select--sm {
+  min-height: var(--control-h-sm);
+  font-size: var(--fs-sm);
 }
 .select option {
   background: var(--surface);
@@ -343,6 +352,7 @@
 .badge--possible_ambiguous { background: var(--ev-ambiguous-bg); color: var(--ev-ambiguous); }
 .badge--contradicted { background: var(--ev-contradicted-bg); color: var(--ev-contradicted); }
 .badge--unavailable { background: var(--ev-unavailable-bg); color: var(--ev-unavailable); }
+.badge--mixed { background: var(--accent-soft); color: var(--accent); }
 .badge--accent { background: var(--accent-soft); color: var(--accent); padding-left: var(--s-2); }
 .badge--case {
   padding-left: var(--s-2);

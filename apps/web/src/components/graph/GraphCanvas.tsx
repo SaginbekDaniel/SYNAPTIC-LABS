@@ -1,17 +1,24 @@
 import cytoscape, { type Core, type ElementDefinition, type StylesheetJson } from "cytoscape";
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { useTheme } from "../../app/theme";
 import { formatMoney, parseMinor } from "../../lib/format";
-import { t, type MessageKey } from "../../lib/i18n";
+import { t, tDynamic, type MessageKey } from "../../lib/i18n";
+import type { Band } from "../../lib/types";
 import { Icon } from "../ui/icons";
+import { GraphController, type GraphViewport } from "./controller";
 
 export type NodeRole = "subject" | "entry" | "exit" | "member" | "boundary" | "context";
+export type EdgeStatus = "supported" | "possible_ambiguous" | "contradicted" | "unavailable" | "mixed";
 
 export interface GraphNodeSpec {
   id: string;
   role: NodeRole;
-  /** Fixed position (used with the "preset" layout). */
+  /** Fixed position ("preset" layout) or deterministic seed ("cose" layout). */
   position?: { x: number; y: number };
+  /** Stored risk band of the account's strongest formation (colorBy="band" only). */
+  band?: Band | null;
+  /** The account is the centre of at least one formation: drawn as a diamond. */
+  hub?: boolean;
 }
 
 export interface GraphEdgeSpec {
@@ -24,6 +31,10 @@ export interface GraphEdgeSpec {
   highlighted?: boolean;
   /** Evidence transactions aggregated into this edge (formation graphs only). */
   txIds?: string[];
+  /** Cited by formation evidence (investigation-graph edges). */
+  evidence?: boolean;
+  /** Temporal status of the formations the edge evidences; null = context transfer. */
+  status?: EdgeStatus | null;
 }
 
 function cssVar(name: string): string {
@@ -43,8 +54,16 @@ function readPalette() {
     label: cssVar("--g-label"),
     labelBg: cssVar("--g-label-bg"),
     stage: cssVar("--stage"),
-    glow: cssVar("--accent-glow"),
     font: cssVar("--font-sans"),
+    critical: cssVar("--band-critical"),
+    high: cssVar("--band-high"),
+    medium: cssVar("--band-medium"),
+    low: cssVar("--band-low"),
+    unresolved: cssVar("--band-unresolved"),
+    supported: cssVar("--ev-supported"),
+    ambiguous: cssVar("--ev-ambiguous"),
+    contradicted: cssVar("--ev-contradicted"),
+    unavailable: cssVar("--ev-unavailable"),
   };
 }
 type Palette = ReturnType<typeof readPalette>;
@@ -62,19 +81,27 @@ function shortLabel(id: string): string {
   return id.length > 10 ? `··${id.slice(-4)}` : id;
 }
 
-function stylesheet(p: Palette): StylesheetJson {
+type ColorBy = "role" | "band";
+
+function stylesheet(p: Palette, colorBy: ColorBy): StylesheetJson {
   const roleColor = (role: NodeRole) =>
     ({ subject: p.subject, entry: p.entry, exit: p.exit, member: p.node, boundary: p.boundary, context: p.node })[role];
+  const bandColor = (band: string | undefined) =>
+    ({ critical: p.critical, high: p.high, medium: p.medium, low: p.low, insufficient_evidence: p.unresolved })[band ?? ""] ?? p.node;
+  const fill = (ele: cytoscape.NodeSingular) =>
+    colorBy === "band" ? bandColor(ele.data("band") as string | undefined) : roleColor(ele.data("role") as NodeRole);
   return [
     {
       selector: "node",
       style: {
-        "background-color": (ele: cytoscape.NodeSingular) => roleColor(ele.data("role") as NodeRole),
+        "background-color": fill,
         label: "data(label)",
         color: p.label,
         "font-family": p.font,
         "font-size": 11,
         "font-weight": 500,
+        // Label density follows zoom: labels whose rendered size would be unreadable are not drawn.
+        "min-zoomed-font-size": 7,
         "text-valign": "bottom",
         "text-margin-y": 6,
         "text-background-color": p.labelBg,
@@ -89,6 +116,7 @@ function stylesheet(p: Palette): StylesheetJson {
         "transition-duration": 160,
       },
     },
+    { selector: "node[?hub]", style: { shape: "diamond", width: 26, height: 26 } },
     {
       selector: 'node[role = "subject"]',
       style: {
@@ -96,7 +124,7 @@ function stylesheet(p: Palette): StylesheetJson {
         height: 30,
         "font-size": 12,
         "font-weight": 600,
-        "underlay-color": p.subject,
+        "underlay-color": colorBy === "band" ? p.highlight : p.subject,
         "underlay-padding": 9,
         "underlay-opacity": 0.22,
         "underlay-shape": "ellipse",
@@ -104,9 +132,11 @@ function stylesheet(p: Palette): StylesheetJson {
     },
     { selector: "node.context", style: { opacity: 0.6, width: 12, height: 12 } },
     { selector: 'node[role = "boundary"]', style: { "border-style": "dashed", "border-color": p.boundary, "border-width": 2.5, "background-opacity": 0.35 } },
+    { selector: "node.hover", style: { "underlay-color": p.highlight, "underlay-padding": 7, "underlay-opacity": 0.22, "underlay-shape": "ellipse", "min-zoomed-font-size": 0, "z-index": 9 } },
+    { selector: "node.kbd", style: { "border-color": p.highlight, "border-width": 3, "min-zoomed-font-size": 0 } },
     {
       selector: "node.sel",
-      style: { "border-color": p.edgeStrong, "border-width": 3, "underlay-color": p.highlight, "underlay-padding": 10, "underlay-opacity": 0.3, "underlay-shape": "ellipse" },
+      style: { "border-color": p.edgeStrong, "border-width": 3, "underlay-color": p.highlight, "underlay-padding": 10, "underlay-opacity": 0.3, "underlay-shape": "ellipse", "min-zoomed-font-size": 0 },
     },
     {
       selector: "edge",
@@ -121,6 +151,7 @@ function stylesheet(p: Palette): StylesheetJson {
         label: "data(label)",
         "font-family": p.font,
         "font-size": 10,
+        "min-zoomed-font-size": 7,
         color: p.label,
         "text-rotation": "autorotate",
         "text-background-color": p.labelBg,
@@ -130,10 +161,44 @@ function stylesheet(p: Palette): StylesheetJson {
         "transition-duration": 160,
       },
     },
+    // Evidence edges: the formations' temporal status decides the line, never motion. Contradicted
+    // chronology is drawn dotted and is never presented as a proven money trail.
+    { selector: 'edge[status = "supported"]', style: { "line-color": p.supported, "target-arrow-color": p.supported } },
+    { selector: 'edge[status = "possible_ambiguous"]', style: { "line-color": p.ambiguous, "target-arrow-color": p.ambiguous, "line-style": "dashed", "line-dash-pattern": [7, 4] } },
+    { selector: 'edge[status = "contradicted"]', style: { "line-color": p.contradicted, "target-arrow-color": p.contradicted, "line-style": "dotted" } },
+    { selector: 'edge[status = "unavailable"]', style: { "line-color": p.unavailable, "target-arrow-color": p.unavailable, "line-style": "dashed", "line-dash-pattern": [2, 5] } },
+    { selector: 'edge[status = "mixed"]', style: { "line-color": p.highlight, "target-arrow-color": p.highlight } },
     { selector: "edge.hl", style: { "line-color": p.highlight, "target-arrow-color": p.highlight, "z-index": 5 } },
-    { selector: "edge.sel", style: { "line-color": p.edgeStrong, "target-arrow-color": p.edgeStrong, "z-index": 6, label: "data(amount)" } },
-    { selector: ".dim", style: { opacity: 0.18 } },
+    { selector: "edge.sel", style: { "line-color": p.edgeStrong, "target-arrow-color": p.edgeStrong, "z-index": 6, label: "data(amount)", "min-zoomed-font-size": 0 } },
+    { selector: ".dim", style: { opacity: 0.16 } },
   ] as unknown as StylesheetJson;
+}
+
+/** Cytoscape behind the GraphController port. */
+function cytoscapeViewport(cy: Core): GraphViewport {
+  const node = (id: string) => {
+    const n = cy.getElementById(id);
+    return n.nonempty() && n.isNode() ? n : null;
+  };
+  return {
+    size: () => ({ width: cy.width(), height: cy.height() }),
+    zoom: () => cy.zoom(),
+    zoomTo: (level, anchor) => cy.zoom({ level, renderedPosition: anchor }),
+    panBy: (d) => cy.panBy(d),
+    fit: () => cy.fit(undefined, 48),
+    nodePosition: (id) => node(id)?.renderedPosition() ?? null,
+    moveNode: (id, r) => node(id)?.renderedPosition({ x: r.x, y: r.y } as Record<string, number>),
+    modelPosition: (id) => {
+      const p = node(id)?.position();
+      return p ? { x: p.x, y: p.y } : null;
+    },
+    setModelPosition: (id, p) => node(id)?.position({ x: p.x, y: p.y }),
+    nodeIds: () => cy.nodes().map((n) => n.id()),
+    centerOn: (id) => {
+      const n = node(id);
+      if (n) cy.animate({ center: { eles: n } }, { duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 200 });
+    },
+  };
 }
 
 export interface GraphCanvasProps {
@@ -143,14 +208,29 @@ export interface GraphCanvasProps {
   selectedEdge?: string | null;
   /** Edge ids drawn as highlighted evidence. */
   highlightEdges?: ReadonlySet<string>;
+  /** Node ids to keep at full strength while everything else is dimmed (e.g. one formation). */
+  emphasis?: ReadonlySet<string> | null;
   layout?: "cose" | "preset";
+  /** "role": formation roles (investigation). "band": stored risk band (graph workspace). */
+  colorBy?: ColorBy;
   /** Show aggregated amounts on edges when the graph is small enough to stay legible. */
   edgeLabels?: boolean;
+  /** Keyboard order for "next/previous account" ([ and ]). Defaults to the node order. */
+  order?: string[];
   onSelectNode?: (id: string | null) => void;
   onSelectEdge?: (edge: GraphEdgeSpec | null) => void;
+  onExpand?: (id: string) => void;
+  /** Receives the controller once the canvas exists, and null when it is torn down. */
+  onController?: (controller: GraphController | null) => void;
   /** Overlaid in the bottom-left corner of the stage (legend). */
   overlay?: ReactNode;
+  /** Extra toolbar buttons (e.g. camera gestures). */
+  controls?: ReactNode;
+  /** Absolutely positioned layers inside the stage (e.g. a gesture pointer). */
+  children?: ReactNode;
   className?: string;
+  /** Accessible name for the stage; defaults to a node/edge count. */
+  label?: string;
 }
 
 const MAX_EDGE_LABELS = 14;
@@ -162,82 +242,134 @@ const MAX_EDGE_LABELS = 14;
 export function GraphCanvas(props: GraphCanvasProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const cyRef = useRef<Core | null>(null);
+  const controllerRef = useRef<GraphController | null>(null);
   const { resolved } = useTheme();
   const [focus, setFocus] = useState(false);
-  const handlers = useRef({ onSelectNode: props.onSelectNode, onSelectEdge: props.onSelectEdge, edges: props.edges });
-  handlers.current = { onSelectNode: props.onSelectNode, onSelectEdge: props.onSelectEdge, edges: props.edges };
+  const [cursor, setCursor] = useState<string | null>(null);
+  const [announce, setAnnounce] = useState("");
+  const hintId = useId();
+  const colorBy: ColorBy = props.colorBy ?? "role";
+  const handlers = useRef(props);
+  handlers.current = props;
 
   const labelEdges = (props.edgeLabels ?? true) && props.edges.length <= MAX_EDGE_LABELS;
   const elements = useMemo<ElementDefinition[]>(
     () => [
       ...props.nodes.map((n) => ({
-        data: { id: n.id, label: shortLabel(n.id), role: n.role },
+        data: { id: n.id, label: shortLabel(n.id), role: n.role, band: n.band ?? undefined, hub: n.hub ? true : undefined },
         position: n.position ? { ...n.position } : undefined,
         classes: n.role === "context" ? "context" : "",
       })),
       ...props.edges.map((e) => {
         const amount = formatMoney(e.amountMinor, e.currency, { fraction: false });
         return {
-          data: { id: e.id, source: e.source, target: e.target, width: edgeWidth(e.amountMinor), amount, label: labelEdges ? amount : "" },
+          data: {
+            id: e.id,
+            source: e.source,
+            target: e.target,
+            width: edgeWidth(e.amountMinor),
+            amount,
+            label: labelEdges ? amount : "",
+            status: e.status ?? undefined,
+          },
         };
       }),
     ],
     [props.nodes, props.edges, labelEdges],
   );
 
-  // Build (and destroy) the instance only when the element set or layout changes.
+  // Build (and destroy) the instance only when the element set, layout or colour mode changes.
   useEffect(() => {
     if (!ref.current) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const cy = cytoscape({
       container: ref.current,
       elements,
-      style: stylesheet(readPalette()),
+      style: stylesheet(readPalette(), colorBy),
       wheelSensitivity: 0.25,
       minZoom: 0.15,
       maxZoom: 3,
       boxSelectionEnabled: false,
-      layout:
-        props.layout === "cose"
-          ? { name: "cose", animate: !reduced, animationDuration: 260, randomize: false, nodeRepulsion: () => 9000, idealEdgeLength: () => 95, padding: 36 }
-          : { name: "preset", fit: true, padding: 48 },
+      layout: { name: "preset", fit: props.layout !== "cose", padding: 48 },
     });
-    cy.on("tap", "node", (evt) => handlers.current.onSelectNode?.(evt.target.id()));
-    cy.on("tap", "edge", (evt) => {
-      const spec = handlers.current.edges.find((e) => e.id === evt.target.id());
-      if (spec) handlers.current.onSelectEdge?.(spec);
+    // The force layout is owned here so it can be stopped before destroy(): destroying an instance
+    // while a layout is still iterating makes Cytoscape dereference its torn-down renderer.
+    const layout =
+      props.layout === "cose"
+        ? cy.layout({
+            name: "cose",
+            // Positions are seeded per node id (see graphModel.seedPosition); with randomize off
+            // and no coincident nodes, cose never consults Math.random → same input, same picture.
+            randomize: false,
+            // Settle off-screen, then move once to the result; no animation for reduced motion.
+            animate: reduced ? false : "end",
+            animationDuration: 260,
+            nodeRepulsion: () => 9000,
+            idealEdgeLength: () => 95,
+            nodeOverlap: 12,
+            numIter: 1000,
+            padding: 36,
+          } as cytoscape.LayoutOptions)
+        : null;
+    layout?.run();
+    const controller = new GraphController(cytoscapeViewport(cy), {
+      onSelectNode: (id) => handlers.current.onSelectNode?.(id),
+      onSelectEdge: (id) => {
+        const spec = id === null ? null : handlers.current.edges.find((e) => e.id === id) ?? null;
+        handlers.current.onSelectEdge?.(spec);
+      },
+      onHover: (id) => {
+        cy.nodes(".hover").removeClass("hover");
+        if (id) cy.getElementById(id).addClass("hover");
+      },
+      onExpand: (id) => handlers.current.onExpand?.(id),
     });
+    cy.on("tap", "node", (evt) => controller.dispatch({ type: "selectNode", id: evt.target.id() }));
+    cy.on("tap", "edge", (evt) => controller.dispatch({ type: "selectEdge", id: evt.target.id() }));
     cy.on("tap", (evt) => {
       if (evt.target === cy) {
-        handlers.current.onSelectNode?.(null);
-        handlers.current.onSelectEdge?.(null);
+        controller.dispatch({ type: "selectNode", id: null });
+        controller.dispatch({ type: "selectEdge", id: null });
       }
     });
-    cy.on("mouseover", "node, edge", () => ref.current && (ref.current.style.cursor = "pointer"));
+    cy.on("dbltap", "node", (evt) => controller.dispatch({ type: "focusNode", id: evt.target.id() }));
+    cy.on("mouseover", "node", (evt) => {
+      evt.target.addClass("hover");
+      if (ref.current) ref.current.style.cursor = "pointer";
+    });
+    cy.on("mouseover", "edge", () => ref.current && (ref.current.style.cursor = "pointer"));
+    cy.on("mouseout", "node", (evt) => evt.target.removeClass("hover"));
     cy.on("mouseout", "node, edge", () => ref.current && (ref.current.style.cursor = ""));
     cyRef.current = cy;
+    controllerRef.current = controller;
+    handlers.current.onController?.(controller);
     return () => {
+      handlers.current.onController?.(null);
+      controllerRef.current = null;
+      layout?.stop();
+      cy.stop(true, false);
       cy.destroy();
       cyRef.current = null;
     };
-  }, [elements, props.layout]);
+  }, [elements, props.layout, colorBy]);
 
   // Theme: restyle in place.
   useEffect(() => {
-    cyRef.current?.style(stylesheet(readPalette()));
-  }, [resolved]);
+    cyRef.current?.style(stylesheet(readPalette(), colorBy));
+  }, [resolved, colorBy]);
 
-  // Selection & highlight: classes only.
-  const { selectedNode, selectedEdge, highlightEdges } = props;
+  // Selection, emphasis & highlight: classes only.
+  const { selectedNode, selectedEdge, highlightEdges, emphasis } = props;
   const flagged = useMemo(() => new Set(props.edges.filter((e) => e.highlighted).map((e) => e.id)), [props.edges]);
   useEffect(() => {
     const cy = cyRef.current;
     if (!cy) return;
     cy.batch(() => {
-      cy.elements().removeClass("sel dim hl");
+      cy.elements().removeClass("sel dim hl kbd");
       cy.edges().forEach((e) => {
         if (highlightEdges?.has(e.id()) || flagged.has(e.id())) e.addClass("hl");
       });
+      if (cursor) cy.getElementById(cursor).addClass("kbd");
       let focusSet: cytoscape.CollectionReturnValue | null = null;
       if (selectedNode) {
         const n = cy.getElementById(selectedNode);
@@ -251,10 +383,13 @@ export function GraphCanvas(props: GraphCanvasProps) {
           e.addClass("sel");
           focusSet = e.union(e.connectedNodes());
         }
+      } else if (emphasis && emphasis.size) {
+        const nodes = cy.nodes().filter((n) => emphasis.has(n.id()));
+        focusSet = nodes.union(nodes.edgesWith(nodes));
       }
       if (focusSet) cy.elements().difference(focusSet).addClass("dim");
     });
-  }, [selectedNode, selectedEdge, highlightEdges, flagged, elements]);
+  }, [selectedNode, selectedEdge, highlightEdges, emphasis, flagged, elements, cursor]);
 
   // Focus mode: the stage fills the viewport; Escape leaves it.
   useEffect(() => {
@@ -264,7 +399,7 @@ export function GraphCanvas(props: GraphCanvasProps) {
       cy.fit(undefined, 48);
     }
     if (!focus) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setFocus(false);
+    const onKey = (e: globalThis.KeyboardEvent) => e.key === "Escape" && setFocus(false);
     document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
     return () => {
@@ -273,23 +408,82 @@ export function GraphCanvas(props: GraphCanvasProps) {
     };
   }, [focus]);
 
-  const zoom = (factor: number) => {
-    const cy = cyRef.current;
-    if (!cy) return;
-    cy.zoom({ level: cy.zoom() * factor, renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 } });
+  const order = props.order ?? props.nodes.map((n) => n.id);
+  const describe = (id: string) => {
+    const n = props.nodes.find((x) => x.id === id);
+    const band = n?.band ? tDynamic("band.", n.band) : t("graph.kbd.noBand");
+    return t("graph.kbd.node", { id, band });
+  };
+  const moveCursor = (step: 1 | -1) => {
+    const c = controllerRef.current;
+    if (!c || order.length === 0) return;
+    const i = cursor ? order.indexOf(cursor) : -1;
+    const next = order[(i + step + order.length) % order.length];
+    if (next === undefined) return;
+    setCursor(next);
+    c.dispatch({ type: "focusNode", id: next });
+    setAnnounce(describe(next));
+  };
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    const c = controllerRef.current;
+    if (!c || e.altKey || e.ctrlKey || e.metaKey) return;
+    const step = e.shiftKey ? 160 : 60;
+    const keys: Record<string, () => void> = {
+      ArrowLeft: () => c.dispatch({ type: "pan", dx: step, dy: 0 }),
+      ArrowRight: () => c.dispatch({ type: "pan", dx: -step, dy: 0 }),
+      ArrowUp: () => c.dispatch({ type: "pan", dx: 0, dy: step }),
+      ArrowDown: () => c.dispatch({ type: "pan", dx: 0, dy: -step }),
+      "+": () => c.dispatch({ type: "zoomStep", direction: 1 }),
+      "=": () => c.dispatch({ type: "zoomStep", direction: 1 }),
+      "-": () => c.dispatch({ type: "zoomStep", direction: -1 }),
+      "0": () => c.dispatch({ type: "resetView" }),
+      "]": () => moveCursor(1),
+      "[": () => moveCursor(-1),
+      Enter: () => cursor && c.dispatch({ type: "selectNode", id: cursor }),
+      e: () => {
+        const target = cursor ?? props.selectedNode;
+        if (target && props.onExpand) c.dispatch({ type: "expandNeighborhood", id: target });
+      },
+      Escape: () => {
+        c.dispatch({ type: "cancel" });
+        setCursor(null);
+      },
+    };
+    const run = keys[e.key];
+    if (run) {
+      e.preventDefault();
+      run();
+    }
   };
 
   return (
     <div className={`graph-stage${focus ? " graph-stage--focus" : ""}${props.className ? ` ${props.className}` : ""}`}>
-      <div ref={ref} className="graph-stage__canvas" role="img" aria-label={t("graph.alt", { nodes: props.nodes.length, edges: props.edges.length })} />
+      <div
+        ref={ref}
+        className="graph-stage__canvas"
+        role="application"
+        aria-roledescription={t("graph.roledescription")}
+        aria-label={props.label ?? t("graph.alt", { nodes: props.nodes.length, edges: props.edges.length })}
+        aria-describedby={hintId}
+        tabIndex={0}
+        onKeyDown={onKeyDown}
+        onBlur={() => setCursor(null)}
+        data-testid="graph-canvas"
+      />
+      <p id={hintId} className="visually-hidden">
+        {props.onExpand ? t("graph.kbd.hintExpand") : t("graph.kbd.hint")}
+      </p>
+      <p className="visually-hidden" aria-live="polite">
+        {announce}
+      </p>
       <div className="graph-stage__controls" role="toolbar" aria-label={t("graph.controls")}>
-        <button type="button" className="icon-btn" onClick={() => zoom(1.25)} aria-label={t("graph.zoomIn")} title={t("graph.zoomIn")}>
+        <button type="button" className="icon-btn" onClick={() => controllerRef.current?.dispatch({ type: "zoomStep", direction: 1 })} aria-label={t("graph.zoomIn")} title={t("graph.zoomIn")}>
           <Icon name="plus" />
         </button>
-        <button type="button" className="icon-btn" onClick={() => zoom(0.8)} aria-label={t("graph.zoomOut")} title={t("graph.zoomOut")}>
+        <button type="button" className="icon-btn" onClick={() => controllerRef.current?.dispatch({ type: "zoomStep", direction: -1 })} aria-label={t("graph.zoomOut")} title={t("graph.zoomOut")}>
           <Icon name="minus" />
         </button>
-        <button type="button" className="icon-btn" onClick={() => cyRef.current?.fit(undefined, 48)} aria-label={t("graph.fit")} title={t("graph.fit")}>
+        <button type="button" className="icon-btn" onClick={() => controllerRef.current?.dispatch({ type: "resetView" })} aria-label={t("graph.fit")} title={t("graph.fit")}>
           <Icon name="fit" />
         </button>
         <span className="graph-stage__sep" aria-hidden="true" />
@@ -303,7 +497,9 @@ export function GraphCanvas(props: GraphCanvasProps) {
         >
           <Icon name={focus ? "collapse" : "expand"} />
         </button>
+        {props.controls}
       </div>
+      {props.children}
       {props.overlay && <div className="graph-stage__overlay">{props.overlay}</div>}
     </div>
   );

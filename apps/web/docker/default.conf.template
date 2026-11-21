@@ -60,7 +60,7 @@ server {
   gzip on;
   gzip_vary on;
   gzip_min_length 1024;
-  gzip_types text/css application/javascript application/json image/svg+xml;
+  gzip_types text/css application/javascript application/json image/svg+xml application/wasm;
 
   # Gateway access control (rendered by 10-nexora-gateway.envsh): Basic in "basic" mode, otherwise
   # none here — the API authenticates every /api request with its server-side session.
@@ -115,6 +115,14 @@ server {
   location /assets/ {
     include /etc/nginx/nexora/security-headers.conf;
     add_header Cache-Control "public, max-age=31536000, immutable" always;
+    try_files $uri =404;
+  }
+
+  # Self-hosted, hash-pinned MediaPipe WASM and hand model (scripts/gesture-assets.mjs). A missing
+  # file must be a 404, never the SPA fallback's index.html.
+  location /vendor/ {
+    include /etc/nginx/nexora/security-headers.conf;
+    add_header Cache-Control "public, max-age=86400" always;
     try_files $uri =404;
   }
 

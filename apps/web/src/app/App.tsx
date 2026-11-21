@@ -11,7 +11,7 @@ import { DatasetProvider } from "./dataset";
 
 // Graph screens pull in Cytoscape; secondary screens are visited rarely. Load them on demand.
 const Investigation = lazy(() => import("../features/investigation/Investigation").then((m) => ({ default: m.Investigation })));
-const NetworkExplorer = lazy(() => import("../features/network/NetworkExplorer").then((m) => ({ default: m.NetworkExplorer })));
+const GraphWorkspace = lazy(() => import("../features/graph/GraphWorkspace").then((m) => ({ default: m.GraphWorkspace })));
 const Analytics = lazy(() => import("../features/analytics/Analytics").then((m) => ({ default: m.Analytics })));
 const Evaluation = lazy(() => import("../features/evaluation/Evaluation").then((m) => ({ default: m.Evaluation })));
 const FraudLab = lazy(() => import("../features/fraud-lab/FraudLab").then((m) => ({ default: m.FraudLab })));
@@ -53,7 +53,7 @@ export function App() {
             <Route path="analytics" element={<Analytics />} />
             <Route path="analytics/benchmark" element={<Evaluation />} />
             <Route path="evaluation" element={<Navigate to="/analytics/benchmark" replace />} />
-            <Route path="network" element={<NetworkExplorer />} />
+            <Route path="network" element={<GraphWorkspace />} />
             <Route path="lab" element={<FraudLab />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>

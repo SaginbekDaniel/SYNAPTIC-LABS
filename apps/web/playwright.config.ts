@@ -20,7 +20,7 @@ export default defineConfig({
       name: "desktop",
       use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 }, storageState: AUTH_STATE },
       dependencies: ["setup"],
-      testIgnore: /(mobile|auth)\.spec\.ts/,
+      testIgnore: /(mobile|auth|gestures)\.spec\.ts/,
     },
     {
       name: "mobile",
@@ -30,6 +30,19 @@ export default defineConfig({
     },
     // Sign-in, session and sign-out flows start without a session.
     { name: "auth", use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } }, testMatch: /auth\.spec\.ts/ },
+    {
+      // Camera gestures: Chromium's synthetic camera stands in for hardware (no webcam in CI).
+      name: "gestures",
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1440, height: 900 },
+        storageState: AUTH_STATE,
+        permissions: ["camera"],
+        launchOptions: { args: ["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"] },
+      },
+      dependencies: ["setup"],
+      testMatch: /gestures\.spec\.ts/,
+    },
   ],
   webServer: [
     {

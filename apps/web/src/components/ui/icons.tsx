@@ -172,6 +172,30 @@ const PATHS = {
   eyeOff: <path d="M3 3l18 18M10.6 5.6A9.6 9.6 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a16 16 0 0 1-3 3.8M6.5 6.9C4 8.6 2.5 12 2.5 12S6 18.5 12 18.5a9 9 0 0 0 4.9-1.4M9.9 9.9a3 3 0 0 0 4.2 4.2" />,
   signOut: <path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4M9.5 16.5 5 12l4.5-4.5M5 12h10.5" />,
   shield: <path d="M12 3 5 5.8v5.4c0 4.4 3 8.2 7 9.3 4-1.1 7-4.9 7-9.3V5.8L12 3ZM9 12l2 2 4-4" />,
+  camera: (
+    <>
+      <path d="M3 8a2 2 0 0 1 2-2h2.5L9 4h6l1.5 2H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z" />
+      <circle cx="12" cy="12.5" r="3.5" />
+    </>
+  ),
+  cameraOff: (
+    <>
+      <path d="M3 3l18 18M9 4h6l1.5 2H19a2 2 0 0 1 2 2v8.5M17.5 19H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h1" />
+      <path d="M9.6 10.1a3.5 3.5 0 0 0 4.9 4.9" />
+    </>
+  ),
+  table: (
+    <>
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <path d="M3 10h18M3 15h18M9 4v16" />
+    </>
+  ),
+  keyboard: (
+    <>
+      <rect x="2.5" y="6" width="19" height="12" rx="2" />
+      <path d="M6.5 10h.01M10 10h.01M14 10h.01M17.5 10h.01M7.5 14h9" />
+    </>
+  ),
 } satisfies Record<string, ReactNode>;
 
 export type IconName = keyof typeof PATHS;

@@ -1325,6 +1325,11 @@ export interface components {
         };
         /** GraphLimits */
         GraphLimits: {
+            /**
+             * Formations Total
+             * @description Formations matching the filters (overview) or touching the view (local)
+             */
+            formations_total: number;
             /** Max Edges */
             max_edges: number;
             /** Max Formations */

@@ -390,6 +390,7 @@ class GraphLimits(Model):
     max_nodes: int
     max_edges: int
     max_formations: int
+    formations_total: int = Field(description="Formations matching the filters (overview) or touching the view (local)")
     truncated: bool
     reasons: list[str]
 

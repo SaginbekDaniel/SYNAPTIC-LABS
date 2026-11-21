@@ -108,6 +108,13 @@ def test_overview_budget_keeps_whole_formations_and_reports_truncation(client, s
     assert full["limits"]["max_nodes"] == settings.graph_max_nodes
     assert full["limits"]["max_formations"] == settings.graph_max_formations
 
+    assert full["limits"]["formations_total"] >= len(full["formations"])
+    if "max_formations" not in full["limits"]["reasons"] and "max_nodes" not in full["limits"]["reasons"]:
+        assert full["limits"]["formations_total"] == len(full["formations"])
+    few = _graph(client, sid, max_formations=2)
+    assert len(few["formations"]) <= 2 and few["limits"]["formations_total"] == full["limits"]["formations_total"]
+    assert "max_formations" in few["limits"]["reasons"] or full["limits"]["formations_total"] <= 2
+
     small = _graph(client, sid, max_nodes=8)
     assert len(small["nodes"]) <= 8
     assert small["limits"]["truncated"] and small["limits"]["reasons"]

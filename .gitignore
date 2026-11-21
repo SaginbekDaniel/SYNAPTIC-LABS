@@ -14,6 +14,8 @@ node_modules/
 apps/web/dist/
 apps/web/test-results/
 apps/web/playwright-report/
+# Hash-pinned MediaPipe WASM + model, produced by apps/web/scripts/gesture-assets.mjs
+apps/web/public/vendor/
 # Playwright sign-in state (session cookie for the disposable E2E database)
 apps/web/e2e/.auth/
 
