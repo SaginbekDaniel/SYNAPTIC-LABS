@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { EvaluationReport, MethodSummary } from "../../lib/types";
 import bench from "../../../../../benchmarks/results/bench-v1.json";
-import { countMetric, familyRows, formatMetric, isLegitimateFamily, methodMetrics, metricValue, num, recoveredMetric, storedMetric } from "./evaluationView";
+import { countMetric, familyRows, formatMetric, isLegitimateFamily, methodMetrics, metricValue, num, numeratorMetric, recoveredMetric, storedMetric } from "./evaluationView";
 
 // The committed benchmark run: the numbers the Evaluation screen serves.
 const artifact = bench as unknown as EvaluationReport;
@@ -45,7 +45,7 @@ describe("benchmark metrics are rounded once, from counts", () => {
     const m = methodMetrics(holdoutV2);
     expect(m.recall).toEqual({ kind: "count", num: 73, den: 92 });
     expect(formatMetric(m.recall)).toBe("79,3 %");
-    // F1 = 2·73 / (2·73 + 48 + 19) = 68,545 %; the stored f1 (0.6855, from rounded P and R) would show 68,6 %.
+    // F1 = 2·73 / (2·73 + 48 + 19) = 68,545 % (stored, from counts, as 0.6854).
     expect(formatMetric(m.f1)).toBe("68,5 %");
     expect(formatMetric(m.precision)).toBe("60,3 %");
     expect(formatMetric(m.fpr)).toBe("37,5 %");
@@ -64,6 +64,16 @@ describe("benchmark metrics are rounded once, from counts", () => {
       const m = methodMetrics(s);
       expect(metricValue(m.recall)).toBeCloseTo(tp / (tp + fn), 12);
       expect(metricValue(m.fpr)).toBeCloseTo(fp / (fp + tn), 12);
+      if (2 * tp + fp + fn > 0) expect(s.scenario.f1).toBe(Math.round((2 * tp * 1e4) / (2 * tp + fp + fn)) / 1e4);
+      // Emitted numerators agree with what the legacy fallback recovers from the ratio.
+      for (const [count, ratio, den] of [
+        [s.scenario.tp_high, s.scenario.high_band_recall, s.scenario.suspicious],
+        [s.scenario.fp_high, s.scenario.high_band_fpr, s.scenario.legitimate],
+        [s.alerts.relevant, s.alerts.precision, s.alerts.flagged],
+      ] as const) {
+        expect(count).not.toBeUndefined();
+        if (count !== null && count !== undefined) expect(recoveredMetric(ratio, den)).toEqual(countMetric(count, den));
+      }
       // Ratios with a known denominator resolve to an exact count that rounds back to the stored value.
       for (const [metric, stored] of [
         [m.highFpr, s.scenario.high_band_fpr],
@@ -76,6 +86,21 @@ describe("benchmark metrics are rounded once, from counts", () => {
         }
       }
     }
+  });
+
+  it("prefers emitted numerators and recovers them from the ratio only for older artifacts", () => {
+    // Emitted count wins, even where the ratio alone could not identify it (den ≥ 10^4).
+    expect(numeratorMetric(3, 20000, 0.0002)).toEqual({ kind: "count", num: 3, den: 20000 });
+    expect(numeratorMetric(0, 7, 0)).toEqual({ kind: "count", num: 0, den: 7 });
+    // Older artifact: no count field → recovered from the stored ratio.
+    expect(numeratorMetric(undefined, 128, 0.0625)).toEqual({ kind: "count", num: 8, den: 128 });
+    expect(numeratorMetric(null, 7, 0.5)).toEqual({ kind: "stored", ratio: 0.5 });
+    expect(numeratorMetric(null, 7, null)).toEqual({ kind: "none" });
+    // methodMetrics reads the count fields when present and ignores a contradicting ratio.
+    const legacy = structuredClone(holdoutV2);
+    const withCounts = { ...legacy, scenario: { ...legacy.scenario, fp_high: 1, high_band_fpr: 0.9 }, alerts: { ...legacy.alerts, relevant: 2 } };
+    expect(methodMetrics(withCounts).highFpr).toEqual({ kind: "count", num: 1, den: legacy.scenario.legitimate });
+    expect(methodMetrics(withCounts).alertPrecision).toEqual({ kind: "count", num: 2, den: legacy.alerts.flagged });
   });
 
   it("recovers the numerator of a stored ratio only when it is unique and consistent", () => {

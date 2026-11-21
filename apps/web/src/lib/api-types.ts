@@ -563,6 +563,8 @@ export interface components {
             per_dataset: number | null;
             /** Precision */
             precision: number | null;
+            /** Relevant */
+            relevant?: number | null;
             /** Unmatched */
             unmatched: number;
         };
@@ -1443,6 +1445,8 @@ export interface components {
             fnr: number | null;
             /** Fp */
             fp: number;
+            /** Fp High */
+            fp_high?: number | null;
             /** Fpr */
             fpr: number | null;
             /** High Band Fpr */
@@ -1463,6 +1467,8 @@ export interface components {
             tn: number;
             /** Tp */
             tp: number;
+            /** Tp High */
+            tp_high?: number | null;
         };
         /** Sensitivity */
         Sensitivity: {
