@@ -7,15 +7,20 @@
  * page makes no third-party requests, so the worker that hosts MediaPipe may only reach its own
  * origin. The gateway CSP (`connect-src 'self'`) enforces the same rule a second time.
  *
+ * One rule for every channel — fetch, XMLHttpRequest, WebSocket, EventSource: same origin only.
+ * (Same-origin sockets matter in development, where Vite's HMR client also runs in the worker.)
+ *
  * Installed only inside the dedicated worker scope — the application's own fetch is untouched.
  */
+
+type ChannelConstructor = abstract new (url: string | URL, ...rest: never[]) => unknown;
 
 interface GuardScope {
   location: { href: string; origin: string };
   fetch: typeof fetch;
   XMLHttpRequest?: { prototype: { open: (...args: never[]) => unknown } };
-  WebSocket?: unknown;
-  EventSource?: unknown;
+  WebSocket?: ChannelConstructor;
+  EventSource?: ChannelConstructor;
 }
 
 export class CrossOriginBlocked extends TypeError {
@@ -38,6 +43,16 @@ function resolve(scope: GuardScope, input: unknown): URL | null {
 export function isSameOrigin(scope: Pick<GuardScope, "location">, input: unknown): boolean {
   const url = resolve(scope as GuardScope, input);
   return url !== null && url.origin === scope.location.origin;
+}
+
+/** A socket URL is same-origin when its HTTP equivalent is (ws ↔ http, wss ↔ https). */
+export function isSameOriginSocket(scope: Pick<GuardScope, "location">, input: unknown): boolean {
+  const url = resolve(scope as GuardScope, input);
+  if (url === null) return false;
+  const http = new URL(url.href);
+  if (url.protocol === "ws:") http.protocol = "http:";
+  else if (url.protocol === "wss:") http.protocol = "https:";
+  return http.origin === scope.location.origin;
 }
 
 /** Returns the number of cross-origin attempts blocked so far (for diagnostics; never sent anywhere). */
@@ -63,8 +78,18 @@ export function installSameOriginGuard(scope: GuardScope): () => number {
       return (open as (...a: never[]) => unknown).apply(this, args);
     } as typeof open;
   }
-  // Nothing in the worker needs push channels.
-  scope.WebSocket = undefined;
-  scope.EventSource = undefined;
+  const guardChannel = <C extends ChannelConstructor>(native: C | undefined, allowed: (input: unknown) => boolean): C | undefined =>
+    native &&
+    new Proxy(native, {
+      construct(target, args: unknown[], newTarget) {
+        if (!allowed(args[0])) {
+          blocked++;
+          throw new CrossOriginBlocked(String(args[0]));
+        }
+        return Reflect.construct(target, args, newTarget) as object;
+      },
+    });
+  scope.WebSocket = guardChannel(scope.WebSocket, (u) => isSameOriginSocket(scope, u));
+  scope.EventSource = guardChannel(scope.EventSource, (u) => isSameOrigin(scope, u));
   return () => blocked;
 }

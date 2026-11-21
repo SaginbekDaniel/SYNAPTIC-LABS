@@ -5,6 +5,7 @@ import { formatMoney, parseMinor } from "../../lib/format";
 import { t, tDynamic, type MessageKey } from "../../lib/i18n";
 import type { Band } from "../../lib/types";
 import { Icon } from "../ui/icons";
+import { toCanvasColor } from "./canvasColor";
 import { GraphController, type GraphViewport } from "./controller";
 
 export type NodeRole = "subject" | "entry" | "exit" | "member" | "boundary" | "context";
@@ -37,33 +38,38 @@ export interface GraphEdgeSpec {
   status?: EdgeStatus | null;
 }
 
-function cssVar(name: string): string {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || "#888";
+function cssToken(name: string): string {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+/** A colour token, converted to a notation Cytoscape's canvas parser accepts (see canvasColor.ts). */
+function cssColor(name: string): string {
+  return toCanvasColor(cssToken(name) || "#888");
 }
 
 function readPalette() {
   return {
-    node: cssVar("--g-node"),
-    subject: cssVar("--g-subject"),
-    entry: cssVar("--g-entry"),
-    exit: cssVar("--g-exit"),
-    boundary: cssVar("--g-boundary"),
-    edge: cssVar("--g-edge"),
-    edgeStrong: cssVar("--g-edge-strong"),
-    highlight: cssVar("--g-highlight"),
-    label: cssVar("--g-label"),
-    labelBg: cssVar("--g-label-bg"),
-    stage: cssVar("--stage"),
-    font: cssVar("--font-sans"),
-    critical: cssVar("--band-critical"),
-    high: cssVar("--band-high"),
-    medium: cssVar("--band-medium"),
-    low: cssVar("--band-low"),
-    unresolved: cssVar("--band-unresolved"),
-    supported: cssVar("--ev-supported"),
-    ambiguous: cssVar("--ev-ambiguous"),
-    contradicted: cssVar("--ev-contradicted"),
-    unavailable: cssVar("--ev-unavailable"),
+    node: cssColor("--g-node"),
+    subject: cssColor("--g-subject"),
+    entry: cssColor("--g-entry"),
+    exit: cssColor("--g-exit"),
+    boundary: cssColor("--g-boundary"),
+    edge: cssColor("--g-edge"),
+    edgeStrong: cssColor("--g-edge-strong"),
+    highlight: cssColor("--g-highlight"),
+    label: cssColor("--g-label"),
+    labelBg: cssColor("--g-label-bg"),
+    stage: cssColor("--stage"),
+    font: cssToken("--font-sans") || "sans-serif",
+    critical: cssColor("--band-critical"),
+    high: cssColor("--band-high"),
+    medium: cssColor("--band-medium"),
+    low: cssColor("--band-low"),
+    unresolved: cssColor("--band-unresolved"),
+    supported: cssColor("--ev-supported"),
+    ambiguous: cssColor("--ev-ambiguous"),
+    contradicted: cssColor("--ev-contradicted"),
+    unavailable: cssColor("--ev-unavailable"),
   };
 }
 type Palette = ReturnType<typeof readPalette>;

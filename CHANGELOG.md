@@ -6,6 +6,14 @@ No versions have been released yet; entries are grouped by merged pull request.
 ## [Unreleased]
 
 ### Added
+- **Graph Workspace** (`/network`, work in progress on `graph-workspace-wip`): overview of the top
+  stored formations or the 1–2 hop neighbourhood of one account (`GET /api/v1/snapshots/{id}/graph`,
+  graph-view-v1), URL-backed filters, bounded expansion, table fallback, exact edge drill-down
+  (`GET /api/v1/snapshots/{id}/edge-transactions`), deterministic layout, keyboard navigation.
+- **Opt-in camera gestures** for the graph: consent first, MediaPipe Hand Landmarker in a Web Worker
+  with self-hosted, SHA-256-pinned assets, no cross-origin traffic, read-only `GraphController`.
+  Real-webcam verification is still outstanding (`docs/implementation/GRAPH_GESTURE_VERIFICATION.md`).
+- Zencoder handoff documents under `docs/handoff/`.
 - **Authentication**: named analyst accounts (Argon2id), server-side sessions in PostgreSQL
   (opaque 256-bit tokens, only SHA-256 digests stored; idle and absolute expiry; revocation on
   sign-out, password change and account disable), `HttpOnly` `Secure` `SameSite=Strict` `__Host-`
@@ -41,6 +49,13 @@ No versions have been released yet; entries are grouped by merged pull request.
 - Python image is multi-stage (no build tooling at runtime); gateway runs as unprivileged Nginx.
 
 ### Fixed
+- Gesture mode in development: MediaPipe is pre-bundled (`optimizeDeps.include`), so its first use
+  no longer makes Vite reload the page mid-session (the gesture E2E failed on every cold cache).
+- Landmark worker: one same-origin rule for fetch, XHR, WebSocket and EventSource instead of
+  deleting sockets (Vite's HMR client in the worker threw); MediaPipe's informational `INFO:` stderr
+  lines go to `console.info` instead of `console.error`.
+- Graph edges were drawn in Cytoscape's default grey: CSS Color 4 tokens (`rgb(r g b / a)`) are now
+  converted to a notation Cytoscape accepts before they enter the graph stylesheet.
 - `migrations/env.py` no longer disables loggers created before an in-process migration.
 - Generating a dataset in the Fraud Lab no longer snaps the active dataset back to the previous
   one when other datasets exist (the "go to alerts" link showed the old dataset's queue).

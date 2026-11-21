@@ -86,6 +86,10 @@ describe("GestureAdapter", () => {
 describe("same-origin guard (landmark worker)", () => {
   const scope = () => {
     const native = vi.fn(async () => new Response("ok"));
+    class Channel {
+      static OPEN = 1;
+      constructor(readonly url: string | URL) {}
+    }
     class XHR {
       opened: unknown[] = [];
       open(...args: unknown[]) {
@@ -96,10 +100,11 @@ describe("same-origin guard (landmark worker)", () => {
       location: { href: "https://nexora.example/assets/worker.js", origin: "https://nexora.example" },
       fetch: native as unknown as typeof fetch,
       XMLHttpRequest: XHR as unknown as { prototype: { open: (...args: never[]) => unknown } },
-      WebSocket: class {} as unknown,
-      EventSource: class {} as unknown,
+      WebSocket: Channel as unknown as new (url: string | URL) => unknown,
+      EventSource: Channel as unknown as new (url: string | URL) => unknown,
       native,
       XHR,
+      Channel,
     };
   };
 
@@ -116,15 +121,30 @@ describe("same-origin guard (landmark worker)", () => {
     expect(blocked()).toBe(3);
   });
 
-  it("guards XMLHttpRequest and removes push channels", () => {
+  it("guards XMLHttpRequest with the same rule", () => {
     const s = scope();
     installSameOriginGuard(s);
     const x = new s.XHR();
     x.open("GET", "/vendor/a.wasm");
     expect(x.opened).toEqual(["GET", "/vendor/a.wasm"]);
     expect(() => x.open("POST", "https://odml.pa.googleapis.com/v1/log")).toThrow("cross-origin");
-    expect(s.WebSocket).toBeUndefined();
-    expect(s.EventSource).toBeUndefined();
+  });
+
+  it("allows only same-origin sockets and event streams", () => {
+    const s = scope();
+    const blocked = installSameOriginGuard(s);
+    const WS = s.WebSocket as unknown as new (url: string) => InstanceType<typeof s.Channel>;
+    const ES = s.EventSource as unknown as new (url: string) => InstanceType<typeof s.Channel>;
+    // wss on the page's https origin is the same origin (the dev server's HMR socket is the case).
+    const own = new WS("wss://nexora.example/hmr");
+    expect(own).toBeInstanceOf(s.Channel);
+    expect(own.url).toBe("wss://nexora.example/hmr");
+    expect((s.WebSocket as unknown as typeof s.Channel).OPEN).toBe(1); // statics survive the guard
+    expect(new ES("/events")).toBeInstanceOf(s.Channel);
+    expect(() => new WS("wss://collector.example/socket")).toThrow("cross-origin");
+    expect(() => new WS("ws://nexora.example/hmr")).toThrow("cross-origin"); // ws ↔ http ≠ https
+    expect(() => new ES("https://collector.example/stream")).toThrow("cross-origin");
+    expect(blocked()).toBe(3);
   });
 
   it("treats unparseable input as cross-origin", () => {

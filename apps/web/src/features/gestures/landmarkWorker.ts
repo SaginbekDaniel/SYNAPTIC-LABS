@@ -3,14 +3,17 @@
  * Hand-landmark worker. Runs MediaPipe Hand Landmarker off the main thread on frames the page
  * transfers in, and returns 21 landmarks per hand. Frames and landmarks exist only in memory here:
  * nothing is stored, logged or sent. The same-origin guard is installed before MediaPipe is loaded,
- * so the library's built-in usage-metrics upload cannot leave the browser.
+ * so the library's built-in usage-metrics upload cannot leave the browser; so is the stderr routing,
+ * because MediaPipe binds console.error when its loader runs.
  */
 import type { HandLandmarker } from "@mediapipe/tasks-vision";
 import type { Hand } from "./landmarks";
 import { installSameOriginGuard } from "./sameOriginGuard";
+import { routeInformationalStderr } from "./workerConsole";
 
 declare const self: DedicatedWorkerGlobalScope;
 installSameOriginGuard(self as unknown as Parameters<typeof installSameOriginGuard>[0]);
+routeInformationalStderr(console);
 
 export type WorkerRequest = { type: "init"; wasmBase: string; model: string } | { type: "frame"; bitmap: ImageBitmap; t: number } | { type: "close" };
 export type WorkerResponse = { type: "ready" } | { type: "result"; t: number; hands: Hand[] } | { type: "error"; code: "init_failed" | "inference_failed" };
