@@ -24,6 +24,7 @@ from nexora.api.deps import enforce_authentication, presented_token
 from nexora.api.routes import alerts, analysis, auth, cases, datasets, evaluation
 from nexora.application.errors import AppError, TooManyRequests
 from nexora.auth.service import AUTH_REQUIRED, bootstrap_from_settings
+from nexora.logging_config import request_id_var
 from nexora.persistence import orm
 from nexora.persistence.db import session_factory
 from nexora.settings import Settings, get_settings
@@ -105,6 +106,7 @@ def create_app(settings: Settings | None = None, config: AnalysisConfig | None =
         incoming = request.headers.get("X-Request-ID", "")
         rid = incoming if 0 < len(incoming) <= 64 and incoming.isprintable() else f"req-{uuid.uuid4().hex[:16]}"
         request.state.request_id = rid
+        request_id_var.set(rid)  # every log line written while serving this request carries the id
         if gateway_token and not request.url.path.startswith(_UNGATED_PREFIXES):
             presented = request.headers.get(GATEWAY_TOKEN_HEADER, "")
             if not hmac.compare_digest(presented.encode(), gateway_token.encode()):
@@ -152,7 +154,7 @@ def create_app(settings: Settings | None = None, config: AnalysisConfig | None =
 
     @app.exception_handler(OperationalError)
     async def db_unavailable(request: Request, exc: OperationalError) -> JSONResponse:
-        log.error("database unavailable: %s", exc)
+        log.error("database unavailable: %s", exc, extra={"request_id": getattr(request.state, "request_id", None)})
         return _envelope(
             503,
             "DATABASE_UNAVAILABLE",
@@ -162,7 +164,8 @@ def create_app(settings: Settings | None = None, config: AnalysisConfig | None =
 
     @app.exception_handler(Exception)
     async def unexpected(request: Request, exc: Exception) -> JSONResponse:
-        log.exception("unhandled error")
+        # Explicit: this handler runs outside the request middleware, so do not rely on the context variable.
+        log.exception("unhandled error", extra={"request_id": getattr(request.state, "request_id", None)})
         return _envelope(500, "INTERNAL_ERROR", "unexpected internal error", getattr(request.state, "request_id", None))
 
     @app.get("/health/live", tags=["health"])

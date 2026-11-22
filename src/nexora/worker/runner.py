@@ -26,6 +26,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from nexora.analytics.config import AnalysisConfig, default_config
 from nexora.application import analysis_service
+from nexora.logging_config import configure_logging
 from nexora.persistence import orm
 from nexora.persistence.db import session_factory, session_scope
 from nexora.settings import get_settings
@@ -187,10 +188,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="NEXORA analysis worker")
     parser.add_argument("--once", action="store_true", help="process queued jobs then exit")
     args = parser.parse_args()
-    logging.basicConfig(
-        level=logging.INFO,
-        format='{"ts":"%(asctime)s","level":"%(levelname)s","logger":"%(name)s","msg":"%(message)s"}',
-    )
+    configure_logging()
     factory = session_factory()
     owner = worker_identity()
     log.info("worker %s started", owner)

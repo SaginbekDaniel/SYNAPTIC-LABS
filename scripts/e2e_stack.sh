@@ -14,4 +14,4 @@ done
 uv run python -m nexora.worker.runner &
 WORKER=$!
 trap 'kill "$WORKER" 2>/dev/null || true' EXIT INT TERM
-uv run uvicorn nexora.api.main:app --host 127.0.0.1 --port "$PORT"
+uv run uvicorn nexora.api.main:app --host 127.0.0.1 --port "$PORT" --log-config configs/logging.json

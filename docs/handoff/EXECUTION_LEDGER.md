@@ -149,3 +149,25 @@ Entry template:
   `/analytics/benchmark` at 1440 and 390 px, dark and light: no horizontal overflow, empty console-error list (scratch spec, deleted).
 * Not executed: Docker smoke screenshot pipeline. Pitch numbers (`apps/pitch`) untouched — B-004.
 * State file updated: yes.
+
+### L-0008 · 2026-11-22 · B-015 · status: done
+* Branch / commits: `feat/b-015-structured-logging` → fast-forwarded into `claude/peaceful-darwin-nrquu9`.
+* Changes: `src/nexora/logging_config.py` (new; named so it cannot be confused with the stdlib module) — `JsonFormatter` (`json.dumps` of
+  `ts` UTC ms, `level`, `logger`, `msg`, `request_id` from the record or a `ContextVar`, `exc`, `stack`, plus any `extra=` fields; unserialisable
+  values degrade to text; uvicorn's ANSI `color_message` dropped), `LOGGING_CONFIG` (root → stderr JSON; uvicorn loggers propagate) and
+  `configure_logging()`. `configs/logging.json` is the same dict for uvicorn's `--log-config` (unit test asserts equality and that the Dockerfile
+  CMD, `scripts/e2e_stack.sh` and `make api` pass it). API middleware sets the request-id context; the 500 and 503 handlers pass the envelope's
+  `request_id` explicitly (they run outside the middleware). Worker uses `configure_logging()` instead of the unescaped format string.
+  `docs/deployment/railway.md` documents the format and how to find a quoted id.
+* Reproduction: `test_the_old_worker_format_was_invalid_json` — the old worker format string on `job failed: relation "transactions" does not
+  exist` raises `JSONDecodeError`. The three request-id integration tests fail with `main.py` stashed and pass with it.
+* Verification: unit 12 (hostile messages incl. quotes, backslashes, CR/LF, NUL, printf directives; tracebacks; extras; context vs explicit id;
+  config parity; dictConfig routing of uvicorn loggers); integration 3 (forced 500 and forced `OperationalError` → a log line with the envelope's
+  `request_id`; a client-supplied `X-Request-ID` is echoed and logged). Real uvicorn with `--log-config`: startup, access and shutdown lines are
+  JSON and access lines carry the request id (incl. client-supplied `live-check-1`). Full gate: ruff clean, format 92 files, mypy clean (62
+  files), pytest **224 passed** 0 skipped; tsc clean; vitest **105**; Playwright cold cache **34 passed**; all 592 `[WebServer]` JSON lines in
+  that run parse.
+* Not executed: Docker image (the CMD change is exercised by CI's image job). Alembic's own CLI output (pre-deploy migration, disposable resets)
+  stays plain text — a separate one-shot process configured by `alembic.ini`; the gateway keeps Nginx's format.
+* Follow-up: B-016 can now log job events as structured `extra=` fields.
+* State file updated: yes.

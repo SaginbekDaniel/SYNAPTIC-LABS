@@ -223,7 +223,13 @@ afterwards.
 
 ## Operations
 
-* **Logs:** `railway logs --service api` (or `worker`, `web`). The worker logs JSON lines per job.
+* **Logs:** `railway logs --service api` (or `worker`, `web`). The API (including uvicorn's access and
+  startup lines) and the worker write one JSON object per line on stderr: `ts` (UTC), `level`, `logger`,
+  `msg`, `exc` (traceback, when there is one) and, for anything written while serving a request,
+  `request_id`. That is the id an error envelope and the `X-Request-ID` header show the user, so a quoted id
+  finds its lines: `railway logs --service api | grep '"request_id": "req-…"'`. Configuration:
+  `configs/logging.json` = `nexora.logging_config.LOGGING_CONFIG` (a test keeps them identical). The gateway
+  (`web`) keeps Nginx's own log format.
 * **Status:** `railway deployment list --service api --json`.
 * **Rollback:** in the dashboard, *Deployments → ⋯ → Redeploy* on the last good deployment, or
   check out the last good commit and run `scripts/railway/deploy.sh`. Code rolls back; the schema
