@@ -6,6 +6,10 @@
  * pointer layer, not the graph page. Every exit path — explicit stop, Escape, hidden tab, unmount,
  * camera loss, engine failure — goes through stop(), which cancels the active gesture, stops the
  * camera tracks and disposes the worker. A later start is always a new, deliberate click.
+ *
+ * Order on start: the recognition model is loaded first ("loading"), and only once it is ready is the
+ * browser asked for the camera ("starting"). The camera is therefore never on while ~23 MB of model and
+ * WASM download and initialise, i.e. never on while nothing can be recognised (H-05).
  */
 import type { GraphController } from "../../components/graph/controller";
 import { GestureAdapter, type GestureMode, type PointerState } from "./adapter";
@@ -29,11 +33,24 @@ export interface GestureSnapshot {
 const FRAME_INTERVAL_MS = 33; // ≤ 30 inferences per second
 const CALIBRATION_MS = 500;
 
+/** The parts of CameraSession and HandLandmarkEngine the session drives (unit tests substitute fakes). */
+export type CameraPort = Pick<CameraSession, "start" | "stop" | "onChange">;
+export type EnginePort = Pick<HandLandmarkEngine, "start" | "detect" | "dispose" | "busy">;
+export interface GestureDeps {
+  createCamera(): CameraPort;
+  createEngine(): EnginePort;
+}
+
+const browserDeps: GestureDeps = {
+  createCamera: () => new CameraSession({ isSecureContext: window.isSecureContext, mediaDevices: navigator.mediaDevices }),
+  createEngine: () => new HandLandmarkEngine(),
+};
+
 export class GestureSession {
   private snap: GestureSnapshot = { ui: "off", failure: null, tracking: "searching", phase: "idle", pointer: null, mode: "navigate", dominant: "Right" };
   private readonly listeners = new Set<() => void>();
-  private camera: CameraSession | null = null;
-  private engine: HandLandmarkEngine | null = null;
+  private camera: CameraPort | null = null;
+  private engine: EnginePort | null = null;
   private recognizer: GestureRecognizer | null = null;
   private adapter: GestureAdapter | null = null;
   private controller: GraphController | null = null;
@@ -42,6 +59,8 @@ export class GestureSession {
   private running = false;
   private lastFrame = 0;
   private trackedSince: number | null = null;
+
+  constructor(private readonly deps: GestureDeps = browserDeps) {}
 
   subscribe = (l: () => void) => {
     this.listeners.add(l);
@@ -87,24 +106,14 @@ export class GestureSession {
     if (this.snap.ui === "consent") this.patch({ ui: "off" });
   }
 
-  /** Second, deliberate click: start the camera and the local recogniser. */
+  /** Second, deliberate click: load the local recogniser, then start the camera. */
   async start(): Promise<void> {
     if (this.snap.ui !== "consent" || !this.video || !this.controller) return;
     const gen = ++this.generation;
-    this.patch({ ui: "starting", failure: null, tracking: "searching", phase: "idle", pointer: null });
-    const camera = new CameraSession({ isSecureContext: window.isSecureContext, mediaDevices: navigator.mediaDevices });
-    this.camera = camera;
-    camera.onChange((state) => {
-      if (gen === this.generation && state === "ended") this.fail("ended");
-    });
-    const state = await camera.start(this.video);
-    if (gen !== this.generation) return;
-    if (state !== "live") {
-      this.fail(state === "off" || state === "requesting" ? "error" : state);
-      return;
-    }
-    this.patch({ ui: "loading" });
-    const engine = new HandLandmarkEngine();
+
+    // 1. The model first. No camera request has been made while this runs.
+    this.patch({ ui: "loading", failure: null, tracking: "searching", phase: "idle", pointer: null });
+    const engine = this.deps.createEngine();
     this.engine = engine;
     try {
       await engine.start(() => {
@@ -116,7 +125,26 @@ export class GestureSession {
       return;
     }
     if (gen !== this.generation) {
-      engine.dispose();
+      engine.dispose(); // cancelled (stop, Escape, hidden tab, unmount) while the model loaded
+      return;
+    }
+    const video = this.video;
+    if (!video) {
+      this.fail("error");
+      return;
+    }
+
+    // 2. Only now ask for the camera: recognition can run as soon as frames arrive.
+    this.patch({ ui: "starting" });
+    const camera = this.deps.createCamera();
+    this.camera = camera;
+    camera.onChange((state) => {
+      if (gen === this.generation && state === "ended") this.fail("ended");
+    });
+    const state = await camera.start(video);
+    if (gen !== this.generation) return; // teardown already stopped the camera and disposed the engine
+    if (state !== "live") {
+      this.fail(state === "off" || state === "requesting" ? "error" : state);
       return;
     }
     this.recognizer = new GestureRecognizer({ dominant: this.snap.dominant });

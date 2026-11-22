@@ -100,6 +100,45 @@ test("real recogniser on a synthetic camera: self-hosted model, no foreign traff
   expect(errors).toEqual([]);
 });
 
+test("the camera stays off until the recognition model has loaded (H-05)", async ({ page, context }) => {
+  test.setTimeout(120_000);
+  const errors = collectErrors(page);
+  // Hold every model/WASM download until the test has looked at the loading state.
+  let release!: () => void;
+  const gate = new Promise<void>((r) => (release = r));
+  const held: string[] = [];
+  await context.route("**/vendor/mediapipe/**", async (route) => {
+    held.push(new URL(route.request().url()).pathname);
+    await gate;
+    await route.continue();
+  });
+  await instrumentCamera(page);
+  await openGraph(page, "5204");
+
+  await page.getByTestId("gesture-toggle").click();
+  await page.getByTestId("gesture-start").click();
+  const status = page.getByTestId("gesture-status");
+  await expect(status).toContainText("Загрузка модели распознавания");
+  await expect.poll(() => held.length, { timeout: 30_000 }).toBeGreaterThan(0); // the worker is really waiting on assets
+  await page.waitForTimeout(1000); // give a premature camera request every chance to happen
+  await expect(status).toContainText("Загрузка модели распознавания");
+  expect(await gumCalls(page)).toBe(0);
+  expect(await liveTracks(page)).toBe(0);
+  // The panel does not claim a live camera, and the control cancels rather than "turns off the camera".
+  await expect(page.getByTestId("gesture-panel")).not.toContainText("Камера включена");
+  await expect(page.getByTestId("gesture-stop")).toHaveText("Отменить включение");
+
+  release();
+  await expect(status).toContainText("Покажите руку в кадре", { timeout: 60_000 });
+  expect(await gumCalls(page)).toBe(1);
+  expect(await liveTracks(page)).toBe(1);
+  await expect(page.getByTestId("gesture-panel")).toContainText("Камера включена");
+  await expect(page.getByTestId("gesture-stop")).toHaveText("Выключить камеру");
+  await page.getByTestId("gesture-stop").click();
+  expect(await liveTracks(page)).toBe(0);
+  expect(errors).toEqual([]);
+});
+
 test("leaving the page or hiding the tab releases the camera", async ({ page }) => {
   await instrumentCamera(page);
   await openGraph(page, "5203");

@@ -186,3 +186,24 @@ Entry template:
   errors** (the v6 future-flag warnings are gone).
 * Not executed: production-bundle run through the gateway stand-in (CI's image job covers the real gateway).
 * State file updated: yes.
+
+### L-0010 · 2026-11-22 · B-031 · status: done
+* Branch / commits: `feat/b-031-model-before-camera` → fast-forwarded into `claude/peaceful-darwin-nrquu9`.
+* Changes: `GestureSession.start()` now loads the engine first (`ui: "loading"`), requests the camera only after the engine reports ready
+  (`"starting"`), then calibrates; every exit path still goes through `teardown()` (generation counter unchanged). An optional constructor
+  seam (`GestureDeps`: camera/engine factories, `CameraPort`/`EnginePort`) makes the order unit-testable; production wiring identical.
+  UI follow-up found during the visual check: the panel showed **"Камера включена"**, an empty preview box and a "Выключить камеру" button while
+  the camera was not on (that was already wrong during `starting` before this change). Now the badge and preview appear only from calibration,
+  and the toggle/stop control reads *Отменить включение* (`gesture.cancel`, new i18n key) until the camera is live.
+  `docs/implementation/GRAPH_GESTURE_VERIFICATION.md` steps 3–4 updated for the new order (still **not executed** on real hardware — B-030).
+* Tests: `gestureSession.test.ts` (8, new): order loading → starting → calibrating with no camera object before the engine is ready; stop /
+  hidden tab / model failure while loading never touch the camera; stop during the prompt and a late grant release everything; denial disposes
+  the loaded engine; engine failure during the prompt stops the camera; camera ending mid-session. E2E (new) holds `/vendor/mediapipe/**` with
+  `context.route`: while "Загрузка модели…" is shown `getUserMedia` calls = 0 and live tracks = 0, no "Камера включена", button "Отменить
+  включение"; after release: 1 call, 1 track, badge and "Выключить камеру". **On the old ordering this E2E fails** (`getUserMedia` calls:
+  expected 0, received 1). Existing gesture E2E unchanged and green (the denial test still passes without a longer timeout).
+* Verification: tsc clean; vitest **113**; vite build ok; Playwright cold cache **35 passed**; panel screenshots during loading and live, dark
+  and light (scratch spec, deleted). Python untouched (last full Python gate: L-0008, 224 passed).
+* Behaviour note: the browser prompt now appears after the model has loaded (a second or so locally, longer on slow links), not right after the
+  click; `getUserMedia` does not require transient user activation in Chromium, Firefox or Safari. Real browsers other than Chromium: B-032.
+* State file updated: yes.

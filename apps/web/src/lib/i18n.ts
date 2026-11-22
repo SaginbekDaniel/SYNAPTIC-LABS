@@ -718,6 +718,7 @@ const ru = {
   "graphws.sourceTx": "Исходные транзакции связи",
   "gesture.enable": "Включить управление жестами",
   "gesture.stop": "Выключить камеру",
+  "gesture.cancel": "Отменить включение",
   "gesture.title": "Жесты камеры",
   "gesture.cameraOn": "Камера включена",
   "gesture.preview": "Изображение с камеры (только на этом устройстве)",

@@ -22,8 +22,8 @@ having performed it.
 |---|---|---|
 | 1 | Click the camera icon in the graph toolbar | Consent dialog explains local-only processing; **no** browser permission prompt yet |
 | 2 | *Отмена* | Dialog closes; no camera prompt; camera LED off |
-| 3 | Camera icon → *Включить камеру* → deny in the browser | "Доступ к камере запрещён…"; mouse/keyboard graph control unaffected |
-| 4 | Reset permission, enable again, allow | "Загрузка модели…" then "Покажите руку в кадре"; preview visible in the panel |
+| 3 | Camera icon → *Включить камеру* → deny in the browser | "Загрузка модели…" first (camera LED **off**, no prompt yet), then the browser prompt; after denying: "Доступ к камере запрещён…"; mouse/keyboard graph control unaffected |
+| 4 | Reset permission, enable again, allow | "Загрузка модели…" with the camera LED **off** and the button reading *Отменить включение*; then the prompt, "Запрос доступа к камере…", "Покажите руку в кадре", *Камера включена* and the preview. On a throttled network (DevTools "Slow 4G") the LED stays off for the whole download |
 | 5 | Network tab | Only same-origin requests: `/vendor/mediapipe/vision_wasm_module_internal.{js,wasm}`, `hand_landmarker.task`. **No** request to `*.googleapis.com` or any other origin at any time, including after stopping |
 | 6 | Show an open palm (dominant hand) for ~0.5 s | Status "Рука в кадре"; pointer appears over the graph |
 | 7 | Open palm and move | Graph pans ("сдвиг"); stops when the hand stops |
