@@ -94,3 +94,27 @@ Entry template:
   Playwright **34 passed** cold cache. No web code changed (tsc/vitest not re-run for this task; covered by the baseline and next task).
 * Not executed: the CI step itself (runs on push).
 * State file updated: yes.
+
+### L-0006 · 2026-11-22 · B-010 · status: done
+* Branch / commits: `feat/b-010-gate-csv-import` → fast-forwarded into `claude/peaceful-darwin-nrquu9` (commit "B-010: …").
+* Root cause detail: FastAPI parses a multipart body **before** it solves any dependency (`fastapi/routing.py` 0.163.1: `await
+  request.form()` at line 455, `solve_dependencies` at 511), so a dependency-based gate would refuse only after receiving up to
+  `max_upload_bytes`. Fix: a route-class override on this one route (`_CsvImportRoute`) that, while the switch is off, runs the same
+  `enforce_authentication` as the global dependency (anonymous → 401 `AUTH_REQUIRED`, missing CSRF → 403 `CSRF_FAILED`, so nothing
+  about the setting leaks) and then raises `403 CSV_IMPORT_DISABLED` without touching the body. With the switch on, the normal route
+  runs unchanged (authentication once, via the global dependency).
+* Changes: `Settings.allow_csv_import = False` (`NEXORA_ALLOW_CSV_IMPORT`); `routes/datasets.py` registers the import route with
+  `add_api_route(..., route_class_override=_CsvImportRoute)`; `.railway/railway.ts` pins `"false"` on `api`; `.railway/check.ts` fails if the
+  api literal is not `"false"` (absent counts as a failure) or if the worker receives the switch; `docker-compose.yml` and `.env.example`
+  default false; `SECURITY.md` control row. The two tests that import CSVs opt in (`settings.allow_csv_import = True`). OpenAPI document
+  unchanged (route still listed; `gen:api` → no diff). The SPA has no upload control, so no UI change.
+* Tests (new, `tests/integration/test_api.py`): refused by default + no rows in `datasets`/`import_batches`/`transactions` + lab path still
+  works; anonymous → 401 and missing CSRF → 403 before the gate; an ASGI-level probe shows the disabled route answers **without pulling the
+  body** (`receive()` not called before `http.response.start`), with a positive control (switch on → body read first, 201).
+  Before the fix: `git stash` of `src/` → 2 of the 3 new tests fail (the auth-first one is a guard and passes either way).
+* Verification: ruff clean, format 89 files, mypy clean (one override-type error fixed), pytest **204 passed** 0 skipped; `gen:api` + diff →
+  no change; `tsc -b` clean; vitest **99 passed**; `.railway` check passes, and with the literal flipped to `"true"` fails with "api keeps CSV
+  import disabled"; Playwright cold cache **34 passed** (2.0 m).
+* Not executed: Docker compose stack (no daemon).
+* Decision assumed: D-4 default (off everywhere except an explicit local opt-in).
+* State file updated: yes.

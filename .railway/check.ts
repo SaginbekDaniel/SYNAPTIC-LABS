@@ -44,6 +44,9 @@ for (const name of ["worker", "web"]) check(!services.get(name)?.deploy?.preDepl
 
 check(literal("api", "NEXORA_EXPOSE_API_DOCS") === "false", "api does not expose /docs");
 check(literal("api", "NEXORA_CORS_ORIGINS") === "", "api allows no cross-origin callers");
+// The deployment holds synthetic data only: CSV upload is pinned off, never left to a preserved value.
+check(literal("api", "NEXORA_ALLOW_CSV_IMPORT") === "false", "api keeps CSV import disabled");
+check(!("NEXORA_ALLOW_CSV_IMPORT" in env("worker")), "worker does not receive the CSV import switch");
 // "session": the API authenticates every request; "basic" additionally keeps the shared credential in
 // front (staged rollout / rollback). "off" (no gateway token required) is never deployed.
 check(["session", "basic"].includes(literal("web", "NEXORA_GATEWAY_AUTH") ?? ""), "gateway mode is session or basic");

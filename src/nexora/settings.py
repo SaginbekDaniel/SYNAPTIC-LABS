@@ -60,6 +60,9 @@ class Settings(BaseSettings):
     # One-time operator bootstrap (python -m nexora.auth.cli bootstrap): an Argon2id hash, never a password.
     bootstrap_username: str = ""
     bootstrap_password_hash: str = ""
+    # CSV upload (POST /api/v1/datasets/import). Off by default: the product holds synthetic data only and
+    # has no tenancy, retention or backup drill for real records (H-02). Enable only on a local machine.
+    allow_csv_import: bool = False
     max_upload_bytes: int = 20 * 1024 * 1024
     max_csv_rows: int = 200_000
     graph_max_depth: int = 3

@@ -1,13 +1,16 @@
 from __future__ import annotations
 
+from collections.abc import Callable, Coroutine
 from typing import Annotated, Any
 
-from fastapi import APIRouter, File, Form, Query, Request, UploadFile
+from fastapi import APIRouter, File, Form, Query, Request, Response, UploadFile
+from fastapi.routing import APIRoute
+from starlette.concurrency import run_in_threadpool
 
 from nexora.api import schemas
-from nexora.api.deps import SessionDep, parse_uuid
+from nexora.api.deps import SessionDep, enforce_authentication, parse_uuid
 from nexora.application import ingest_service, queries
-from nexora.application.errors import Invalid, PayloadTooLarge
+from nexora.application.errors import Forbidden, Invalid, PayloadTooLarge
 from nexora.evaluation.generator import SUITES, suite_families
 from nexora.ingest.csv_adapter import CsvSchemaError, read_csv_rows
 
@@ -29,7 +32,30 @@ def overview(dataset_id: str, session: SessionDep) -> Any:
     return queries.overview(session, parse_uuid(dataset_id, "dataset_id"))
 
 
-@router.post("/datasets/import", response_model=schemas.ImportResult, status_code=201)
+class _CsvImportRoute(APIRoute):
+    """Refuses CSV imports while ``allow_csv_import`` is off, *before* the upload is read.
+
+    FastAPI parses a multipart body before it runs any dependency, so a dependency could only refuse
+    after receiving up to ``max_upload_bytes``. This handler runs first: it authenticates exactly like the
+    global dependency (anonymous callers still get 401 and learn nothing about the setting; writes still
+    need origin + CSRF), then refuses. With the setting on, the normal route runs unchanged.
+    """
+
+    def get_route_handler(self) -> Callable[[Request], Coroutine[Any, Any, Response]]:
+        handler = super().get_route_handler()
+
+        async def gated(request: Request) -> Response:
+            if not request.app.state.settings.allow_csv_import:
+                await run_in_threadpool(enforce_authentication, request)
+                raise Forbidden(
+                    "CSV_IMPORT_DISABLED",
+                    "CSV import is disabled on this deployment: it holds synthetic data only",
+                )
+            return await handler(request)
+
+        return gated
+
+
 async def import_csv(
     request: Request,
     session: SessionDep,
@@ -79,6 +105,17 @@ async def import_csv(
         "batch_id": str(batch.id),
         "report": report.as_dict(),
     }
+
+
+# Registered explicitly: the route-class override (the pre-body gate) is not available on @router.post.
+router.add_api_route(
+    "/datasets/import",
+    import_csv,
+    methods=["POST"],
+    response_model=schemas.ImportResult,
+    status_code=201,
+    route_class_override=_CsvImportRoute,
+)
 
 
 @router.get("/lab/suites", response_model=list[schemas.LabSuite], tags=["lab"])

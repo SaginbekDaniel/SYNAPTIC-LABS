@@ -139,6 +139,7 @@ def test_filters_select_formations_by_stored_band_and_kind(client, settings):
 
 
 def test_local_mode_round_trips_big_ids_and_filters_eligibility(client, settings):
+    settings.allow_csv_import = True  # the import route is off by default (B-010)
     big = "9007199254740993"  # 2^53 + 1: must never become a float anywhere
     csv = (
         "source_transaction_id,sender_account_id,receiver_account_id,amount_minor,currency,observed_date,status\n"

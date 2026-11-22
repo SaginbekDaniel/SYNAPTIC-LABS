@@ -57,6 +57,8 @@ export default defineRailway(() => {
       // Same-origin behind the gateway: no cross-origin callers, no public API documentation.
       NEXORA_CORS_ORIGINS: "",
       NEXORA_EXPOSE_API_DOCS: "false",
+      // Synthetic data only: the CSV upload route stays closed in the deployment (H-02).
+      NEXORA_ALLOW_CSV_IMPORT: "false",
     },
     deploy: {
       // Runs once per deploy, before the new API starts serving; the worker never migrates.

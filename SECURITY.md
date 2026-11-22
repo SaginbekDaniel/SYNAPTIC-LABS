@@ -38,6 +38,7 @@ What is in place (see [docs/deployment/railway.md](docs/deployment/railway.md#se
 | Gateway fails closed: refuses to start without a ≥ 32-character gateway token (`session` mode) or without Basic credentials (`basic` mode) | `apps/web/docker/10-nexora-gateway.envsh` |
 | TLS terminated by Railway; HSTS when served over HTTPS | Railway edge, gateway headers |
 | Content-Security-Policy (hash-pinned inline script), `X-Frame-Options: DENY`, `nosniff`, Referrer/Permissions policies; `Cache-Control: no-store` on every API response | `apps/web/docker/csp.mjs`, API middleware |
+| **CSV upload disabled by default** (`POST /api/v1/datasets/import` → `403 CSV_IMPORT_DISABLED`, refused after authentication but before the upload is read); pinned off in the deployment definition and checked by its invariant test; only the synthetic Fraud Lab creates data | `NEXORA_ALLOW_CSV_IMPORT`, `src/nexora/api/routes/datasets.py`, `.railway/check.ts` |
 | Rate limits (reads 20 r/s, writes 30/min, sign-in 10/min per client), 21 MiB body limit, CSV row limit | gateway config, `NEXORA_MAX_*` |
 | API docs and readiness details not served publicly; error envelopes without stack traces | `NEXORA_EXPOSE_API_DOCS=false`, gateway, API error handlers |
 | Non-root containers; secrets only in Railway variables, set over stdin | Dockerfiles, `scripts/railway/bootstrap.sh` |

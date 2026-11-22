@@ -76,6 +76,7 @@ def test_end_to_end_transaction_to_audited_decision(client, settings):  # UI-001
 
 
 def test_big_account_ids_round_trip_exactly(client, settings):  # DATA-001
+    settings.allow_csv_import = True  # the import route is off by default (B-010)
     big = "9007199254740993"  # 2^53 + 1
     csv = (
         "source_transaction_id,sender_account_id,receiver_account_id,amount_minor,currency,observed_date\n"
@@ -199,3 +200,123 @@ def test_alert_list_pages_searches_sorts_and_counts_on_the_server(client, settin
         first = client.get("/api/v1/alerts", params={"dataset_id": ds_id, "sort": sort, "limit": 1}).json()
         assert first["items"][0]["id"] == got[0]["id"]
     assert client.get("/api/v1/alerts", params={"sort": "bogus"}).status_code == 422
+
+
+# -- CSV import gate (H-02, backlog B-010) --------------------------------------------------------
+_IMPORT_CSV = (
+    "source_transaction_id,sender_account_id,receiver_account_id,amount_minor,currency,observed_date\n"
+    "g1,A,B,100,KZT,2026-07-01\n"
+)
+
+
+def _row_counts(settings) -> dict[str, int]:
+    from sqlalchemy import create_engine, text
+
+    engine = create_engine(settings.database_url)
+    try:
+        with engine.connect() as c:
+            return {t: c.execute(text(f"SELECT count(*) FROM {t}")).scalar_one() for t in _IMPORTED_TABLES}
+    finally:
+        engine.dispose()
+
+
+_IMPORTED_TABLES = ("datasets", "import_batches", "transactions")
+
+
+def test_csv_import_is_refused_by_default_and_stores_nothing(client, settings):
+    from nexora.settings import Settings
+
+    assert Settings.model_fields["allow_csv_import"].default is False
+    assert settings.allow_csv_import is False
+    before = _row_counts(settings)
+    r = client.post("/api/v1/datasets/import", files={"file": ("x.csv", _IMPORT_CSV.encode())}, data={"name": "real?"})
+    assert r.status_code == 403, r.text
+    assert r.json()["error"]["code"] == "CSV_IMPORT_DISABLED" and r.json()["error"]["request_id"]
+    assert _row_counts(settings) == before
+    # The synthetic lab path is unaffected.
+    assert client.post("/api/v1/lab/datasets", json={"suite": "demo-v1", "seed": 4242}).status_code == 201
+
+
+def test_disabled_csv_import_is_still_authenticated_first(anon_client, client, settings):
+    files, data = {"file": ("x.csv", _IMPORT_CSV.encode())}, {"name": "x"}
+    r = anon_client.post("/api/v1/datasets/import", files=files, data=data)
+    assert r.status_code == 401 and r.json()["error"]["code"] == "AUTH_REQUIRED"  # nothing learnt about the flag
+    csrf = client.headers.pop("X-CSRF-Token")
+    try:
+        r = client.post("/api/v1/datasets/import", files=files, data=data)
+        assert r.status_code == 403 and r.json()["error"]["code"] == "CSRF_FAILED"
+    finally:
+        client.headers["X-CSRF-Token"] = csrf
+
+
+def _asgi_import(app, client) -> tuple[int, list[str]]:
+    """POST a multipart upload straight into the ASGI app and record when the body is pulled."""
+    import anyio
+
+    events: list[str] = []
+    body = (
+        b'--x\r\nContent-Disposition: form-data; name="name"\r\n\r\nasgi\r\n'
+        b'--x\r\nContent-Disposition: form-data; name="file"; filename="x.csv"\r\n'
+        b"Content-Type: text/csv\r\n\r\n" + _IMPORT_CSV.encode() + b"\r\n--x--\r\n"
+    )
+    cookie = "; ".join(f"{k}={v}" for k, v in client.cookies.items())
+    scope = {
+        "type": "http",
+        "asgi": {"version": "3.0"},
+        "http_version": "1.1",
+        "method": "POST",
+        "scheme": "https",
+        "path": "/api/v1/datasets/import",
+        "raw_path": b"/api/v1/datasets/import",
+        "query_string": b"",
+        "root_path": "",
+        "headers": [
+            (b"host", b"testserver"),
+            (b"cookie", cookie.encode()),
+            (b"x-csrf-token", client.headers["X-CSRF-Token"].encode()),
+            (b"content-type", b"multipart/form-data; boundary=x"),
+            (b"content-length", str(len(body)).encode()),
+        ],
+        "client": ("127.0.0.1", 50000),
+        "server": ("testserver", 443),
+    }
+    status: list[int] = []
+    sent_body = False
+
+    async def receive() -> dict:
+        nonlocal sent_body
+        if not sent_body:
+            sent_body = True
+            events.append("body-read")
+            return {"type": "http.request", "body": body, "more_body": False}
+        await anyio.sleep_forever()  # a client that never disconnects
+        raise AssertionError("unreachable")
+
+    async def send(message: dict) -> None:
+        if message["type"] == "http.response.start":
+            status.append(message["status"])
+            events.append("response")
+
+    async def run() -> None:
+        with anyio.move_on_after(10):
+            await app(scope, receive, send)
+
+    anyio.run(run)
+    return status[0], events
+
+
+def test_disabled_csv_import_refuses_before_reading_the_upload(client, settings):
+    from nexora.api.main import create_app
+
+    status, events = _asgi_import(create_app(settings), client)
+    assert status == 403
+    assert "body-read" not in events[: events.index("response")], events
+
+    # Control: with the import enabled the same request is read (and accepted), so the probe detects reads.
+    settings.allow_csv_import = True
+    try:
+        status, events = _asgi_import(create_app(settings), client)
+    finally:
+        settings.allow_csv_import = False
+    assert status == 201
+    assert events.index("body-read") < events.index("response"), events
