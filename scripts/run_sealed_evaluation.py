@@ -113,7 +113,11 @@ def git_state() -> dict[str, Any]:
     def run(*args: str) -> str:
         return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, check=False).stdout.strip()
 
-    return {"commit": run("rev-parse", "HEAD"), "dirty_paths": run("status", "--porcelain").splitlines()[:20]}
+    # Porcelain lines are "XY path"; X may be a space, so the output must not be stripped first.
+    porcelain = subprocess.run(
+        ["git", "status", "--porcelain"], cwd=ROOT, capture_output=True, text=True, check=False
+    ).stdout
+    return {"commit": run("rev-parse", "HEAD"), "dirty_paths": [ln for ln in porcelain.splitlines() if ln][:20]}
 
 
 def sha(path: str) -> str:
