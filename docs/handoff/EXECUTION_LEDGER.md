@@ -62,3 +62,35 @@ Entry template:
 * Not executed: no further stress batches (stopped on the owner's instruction); CI result for the fix commit is recorded in the commit that follows, if any.
 * Follow-up: none needed for the product. A future change that adds background API calls to the shell should keep this test's parking.
 * State file updated: yes.
+
+### L-0004 · 2026-11-22 · session baseline (fresh container) · status: done
+* Branch: `claude/peaceful-darwin-nrquu9` at `0c8d21b`; `git fetch --prune` matched EXECUTION_STATE (open PR list not re-read: no difference
+  in refs). **Push policy for this session**: the harness allows pushes only to `claude/peaceful-darwin-nrquu9`, so each task is developed
+  on a local `feat/b-0xx-*` branch and fast-forwarded into the working branch after its gate passes (no `feat/*` branches on GitHub).
+* Environment: PostgreSQL 16 started; the `nexora` role and `nexora`, `nexora_test`, `nexora_e2e` databases did not exist in this container
+  and were created per `docs/development/local-setup.md`.
+* Verification (commands → observed): `ruff check` All checks passed · `ruff format --check` 87 files already formatted · `mypy` no issues in
+  61 source files · `pytest -p no:cacheprovider -rs` **190 passed**, 0 skipped · `alembic upgrade head` → `0004`, `alembic check` No new upgrade
+  operations detected · `tsc -b` clean · `vitest run` **99 passed** · `vite build` built · `gen:api` + `git diff --exit-code` no diff ·
+  `rm -rf node_modules/.vite && playwright test --trace off` **34 passed** (2.1 m) · `.railway` `npm run check` 3 services + database, all
+  invariants hold. Matches the handoff exactly.
+* Not executed: Docker, ShellCheck, pip-audit, webcam, live Railway (unchanged constraints).
+* State file updated: no (baseline only).
+
+### L-0005 · 2026-11-22 · B-001 · status: done
+* Branch / commits: `feat/b-001-migration-chain-guard` → fast-forwarded into `claude/peaceful-darwin-nrquu9` (commit "B-001: …").
+* Changes: `tests/unit/test_migration_chain.py` (new) — `chain_problems()` parses every file in `migrations/versions` itself (Alembic only
+  warns on a duplicate id) and reports: duplicate ids, filename ≠ revision prefix, non-four-digit ids, merge revisions, missing parents,
+  more than one base or head, branch points, gaps in the 0001… sequence, wrong `down_revision`; `0001`–`0004` pinned by SHA-256 and by the
+  table each creates (`0003` → `users`, `0004` → `hypothesis_assessments`). 10 tests incl. the H-01 collision, two heads, renumbering/swap,
+  edits. `tests/integration/test_migrations.py` (new) — upgrades `0002 → 0003 → head` in a throwaway schema (`search_path`), keeps a user
+  row created at `0003`, then `compare_metadata` = [] (alembic-check equivalent). `migrations/env.py` accepts a caller-supplied connection
+  (`config.attributes["connection"]`, the standard Alembic recipe; default path unchanged). CI "Migrations apply and match ORM" now fails
+  unless `alembic heads` prints exactly one line. `docs/development/testing.md` documents the migration rules.
+* Verification: reproduced H-01 with the real files (stoic-dijkstra's versions + quirky-ride's `0003_hypothesis_assessments.py`) →
+  checker reports "revision '0003' defined more than once", "revision '0002' has 2 children". `pytest tests/unit/test_migration_chain.py`
+  10 passed; `pytest tests/integration/test_migrations.py` 1 passed (would fail if search_path were ignored: public is already at 0004);
+  full gate: ruff clean, format 89 files, mypy clean, pytest **201 passed** 0 skipped, `alembic check` clean, `alembic heads` 1 line,
+  Playwright **34 passed** cold cache. No web code changed (tsc/vitest not re-run for this task; covered by the baseline and next task).
+* Not executed: the CI step itself (runs on push).
+* State file updated: yes.

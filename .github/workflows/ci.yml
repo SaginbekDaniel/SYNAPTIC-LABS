@@ -43,6 +43,8 @@ jobs:
           uv run mypy
       - name: Migrations apply and match ORM
         run: |
+          # Exactly one head (H-01: two branches once each added a different 0003).
+          test "$(uv run alembic heads | wc -l)" -eq 1 || { uv run alembic heads; echo "::error::multiple Alembic heads"; exit 1; }
           uv run alembic upgrade head
           uv run alembic check
       - name: Python unit + integration tests

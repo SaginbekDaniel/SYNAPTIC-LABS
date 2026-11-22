@@ -30,12 +30,12 @@ real Nginx image, ORM load/publish at 200k rows.
 
 ## Tasks
 
-* **Completed backlog tasks**: none yet. (Earlier, outside the backlog: the four fixes and the verification checklist in commit
+* **Completed backlog tasks**: B-001 (L-0005). (Earlier, outside the backlog: the four fixes and the verification checklist in commit
   `7abd9a5` — MediaPipe pre-bundling, worker network guard for all four channels, `INFO:` stderr routing, `toCanvasColor`.)
-* **Active**: none.
-* **Ready now (autonomous, no human input, dependencies met)**: B-001, B-003, B-010, B-012, B-013, B-015, B-017, B-020, B-022, B-031, B-040,
-  B-041, B-047, B-050, B-053. Recommended order: **B-001 → B-010 → B-003 → B-015 → B-012 → B-031 → B-020 → B-040/B-041**.
-* **Pending (waiting on dependencies)**: B-004, B-011, B-014, B-016, B-018*, B-019, B-021, B-023, B-024, B-032, B-033, B-042..B-046, B-052, B-054
+* **Active**: B-010.
+* **Ready now (autonomous, no human input, dependencies met)**: B-003, B-010, B-012, B-013, B-015, B-017, B-020, B-022, B-031, B-040,
+  B-041, B-047, B-050, B-053, B-021 (B-001 done). Recommended order: **B-010 → B-003 → B-015 → B-012 → B-031 → B-020 → B-040/B-041**.
+* **Pending (waiting on dependencies)**: B-004, B-011, B-014, B-016, B-018*, B-019, B-023, B-024, B-032, B-033, B-042..B-046, B-052, B-054
   (*B-018 has no dependency and may start any time).
 * **Human-gated**: B-002 (approve merges/closures), B-005 (live Railway access), B-030 (a person with a webcam), B-051 (live backups, owner
   decisions D-5), B-055 (deployment approval).
