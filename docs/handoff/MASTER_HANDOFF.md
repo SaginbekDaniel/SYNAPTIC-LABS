@@ -83,7 +83,7 @@ Playwright); *Production images + gateway smoke test* (both Docker images build,
 fails closed in four misconfigurations, Basic rollback mode works, compose stack starts, smoke test through
 the gateway incl. cookie flags and a `/network` deep-link reload with no console/CSP errors, worker stops
 gracefully); *Deployment config (Railway IaC, shell)* (IaC invariants, ShellCheck). The earlier checkpoint
-`b9943f0` (run 61) concluded **failure**; its logs were not read here (cause not diagnosed).
+`b9943f0` (run 61) concluded **failure**; its logs were not read here (cause not diagnosed). Run 65 on the docs-only handoff commit `da681c2` failed once in *Browser E2E* on an intermittent auth test race (not a product defect; fixed in the next commit — see `EXECUTION_LEDGER.md` L-0003).
 
 ### 2.3 Not executed here — and why
 

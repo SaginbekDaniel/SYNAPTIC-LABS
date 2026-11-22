@@ -16,7 +16,7 @@ re-verified, not trusted. Context: [`MASTER_HANDOFF.md`](MASTER_HANDOFF.md), que
 | Default branch | `claude/brave-dirac-c80nwq` at `ea5ca9c` (no `main`); integration line is 25 commits ahead, 0 behind |
 | Open PRs | #15, #5, #3 (superseded in effect by the integration line — owner decides, B-002) and Dependabot #6–#14 |
 | Unmerged branches without PRs | `eloquent-planck-pwnbd8`, `sharp-cannon-xkrybs`, `admiring-fermat-9fc4nx`, `great-lovelace-0gmpmi`, `peaceful-babbage-cyqrox` (see MASTER_HANDOFF §6) |
-| GitHub CI on the base | run 64 → success (3 jobs) |
+| GitHub CI | run 64 on `7abd9a5` → success; run 65 on `da681c2` → one intermittent auth E2E test failed (test race, fixed — ledger L-0003); the fix commit's run is recorded in the final report / ledger |
 
 ## Baseline verification (2026-11-22, this container)
 

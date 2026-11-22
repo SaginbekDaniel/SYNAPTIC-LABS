@@ -155,12 +155,26 @@ test("an ended session sends the analyst to sign in and back to where they were"
   await page.goto("/login");
   await signIn(page);
   await expect(page).toHaveURL("/");
-  // Let the overview finish loading first: an in-flight request would otherwise already be the one
-  // that discovers the ended session (correct behaviour, but it races the navigation below).
+  // Let the overview finish loading first.
   await page.waitForLoadState("networkidle");
+  // Whichever API request reaches the server first after the cookies are gone discovers the ended session
+  // and sends the analyst to sign in from wherever they are at that moment (correct behaviour). "Network
+  // idle" cannot guarantee that request is the one this test means: a late chained fetch or the tab-
+  // visibility re-check can land between clearing the cookies and the click, which replaces the whole shell
+  // and leaves the click on a detached link (seen in CI run 65; reproduced by dispatching one
+  // visibilitychange here). So park every API request until the click has navigated to /lab; the first
+  // request that then reaches the server is deterministically one made from /lab.
+  let release!: () => void;
+  const parked = new Promise<void>((resolve) => (release = resolve));
+  await page.route("**/api/**", async (route) => {
+    await parked;
+    await route.continue();
+  });
   // The server-side session disappears (expiry, revocation); the next API call is rejected.
   await page.context().clearCookies();
   await page.getByRole("navigation", { name: "Инструменты" }).getByRole("link", { name: "Лаборатория" }).click();
+  await expect(page).toHaveURL("/lab");
+  release();
   await expect(page).toHaveURL(/\/login\?next=%2Flab&reason=expired$/);
   await expect(page.getByTestId("login-notice")).toContainText("Сеанс завершён");
   await signIn(page);
