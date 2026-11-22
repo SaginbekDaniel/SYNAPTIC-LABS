@@ -98,3 +98,24 @@ Per-family regressions are reported regardless of the aggregate outcome.
   without peer statistics looked better; it was **not** adopted (selection on an exposed split) and is
   reported as an open question.
 * Sealed generator unchanged since the lock (sha256 `558e3595239fc4e929fed5c34546044efcf88f0e015f2842c21350446e073e9f`).
+
+## Amendment A2 — metric arithmetic only, after the sealed run (2026-11-22)
+
+Recorded **before** the sealed artifact was regenerated. No detector, policy, generator or decision-rule
+change; no new evaluation of a new candidate; `sealed-v1` remains consumed and is not used for tuning.
+
+* **Harness fix** (finding H-08, ported from `eloquent-planck-pwnbd8` `8c7f2ff`): scenario F1 was derived
+  from the already-rounded precision and recall; it is now `2tp / (2tp + fp + fn)` from counts. The harness
+  also emits the integer numerators `tp_high`, `fp_high` (banded methods) and `alerts.relevant`. F1 is a
+  secondary metric and is not part of the decision rule; every primary metric and every count is unchanged.
+  New harness sha256: `f6e9f622db30ae1cc8daadcf72a0c73dae4fcb4b462f15d4735441e70d05cc42`.
+* **Runner fix**: `scripts/run_sealed_evaluation.py` no longer strips `git status --porcelain` output before
+  recording dirty paths (provenance only). New runner sha256:
+  `4c6141fface8f257cba12ba4c44001459d892eff1c00ce3182d9ef19eda5db71`.
+* **Unchanged and verified before the rerun**: sealed generator sha256 `558e3595…446e073e9f`, candidate config
+  `1f9e2a64…bf460f1055`, baseline config `489b477a…7f194153`, bootstrap draws/seed.
+* **Procedure**: regenerate `sealed-evaluation.json` and `dev-evaluation.json` with
+  `uv run python scripts/run_sealed_evaluation.py --split sealed|dev` on a clean tree, then compare old and new
+  artifacts field by field. Acceptance: identical counts, alerts, bootstrap intervals and decision; only F1,
+  the new numerator fields, latency/runtime and provenance (commit, timestamp, harness hash) may differ. Any
+  other difference is reported as a deviation and the old artifact is kept.
