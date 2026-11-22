@@ -37,20 +37,20 @@
 
 | Method | Scen. precision | Scen. recall | F1 | FPR | High-band recall | High-band FPR | Alerts / dataset | Alert precision | P@5 | Recall@5 | P@10 | Recall@10 | Median ms |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| NEXORA v2 | 0.544 | 0.768 | 0.637 | 0.423 | 0.625 | 0.106 | 7.850 | 0.319 | 0.492 | 0.700 | 0.418 | 0.812 | 83.500 |
+| NEXORA v2 | 0.544 | 0.768 | 0.637 | 0.424 | 0.625 | 0.106 | 7.850 | 0.318 | 0.492 | 0.700 | 0.418 | 0.812 | 83.500 |
 | NEXORA v1 | 0.465 | 0.589 | 0.520 | 0.447 | 0.429 | 0.435 | 5.850 | 0.333 | 0.402 | 0.500 | 0.433 | 0.646 | 58.000 |
-| B4 Structure + temporal | 0.581 | 0.768 | 0.661 | 0.365 | 0.643 | 0.329 | 7.300 | 0.308 | 0.378 | 0.521 | 0.426 | 0.800 | 70.800 |
+| B4 Structure + temporal | 0.581 | 0.768 | 0.662 | 0.365 | 0.643 | 0.329 | 7.300 | 0.308 | 0.378 | 0.521 | 0.426 | 0.800 | 70.800 |
 | B3 Structure only | 0.448 | 1.000 | 0.619 | 0.812 | — | — | 51.350 | 0.065 | 0.120 | 0.237 | 0.125 | 0.438 | 75.700 |
 | B1 Monitoring rules | 0.435 | 0.893 | 0.585 | 0.765 | — | — | 37.050 | 0.205 | 0.330 | 0.500 | 0.385 | 0.758 | 1.800 |
-| B0 Turnover ranking | 0.412 | 0.589 | 0.485 | 0.553 | — | — | 7.850 | 0.433 | 0.340 | 0.442 | 0.425 | 0.683 | 4.200 |
+| B0 Turnover ranking | 0.413 | 0.589 | 0.485 | 0.553 | — | — | 7.850 | 0.433 | 0.340 | 0.442 | 0.425 | 0.683 | 4.200 |
 | B2 PageRank | 0.116 | 0.089 | 0.101 | 0.447 | — | — | 7.850 | 0.038 | 0.000 | 0.000 | 0.040 | 0.083 | 34.500 |
 
 ## Results — holdout
 
 | Method | Scen. precision | Scen. recall | F1 | FPR | High-band recall | High-band FPR | Alerts / dataset | Alert precision | P@5 | Recall@5 | P@10 | Recall@10 | Median ms |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| NEXORA v2 | 0.603 | 0.793 | 0.685 | 0.375 | 0.641 | 0.062 | 9.500 | 0.347 | 0.483 | 0.736 | 0.420 | 0.872 | 86.200 |
-| NEXORA v1 | 0.487 | 0.609 | 0.541 | 0.461 | 0.359 | 0.438 | 7.300 | 0.310 | 0.313 | 0.458 | 0.364 | 0.664 | 60.600 |
+| NEXORA v2 | 0.603 | 0.793 | 0.685 | 0.375 | 0.641 | 0.063 | 9.500 | 0.347 | 0.483 | 0.736 | 0.420 | 0.872 | 86.200 |
+| NEXORA v1 | 0.487 | 0.609 | 0.541 | 0.461 | 0.359 | 0.438 | 7.300 | 0.311 | 0.313 | 0.458 | 0.364 | 0.664 | 60.600 |
 | B4 Structure + temporal | 0.629 | 0.793 | 0.702 | 0.336 | 0.652 | 0.281 | 8.830 | 0.332 | 0.379 | 0.600 | 0.387 | 0.833 | 81.600 |
 | B3 Structure only | 0.492 | 1.000 | 0.659 | 0.742 | — | — | 57.930 | 0.072 | 0.220 | 0.306 | 0.163 | 0.431 | 91.100 |
 | B1 Monitoring rules | 0.461 | 0.957 | 0.622 | 0.805 | — | — | 42.570 | 0.279 | 0.327 | 0.436 | 0.470 | 0.717 | 2.100 |
@@ -84,49 +84,49 @@ Suspicious families: share flagged (higher is better). Legitimate families: shar
 
 | Variant | Scen. recall | FPR | High-band FPR | Alert precision | P@5 | Recall@5 |
 |---|---:|---:|---:|---:|---:|---:|
-| full | 0.768 | 0.423 | 0.106 | 0.319 | 0.492 | 0.700 |
+| full | 0.768 | 0.424 | 0.106 | 0.318 | 0.492 | 0.700 |
 | minus_temporal | 0.518 | 0.624 | 0.024 | 0.103 | 0.230 | 0.362 |
 | minus_peer | 0.768 | 0.365 | 0.329 | 0.308 | 0.378 | 0.521 |
 | minus_fan_out_cycle | 0.589 | 0.329 | 0.082 | 0.364 | 0.486 | 0.575 |
 | minus_returning_feeder_rule | 0.768 | 0.541 | 0.224 | 0.299 | 0.448 | 0.675 |
-| minus_coverage_abstention | 0.839 | 0.423 | 0.106 | 0.335 | 0.502 | 0.725 |
+| minus_coverage_abstention | 0.839 | 0.424 | 0.106 | 0.335 | 0.502 | 0.725 |
 
 ## Ablations — holdout
 
 | Variant | Scen. recall | FPR | High-band FPR | Alert precision | P@5 | Recall@5 |
 |---|---:|---:|---:|---:|---:|---:|
-| full | 0.793 | 0.375 | 0.062 | 0.347 | 0.483 | 0.736 |
+| full | 0.793 | 0.375 | 0.063 | 0.347 | 0.483 | 0.736 |
 | minus_temporal | 0.554 | 0.609 | 0.055 | 0.140 | 0.386 | 0.450 |
 | minus_peer | 0.793 | 0.336 | 0.281 | 0.332 | 0.379 | 0.600 |
 | minus_fan_out_cycle | 0.630 | 0.297 | 0.047 | 0.352 | 0.419 | 0.547 |
 | minus_returning_feeder_rule | 0.793 | 0.539 | 0.227 | 0.321 | 0.440 | 0.686 |
-| minus_coverage_abstention | 0.870 | 0.375 | 0.062 | 0.363 | 0.496 | 0.769 |
+| minus_coverage_abstention | 0.870 | 0.375 | 0.063 | 0.363 | 0.496 | 0.769 |
 
 ## Robustness — validation
 
 | Perturbation | Identical output | Scen. recall | FPR | High-band FPR | P@5 | Median ms |
 |---|---|---:|---:|---:|---:|---:|
-| (none) | — | 0.768 | 0.423 | 0.106 | 0.492 | 110.900 |
-| row order shuffled (out-of-order arrival) | yes | 0.768 | 0.423 | 0.106 | 0.492 | 85.300 |
-| 5% of rows re-sent as exact duplicates | yes | 0.768 | 0.423 | 0.106 | 0.492 | 76.800 |
+| (none) | — | 0.768 | 0.424 | 0.106 | 0.492 | 110.900 |
+| row order shuffled (out-of-order arrival) | yes | 0.768 | 0.424 | 0.106 | 0.492 | 85.300 |
+| 5% of rows re-sent as exact duplicates | yes | 0.768 | 0.424 | 0.106 | 0.492 | 76.800 |
 | 10% of rows missing at random | no | 0.607 | 0.400 | 0.071 | 0.410 | 78.200 |
-| every amount perturbed by up to +/-1% | no | 0.768 | 0.423 | 0.129 | 0.472 | 104.300 |
+| every amount perturbed by up to +/-1% | no | 0.768 | 0.424 | 0.129 | 0.472 | 104.300 |
 | intraday timestamps removed (day precision only) | no | 0.786 | 0.435 | 0.094 | 0.492 | 80.500 |
 | 10% of accounts declared at the collection boundary | no | 0.732 | 0.400 | 0.106 | 0.423 | 82.400 |
 | twice the unlabelled background volume | no | 0.786 | 0.435 | 0.071 | 0.477 | 74.500 |
-| four times the unlabelled background volume | no | 0.786 | 0.423 | 0.071 | 0.547 | 79.500 |
+| four times the unlabelled background volume | no | 0.786 | 0.424 | 0.071 | 0.547 | 79.500 |
 
 ## Threshold sensitivity — validation
 
 | Change | Scen. recall | FPR | High-band FPR | P@5 |
 |---|---:|---:|---:|---:|
-| `funnel.min_feeder_share=0.4` | 0.768 | 0.423 | 0.106 | 0.435 |
-| `funnel.min_feeder_share=0.6` | 0.768 | 0.423 | 0.106 | 0.482 |
+| `funnel.min_feeder_share=0.4` | 0.768 | 0.424 | 0.106 | 0.435 |
+| `funnel.min_feeder_share=0.6` | 0.768 | 0.424 | 0.106 | 0.482 |
 | `temporal.max_hop_lag_days=5` | 0.714 | 0.365 | 0.059 | 0.492 |
 | `temporal.max_hop_lag_days=10` | 0.875 | 0.471 | 0.129 | 0.455 |
 | `fan_out.min_recipients=4` | 0.768 | 0.447 | 0.118 | 0.433 |
-| `fan_out.min_recipients=6` | 0.732 | 0.377 | 0.106 | 0.488 |
-| `peer.fence_iqr_multiplier=1.0` | 0.768 | 0.423 | 0.106 | 0.492 |
+| `fan_out.min_recipients=6` | 0.732 | 0.376 | 0.106 | 0.488 |
+| `peer.fence_iqr_multiplier=1.0` | 0.768 | 0.424 | 0.106 | 0.492 |
 | `peer.fence_iqr_multiplier=2.0` | 0.768 | 0.412 | 0.106 | 0.498 |
 
 ## Error examples — holdout, NEXORA v2

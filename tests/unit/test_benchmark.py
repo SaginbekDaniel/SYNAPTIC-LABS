@@ -254,3 +254,67 @@ def test_committed_benchmark_artifact_validates_against_the_api_schema():
     root = Path(__file__).resolve().parents[2]
     assert json.loads((root / "benchmarks/results/bench-v1.json").read_text())["schema_version"] == 1
     EvaluationReport.model_validate(load_report("benchmarks/results/bench-v1.json"))
+
+
+# -- published arithmetic (H-08, backlog B-003) ---------------------------------------------------
+_ARTIFACTS = ("bench-v1.json", "dev-evaluation.json", "sealed-evaluation.json")
+
+
+def _summaries(node, path=""):
+    """Every ``summarize`` result inside an artifact (results, ablations, robustness, sensitivity)."""
+    if isinstance(node, dict):
+        if isinstance(node.get("scenario"), dict) and "tp" in node["scenario"]:
+            yield path, node
+        for k, v in node.items():
+            yield from _summaries(v, f"{path}.{k}")
+    elif isinstance(node, list):
+        for i, v in enumerate(node):
+            yield from _summaries(v, f"{path}[{i}]")
+
+
+@pytest.mark.parametrize("name", _ARTIFACTS)
+def test_every_committed_ratio_recomputes_from_its_counts(name):
+    import json
+    from pathlib import Path
+
+    from nexora.evaluation.benchmark import _ratio
+
+    artifact = json.loads((Path(__file__).resolve().parents[2] / "benchmarks" / "results" / name).read_text())
+    found = list(_summaries(artifact))
+    assert len(found) >= 10
+    for path, s in found:
+        sc, al = s["scenario"], s["alerts"]
+        tp, fp, fn, tn = sc["tp"], sc["fp"], sc["fn"], sc["tn"]
+        assert (tp + fn, fp + tn) == (sc["suspicious"], sc["legitimate"]), path
+        expected = {
+            "precision": _ratio(tp, tp + fp),
+            "recall": _ratio(tp, tp + fn),
+            "f1": _ratio(2 * tp, 2 * tp + fp + fn),
+            "fpr": _ratio(fp, fp + tn),
+        }
+        assert {k: sc[k] for k in expected} == expected, path
+        if sc["high_band_fpr"] is not None:
+            assert sc["high_band_recall"] == _ratio(sc["tp_high"], tp + fn), path
+            assert sc["high_band_fpr"] == _ratio(sc["fp_high"], fp + tn), path
+        assert al["precision"] == _ratio(al["relevant"], al["flagged"]), path
+
+
+def test_report_rounds_count_backed_ratios_once():
+    from scripts.run_benchmark import _r, _ratios
+
+    # 8/128 = 0.0625 exactly: half-up gives 0.063 (formatting the float 0.0625 gives 0.062).
+    assert _r(8, 128, 0.0625) == "0.063"
+    # 36/85 = 0.42353 is stored as 0.4235; re-rounding that would print 0.423.
+    assert _r(36, 85, 0.4235) == "0.424"
+    assert _r(None, 85, 0.4235) == f"{0.4235:.3f}"  # artifact without numerators: the stored value, as before
+    assert _r(0, 0, None) == "—"
+    summary = {
+        "scenario": {
+            "tp": 73, "fp": 48, "fn": 19, "suspicious": 92, "legitimate": 128, "tp_high": 59, "fp_high": 8,
+            "precision": 0.6033, "recall": 0.7935, "f1": 0.6854, "fpr": 0.375,
+            "high_band_recall": 0.6413, "high_band_fpr": 0.0625,
+        },
+        "alerts": {"flagged": 285, "relevant": 99, "precision": 0.3474},
+    }  # fmt: skip
+    r = _ratios(summary)
+    assert (r["recall"], r["f1"], r["high_band_fpr"]) == ("0.793", "0.685", "0.063")

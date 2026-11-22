@@ -21,6 +21,7 @@ import platform
 import subprocess
 import sys
 import time
+from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 from typing import Any
 
@@ -195,6 +196,32 @@ def _f(v: Any) -> str:
     return str(v)
 
 
+def _r(num: int | None, den: int | None, stored: Any) -> str:
+    """A count-backed ratio at 3 decimals, rounded once from its counts (half up, as on the Evaluation screen).
+
+    Re-rounding the artifact's 4-decimal value can give a wrong digit (H-08); artifacts written before the
+    numerators were emitted fall back to the stored ratio.
+    """
+    if num is None or not den:
+        return _f(stored)
+    return str((Decimal(num) / Decimal(den)).quantize(Decimal("0.001"), rounding=ROUND_HALF_UP))
+
+
+def _ratios(summary: dict[str, Any]) -> dict[str, str]:
+    """Every count-backed ratio of one ``summarize`` result, rendered once from its counts."""
+    sc, al = summary["scenario"], summary["alerts"]
+    tp, fp, fn, susp, legit = sc["tp"], sc["fp"], sc["fn"], sc["suspicious"], sc["legitimate"]
+    return {
+        "precision": _r(tp, tp + fp, sc["precision"]),
+        "recall": _r(tp, susp, sc["recall"]),
+        "f1": _r(2 * tp, 2 * tp + fp + fn, sc["f1"]),
+        "fpr": _r(fp, legit, sc["fpr"]),
+        "high_band_recall": _r(sc.get("tp_high"), susp, sc["high_band_recall"]),
+        "high_band_fpr": _r(sc.get("fp_high"), legit, sc["high_band_fpr"]),
+        "alert_precision": _r(al.get("relevant"), al["flagged"], al["precision"]),
+    }
+
+
 def render(a: dict[str, Any]) -> str:
     labels = {m["id"]: m["label"] for m in a["methods"]}
     lines = [
@@ -233,11 +260,11 @@ def render(a: dict[str, Any]) -> str:
             "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
         ]
         for mid, s in res.items():
-            sc, q = s["scenario"], s["queue"]
+            q, r = s["queue"], _ratios(s)
             lines.append(
-                f"| {labels.get(mid, mid)} | {_f(sc['precision'])} | {_f(sc['recall'])} | {_f(sc['f1'])} | "
-                f"{_f(sc['fpr'])} | {_f(sc['high_band_recall'])} | {_f(sc['high_band_fpr'])} | "
-                f"{_f(s['alerts']['per_dataset'])} | {_f(s['alerts']['precision'])} | {_f(q['p_at_5'])} | "
+                f"| {labels.get(mid, mid)} | {r['precision']} | {r['recall']} | {r['f1']} | {r['fpr']} | "
+                f"{r['high_band_recall']} | {r['high_band_fpr']} | {_f(s['alerts']['per_dataset'])} | "
+                f"{r['alert_precision']} | {_f(q['p_at_5'])} | "
                 f"{_f(q['recall_at_5'])} | {_f(q['p_at_10'])} | {_f(q['recall_at_10'])} | "
                 f"{_f(s['latency_ms']['median'])} |"
             )
@@ -268,28 +295,28 @@ def render(a: dict[str, Any]) -> str:
             "|---|---:|---:|---:|---:|---:|---:|",
         ]
         for vid, s in abl.items():
-            sc, q = s["scenario"], s["queue"]
+            q, r = s["queue"], _ratios(s)
             lines.append(
-                f"| {vid} | {_f(sc['recall'])} | {_f(sc['fpr'])} | {_f(sc['high_band_fpr'])} | "
-                f"{_f(s['alerts']['precision'])} | {_f(q['p_at_5'])} | {_f(q['recall_at_5'])} |"
+                f"| {vid} | {r['recall']} | {r['fpr']} | {r['high_band_fpr']} | "
+                f"{r['alert_precision']} | {_f(q['p_at_5'])} | {_f(q['recall_at_5'])} |"
             )
     if "robustness" in a:
         base = a["robustness"]["base"]
+        rb = _ratios(base)
         lines += [
             "",
             "## Robustness — validation",
             "",
             "| Perturbation | Identical output | Scen. recall | FPR | High-band FPR | P@5 | Median ms |",
             "|---|---|---:|---:|---:|---:|---:|",
-            f"| (none) | — | {_f(base['scenario']['recall'])} | {_f(base['scenario']['fpr'])} | "
-            f"{_f(base['scenario']['high_band_fpr'])} | {_f(base['queue']['p_at_5'])} | "
+            f"| (none) | — | {rb['recall']} | {rb['fpr']} | {rb['high_band_fpr']} | {_f(base['queue']['p_at_5'])} | "
             f"{_f(base['latency_ms']['median'])} |",
         ]
         for p in a["robustness"]["perturbations"]:
-            s = p["summary"]
+            s, r = p["summary"], _ratios(p["summary"])
             lines.append(
                 f"| {p['description']} | {'yes' if p['identical_to_base'] else 'no'} | "
-                f"{_f(s['scenario']['recall'])} | {_f(s['scenario']['fpr'])} | {_f(s['scenario']['high_band_fpr'])} | "
+                f"{r['recall']} | {r['fpr']} | {r['high_band_fpr']} | "
                 f"{_f(s['queue']['p_at_5'])} | {_f(s['latency_ms']['median'])} |"
             )
         lines += [
@@ -300,10 +327,9 @@ def render(a: dict[str, Any]) -> str:
             "|---|---:|---:|---:|---:|",
         ]
         for v in a["sensitivity"]["variants"]:
-            s = v["summary"]
+            s, r = v["summary"], _ratios(v["summary"])
             lines.append(
-                f"| `{v['id']}` | {_f(s['scenario']['recall'])} | {_f(s['scenario']['fpr'])} | "
-                f"{_f(s['scenario']['high_band_fpr'])} | {_f(s['queue']['p_at_5'])} |"
+                f"| `{v['id']}` | {r['recall']} | {r['fpr']} | {r['high_band_fpr']} | {_f(s['queue']['p_at_5'])} |"
             )
     if "examples" in a:
         lines += ["", "## Error examples — holdout, NEXORA v2", ""]
@@ -332,7 +358,16 @@ def main() -> None:
     parser.add_argument("--splits", default="dev,validation,holdout")
     parser.add_argument("--out", default=str(ROOT / OUTPUTS[0]))
     parser.add_argument("--report", default=str(ROOT / OUTPUTS[1]))
+    parser.add_argument(
+        "--render-only",
+        action="store_true",
+        help="re-render the report from the existing artifact (--out) without running the benchmark",
+    )
     args = parser.parse_args()
+    if args.render_only:
+        Path(args.report).write_text(render(json.loads(Path(args.out).read_text(encoding="utf-8"))), encoding="utf-8")
+        print(f"rendered {args.report} from {args.out}")
+        return
     artifact = run([s.strip() for s in args.splits.split(",") if s.strip()])
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)

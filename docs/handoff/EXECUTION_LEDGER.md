@@ -118,3 +118,34 @@ Entry template:
 * Not executed: Docker compose stack (no daemon).
 * Decision assumed: D-4 default (off everywhere except an explicit local opt-in).
 * State file updated: yes.
+
+### L-0007 · 2026-11-22 · B-003 · status: done
+* Branch / commits: `feat/b-003-benchmark-arithmetic` → fast-forwarded into `claude/peaceful-darwin-nrquu9`. Cherry-picked `65e3894`
+  (sharp-cannon, screen rounding), `8c7f2ff` (F1 from counts + numerators), `1867d01` (dirty-tree fix); the artifact half of `d084a97` was
+  **not** cherry-picked — regenerated instead. Then: runner porcelain fix, artifact regeneration commits, amendment A2, renderer fix.
+* Conflicts resolved: `Evaluation.tsx` — kept the integration line's distinct-network P@5 headline (audit L-02) inside the new count-based
+  `methodMetrics` model (added `MethodMetrics.p5Distinct`); `tests/unit/test_benchmark.py` — union of both assertions (numerators +
+  `per_flagged_network` / `networks_with_duplicates`); `docs/assets/screenshots/evaluation.webp` — the cherry-picked image came from another UI
+  lineage, so it was regenerated (below).
+* Artifacts (scripts only, clean trees): `run_benchmark.py` at `3f87b95` (92.6 s); A2 committed **before** the sealed rerun;
+  `run_sealed_evaluation.py --split sealed` at `e113df7` (88.6 s), `--split dev` (39.9 s). Field-by-field diff (scratch script) old → new, all
+  three: **0 integer/count changes**; sealed and dev `decision`, `bootstrap`, `examples` identical; F1 changed by ≤ 1e-4 in 9 (bench, incl.
+  holdout v2 0.6855 → 0.6854), 3 (sealed: B3, B1, B0) and 4 (dev) summaries; new `tp_high`/`fp_high`/`relevant`; latency, platform, timestamps,
+  commit, harness hash differ. Generator and candidate/baseline config hashes verified unchanged before the rerun.
+* New defect found and fixed (H-08 class): `scripts/run_benchmark.py` rendered `docs/EVALUATION.md` by re-rounding stored 4-decimal ratios to 3
+  decimals; **18 table rows** carried a wrong third decimal (e.g. validation v2 FPR 36/85 = 0.42353 shown 0.423 → 0.424; holdout v2 high-band FPR
+  8/128 = 0.0625 shown 0.062 → 0.063 half-up; validation v2 alert precision 50/157 = 0.31847 shown 0.319 → 0.318). Count-backed ratios now
+  render once from counts (Decimal, half-up, as on the screen); added `--render-only` to re-render from the committed artifact.
+  Also fixed the same porcelain-strip bug in `run_sealed_evaluation.py` as `1867d01` fixed in `run_benchmark.py`.
+* Docs: README 79.4 % → 79.3 % (from the cherry-pick); `docs/evaluation/RESULTS.md` A2 note + provenance (tables unchanged at 3 decimals;
+  median-ms columns marked as original-run values); `EXPERIMENT_PROTOCOL.md` amendment A2. README table re-checked against counts: all match.
+  README screenshot regenerated on the dev stack (same 1440×900 viewport, `demo-v1 · seed 2026`, 2× → 1600×1000 webp): it showed 79,4 %, now
+  79,3 %. Not produced through the Docker gateway smoke pipeline (no Docker here).
+* Tests: Python `test_every_committed_ratio_recomputes_from_its_counts[bench-v1|dev|sealed]` (fails on all three old artifacts, passes now) and
+  `test_report_rounds_count_backed_ratios_once`; vitest artifact-consistency test from `8c7f2ff` failed on the old artifact, passes now;
+  `evaluation.spec.ts` asserts the headline reads `79,3 %`.
+* Verification: ruff clean, format 89 files, mypy clean, pytest **210 passed** 0 skipped; gen:api in sync (schema change from `8c7f2ff` already
+  carried its generated files); tsc clean; vitest **105 passed**; vite build ok; Playwright cold cache **34 passed**; visual check of
+  `/analytics/benchmark` at 1440 and 390 px, dark and light: no horizontal overflow, empty console-error list (scratch spec, deleted).
+* Not executed: Docker smoke screenshot pipeline. Pitch numbers (`apps/pitch`) untouched — B-004.
+* State file updated: yes.
