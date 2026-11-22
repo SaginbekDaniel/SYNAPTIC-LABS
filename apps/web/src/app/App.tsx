@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from "react";
-import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router";
 import { Shell } from "../components/layout/Shell";
 import { Loading } from "../components/ui";
 import { AlertsQueue } from "../features/alerts/AlertsQueue";

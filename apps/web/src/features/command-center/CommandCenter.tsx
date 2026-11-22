@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router";
 import { useDataset } from "../../app/dataset";
 import { ActivityChart, SeriesLegend, type ActivitySeries } from "../../components/charts/ActivityChart";
 import { Donut } from "../../components/charts/Donut";

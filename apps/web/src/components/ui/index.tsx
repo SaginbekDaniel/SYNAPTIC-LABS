@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import type { ApiError } from "../../lib/api";
 import { formatEventTime, formatMoney, shortId } from "../../lib/format";
 import { t, tDynamic } from "../../lib/i18n";

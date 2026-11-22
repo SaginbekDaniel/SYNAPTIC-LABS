@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { useDataset } from "../../app/dataset";
 import { BandBadge, Disclosure, Empty, ErrorState, Icon, Loading, PageHeader, Panel } from "../../components/ui";
 import { api, ApiError } from "../../lib/api";

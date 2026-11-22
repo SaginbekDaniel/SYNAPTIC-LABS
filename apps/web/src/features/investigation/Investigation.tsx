@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router";
 import { SegmentedMeter } from "../../components/charts/Progress";
 import { GraphCanvas, GraphLegend, type GraphEdgeSpec, type NodeRole } from "../../components/graph/GraphCanvas";
 import { AccountId, BandBadge, CaseStatusBadge, Disclosure, ErrorState, EvidenceBadge, Icon, Loading, Panel, TxTable } from "../../components/ui";

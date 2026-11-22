@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from "react";
-import { Navigate, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { Navigate, useLocation, useNavigate, useSearchParams } from "react-router";
 import { safeNext, signIn, useAuth } from "../../app/auth";
 import { ThemeSwitch } from "../../components/layout/ThemeSwitch";
 import { Icon } from "../../components/ui/icons";

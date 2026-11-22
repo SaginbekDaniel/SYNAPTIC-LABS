@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router";
 import { useDataset } from "../../app/dataset";
 import { GraphCanvas, type GraphEdgeSpec } from "../../components/graph/GraphCanvas";
 import type { GraphController } from "../../components/graph/controller";

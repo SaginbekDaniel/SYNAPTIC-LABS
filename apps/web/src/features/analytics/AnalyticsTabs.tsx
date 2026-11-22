@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink } from "react-router";
 import { t } from "../../lib/i18n";
 
 /** Analytics sub-views: operational dataset analytics and the offline benchmark. */

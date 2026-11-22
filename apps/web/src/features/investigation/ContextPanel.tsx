@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import type { GraphEdgeSpec, NodeRole } from "../../components/graph/GraphCanvas";
 import { AccountId, ErrorState, Icon, Loading, Money } from "../../components/ui";
 import { api } from "../../lib/api";

@@ -171,3 +171,18 @@ Entry template:
   stays plain text — a separate one-shot process configured by `alembic.ini`; the gateway keeps Nginx's format.
 * Follow-up: B-016 can now log job events as structured `extra=` fields.
 * State file updated: yes.
+
+### L-0009 · 2026-11-22 · B-012 · status: done
+* Branch / commits: `feat/b-012-react-router-v7` → fast-forwarded into `claude/peaceful-darwin-nrquu9`.
+* Changes: `react-router-dom@^6.30.6` replaced by `react-router@^7.18.6` (v7's canonical package; `react-router-dom` is only a compatibility
+  re-export), imports in 14 files rewritten `react-router-dom` → `react-router`. No code changes needed: the app uses declarative `BrowserRouter`
+  routing only (the data-router future flags do not apply); the one splat route navigates to an absolute path, and no relative `to`/`navigate`
+  exists (grep), so `v7_relativeSplatPath` changes nothing; navigation state updates are now wrapped in `startTransition` (v7 default).
+  Dependabot PR #10 (react-router-dom 7.18.5) is superseded by this change — left for the owner to close.
+* Verification: `npm audit --omit=dev` before → 2 moderate (GHSA-wrjc-x8rr-h8h6 open redirect, GHSA-337j-9hxr-rhxg SSR); after → **found 0
+  vulnerabilities**. `tsc -b` clean; vitest **105**; `vite build` ok — main chunk 296.58 → 312.93 kB (gzip 99.60 → 105.34 kB, +5.7 kB: v7 core);
+  Playwright cold cache **34 passed** (incl. the sign-in return-to flows and graph URL filters surviving reload). Scratch spec (deleted): every
+  route, the `/evaluation` redirect, the `*` fallback, rail navigation into three lazy chunks and browser back — **zero console warnings or
+  errors** (the v6 future-flag warnings are gone).
+* Not executed: production-bundle run through the gateway stand-in (CI's image job covers the real gateway).
+* State file updated: yes.
