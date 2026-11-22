@@ -1,5 +1,9 @@
 # Zencoder task list — Graph Workspace & Gesture Control
 
+> **SUPERSEDED by [`EXECUTION_BACKLOG.md`](EXECUTION_BACKLOG.md) (kept for history).** Mapping: T1→B-002, T2→B-030, T3→B-050, T4+T5→B-052, T6→B-012,
+> T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-055. **T1 option (a) below ("merge #15 → #3 → #5 as they stand") is unsafe**: PR #15 and PR #3 both
+> define migration `0003` — PR #3's must be renumbered to `0004` first (MASTER_HANDOFF H-01).
+
 Context: [`ZENCODER_HANDOFF.md`](ZENCODER_HANDOFF.md). Baseline: branch `graph-workspace-wip`, all
 automated gates green (pytest 190, vitest 99, Playwright 34, build, tsc, mypy, ruff, alembic check,
 OpenAPI drift, IaC check). Every task below must end with the full gate (Handoff §14) passing and
@@ -18,7 +22,7 @@ Legend — **P0** blocks merge/release, **P1** should land before release, **P2*
 * **Depends on**: none. **Blocks**: T11.
 * **Affected**: repository branches/PRs only.
 * **Requirements**
-  1. Present the owner with the two options: (a) merge #15 → #3 → #5 first, then open the graph PR
+  1. Present the owner with the two options: (a) merge #15 → #3 → #5 first (UNSAFE as they stand: renumber #3's migration to 0004 first), then open the graph PR
      (diff = `ff40b72` + `b9943f0` + later commits); (b) one stacked PR, described as such.
   2. Do not merge anything yourself without explicit approval; never force-push shared branches.
   3. If the default branch moved, merge it into a feature branch (no rebase of shared history) and
@@ -67,7 +71,7 @@ Legend — **P0** blocks merge/release, **P1** should land before release, **P2*
 * **Requirements**: document consent flow, local-only processing, no storage, worker network guard
   (all four channels), CSP directives (`wasm-unsafe-eval`, `worker-src 'self'`, `connect-src 'self'`),
   `Permissions-Policy camera=(self)`, asset pinning and the upgrade procedure for MediaPipe (version
-  + three hashes in `scripts/gesture-assets.mjs`), the build-time egress requirement, and the
+  + three hashes in `apps/web/scripts/gesture-assets.mjs`), the build-time egress requirement, and the
   limitation that recognition quality is unverified until T2 is done.
 * **Test criteria**: every statement traceable to code or an executed test; links resolve
   (`grep` the referenced paths).
@@ -89,7 +93,7 @@ Legend — **P0** blocks merge/release, **P1** should land before release, **P2*
 ## T6 (P1) — Upgrade `react-router-dom` to v7 (advisory B1)
 
 * **Depends on**: none; do on its own branch. Dependabot PR #10 exists (7.18.5; audit asks ≥ 7.18.6).
-* **Affected**: `apps/web/package.json`, `package-lock.json`, `src/app/App.tsx`, every
+* **Affected**: `apps/web/package.json`, `package-lock.json`, `apps/web/src/app/App.tsx`, every
   `useSearchParams`/`Link`/`useNavigate` user (graph workspace URL filters, queue filters, auth
   return-to).
 * **Requirements**: follow the v6→v7 upgrade guide (enable future flags first, then bump); keep URL
@@ -101,7 +105,7 @@ Legend — **P0** blocks merge/release, **P1** should land before release, **P2*
 
 * **Depends on**: T6 recommended first (smaller change). Dependabot PRs #11, #13 exist.
 * **Affected**: `apps/web/package.json`, `vite.config.ts` (worker format, `optimizeDeps`,
-  `test` block), `scripts/gesture-assets.mjs` (Vite plugin hooks `configResolved`/`buildStart`),
+  `test` block), `apps/web/scripts/gesture-assets.mjs` (Vite plugin hooks `configResolved`/`buildStart`),
   `playwright.config.ts` (dev server command).
 * **Requirements**
   1. Keep `optimizeDeps.include: ["@mediapipe/tasks-vision"]` (or the Vite 8 equivalent) — its
@@ -113,8 +117,8 @@ Legend — **P0** blocks merge/release, **P1** should land before release, **P2*
 
 ## T8 (P2) — Graph stage visible above the fold
 
-* **Affected**: `apps/web/src/features/graph/GraphWorkspace.tsx`, `src/styles/features.css`,
-  `src/styles/layout.css` (tokens only).
+* **Affected**: `apps/web/src/features/graph/GraphWorkspace.tsx`, `apps/web/src/styles/features.css`,
+  `apps/web/src/styles/layout.css` (tokens only).
 * **Requirements**: at 1440×900 the graph stage starts within the first viewport (e.g. collapse the
   filter panel by default when no filter is active, or move filters into a compact toolbar /
   side drawer). Keep: filters open automatically when one is active; mobile graph-first order;

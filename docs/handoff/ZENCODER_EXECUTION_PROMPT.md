@@ -1,5 +1,8 @@
 # Zencoder execution prompt
 
+> **SUPERSEDED by [`NEXT_SESSION_PROMPT.md`](NEXT_SESSION_PROMPT.md) (kept for history).** The new prompt adds branch recovery, an execution queue,
+> a per-task loop, an execution ledger and the corrected migration/PR guidance (MASTER_HANDOFF H-01).
+
 > **Transfer status:** no Zencoder integration (CLI, MCP server, plugin or connector) was available
 > in the environment that prepared this handoff, so nothing was transferred automatically. To start,
 > open the repository in Zencoder and paste everything below the line as the first message.
@@ -55,7 +58,7 @@ NEXORA_DATABASE_URL=postgresql+psycopg://nexora:nexora@localhost:5432/nexora uv 
 cd apps/web && npm ci
 npx tsc -b && npx vitest run                    # expect 99 passed
 npx vite build                                  # downloads + hash-verifies the hand model once
-npm run gen:api && git diff --exit-code -- openapi.json src/lib/api-types.ts
+npm run gen:api && git -C "$(git rev-parse --show-toplevel)" diff --exit-code -- apps/web/openapi.json apps/web/src/lib/api-types.ts
 npx playwright install chromium
 rm -rf node_modules/.vite && npx playwright test --trace off   # expect 34 passed
 ```

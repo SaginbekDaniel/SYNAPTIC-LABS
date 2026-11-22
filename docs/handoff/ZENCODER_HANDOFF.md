@@ -1,5 +1,14 @@
 # NEXORA AI — Graph Workspace & Gesture Control: handoff to Zencoder
 
+> **SUPERSEDED — kept for history. Use [`MASTER_HANDOFF.md`](MASTER_HANDOFF.md) (2026-11-22), [`EXECUTION_BACKLOG.md`](EXECUTION_BACKLOG.md) and
+> [`NEXT_SESSION_PROMPT.md`](NEXT_SESSION_PROMPT.md).** Corrections found when this document was re-verified:
+> 1. The Docker image build, compose smoke test and ShellCheck listed as "not executed" in §10 **are** covered by GitHub CI run 64 on `7abd9a5`
+>    (all jobs success); they still did not run in the build container.
+> 2. The advice in §6 and T1 to merge PRs #15 → #3 → #5 "as they stand" is **unsafe**: #15 and #3 both define migration revision `0003`
+>    (two Alembic heads). See MASTER_HANDOFF H-01 and B-001/B-002.
+> 3. It omits five branches with unmerged work, including the benchmark-arithmetic fixes and the README/pitch redesign (MASTER_HANDOFF §6, H-08, H-22).
+> 4. Task numbers T1–T11 are now B-002, B-030, B-050, B-052, B-052, B-012, B-013, B-022, B-053/B-014, B-004, B-055 (see the mapping in the backlog).
+
 Prepared 2026-11-21 from a fresh clone, by re-running every check listed in §10 in a Linux
 container (Python 3.13, Node 22, PostgreSQL 16, Chromium via Playwright). Nothing below is copied
 from earlier reports without being re-verified; anything not executed is marked **not executed**.
@@ -41,7 +50,7 @@ do, and the integration of the stacked open PRs (see §6).
 |---|---|---|
 | Web | React 18, TypeScript 5.9, Vite 5.4, react-router 6, Cytoscape.js 3.35 | `apps/web`; served in production by unprivileged Nginx (gateway) |
 | Gestures | `@mediapipe/tasks-vision` **1.2.2 (pinned exactly)** in a module Web Worker | WASM + `hand_landmarker.task` self-hosted under `/vendor/mediapipe/`, SHA-256 pinned |
-| API | FastAPI, Pydantic v2 | OpenAPI → generated TS client (`apps/web/openapi.json`, `src/lib/api-types.ts`) |
+| API | FastAPI, Pydantic v2 | OpenAPI → generated TS client (`apps/web/openapi.json`, `apps/web/src/lib/api-types.ts`) |
 | Analysis | Python 3.13, NetworkX, exact integer money | `nexora.analytics` is pure (no FastAPI/SQLAlchemy imports) |
 | Jobs | PostgreSQL lease worker (`FOR UPDATE SKIP LOCKED`) | at-least-once, idempotent publish (content-derived uuid5 ids) |
 | Storage | PostgreSQL 16, SQLAlchemy 2, Alembic | `NUMERIC(38,0)` money; append-only audit via trigger |
@@ -91,16 +100,16 @@ the worker. Restarting always needs a new, deliberate click.
 
 ```
 apps/web/                         React SPA + gateway image
-  src/app/App.tsx                 routes; /network → features/graph/GraphWorkspace (lazy)
-  src/features/graph/             GraphWorkspace.tsx, graphModel.ts (+ test)
-  src/components/graph/           GraphCanvas.tsx, controller.ts (+ test), canvasColor.ts (+ test)
-  src/features/gestures/          GestureControl.tsx (UI), gestureSession.ts, cameraSession.ts,
+  apps/web/src/app/App.tsx                 routes; /network → features/graph/GraphWorkspace (lazy)
+  apps/web/src/features/graph/             GraphWorkspace.tsx, graphModel.ts (+ test)
+  apps/web/src/components/graph/           GraphCanvas.tsx, controller.ts (+ test), canvasColor.ts (+ test)
+  apps/web/src/features/gestures/          GestureControl.tsx (UI), gestureSession.ts, cameraSession.ts,
                                   landmarkEngine.ts, landmarkWorker.ts, recognizer.ts, adapter.ts,
                                   landmarks.ts, oneEuro.ts, sameOriginGuard.ts, workerConsole.ts,
                                   syntheticHands.ts (+ unit tests)
-  src/lib/i18n.ts                 ALL user-facing copy (Russian dictionary)
-  src/styles/tokens.css           ALL colours/spacing (design tokens)
-  scripts/gesture-assets.mjs      Vite plugin: copies/downloads + SHA-256-verifies MediaPipe assets
+  apps/web/src/lib/i18n.ts                 ALL user-facing copy (Russian dictionary)
+  apps/web/src/styles/tokens.css           ALL colours/spacing (design tokens)
+  apps/web/scripts/gesture-assets.mjs      Vite plugin: copies/downloads + SHA-256-verifies MediaPipe assets
   docker/csp.mjs                  generates the gateway CSP/security headers at image build
   docker/default.conf.template    Nginx gateway (/vendor/ → try_files =404)
   e2e/graph-workspace.spec.ts     graph E2E;  e2e/gestures.spec.ts  gesture E2E
@@ -110,7 +119,7 @@ src/nexora/
   application/graph_view.py       graph read model (overview/local, budgets, evidence edges)
   auth/                           sessions, passwords, CLI
   analytics/, domain/             pure analysis (no web/DB imports)
-migrations/versions/0001…0004     Alembic chain (head = 0004)
+migrations/versions/              Alembic chain 0001 … 0004 (head = 0004)
 tests/integration/test_investigation_graph.py   graph API integration tests
 apps/pitch/                       separate static pitch deck (own CI workflow)
 docs/implementation/GRAPH_GESTURE_VERIFICATION.md   manual real-camera checklist (not yet executed)
@@ -195,7 +204,7 @@ GitHub: https://github.com/SaginbekDaniel/SYNAPTIC-LABS — **default branch is
 Branches: `graph-workspace-wip` (this work, pushed fast-forward), `claude/peaceful-darwin-nrquu9`
 (same commits; the session branch it was prepared on). Open PRs #6–#14 are Dependabot bumps
 (several are the major upgrades in §12). **Consequence:** a PR from `graph-workspace-wip` to the
-default branch would also land PRs #3, #5 and #15. Either merge those first (in the order 15 → 3 →
+default branch would also land PRs #3, #5 and #15. Either merge those first (in the order 15 → 3 → — UNSAFE as they stand, see the banner —
 5) or open the graph PR knowingly as a stack — the repository owner decides.
 
 ## 7. Database and migration requirements
@@ -265,7 +274,7 @@ registry; PyPI; Railway (deployment). At runtime the browser contacts only its o
 | pytest (unit + integration, live PostgreSQL) | `uv run pytest` | **190 passed, 0 skipped**, 1 deprecation warning (starlette/httpx) |
 | Graph API integration | `uv run pytest tests/integration/test_investigation_graph.py` | 7 passed |
 | Migrations | `uv run alembic upgrade head && uv run alembic check` | head 0004; no new operations |
-| OpenAPI drift | `cd apps/web && npm run gen:api && git diff --exit-code -- openapi.json src/lib/api-types.ts` | no diff |
+| OpenAPI drift | `cd apps/web && npm run gen:api && git -C "$(git rev-parse --show-toplevel)" diff --exit-code -- apps/web/openapi.json apps/web/src/lib/api-types.ts` | no diff |
 | TypeScript | `cd apps/web && npx tsc -b` | clean |
 | Vitest | `cd apps/web && npx vitest run` | **99 passed (12 files)** (93 before this session; +6 new) |
 | Production build | `cd apps/web && npx vite build` | built; assets SHA-256 verified; worker chunk + `vision_bundle` emitted |
@@ -310,7 +319,7 @@ No failing automated check remains.
   `Permissions-Policy: camera=(self)`, everything else denied.
 * **Supply chain**: `@mediapipe/tasks-vision` pinned to an exact version (integrity in
   `package-lock.json`); copied WASM and downloaded model are SHA-256-pinned in
-  `scripts/gesture-assets.mjs`; production builds fail closed on mismatch; `/vendor/` returns 404 for
+  `apps/web/scripts/gesture-assets.mjs`; production builds fail closed on mismatch; `/vendor/` returns 404 for
   missing files (never the SPA's `index.html`). Upgrading MediaPipe requires deliberately updating
   the version and all three hashes.
 * **Read-only gestures**: the `GraphController` command union has no write commands (pinned by a
@@ -348,7 +357,7 @@ A task is done only when all of the following hold, with output observed, not as
    (from a cold `node_modules/.vite`), `npm run gen:api` produces no diff.
 2. No new console errors on any page (the E2E suites assert this) and no CSP violation in the
    production build.
-3. UI copy only via `src/lib/i18n.ts`; colours/spacing only via `styles/tokens.css`; colours given
+3. UI copy only via `apps/web/src/lib/i18n.ts`; colours/spacing only via `styles/tokens.css`; colours given
    to Cytoscape go through `toCanvasColor`.
 4. Camera invariants hold: no prompt before consent, zero foreign requests, camera released on
    every exit path, gestures cannot write.
