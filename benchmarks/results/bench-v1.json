@@ -1,10 +1,10 @@
 {
  "schema_version": 1,
  "benchmark_version": "bench-harness-v1",
- "generated_at": "2026-11-22T11:13:31+00:00",
+ "generated_at": "2026-11-23T06:03:04+00:00",
  "synthetic": true,
  "code": {
-  "commit": "3f87b95a6e8f72eb903bb4c43944577ae3231198",
+  "commit": "85f8b5e5b242ebaad3310c3d65d40045a31c2047",
   "dirty": false,
   "dirty_paths": []
  },
@@ -1543,9 +1543,262 @@
      }
     },
     "latency_ms": {
-     "median": 73.8,
-     "p95": 177.3,
-     "max": 279.1
+     "median": 63.7,
+     "p95": 164.7,
+     "max": 275.2
+    },
+    "entity": {
+     "accounts": {
+      "positive": 764,
+      "flagged": 1964,
+      "tp": 632,
+      "fp": 1332,
+      "fn": 132,
+      "fp_labelled_legitimate": 955,
+      "fp_unlabelled": 377,
+      "recall": 0.8272,
+      "precision": 0.3218
+     },
+     "ranking": {
+      "suspicious_networks": 96,
+      "queued_items": 297,
+      "networks_reached": 90,
+      "average_precision": 0.714,
+      "curve": [
+       {
+        "items": 1,
+        "networks": 1
+       },
+       {
+        "items": 2,
+        "networks": 2
+       },
+       {
+        "items": 3,
+        "networks": 3
+       },
+       {
+        "items": 4,
+        "networks": 4
+       },
+       {
+        "items": 7,
+        "networks": 7
+       },
+       {
+        "items": 8,
+        "networks": 8
+       },
+       {
+        "items": 11,
+        "networks": 11
+       },
+       {
+        "items": 13,
+        "networks": 13
+       },
+       {
+        "items": 15,
+        "networks": 15
+       },
+       {
+        "items": 16,
+        "networks": 16
+       },
+       {
+        "items": 17,
+        "networks": 17
+       },
+       {
+        "items": 19,
+        "networks": 18
+       },
+       {
+        "items": 21,
+        "networks": 19
+       },
+       {
+        "items": 29,
+        "networks": 26
+       },
+       {
+        "items": 34,
+        "networks": 31
+       },
+       {
+        "items": 35,
+        "networks": 32
+       },
+       {
+        "items": 37,
+        "networks": 34
+       },
+       {
+        "items": 38,
+        "networks": 35
+       },
+       {
+        "items": 42,
+        "networks": 38
+       },
+       {
+        "items": 43,
+        "networks": 39
+       },
+       {
+        "items": 48,
+        "networks": 41
+       },
+       {
+        "items": 55,
+        "networks": 47
+       },
+       {
+        "items": 56,
+        "networks": 48
+       },
+       {
+        "items": 60,
+        "networks": 52
+       },
+       {
+        "items": 65,
+        "networks": 57
+       },
+       {
+        "items": 76,
+        "networks": 58
+       },
+       {
+        "items": 81,
+        "networks": 63
+       },
+       {
+        "items": 84,
+        "networks": 65
+       },
+       {
+        "items": 87,
+        "networks": 67
+       },
+       {
+        "items": 89,
+        "networks": 68
+       },
+       {
+        "items": 92,
+        "networks": 69
+       },
+       {
+        "items": 144,
+        "networks": 70
+       },
+       {
+        "items": 149,
+        "networks": 71
+       },
+       {
+        "items": 212,
+        "networks": 73
+       },
+       {
+        "items": 228,
+        "networks": 74
+       },
+       {
+        "items": 241,
+        "networks": 75
+       },
+       {
+        "items": 259,
+        "networks": 76
+       },
+       {
+        "items": 266,
+        "networks": 80
+       },
+       {
+        "items": 269,
+        "networks": 81
+       },
+       {
+        "items": 291,
+        "networks": 85
+       },
+       {
+        "items": 297,
+        "networks": 90
+       }
+      ]
+     },
+     "reliability": [
+      {
+       "band": "critical",
+       "items": 4,
+       "planted": 4,
+       "share": 1.0,
+       "wilson95": [
+        0.5101,
+        1.0
+       ]
+      },
+      {
+       "band": "high",
+       "items": 88,
+       "planted": 65,
+       "share": 0.7386,
+       "wilson95": [
+        0.6382,
+        0.8191
+       ]
+      },
+      {
+       "band": "medium",
+       "items": 200,
+       "planted": 47,
+       "share": 0.235,
+       "wilson95": [
+        0.1816,
+        0.2984
+       ]
+      },
+      {
+       "band": "insufficient_evidence",
+       "items": 5,
+       "planted": 5,
+       "share": 1.0,
+       "wilson95": [
+        0.5655,
+        1.0
+       ]
+      },
+      {
+       "band": "low",
+       "items": 1520,
+       "planted": 14,
+       "share": 0.0092,
+       "wilson95": [
+        0.0055,
+        0.0154
+       ]
+      }
+     ],
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.762,
+       0.8867
+      ],
+      "account_precision": [
+       0.2687,
+       0.3841
+      ],
+      "average_precision": [
+       0.6359,
+       0.7915
+      ]
+     }
     }
    },
    "nexora_v1": {
@@ -1676,9 +1929,192 @@
      }
     },
     "latency_ms": {
-     "median": 55.6,
-     "p95": 94.6,
-     "max": 182.5
+     "median": 44.3,
+     "p95": 82.2,
+     "max": 161.0
+    },
+    "entity": {
+     "accounts": {
+      "positive": 764,
+      "flagged": 1939,
+      "tp": 477,
+      "fp": 1462,
+      "fn": 287,
+      "fp_labelled_legitimate": 1140,
+      "fp_unlabelled": 322,
+      "recall": 0.6243,
+      "precision": 0.246
+     },
+     "ranking": {
+      "suspicious_networks": 96,
+      "queued_items": 217,
+      "networks_reached": 74,
+      "average_precision": 0.269,
+      "curve": [
+       {
+        "items": 19,
+        "networks": 8
+       },
+       {
+        "items": 33,
+        "networks": 14
+       },
+       {
+        "items": 35,
+        "networks": 15
+       },
+       {
+        "items": 37,
+        "networks": 16
+       },
+       {
+        "items": 40,
+        "networks": 17
+       },
+       {
+        "items": 47,
+        "networks": 21
+       },
+       {
+        "items": 58,
+        "networks": 24
+       },
+       {
+        "items": 74,
+        "networks": 25
+       },
+       {
+        "items": 95,
+        "networks": 30
+       },
+       {
+        "items": 101,
+        "networks": 32
+       },
+       {
+        "items": 105,
+        "networks": 33
+       },
+       {
+        "items": 116,
+        "networks": 38
+       },
+       {
+        "items": 147,
+        "networks": 42
+       },
+       {
+        "items": 152,
+        "networks": 44
+       },
+       {
+        "items": 155,
+        "networks": 46
+       },
+       {
+        "items": 158,
+        "networks": 47
+       },
+       {
+        "items": 160,
+        "networks": 48
+       },
+       {
+        "items": 171,
+        "networks": 49
+       },
+       {
+        "items": 173,
+        "networks": 50
+       },
+       {
+        "items": 177,
+        "networks": 51
+       },
+       {
+        "items": 187,
+        "networks": 55
+       },
+       {
+        "items": 188,
+        "networks": 56
+       },
+       {
+        "items": 201,
+        "networks": 63
+       },
+       {
+        "items": 208,
+        "networks": 67
+       },
+       {
+        "items": 212,
+        "networks": 69
+       },
+       {
+        "items": 217,
+        "networks": 74
+       }
+      ]
+     },
+     "reliability": [
+      {
+       "band": "high",
+       "items": 160,
+       "planted": 58,
+       "share": 0.3625,
+       "wilson95": [
+        0.292,
+        0.4394
+       ]
+      },
+      {
+       "band": "medium",
+       "items": 52,
+       "planted": 25,
+       "share": 0.4808,
+       "wilson95": [
+        0.351,
+        0.6131
+       ]
+      },
+      {
+       "band": "insufficient_evidence",
+       "items": 5,
+       "planted": 5,
+       "share": 1.0,
+       "wilson95": [
+        0.5655,
+        1.0
+       ]
+      },
+      {
+       "band": "low",
+       "items": 1519,
+       "planted": 40,
+       "share": 0.0263,
+       "wilson95": [
+        0.0194,
+        0.0357
+       ]
+      }
+     ],
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.5202,
+       0.7235
+      ],
+      "account_precision": [
+       0.1956,
+       0.3082
+      ],
+      "average_precision": [
+       0.19,
+       0.3771
+      ]
+     }
     }
    },
    "B4_structure_temporal": {
@@ -1809,9 +2245,196 @@
      }
     },
     "latency_ms": {
-     "median": 71.7,
-     "p95": 150.4,
-     "max": 232.4
+     "median": 64.1,
+     "p95": 156.8,
+     "max": 219.4
+    },
+    "entity": {
+     "accounts": {
+      "positive": 764,
+      "flagged": 1869,
+      "tp": 612,
+      "fp": 1257,
+      "fn": 152,
+      "fp_labelled_legitimate": 938,
+      "fp_unlabelled": 319,
+      "recall": 0.801,
+      "precision": 0.3274
+     },
+     "ranking": {
+      "suspicious_networks": 96,
+      "queued_items": 266,
+      "networks_reached": 90,
+      "average_precision": 0.4336,
+      "curve": [
+       {
+        "items": 7,
+        "networks": 1
+       },
+       {
+        "items": 21,
+        "networks": 10
+       },
+       {
+        "items": 34,
+        "networks": 18
+       },
+       {
+        "items": 39,
+        "networks": 23
+       },
+       {
+        "items": 41,
+        "networks": 25
+       },
+       {
+        "items": 42,
+        "networks": 26
+       },
+       {
+        "items": 51,
+        "networks": 32
+       },
+       {
+        "items": 59,
+        "networks": 33
+       },
+       {
+        "items": 74,
+        "networks": 36
+       },
+       {
+        "items": 94,
+        "networks": 44
+       },
+       {
+        "items": 101,
+        "networks": 47
+       },
+       {
+        "items": 109,
+        "networks": 51
+       },
+       {
+        "items": 124,
+        "networks": 58
+       },
+       {
+        "items": 142,
+        "networks": 59
+       },
+       {
+        "items": 153,
+        "networks": 64
+       },
+       {
+        "items": 159,
+        "networks": 66
+       },
+       {
+        "items": 164,
+        "networks": 68
+       },
+       {
+        "items": 169,
+        "networks": 70
+       },
+       {
+        "items": 173,
+        "networks": 71
+       },
+       {
+        "items": 185,
+        "networks": 73
+       },
+       {
+        "items": 191,
+        "networks": 74
+       },
+       {
+        "items": 205,
+        "networks": 75
+       },
+       {
+        "items": 216,
+        "networks": 76
+       },
+       {
+        "items": 223,
+        "networks": 80
+       },
+       {
+        "items": 226,
+        "networks": 81
+       },
+       {
+        "items": 257,
+        "networks": 85
+       },
+       {
+        "items": 266,
+        "networks": 90
+       }
+      ]
+     },
+     "reliability": [
+      {
+       "band": "high",
+       "items": 174,
+       "planted": 71,
+       "share": 0.408,
+       "wilson95": [
+        0.3378,
+        0.4823
+       ]
+      },
+      {
+       "band": "medium",
+       "items": 87,
+       "planted": 25,
+       "share": 0.2874,
+       "wilson95": [
+        0.2029,
+        0.3898
+       ]
+      },
+      {
+       "band": "insufficient_evidence",
+       "items": 5,
+       "planted": 5,
+       "share": 1.0,
+       "wilson95": [
+        0.5655,
+        1.0
+       ]
+      },
+      {
+       "band": "low",
+       "items": 1551,
+       "planted": 34,
+       "share": 0.0219,
+       "wilson95": [
+        0.0157,
+        0.0305
+       ]
+      }
+     ],
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.7387,
+       0.8597
+      ],
+      "account_precision": [
+       0.2729,
+       0.394
+      ],
+      "average_precision": [
+       0.356,
+       0.5351
+      ]
+     }
     }
    },
    "B3_structure_only": {
@@ -1942,9 +2565,87 @@
      }
     },
     "latency_ms": {
-     "median": 72.5,
-     "p95": 160.6,
-     "max": 243.7
+     "median": 71.0,
+     "p95": 153.3,
+     "max": 203.9
+    },
+    "entity": {
+     "accounts": {
+      "positive": 764,
+      "flagged": 3664,
+      "tp": 726,
+      "fp": 2938,
+      "fn": 38,
+      "fp_labelled_legitimate": 1375,
+      "fp_unlabelled": 1563,
+      "recall": 0.9503,
+      "precision": 0.1981
+     },
+     "ranking": {
+      "suspicious_networks": 96,
+      "queued_items": 1817,
+      "networks_reached": 96,
+      "average_precision": 0.0677,
+      "curve": [
+       {
+        "items": 589,
+        "networks": 42
+       },
+       {
+        "items": 595,
+        "networks": 43
+       },
+       {
+        "items": 615,
+        "networks": 48
+       },
+       {
+        "items": 629,
+        "networks": 51
+       },
+       {
+        "items": 991,
+        "networks": 65
+       },
+       {
+        "items": 1013,
+        "networks": 68
+       },
+       {
+        "items": 1029,
+        "networks": 72
+       },
+       {
+        "items": 1038,
+        "networks": 77
+       },
+       {
+        "items": 1058,
+        "networks": 78
+       },
+       {
+        "items": 1817,
+        "networks": 96
+       }
+      ]
+     },
+     "reliability": null,
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.9348,
+       0.9668
+      ],
+      "account_precision": [
+       0.1699,
+       0.227
+      ],
+      "average_precision": [
+       0.0398,
+       0.1233
+      ]
+     }
     }
    },
    "B1_rules": {
@@ -2075,9 +2776,407 @@
      }
     },
     "latency_ms": {
-     "median": 2.1,
-     "p95": 3.2,
-     "max": 5.5
+     "median": 1.8,
+     "p95": 2.7,
+     "max": 3.1
+    },
+    "entity": {
+     "accounts": {
+      "positive": 764,
+      "flagged": 1379,
+      "tp": 399,
+      "fp": 980,
+      "fn": 365,
+      "fp_labelled_legitimate": 206,
+      "fp_unlabelled": 774,
+      "recall": 0.5223,
+      "precision": 0.2893
+     },
+     "ranking": {
+      "suspicious_networks": 96,
+      "queued_items": 1379,
+      "networks_reached": 90,
+      "average_precision": 0.1712,
+      "curve": [
+       {
+        "items": 62,
+        "networks": 1
+       },
+       {
+        "items": 64,
+        "networks": 2
+       },
+       {
+        "items": 67,
+        "networks": 3
+       },
+       {
+        "items": 68,
+        "networks": 4
+       },
+       {
+        "items": 69,
+        "networks": 5
+       },
+       {
+        "items": 71,
+        "networks": 6
+       },
+       {
+        "items": 75,
+        "networks": 7
+       },
+       {
+        "items": 76,
+        "networks": 8
+       },
+       {
+        "items": 79,
+        "networks": 9
+       },
+       {
+        "items": 81,
+        "networks": 10
+       },
+       {
+        "items": 82,
+        "networks": 11
+       },
+       {
+        "items": 84,
+        "networks": 12
+       },
+       {
+        "items": 85,
+        "networks": 13
+       },
+       {
+        "items": 86,
+        "networks": 14
+       },
+       {
+        "items": 90,
+        "networks": 15
+       },
+       {
+        "items": 91,
+        "networks": 16
+       },
+       {
+        "items": 93,
+        "networks": 17
+       },
+       {
+        "items": 94,
+        "networks": 18
+       },
+       {
+        "items": 96,
+        "networks": 19
+       },
+       {
+        "items": 97,
+        "networks": 20
+       },
+       {
+        "items": 99,
+        "networks": 21
+       },
+       {
+        "items": 100,
+        "networks": 22
+       },
+       {
+        "items": 103,
+        "networks": 23
+       },
+       {
+        "items": 104,
+        "networks": 24
+       },
+       {
+        "items": 106,
+        "networks": 25
+       },
+       {
+        "items": 107,
+        "networks": 26
+       },
+       {
+        "items": 108,
+        "networks": 27
+       },
+       {
+        "items": 109,
+        "networks": 28
+       },
+       {
+        "items": 110,
+        "networks": 29
+       },
+       {
+        "items": 111,
+        "networks": 30
+       },
+       {
+        "items": 112,
+        "networks": 31
+       },
+       {
+        "items": 138,
+        "networks": 32
+       },
+       {
+        "items": 139,
+        "networks": 33
+       },
+       {
+        "items": 140,
+        "networks": 34
+       },
+       {
+        "items": 141,
+        "networks": 35
+       },
+       {
+        "items": 142,
+        "networks": 36
+       },
+       {
+        "items": 154,
+        "networks": 37
+       },
+       {
+        "items": 156,
+        "networks": 38
+       },
+       {
+        "items": 158,
+        "networks": 39
+       },
+       {
+        "items": 160,
+        "networks": 40
+       },
+       {
+        "items": 161,
+        "networks": 41
+       },
+       {
+        "items": 166,
+        "networks": 42
+       },
+       {
+        "items": 167,
+        "networks": 43
+       },
+       {
+        "items": 168,
+        "networks": 44
+       },
+       {
+        "items": 169,
+        "networks": 45
+       },
+       {
+        "items": 170,
+        "networks": 46
+       },
+       {
+        "items": 173,
+        "networks": 47
+       },
+       {
+        "items": 174,
+        "networks": 48
+       },
+       {
+        "items": 255,
+        "networks": 49
+       },
+       {
+        "items": 256,
+        "networks": 50
+       },
+       {
+        "items": 264,
+        "networks": 51
+       },
+       {
+        "items": 273,
+        "networks": 52
+       },
+       {
+        "items": 278,
+        "networks": 53
+       },
+       {
+        "items": 292,
+        "networks": 54
+       },
+       {
+        "items": 307,
+        "networks": 55
+       },
+       {
+        "items": 308,
+        "networks": 56
+       },
+       {
+        "items": 312,
+        "networks": 57
+       },
+       {
+        "items": 316,
+        "networks": 58
+       },
+       {
+        "items": 320,
+        "networks": 59
+       },
+       {
+        "items": 321,
+        "networks": 60
+       },
+       {
+        "items": 345,
+        "networks": 61
+       },
+       {
+        "items": 354,
+        "networks": 62
+       },
+       {
+        "items": 376,
+        "networks": 63
+       },
+       {
+        "items": 377,
+        "networks": 64
+       },
+       {
+        "items": 397,
+        "networks": 65
+       },
+       {
+        "items": 433,
+        "networks": 66
+       },
+       {
+        "items": 444,
+        "networks": 67
+       },
+       {
+        "items": 462,
+        "networks": 68
+       },
+       {
+        "items": 466,
+        "networks": 69
+       },
+       {
+        "items": 467,
+        "networks": 70
+       },
+       {
+        "items": 468,
+        "networks": 71
+       },
+       {
+        "items": 469,
+        "networks": 72
+       },
+       {
+        "items": 472,
+        "networks": 73
+       },
+       {
+        "items": 473,
+        "networks": 74
+       },
+       {
+        "items": 477,
+        "networks": 75
+       },
+       {
+        "items": 481,
+        "networks": 76
+       },
+       {
+        "items": 486,
+        "networks": 77
+       },
+       {
+        "items": 490,
+        "networks": 78
+       },
+       {
+        "items": 491,
+        "networks": 79
+       },
+       {
+        "items": 492,
+        "networks": 80
+       },
+       {
+        "items": 512,
+        "networks": 81
+       },
+       {
+        "items": 516,
+        "networks": 82
+       },
+       {
+        "items": 518,
+        "networks": 83
+       },
+       {
+        "items": 523,
+        "networks": 84
+       },
+       {
+        "items": 524,
+        "networks": 85
+       },
+       {
+        "items": 532,
+        "networks": 86
+       },
+       {
+        "items": 533,
+        "networks": 87
+       },
+       {
+        "items": 570,
+        "networks": 88
+       },
+       {
+        "items": 572,
+        "networks": 89
+       },
+       {
+        "items": 667,
+        "networks": 90
+       }
+      ]
+     },
+     "reliability": null,
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.4571,
+       0.588
+      ],
+      "account_precision": [
+       0.2407,
+       0.3347
+      ],
+      "average_precision": [
+       0.1383,
+       0.2216
+      ]
+     }
     }
    },
    "B0_volume": {
@@ -2208,9 +3307,431 @@
      }
     },
     "latency_ms": {
-     "median": 4.7,
-     "p95": 5.8,
-     "max": 8.9
+     "median": 4.1,
+     "p95": 6.0,
+     "max": 8.5
+    },
+    "entity": {
+     "accounts": {
+      "positive": 764,
+      "flagged": 292,
+      "tp": 144,
+      "fp": 148,
+      "fn": 620,
+      "fp_labelled_legitimate": 148,
+      "fp_unlabelled": 0,
+      "recall": 0.1885,
+      "precision": 0.4932
+     },
+     "ranking": {
+      "suspicious_networks": 96,
+      "queued_items": 5687,
+      "networks_reached": 96,
+      "average_precision": 0.1555,
+      "curve": [
+       {
+        "items": 65,
+        "networks": 1
+       },
+       {
+        "items": 67,
+        "networks": 2
+       },
+       {
+        "items": 69,
+        "networks": 3
+       },
+       {
+        "items": 73,
+        "networks": 4
+       },
+       {
+        "items": 76,
+        "networks": 5
+       },
+       {
+        "items": 78,
+        "networks": 6
+       },
+       {
+        "items": 79,
+        "networks": 7
+       },
+       {
+        "items": 80,
+        "networks": 8
+       },
+       {
+        "items": 82,
+        "networks": 9
+       },
+       {
+        "items": 87,
+        "networks": 10
+       },
+       {
+        "items": 88,
+        "networks": 11
+       },
+       {
+        "items": 89,
+        "networks": 12
+       },
+       {
+        "items": 93,
+        "networks": 13
+       },
+       {
+        "items": 96,
+        "networks": 14
+       },
+       {
+        "items": 97,
+        "networks": 15
+       },
+       {
+        "items": 101,
+        "networks": 16
+       },
+       {
+        "items": 105,
+        "networks": 17
+       },
+       {
+        "items": 106,
+        "networks": 18
+       },
+       {
+        "items": 107,
+        "networks": 19
+       },
+       {
+        "items": 115,
+        "networks": 20
+       },
+       {
+        "items": 117,
+        "networks": 21
+       },
+       {
+        "items": 119,
+        "networks": 22
+       },
+       {
+        "items": 120,
+        "networks": 23
+       },
+       {
+        "items": 131,
+        "networks": 24
+       },
+       {
+        "items": 135,
+        "networks": 25
+       },
+       {
+        "items": 136,
+        "networks": 26
+       },
+       {
+        "items": 138,
+        "networks": 27
+       },
+       {
+        "items": 147,
+        "networks": 28
+       },
+       {
+        "items": 148,
+        "networks": 29
+       },
+       {
+        "items": 162,
+        "networks": 30
+       },
+       {
+        "items": 168,
+        "networks": 31
+       },
+       {
+        "items": 172,
+        "networks": 32
+       },
+       {
+        "items": 178,
+        "networks": 33
+       },
+       {
+        "items": 186,
+        "networks": 34
+       },
+       {
+        "items": 187,
+        "networks": 35
+       },
+       {
+        "items": 189,
+        "networks": 36
+       },
+       {
+        "items": 199,
+        "networks": 37
+       },
+       {
+        "items": 200,
+        "networks": 38
+       },
+       {
+        "items": 202,
+        "networks": 39
+       },
+       {
+        "items": 203,
+        "networks": 40
+       },
+       {
+        "items": 212,
+        "networks": 41
+       },
+       {
+        "items": 213,
+        "networks": 42
+       },
+       {
+        "items": 215,
+        "networks": 43
+       },
+       {
+        "items": 223,
+        "networks": 44
+       },
+       {
+        "items": 224,
+        "networks": 45
+       },
+       {
+        "items": 227,
+        "networks": 46
+       },
+       {
+        "items": 230,
+        "networks": 47
+       },
+       {
+        "items": 231,
+        "networks": 48
+       },
+       {
+        "items": 232,
+        "networks": 49
+       },
+       {
+        "items": 233,
+        "networks": 50
+       },
+       {
+        "items": 245,
+        "networks": 51
+       },
+       {
+        "items": 250,
+        "networks": 52
+       },
+       {
+        "items": 259,
+        "networks": 53
+       },
+       {
+        "items": 263,
+        "networks": 54
+       },
+       {
+        "items": 269,
+        "networks": 55
+       },
+       {
+        "items": 270,
+        "networks": 56
+       },
+       {
+        "items": 275,
+        "networks": 57
+       },
+       {
+        "items": 280,
+        "networks": 58
+       },
+       {
+        "items": 282,
+        "networks": 59
+       },
+       {
+        "items": 289,
+        "networks": 60
+       },
+       {
+        "items": 291,
+        "networks": 61
+       },
+       {
+        "items": 323,
+        "networks": 62
+       },
+       {
+        "items": 334,
+        "networks": 63
+       },
+       {
+        "items": 361,
+        "networks": 64
+       },
+       {
+        "items": 363,
+        "networks": 65
+       },
+       {
+        "items": 401,
+        "networks": 66
+       },
+       {
+        "items": 456,
+        "networks": 67
+       },
+       {
+        "items": 479,
+        "networks": 68
+       },
+       {
+        "items": 503,
+        "networks": 69
+       },
+       {
+        "items": 506,
+        "networks": 70
+       },
+       {
+        "items": 507,
+        "networks": 71
+       },
+       {
+        "items": 508,
+        "networks": 72
+       },
+       {
+        "items": 510,
+        "networks": 73
+       },
+       {
+        "items": 526,
+        "networks": 74
+       },
+       {
+        "items": 528,
+        "networks": 75
+       },
+       {
+        "items": 530,
+        "networks": 76
+       },
+       {
+        "items": 543,
+        "networks": 77
+       },
+       {
+        "items": 561,
+        "networks": 78
+       },
+       {
+        "items": 563,
+        "networks": 79
+       },
+       {
+        "items": 577,
+        "networks": 80
+       },
+       {
+        "items": 583,
+        "networks": 81
+       },
+       {
+        "items": 616,
+        "networks": 82
+       },
+       {
+        "items": 626,
+        "networks": 83
+       },
+       {
+        "items": 639,
+        "networks": 84
+       },
+       {
+        "items": 650,
+        "networks": 85
+       },
+       {
+        "items": 668,
+        "networks": 86
+       },
+       {
+        "items": 681,
+        "networks": 87
+       },
+       {
+        "items": 751,
+        "networks": 88
+       },
+       {
+        "items": 839,
+        "networks": 89
+       },
+       {
+        "items": 880,
+        "networks": 90
+       },
+       {
+        "items": 927,
+        "networks": 91
+       },
+       {
+        "items": 1005,
+        "networks": 92
+       },
+       {
+        "items": 1018,
+        "networks": 93
+       },
+       {
+        "items": 1275,
+        "networks": 94
+       },
+       {
+        "items": 1281,
+        "networks": 95
+       },
+       {
+        "items": 1582,
+        "networks": 96
+       }
+      ]
+     },
+     "reliability": null,
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.1576,
+       0.2252
+      ],
+      "account_precision": [
+       0.4228,
+       0.5667
+      ],
+      "average_precision": [
+       0.1352,
+       0.1927
+      ]
+     }
     }
    },
    "B2_pagerank": {
@@ -2341,9 +3862,415 @@
      }
     },
     "latency_ms": {
-     "median": 42.7,
-     "p95": 66.7,
-     "max": 108.3
+     "median": 37.5,
+     "p95": 57.9,
+     "max": 66.8
+    },
+    "entity": {
+     "accounts": {
+      "positive": 764,
+      "flagged": 292,
+      "tp": 12,
+      "fp": 280,
+      "fn": 752,
+      "fp_labelled_legitimate": 107,
+      "fp_unlabelled": 173,
+      "recall": 0.0157,
+      "precision": 0.0411
+     },
+     "ranking": {
+      "suspicious_networks": 96,
+      "queued_items": 5687,
+      "networks_reached": 96,
+      "average_precision": 0.0417,
+      "curve": [
+       {
+        "items": 225,
+        "networks": 1
+       },
+       {
+        "items": 236,
+        "networks": 2
+       },
+       {
+        "items": 248,
+        "networks": 3
+       },
+       {
+        "items": 258,
+        "networks": 4
+       },
+       {
+        "items": 288,
+        "networks": 5
+       },
+       {
+        "items": 305,
+        "networks": 6
+       },
+       {
+        "items": 314,
+        "networks": 7
+       },
+       {
+        "items": 325,
+        "networks": 8
+       },
+       {
+        "items": 326,
+        "networks": 9
+       },
+       {
+        "items": 344,
+        "networks": 10
+       },
+       {
+        "items": 348,
+        "networks": 11
+       },
+       {
+        "items": 390,
+        "networks": 12
+       },
+       {
+        "items": 424,
+        "networks": 13
+       },
+       {
+        "items": 435,
+        "networks": 14
+       },
+       {
+        "items": 437,
+        "networks": 15
+       },
+       {
+        "items": 438,
+        "networks": 16
+       },
+       {
+        "items": 451,
+        "networks": 17
+       },
+       {
+        "items": 468,
+        "networks": 18
+       },
+       {
+        "items": 478,
+        "networks": 19
+       },
+       {
+        "items": 485,
+        "networks": 20
+       },
+       {
+        "items": 513,
+        "networks": 21
+       },
+       {
+        "items": 519,
+        "networks": 22
+       },
+       {
+        "items": 530,
+        "networks": 24
+       },
+       {
+        "items": 562,
+        "networks": 25
+       },
+       {
+        "items": 577,
+        "networks": 26
+       },
+       {
+        "items": 581,
+        "networks": 27
+       },
+       {
+        "items": 592,
+        "networks": 28
+       },
+       {
+        "items": 605,
+        "networks": 30
+       },
+       {
+        "items": 631,
+        "networks": 31
+       },
+       {
+        "items": 654,
+        "networks": 32
+       },
+       {
+        "items": 672,
+        "networks": 33
+       },
+       {
+        "items": 688,
+        "networks": 35
+       },
+       {
+        "items": 720,
+        "networks": 36
+       },
+       {
+        "items": 723,
+        "networks": 37
+       },
+       {
+        "items": 766,
+        "networks": 38
+       },
+       {
+        "items": 789,
+        "networks": 39
+       },
+       {
+        "items": 851,
+        "networks": 40
+       },
+       {
+        "items": 894,
+        "networks": 41
+       },
+       {
+        "items": 904,
+        "networks": 42
+       },
+       {
+        "items": 907,
+        "networks": 43
+       },
+       {
+        "items": 914,
+        "networks": 44
+       },
+       {
+        "items": 934,
+        "networks": 46
+       },
+       {
+        "items": 945,
+        "networks": 47
+       },
+       {
+        "items": 953,
+        "networks": 48
+       },
+       {
+        "items": 964,
+        "networks": 49
+       },
+       {
+        "items": 978,
+        "networks": 50
+       },
+       {
+        "items": 988,
+        "networks": 51
+       },
+       {
+        "items": 1017,
+        "networks": 52
+       },
+       {
+        "items": 1031,
+        "networks": 53
+       },
+       {
+        "items": 1043,
+        "networks": 54
+       },
+       {
+        "items": 1077,
+        "networks": 55
+       },
+       {
+        "items": 1093,
+        "networks": 56
+       },
+       {
+        "items": 1113,
+        "networks": 57
+       },
+       {
+        "items": 1130,
+        "networks": 58
+       },
+       {
+        "items": 1143,
+        "networks": 59
+       },
+       {
+        "items": 1204,
+        "networks": 60
+       },
+       {
+        "items": 1262,
+        "networks": 61
+       },
+       {
+        "items": 1272,
+        "networks": 62
+       },
+       {
+        "items": 1296,
+        "networks": 63
+       },
+       {
+        "items": 1304,
+        "networks": 64
+       },
+       {
+        "items": 1333,
+        "networks": 65
+       },
+       {
+        "items": 1337,
+        "networks": 66
+       },
+       {
+        "items": 1415,
+        "networks": 67
+       },
+       {
+        "items": 1486,
+        "networks": 68
+       },
+       {
+        "items": 1585,
+        "networks": 69
+       },
+       {
+        "items": 1607,
+        "networks": 70
+       },
+       {
+        "items": 1631,
+        "networks": 71
+       },
+       {
+        "items": 1669,
+        "networks": 72
+       },
+       {
+        "items": 1721,
+        "networks": 73
+       },
+       {
+        "items": 1725,
+        "networks": 74
+       },
+       {
+        "items": 1739,
+        "networks": 75
+       },
+       {
+        "items": 1754,
+        "networks": 76
+       },
+       {
+        "items": 1770,
+        "networks": 77
+       },
+       {
+        "items": 1815,
+        "networks": 78
+       },
+       {
+        "items": 1850,
+        "networks": 79
+       },
+       {
+        "items": 1863,
+        "networks": 80
+       },
+       {
+        "items": 1888,
+        "networks": 81
+       },
+       {
+        "items": 1937,
+        "networks": 82
+       },
+       {
+        "items": 1943,
+        "networks": 83
+       },
+       {
+        "items": 1977,
+        "networks": 84
+       },
+       {
+        "items": 2060,
+        "networks": 85
+       },
+       {
+        "items": 2136,
+        "networks": 86
+       },
+       {
+        "items": 2263,
+        "networks": 87
+       },
+       {
+        "items": 2268,
+        "networks": 88
+       },
+       {
+        "items": 2286,
+        "networks": 89
+       },
+       {
+        "items": 2481,
+        "networks": 90
+       },
+       {
+        "items": 2542,
+        "networks": 91
+       },
+       {
+        "items": 2564,
+        "networks": 92
+       },
+       {
+        "items": 2619,
+        "networks": 93
+       },
+       {
+        "items": 2703,
+        "networks": 94
+       },
+       {
+        "items": 2836,
+        "networks": 95
+       },
+       {
+        "items": 3022,
+        "networks": 96
+       }
+      ]
+     },
+     "reliability": null,
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.0035,
+       0.0333
+      ],
+      "account_precision": [
+       0.0096,
+       0.0859
+      ],
+      "average_precision": [
+       0.0351,
+       0.0517
+      ]
+     }
     }
    }
   },
@@ -2476,9 +4403,206 @@
      }
     },
     "latency_ms": {
-     "median": 83.5,
-     "p95": 156.9,
-     "max": 196.9
+     "median": 56.9,
+     "p95": 110.0,
+     "max": 214.0
+    },
+    "entity": {
+     "accounts": {
+      "positive": 414,
+      "flagged": 1115,
+      "tp": 294,
+      "fp": 821,
+      "fn": 120,
+      "fp_labelled_legitimate": 603,
+      "fp_unlabelled": 218,
+      "recall": 0.7101,
+      "precision": 0.2637
+     },
+     "ranking": {
+      "suspicious_networks": 56,
+      "queued_items": 162,
+      "networks_reached": 48,
+      "average_precision": 0.5912,
+      "curve": [
+       {
+        "items": 1,
+        "networks": 1
+       },
+       {
+        "items": 3,
+        "networks": 3
+       },
+       {
+        "items": 4,
+        "networks": 4
+       },
+       {
+        "items": 5,
+        "networks": 5
+       },
+       {
+        "items": 7,
+        "networks": 6
+       },
+       {
+        "items": 8,
+        "networks": 7
+       },
+       {
+        "items": 10,
+        "networks": 9
+       },
+       {
+        "items": 14,
+        "networks": 13
+       },
+       {
+        "items": 16,
+        "networks": 14
+       },
+       {
+        "items": 17,
+        "networks": 15
+       },
+       {
+        "items": 19,
+        "networks": 17
+       },
+       {
+        "items": 22,
+        "networks": 18
+       },
+       {
+        "items": 23,
+        "networks": 19
+       },
+       {
+        "items": 26,
+        "networks": 21
+       },
+       {
+        "items": 27,
+        "networks": 22
+       },
+       {
+        "items": 32,
+        "networks": 25
+       },
+       {
+        "items": 41,
+        "networks": 28
+       },
+       {
+        "items": 44,
+        "networks": 31
+       },
+       {
+        "items": 45,
+        "networks": 32
+       },
+       {
+        "items": 52,
+        "networks": 34
+       },
+       {
+        "items": 55,
+        "networks": 35
+       },
+       {
+        "items": 79,
+        "networks": 36
+       },
+       {
+        "items": 115,
+        "networks": 38
+       },
+       {
+        "items": 126,
+        "networks": 39
+       },
+       {
+        "items": 143,
+        "networks": 42
+       },
+       {
+        "items": 149,
+        "networks": 43
+       },
+       {
+        "items": 162,
+        "networks": 48
+       }
+      ]
+     },
+     "reliability": [
+      {
+       "band": "critical",
+       "items": 1,
+       "planted": 1,
+       "share": 1.0,
+       "wilson95": [
+        0.2065,
+        1.0
+       ]
+      },
+      {
+       "band": "high",
+       "items": 54,
+       "planted": 34,
+       "share": 0.6296,
+       "wilson95": [
+        0.4963,
+        0.7458
+       ]
+      },
+      {
+       "band": "medium",
+       "items": 102,
+       "planted": 15,
+       "share": 0.1471,
+       "wilson95": [
+        0.0912,
+        0.2285
+       ]
+      },
+      {
+       "band": "insufficient_evidence",
+       "items": 5,
+       "planted": 5,
+       "share": 1.0,
+       "wilson95": [
+        0.5655,
+        1.0
+       ]
+      },
+      {
+       "band": "low",
+       "items": 865,
+       "planted": 12,
+       "share": 0.0139,
+       "wilson95": [
+        0.008,
+        0.0241
+       ]
+      }
+     ],
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.6111,
+       0.7957
+      ],
+      "account_precision": [
+       0.1939,
+       0.3504
+      ],
+      "average_precision": [
+       0.4828,
+       0.7104
+      ]
+     }
     }
    },
    "nexora_v1": {
@@ -2609,9 +4733,168 @@
      }
     },
     "latency_ms": {
-     "median": 58.0,
-     "p95": 133.3,
-     "max": 205.5
+     "median": 44.3,
+     "p95": 84.6,
+     "max": 129.7
+    },
+    "entity": {
+     "accounts": {
+      "positive": 414,
+      "flagged": 1090,
+      "tp": 206,
+      "fp": 884,
+      "fn": 208,
+      "fp_labelled_legitimate": 712,
+      "fp_unlabelled": 172,
+      "recall": 0.4976,
+      "precision": 0.189
+     },
+     "ranking": {
+      "suspicious_networks": 56,
+      "queued_items": 122,
+      "networks_reached": 38,
+      "average_precision": 0.1808,
+      "curve": [
+       {
+        "items": 18,
+        "networks": 3
+       },
+       {
+        "items": 21,
+        "networks": 4
+       },
+       {
+        "items": 28,
+        "networks": 5
+       },
+       {
+        "items": 31,
+        "networks": 7
+       },
+       {
+        "items": 35,
+        "networks": 8
+       },
+       {
+        "items": 41,
+        "networks": 12
+       },
+       {
+        "items": 49,
+        "networks": 14
+       },
+       {
+        "items": 56,
+        "networks": 16
+       },
+       {
+        "items": 66,
+        "networks": 17
+       },
+       {
+        "items": 73,
+        "networks": 18
+       },
+       {
+        "items": 78,
+        "networks": 21
+       },
+       {
+        "items": 84,
+        "networks": 23
+       },
+       {
+        "items": 88,
+        "networks": 24
+       },
+       {
+        "items": 91,
+        "networks": 26
+       },
+       {
+        "items": 95,
+        "networks": 27
+       },
+       {
+        "items": 104,
+        "networks": 30
+       },
+       {
+        "items": 110,
+        "networks": 31
+       },
+       {
+        "items": 112,
+        "networks": 32
+       },
+       {
+        "items": 117,
+        "networks": 33
+       },
+       {
+        "items": 122,
+        "networks": 38
+       }
+      ]
+     },
+     "reliability": [
+      {
+       "band": "high",
+       "items": 88,
+       "planted": 29,
+       "share": 0.3295,
+       "wilson95": [
+        0.2403,
+        0.4331
+       ]
+      },
+      {
+       "band": "medium",
+       "items": 29,
+       "planted": 10,
+       "share": 0.3448,
+       "wilson95": [
+        0.1994,
+        0.5265
+       ]
+      },
+      {
+       "band": "insufficient_evidence",
+       "items": 5,
+       "planted": 5,
+       "share": 1.0,
+       "wilson95": [
+        0.5655,
+        1.0
+       ]
+      },
+      {
+       "band": "low",
+       "items": 860,
+       "planted": 22,
+       "share": 0.0256,
+       "wilson95": [
+        0.017,
+        0.0384
+       ]
+      }
+     ],
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.3824,
+       0.6046
+      ],
+      "account_precision": [
+       0.1319,
+       0.2604
+      ],
+      "average_precision": [
+       0.1286,
+       0.2578
+      ]
+     }
     }
    },
    "B4_structure_temporal": {
@@ -2742,9 +5025,180 @@
      }
     },
     "latency_ms": {
-     "median": 70.8,
-     "p95": 129.0,
-     "max": 199.4
+     "median": 54.6,
+     "p95": 196.6,
+     "max": 212.5
+    },
+    "entity": {
+     "accounts": {
+      "positive": 414,
+      "flagged": 1072,
+      "tp": 289,
+      "fp": 783,
+      "fn": 125,
+      "fp_labelled_legitimate": 592,
+      "fp_unlabelled": 191,
+      "recall": 0.6981,
+      "precision": 0.2696
+     },
+     "ranking": {
+      "suspicious_networks": 56,
+      "queued_items": 151,
+      "networks_reached": 48,
+      "average_precision": 0.2959,
+      "curve": [
+       {
+        "items": 9,
+        "networks": 1
+       },
+       {
+        "items": 15,
+        "networks": 3
+       },
+       {
+        "items": 21,
+        "networks": 6
+       },
+       {
+        "items": 24,
+        "networks": 8
+       },
+       {
+        "items": 25,
+        "networks": 9
+       },
+       {
+        "items": 31,
+        "networks": 13
+       },
+       {
+        "items": 36,
+        "networks": 14
+       },
+       {
+        "items": 41,
+        "networks": 17
+       },
+       {
+        "items": 48,
+        "networks": 19
+       },
+       {
+        "items": 52,
+        "networks": 20
+       },
+       {
+        "items": 59,
+        "networks": 23
+       },
+       {
+        "items": 74,
+        "networks": 27
+       },
+       {
+        "items": 82,
+        "networks": 30
+       },
+       {
+        "items": 85,
+        "networks": 31
+       },
+       {
+        "items": 94,
+        "networks": 32
+       },
+       {
+        "items": 100,
+        "networks": 34
+       },
+       {
+        "items": 105,
+        "networks": 35
+       },
+       {
+        "items": 107,
+        "networks": 36
+       },
+       {
+        "items": 110,
+        "networks": 38
+       },
+       {
+        "items": 117,
+        "networks": 39
+       },
+       {
+        "items": 129,
+        "networks": 42
+       },
+       {
+        "items": 135,
+        "networks": 43
+       },
+       {
+        "items": 151,
+        "networks": 48
+       }
+      ]
+     },
+     "reliability": [
+      {
+       "band": "high",
+       "items": 107,
+       "planted": 36,
+       "share": 0.3364,
+       "wilson95": [
+        0.254,
+        0.4303
+       ]
+      },
+      {
+       "band": "medium",
+       "items": 39,
+       "planted": 9,
+       "share": 0.2308,
+       "wilson95": [
+        0.1265,
+        0.3834
+       ]
+      },
+      {
+       "band": "insufficient_evidence",
+       "items": 5,
+       "planted": 5,
+       "share": 1.0,
+       "wilson95": [
+        0.5655,
+        1.0
+       ]
+      },
+      {
+       "band": "low",
+       "items": 876,
+       "planted": 17,
+       "share": 0.0194,
+       "wilson95": [
+        0.0122,
+        0.0309
+       ]
+      }
+     ],
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.601,
+       0.7823
+      ],
+      "account_precision": [
+       0.1964,
+       0.365
+      ],
+      "average_precision": [
+       0.2184,
+       0.4156
+      ]
+     }
     }
    },
    "B3_structure_only": {
@@ -2875,9 +5329,83 @@
      }
     },
     "latency_ms": {
-     "median": 75.7,
-     "p95": 132.6,
-     "max": 286.4
+     "median": 63.5,
+     "p95": 178.1,
+     "max": 236.1
+    },
+    "entity": {
+     "accounts": {
+      "positive": 414,
+      "flagged": 2326,
+      "tp": 395,
+      "fp": 1931,
+      "fn": 19,
+      "fp_labelled_legitimate": 918,
+      "fp_unlabelled": 1013,
+      "recall": 0.9541,
+      "precision": 0.1698
+     },
+     "ranking": {
+      "suspicious_networks": 56,
+      "queued_items": 1027,
+      "networks_reached": 56,
+      "average_precision": 0.0717,
+      "curve": [
+       {
+        "items": 310,
+        "networks": 21
+       },
+       {
+        "items": 315,
+        "networks": 22
+       },
+       {
+        "items": 332,
+        "networks": 30
+       },
+       {
+        "items": 339,
+        "networks": 31
+       },
+       {
+        "items": 537,
+        "networks": 39
+       },
+       {
+        "items": 558,
+        "networks": 43
+       },
+       {
+        "items": 565,
+        "networks": 46
+       },
+       {
+        "items": 575,
+        "networks": 47
+       },
+       {
+        "items": 1027,
+        "networks": 56
+       }
+      ]
+     },
+     "reliability": null,
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.9328,
+       0.9772
+      ],
+      "account_precision": [
+       0.1411,
+       0.1995
+      ],
+      "average_precision": [
+       0.0538,
+       0.1025
+      ]
+     }
     }
    },
    "B1_rules": {
@@ -3008,9 +5536,247 @@
      }
     },
     "latency_ms": {
-     "median": 1.8,
-     "p95": 3.1,
-     "max": 4.7
+     "median": 1.7,
+     "p95": 3.0,
+     "max": 4.9
+    },
+    "entity": {
+     "accounts": {
+      "positive": 414,
+      "flagged": 741,
+      "tp": 152,
+      "fp": 589,
+      "fn": 262,
+      "fp_labelled_legitimate": 126,
+      "fp_unlabelled": 463,
+      "recall": 0.3671,
+      "precision": 0.2051
+     },
+     "ranking": {
+      "suspicious_networks": 56,
+      "queued_items": 741,
+      "networks_reached": 50,
+      "average_precision": 0.1689,
+      "curve": [
+       {
+        "items": 31,
+        "networks": 1
+       },
+       {
+        "items": 32,
+        "networks": 2
+       },
+       {
+        "items": 33,
+        "networks": 3
+       },
+       {
+        "items": 39,
+        "networks": 4
+       },
+       {
+        "items": 41,
+        "networks": 5
+       },
+       {
+        "items": 42,
+        "networks": 6
+       },
+       {
+        "items": 43,
+        "networks": 7
+       },
+       {
+        "items": 45,
+        "networks": 8
+       },
+       {
+        "items": 47,
+        "networks": 9
+       },
+       {
+        "items": 48,
+        "networks": 10
+       },
+       {
+        "items": 49,
+        "networks": 11
+       },
+       {
+        "items": 50,
+        "networks": 12
+       },
+       {
+        "items": 52,
+        "networks": 13
+       },
+       {
+        "items": 53,
+        "networks": 14
+       },
+       {
+        "items": 73,
+        "networks": 15
+       },
+       {
+        "items": 74,
+        "networks": 16
+       },
+       {
+        "items": 86,
+        "networks": 17
+       },
+       {
+        "items": 88,
+        "networks": 18
+       },
+       {
+        "items": 89,
+        "networks": 19
+       },
+       {
+        "items": 90,
+        "networks": 20
+       },
+       {
+        "items": 91,
+        "networks": 21
+       },
+       {
+        "items": 92,
+        "networks": 22
+       },
+       {
+        "items": 93,
+        "networks": 23
+       },
+       {
+        "items": 94,
+        "networks": 24
+       },
+       {
+        "items": 100,
+        "networks": 25
+       },
+       {
+        "items": 101,
+        "networks": 26
+       },
+       {
+        "items": 136,
+        "networks": 27
+       },
+       {
+        "items": 137,
+        "networks": 28
+       },
+       {
+        "items": 159,
+        "networks": 29
+       },
+       {
+        "items": 161,
+        "networks": 30
+       },
+       {
+        "items": 162,
+        "networks": 31
+       },
+       {
+        "items": 169,
+        "networks": 32
+       },
+       {
+        "items": 178,
+        "networks": 33
+       },
+       {
+        "items": 179,
+        "networks": 34
+       },
+       {
+        "items": 186,
+        "networks": 35
+       },
+       {
+        "items": 191,
+        "networks": 36
+       },
+       {
+        "items": 198,
+        "networks": 37
+       },
+       {
+        "items": 206,
+        "networks": 38
+       },
+       {
+        "items": 223,
+        "networks": 39
+       },
+       {
+        "items": 225,
+        "networks": 40
+       },
+       {
+        "items": 231,
+        "networks": 41
+       },
+       {
+        "items": 232,
+        "networks": 42
+       },
+       {
+        "items": 235,
+        "networks": 43
+       },
+       {
+        "items": 237,
+        "networks": 44
+       },
+       {
+        "items": 245,
+        "networks": 45
+       },
+       {
+        "items": 254,
+        "networks": 46
+       },
+       {
+        "items": 259,
+        "networks": 47
+       },
+       {
+        "items": 265,
+        "networks": 48
+       },
+       {
+        "items": 266,
+        "networks": 49
+       },
+       {
+        "items": 275,
+        "networks": 50
+       }
+      ]
+     },
+     "reliability": null,
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.3033,
+       0.43
+      ],
+      "account_precision": [
+       0.1572,
+       0.2587
+      ],
+      "average_precision": [
+       0.1324,
+       0.2371
+      ]
+     }
     }
    },
    "B0_volume": {
@@ -3141,9 +5907,271 @@
      }
     },
     "latency_ms": {
-     "median": 4.2,
-     "p95": 5.4,
-     "max": 10.0
+     "median": 3.7,
+     "p95": 6.3,
+     "max": 11.2
+    },
+    "entity": {
+     "accounts": {
+      "positive": 414,
+      "flagged": 157,
+      "tp": 68,
+      "fp": 89,
+      "fn": 346,
+      "fp_labelled_legitimate": 89,
+      "fp_unlabelled": 0,
+      "recall": 0.1643,
+      "precision": 0.4331
+     },
+     "ranking": {
+      "suspicious_networks": 56,
+      "queued_items": 3605,
+      "networks_reached": 56,
+      "average_precision": 0.1609,
+      "curve": [
+       {
+        "items": 33,
+        "networks": 1
+       },
+       {
+        "items": 36,
+        "networks": 2
+       },
+       {
+        "items": 38,
+        "networks": 3
+       },
+       {
+        "items": 44,
+        "networks": 4
+       },
+       {
+        "items": 46,
+        "networks": 5
+       },
+       {
+        "items": 47,
+        "networks": 6
+       },
+       {
+        "items": 53,
+        "networks": 7
+       },
+       {
+        "items": 57,
+        "networks": 8
+       },
+       {
+        "items": 61,
+        "networks": 9
+       },
+       {
+        "items": 73,
+        "networks": 10
+       },
+       {
+        "items": 76,
+        "networks": 11
+       },
+       {
+        "items": 81,
+        "networks": 12
+       },
+       {
+        "items": 84,
+        "networks": 13
+       },
+       {
+        "items": 85,
+        "networks": 14
+       },
+       {
+        "items": 89,
+        "networks": 15
+       },
+       {
+        "items": 92,
+        "networks": 16
+       },
+       {
+        "items": 95,
+        "networks": 17
+       },
+       {
+        "items": 98,
+        "networks": 18
+       },
+       {
+        "items": 99,
+        "networks": 19
+       },
+       {
+        "items": 100,
+        "networks": 20
+       },
+       {
+        "items": 101,
+        "networks": 21
+       },
+       {
+        "items": 102,
+        "networks": 22
+       },
+       {
+        "items": 105,
+        "networks": 23
+       },
+       {
+        "items": 110,
+        "networks": 24
+       },
+       {
+        "items": 111,
+        "networks": 25
+       },
+       {
+        "items": 128,
+        "networks": 26
+       },
+       {
+        "items": 130,
+        "networks": 27
+       },
+       {
+        "items": 135,
+        "networks": 28
+       },
+       {
+        "items": 137,
+        "networks": 29
+       },
+       {
+        "items": 138,
+        "networks": 30
+       },
+       {
+        "items": 145,
+        "networks": 31
+       },
+       {
+        "items": 148,
+        "networks": 32
+       },
+       {
+        "items": 159,
+        "networks": 33
+       },
+       {
+        "items": 160,
+        "networks": 34
+       },
+       {
+        "items": 169,
+        "networks": 35
+       },
+       {
+        "items": 175,
+        "networks": 36
+       },
+       {
+        "items": 180,
+        "networks": 37
+       },
+       {
+        "items": 188,
+        "networks": 38
+       },
+       {
+        "items": 241,
+        "networks": 39
+       },
+       {
+        "items": 249,
+        "networks": 40
+       },
+       {
+        "items": 250,
+        "networks": 41
+       },
+       {
+        "items": 256,
+        "networks": 42
+       },
+       {
+        "items": 265,
+        "networks": 43
+       },
+       {
+        "items": 269,
+        "networks": 44
+       },
+       {
+        "items": 279,
+        "networks": 45
+       },
+       {
+        "items": 282,
+        "networks": 46
+       },
+       {
+        "items": 305,
+        "networks": 47
+       },
+       {
+        "items": 321,
+        "networks": 48
+       },
+       {
+        "items": 337,
+        "networks": 49
+       },
+       {
+        "items": 392,
+        "networks": 50
+       },
+       {
+        "items": 414,
+        "networks": 51
+       },
+       {
+        "items": 510,
+        "networks": 52
+       },
+       {
+        "items": 540,
+        "networks": 53
+       },
+       {
+        "items": 643,
+        "networks": 54
+       },
+       {
+        "items": 646,
+        "networks": 55
+       },
+       {
+        "items": 704,
+        "networks": 56
+       }
+      ]
+     },
+     "reliability": null,
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.1082,
+       0.2258
+      ],
+      "account_precision": [
+       0.3013,
+       0.5632
+      ],
+      "average_precision": [
+       0.1284,
+       0.2239
+      ]
+     }
     }
    },
    "B2_pagerank": {
@@ -3274,9 +6302,263 @@
      }
     },
     "latency_ms": {
-     "median": 34.5,
-     "p95": 56.7,
-     "max": 87.1
+     "median": 32.0,
+     "p95": 56.4,
+     "max": 79.7
+    },
+    "entity": {
+     "accounts": {
+      "positive": 414,
+      "flagged": 157,
+      "tp": 6,
+      "fp": 151,
+      "fn": 408,
+      "fp_labelled_legitimate": 57,
+      "fp_unlabelled": 94,
+      "recall": 0.0145,
+      "precision": 0.0382
+     },
+     "ranking": {
+      "suspicious_networks": 56,
+      "queued_items": 3605,
+      "networks_reached": 56,
+      "average_precision": 0.0371,
+      "curve": [
+       {
+        "items": 133,
+        "networks": 1
+       },
+       {
+        "items": 145,
+        "networks": 2
+       },
+       {
+        "items": 195,
+        "networks": 3
+       },
+       {
+        "items": 200,
+        "networks": 4
+       },
+       {
+        "items": 210,
+        "networks": 5
+       },
+       {
+        "items": 217,
+        "networks": 6
+       },
+       {
+        "items": 250,
+        "networks": 7
+       },
+       {
+        "items": 296,
+        "networks": 8
+       },
+       {
+        "items": 328,
+        "networks": 9
+       },
+       {
+        "items": 342,
+        "networks": 10
+       },
+       {
+        "items": 351,
+        "networks": 11
+       },
+       {
+        "items": 364,
+        "networks": 12
+       },
+       {
+        "items": 368,
+        "networks": 13
+       },
+       {
+        "items": 378,
+        "networks": 14
+       },
+       {
+        "items": 385,
+        "networks": 15
+       },
+       {
+        "items": 392,
+        "networks": 16
+       },
+       {
+        "items": 417,
+        "networks": 17
+       },
+       {
+        "items": 441,
+        "networks": 18
+       },
+       {
+        "items": 467,
+        "networks": 19
+       },
+       {
+        "items": 476,
+        "networks": 20
+       },
+       {
+        "items": 488,
+        "networks": 21
+       },
+       {
+        "items": 502,
+        "networks": 22
+       },
+       {
+        "items": 534,
+        "networks": 23
+       },
+       {
+        "items": 574,
+        "networks": 24
+       },
+       {
+        "items": 596,
+        "networks": 25
+       },
+       {
+        "items": 626,
+        "networks": 26
+       },
+       {
+        "items": 635,
+        "networks": 27
+       },
+       {
+        "items": 642,
+        "networks": 28
+       },
+       {
+        "items": 663,
+        "networks": 29
+       },
+       {
+        "items": 665,
+        "networks": 30
+       },
+       {
+        "items": 723,
+        "networks": 31
+       },
+       {
+        "items": 774,
+        "networks": 32
+       },
+       {
+        "items": 790,
+        "networks": 33
+       },
+       {
+        "items": 796,
+        "networks": 34
+       },
+       {
+        "items": 814,
+        "networks": 35
+       },
+       {
+        "items": 829,
+        "networks": 36
+       },
+       {
+        "items": 840,
+        "networks": 37
+       },
+       {
+        "items": 844,
+        "networks": 38
+       },
+       {
+        "items": 848,
+        "networks": 39
+       },
+       {
+        "items": 880,
+        "networks": 40
+       },
+       {
+        "items": 917,
+        "networks": 41
+       },
+       {
+        "items": 937,
+        "networks": 42
+       },
+       {
+        "items": 965,
+        "networks": 43
+       },
+       {
+        "items": 992,
+        "networks": 44
+       },
+       {
+        "items": 1068,
+        "networks": 45
+       },
+       {
+        "items": 1175,
+        "networks": 46
+       },
+       {
+        "items": 1212,
+        "networks": 47
+       },
+       {
+        "items": 1240,
+        "networks": 48
+       },
+       {
+        "items": 1331,
+        "networks": 50
+       },
+       {
+        "items": 1384,
+        "networks": 51
+       },
+       {
+        "items": 1607,
+        "networks": 52
+       },
+       {
+        "items": 1662,
+        "networks": 54
+       },
+       {
+        "items": 1672,
+        "networks": 55
+       },
+       {
+        "items": 1697,
+        "networks": 56
+       }
+      ]
+     },
+     "reliability": null,
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.0025,
+       0.0302
+      ],
+      "account_precision": [
+       0.0065,
+       0.0811
+      ],
+      "average_precision": [
+       0.0297,
+       0.0495
+      ]
+     }
     }
    }
   },
@@ -3409,9 +6691,234 @@
      }
     },
     "latency_ms": {
-     "median": 86.2,
-     "p95": 202.0,
-     "max": 229.4
+     "median": 70.2,
+     "p95": 161.7,
+     "max": 171.9
+    },
+    "entity": {
+     "accounts": {
+      "positive": 735,
+      "flagged": 1799,
+      "tp": 544,
+      "fp": 1255,
+      "fn": 191,
+      "fp_labelled_legitimate": 878,
+      "fp_unlabelled": 377,
+      "recall": 0.7401,
+      "precision": 0.3024
+     },
+     "ranking": {
+      "suspicious_networks": 92,
+      "queued_items": 293,
+      "networks_reached": 81,
+      "average_precision": 0.6259,
+      "curve": [
+       {
+        "items": 4,
+        "networks": 4
+       },
+       {
+        "items": 6,
+        "networks": 6
+       },
+       {
+        "items": 7,
+        "networks": 7
+       },
+       {
+        "items": 8,
+        "networks": 8
+       },
+       {
+        "items": 11,
+        "networks": 11
+       },
+       {
+        "items": 12,
+        "networks": 12
+       },
+       {
+        "items": 14,
+        "networks": 13
+       },
+       {
+        "items": 15,
+        "networks": 14
+       },
+       {
+        "items": 16,
+        "networks": 15
+       },
+       {
+        "items": 17,
+        "networks": 16
+       },
+       {
+        "items": 20,
+        "networks": 17
+       },
+       {
+        "items": 24,
+        "networks": 21
+       },
+       {
+        "items": 28,
+        "networks": 25
+       },
+       {
+        "items": 31,
+        "networks": 28
+       },
+       {
+        "items": 33,
+        "networks": 29
+       },
+       {
+        "items": 37,
+        "networks": 31
+       },
+       {
+        "items": 39,
+        "networks": 33
+       },
+       {
+        "items": 43,
+        "networks": 36
+       },
+       {
+        "items": 46,
+        "networks": 38
+       },
+       {
+        "items": 48,
+        "networks": 40
+       },
+       {
+        "items": 52,
+        "networks": 43
+       },
+       {
+        "items": 63,
+        "networks": 52
+       },
+       {
+        "items": 80,
+        "networks": 53
+       },
+       {
+        "items": 83,
+        "networks": 55
+       },
+       {
+        "items": 89,
+        "networks": 57
+       },
+       {
+        "items": 93,
+        "networks": 58
+       },
+       {
+        "items": 96,
+        "networks": 59
+       },
+       {
+        "items": 102,
+        "networks": 60
+       },
+       {
+        "items": 150,
+        "networks": 61
+       },
+       {
+        "items": 162,
+        "networks": 62
+       },
+       {
+        "items": 209,
+        "networks": 65
+       },
+       {
+        "items": 253,
+        "networks": 71
+       },
+       {
+        "items": 285,
+        "networks": 73
+       },
+       {
+        "items": 293,
+        "networks": 81
+       }
+      ]
+     },
+     "reliability": [
+      {
+       "band": "critical",
+       "items": 8,
+       "planted": 8,
+       "share": 1.0,
+       "wilson95": [
+        0.6756,
+        1.0
+       ]
+      },
+      {
+       "band": "high",
+       "items": 93,
+       "planted": 51,
+       "share": 0.5484,
+       "wilson95": [
+        0.4473,
+        0.6456
+       ]
+      },
+      {
+       "band": "medium",
+       "items": 184,
+       "planted": 40,
+       "share": 0.2174,
+       "wilson95": [
+        0.1639,
+        0.2824
+       ]
+      },
+      {
+       "band": "insufficient_evidence",
+       "items": 8,
+       "planted": 8,
+       "share": 1.0,
+       "wilson95": [
+        0.6756,
+        1.0
+       ]
+      },
+      {
+       "band": "low",
+       "items": 1445,
+       "planted": 18,
+       "share": 0.0125,
+       "wilson95": [
+        0.0079,
+        0.0196
+       ]
+      }
+     ],
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.6515,
+       0.8237
+      ],
+      "account_precision": [
+       0.258,
+       0.3557
+      ],
+      "average_precision": [
+       0.5259,
+       0.7272
+      ]
+     }
     }
    },
    "nexora_v1": {
@@ -3542,9 +7049,172 @@
      }
     },
     "latency_ms": {
-     "median": 60.6,
-     "p95": 124.9,
-     "max": 147.5
+     "median": 55.2,
+     "p95": 118.8,
+     "max": 166.1
+    },
+    "entity": {
+     "accounts": {
+      "positive": 735,
+      "flagged": 1846,
+      "tp": 378,
+      "fp": 1468,
+      "fn": 357,
+      "fp_labelled_legitimate": 1121,
+      "fp_unlabelled": 347,
+      "recall": 0.5143,
+      "precision": 0.2048
+     },
+     "ranking": {
+      "suspicious_networks": 92,
+      "queued_items": 227,
+      "networks_reached": 64,
+      "average_precision": 0.1579,
+      "curve": [
+       {
+        "items": 23,
+        "networks": 2
+       },
+       {
+        "items": 30,
+        "networks": 6
+       },
+       {
+        "items": 38,
+        "networks": 8
+       },
+       {
+        "items": 43,
+        "networks": 9
+       },
+       {
+        "items": 54,
+        "networks": 11
+       },
+       {
+        "items": 63,
+        "networks": 14
+       },
+       {
+        "items": 75,
+        "networks": 16
+       },
+       {
+        "items": 86,
+        "networks": 19
+       },
+       {
+        "items": 97,
+        "networks": 20
+       },
+       {
+        "items": 108,
+        "networks": 24
+       },
+       {
+        "items": 130,
+        "networks": 25
+       },
+       {
+        "items": 139,
+        "networks": 30
+       },
+       {
+        "items": 148,
+        "networks": 31
+       },
+       {
+        "items": 152,
+        "networks": 32
+       },
+       {
+        "items": 154,
+        "networks": 33
+       },
+       {
+        "items": 169,
+        "networks": 36
+       },
+       {
+        "items": 185,
+        "networks": 42
+       },
+       {
+        "items": 201,
+        "networks": 50
+       },
+       {
+        "items": 212,
+        "networks": 52
+       },
+       {
+        "items": 219,
+        "networks": 56
+       },
+       {
+        "items": 227,
+        "networks": 64
+       }
+      ]
+     },
+     "reliability": [
+      {
+       "band": "high",
+       "items": 162,
+       "planted": 42,
+       "share": 0.2593,
+       "wilson95": [
+        0.1979,
+        0.3318
+       ]
+      },
+      {
+       "band": "medium",
+       "items": 57,
+       "planted": 26,
+       "share": 0.4561,
+       "wilson95": [
+        0.3337,
+        0.5841
+       ]
+      },
+      {
+       "band": "insufficient_evidence",
+       "items": 8,
+       "planted": 8,
+       "share": 1.0,
+       "wilson95": [
+        0.6756,
+        1.0
+       ]
+      },
+      {
+       "band": "low",
+       "items": 1434,
+       "planted": 41,
+       "share": 0.0286,
+       "wilson95": [
+        0.0211,
+        0.0386
+       ]
+      }
+     ],
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.4097,
+       0.6255
+      ],
+      "account_precision": [
+       0.1604,
+       0.2571
+      ],
+      "average_precision": [
+       0.1182,
+       0.218
+      ]
+     }
     }
    },
    "B4_structure_temporal": {
@@ -3675,9 +7345,188 @@
      }
     },
     "latency_ms": {
-     "median": 81.6,
-     "p95": 151.5,
-     "max": 219.0
+     "median": 72.4,
+     "p95": 188.4,
+     "max": 263.5
+    },
+    "entity": {
+     "accounts": {
+      "positive": 735,
+      "flagged": 1732,
+      "tp": 533,
+      "fp": 1199,
+      "fn": 202,
+      "fp_labelled_legitimate": 862,
+      "fp_unlabelled": 337,
+      "recall": 0.7252,
+      "precision": 0.3077
+     },
+     "ranking": {
+      "suspicious_networks": 92,
+      "queued_items": 273,
+      "networks_reached": 81,
+      "average_precision": 0.3109,
+      "curve": [
+       {
+        "items": 16,
+        "networks": 4
+       },
+       {
+        "items": 30,
+        "networks": 10
+       },
+       {
+        "items": 38,
+        "networks": 15
+       },
+       {
+        "items": 40,
+        "networks": 16
+       },
+       {
+        "items": 46,
+        "networks": 21
+       },
+       {
+        "items": 48,
+        "networks": 22
+       },
+       {
+        "items": 59,
+        "networks": 24
+       },
+       {
+        "items": 68,
+        "networks": 26
+       },
+       {
+        "items": 80,
+        "networks": 29
+       },
+       {
+        "items": 91,
+        "networks": 32
+       },
+       {
+        "items": 97,
+        "networks": 36
+       },
+       {
+        "items": 106,
+        "networks": 40
+       },
+       {
+        "items": 124,
+        "networks": 49
+       },
+       {
+        "items": 145,
+        "networks": 50
+       },
+       {
+        "items": 154,
+        "networks": 53
+       },
+       {
+        "items": 164,
+        "networks": 56
+       },
+       {
+        "items": 171,
+        "networks": 57
+       },
+       {
+        "items": 174,
+        "networks": 58
+       },
+       {
+        "items": 180,
+        "networks": 59
+       },
+       {
+        "items": 185,
+        "networks": 60
+       },
+       {
+        "items": 193,
+        "networks": 64
+       },
+       {
+        "items": 217,
+        "networks": 70
+       },
+       {
+        "items": 237,
+        "networks": 71
+       },
+       {
+        "items": 258,
+        "networks": 73
+       },
+       {
+        "items": 273,
+        "networks": 81
+       }
+      ]
+     },
+     "reliability": [
+      {
+       "band": "high",
+       "items": 185,
+       "planted": 60,
+       "share": 0.3243,
+       "wilson95": [
+        0.261,
+        0.3948
+       ]
+      },
+      {
+       "band": "medium",
+       "items": 80,
+       "planted": 28,
+       "share": 0.35,
+       "wilson95": [
+        0.2545,
+        0.4592
+       ]
+      },
+      {
+       "band": "insufficient_evidence",
+       "items": 8,
+       "planted": 8,
+       "share": 1.0,
+       "wilson95": [
+        0.6756,
+        1.0
+       ]
+      },
+      {
+       "band": "low",
+       "items": 1465,
+       "planted": 29,
+       "share": 0.0198,
+       "wilson95": [
+        0.0138,
+        0.0283
+       ]
+      }
+     ],
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.6378,
+       0.8061
+      ],
+      "account_precision": [
+       0.2639,
+       0.3631
+      ],
+      "average_precision": [
+       0.2491,
+       0.4032
+      ]
+     }
     }
    },
    "B3_structure_only": {
@@ -3808,9 +7657,83 @@
      }
     },
     "latency_ms": {
-     "median": 91.1,
-     "p95": 163.6,
-     "max": 225.8
+     "median": 85.6,
+     "p95": 142.9,
+     "max": 162.0
+    },
+    "entity": {
+     "accounts": {
+      "positive": 735,
+      "flagged": 3599,
+      "tp": 686,
+      "fp": 2913,
+      "fn": 49,
+      "fp_labelled_legitimate": 1317,
+      "fp_unlabelled": 1596,
+      "recall": 0.9333,
+      "precision": 0.1906
+     },
+     "ranking": {
+      "suspicious_networks": 92,
+      "queued_items": 1738,
+      "networks_reached": 92,
+      "average_precision": 0.0808,
+      "curve": [
+       {
+        "items": 478,
+        "networks": 39
+       },
+       {
+        "items": 480,
+        "networks": 41
+       },
+       {
+        "items": 506,
+        "networks": 51
+       },
+       {
+        "items": 828,
+        "networks": 62
+       },
+       {
+        "items": 849,
+        "networks": 65
+       },
+       {
+        "items": 872,
+        "networks": 74
+       },
+       {
+        "items": 884,
+        "networks": 80
+       },
+       {
+        "items": 900,
+        "networks": 82
+       },
+       {
+        "items": 1738,
+        "networks": 92
+       }
+      ]
+     },
+     "reliability": null,
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.9109,
+       0.9552
+      ],
+      "account_precision": [
+       0.1694,
+       0.2142
+      ],
+      "average_precision": [
+       0.06,
+       0.1164
+      ]
+     }
     }
    },
    "B1_rules": {
@@ -3941,9 +7864,399 @@
      }
     },
     "latency_ms": {
-     "median": 2.1,
-     "p95": 3.7,
-     "max": 5.2
+     "median": 2.0,
+     "p95": 2.6,
+     "max": 3.2
+    },
+    "entity": {
+     "accounts": {
+      "positive": 735,
+      "flagged": 1277,
+      "tp": 356,
+      "fp": 921,
+      "fn": 379,
+      "fp_labelled_legitimate": 203,
+      "fp_unlabelled": 718,
+      "recall": 0.4844,
+      "precision": 0.2788
+     },
+     "ranking": {
+      "suspicious_networks": 92,
+      "queued_items": 1277,
+      "networks_reached": 88,
+      "average_precision": 0.1994,
+      "curve": [
+       {
+        "items": 54,
+        "networks": 1
+       },
+       {
+        "items": 56,
+        "networks": 2
+       },
+       {
+        "items": 57,
+        "networks": 3
+       },
+       {
+        "items": 59,
+        "networks": 4
+       },
+       {
+        "items": 60,
+        "networks": 5
+       },
+       {
+        "items": 61,
+        "networks": 6
+       },
+       {
+        "items": 62,
+        "networks": 7
+       },
+       {
+        "items": 64,
+        "networks": 8
+       },
+       {
+        "items": 66,
+        "networks": 9
+       },
+       {
+        "items": 67,
+        "networks": 10
+       },
+       {
+        "items": 69,
+        "networks": 11
+       },
+       {
+        "items": 71,
+        "networks": 12
+       },
+       {
+        "items": 73,
+        "networks": 13
+       },
+       {
+        "items": 74,
+        "networks": 14
+       },
+       {
+        "items": 76,
+        "networks": 15
+       },
+       {
+        "items": 77,
+        "networks": 16
+       },
+       {
+        "items": 78,
+        "networks": 17
+       },
+       {
+        "items": 79,
+        "networks": 18
+       },
+       {
+        "items": 80,
+        "networks": 19
+       },
+       {
+        "items": 81,
+        "networks": 20
+       },
+       {
+        "items": 82,
+        "networks": 21
+       },
+       {
+        "items": 83,
+        "networks": 22
+       },
+       {
+        "items": 84,
+        "networks": 23
+       },
+       {
+        "items": 85,
+        "networks": 24
+       },
+       {
+        "items": 86,
+        "networks": 25
+       },
+       {
+        "items": 87,
+        "networks": 26
+       },
+       {
+        "items": 119,
+        "networks": 27
+       },
+       {
+        "items": 120,
+        "networks": 28
+       },
+       {
+        "items": 121,
+        "networks": 29
+       },
+       {
+        "items": 122,
+        "networks": 30
+       },
+       {
+        "items": 123,
+        "networks": 31
+       },
+       {
+        "items": 126,
+        "networks": 32
+       },
+       {
+        "items": 134,
+        "networks": 33
+       },
+       {
+        "items": 141,
+        "networks": 34
+       },
+       {
+        "items": 142,
+        "networks": 35
+       },
+       {
+        "items": 145,
+        "networks": 36
+       },
+       {
+        "items": 148,
+        "networks": 37
+       },
+       {
+        "items": 149,
+        "networks": 38
+       },
+       {
+        "items": 150,
+        "networks": 39
+       },
+       {
+        "items": 151,
+        "networks": 40
+       },
+       {
+        "items": 152,
+        "networks": 41
+       },
+       {
+        "items": 153,
+        "networks": 42
+       },
+       {
+        "items": 154,
+        "networks": 43
+       },
+       {
+        "items": 155,
+        "networks": 44
+       },
+       {
+        "items": 156,
+        "networks": 45
+       },
+       {
+        "items": 157,
+        "networks": 46
+       },
+       {
+        "items": 159,
+        "networks": 47
+       },
+       {
+        "items": 160,
+        "networks": 48
+       },
+       {
+        "items": 164,
+        "networks": 49
+       },
+       {
+        "items": 165,
+        "networks": 50
+       },
+       {
+        "items": 166,
+        "networks": 51
+       },
+       {
+        "items": 167,
+        "networks": 52
+       },
+       {
+        "items": 228,
+        "networks": 53
+       },
+       {
+        "items": 231,
+        "networks": 54
+       },
+       {
+        "items": 255,
+        "networks": 55
+       },
+       {
+        "items": 273,
+        "networks": 56
+       },
+       {
+        "items": 276,
+        "networks": 57
+       },
+       {
+        "items": 290,
+        "networks": 58
+       },
+       {
+        "items": 293,
+        "networks": 59
+       },
+       {
+        "items": 301,
+        "networks": 60
+       },
+       {
+        "items": 304,
+        "networks": 61
+       },
+       {
+        "items": 321,
+        "networks": 62
+       },
+       {
+        "items": 324,
+        "networks": 63
+       },
+       {
+        "items": 340,
+        "networks": 64
+       },
+       {
+        "items": 352,
+        "networks": 65
+       },
+       {
+        "items": 355,
+        "networks": 66
+       },
+       {
+        "items": 357,
+        "networks": 67
+       },
+       {
+        "items": 360,
+        "networks": 68
+       },
+       {
+        "items": 402,
+        "networks": 69
+       },
+       {
+        "items": 404,
+        "networks": 70
+       },
+       {
+        "items": 406,
+        "networks": 71
+       },
+       {
+        "items": 410,
+        "networks": 72
+       },
+       {
+        "items": 414,
+        "networks": 73
+       },
+       {
+        "items": 417,
+        "networks": 74
+       },
+       {
+        "items": 423,
+        "networks": 75
+       },
+       {
+        "items": 428,
+        "networks": 76
+       },
+       {
+        "items": 431,
+        "networks": 77
+       },
+       {
+        "items": 437,
+        "networks": 78
+       },
+       {
+        "items": 440,
+        "networks": 79
+       },
+       {
+        "items": 442,
+        "networks": 80
+       },
+       {
+        "items": 447,
+        "networks": 81
+       },
+       {
+        "items": 453,
+        "networks": 82
+       },
+       {
+        "items": 455,
+        "networks": 83
+       },
+       {
+        "items": 456,
+        "networks": 84
+       },
+       {
+        "items": 460,
+        "networks": 85
+       },
+       {
+        "items": 463,
+        "networks": 86
+       },
+       {
+        "items": 465,
+        "networks": 87
+       },
+       {
+        "items": 503,
+        "networks": 88
+       }
+      ]
+     },
+     "reliability": null,
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.422,
+       0.5477
+      ],
+      "account_precision": [
+       0.2302,
+       0.3304
+      ],
+      "average_precision": [
+       0.1649,
+       0.2571
+      ]
+     }
     }
    },
    "B0_volume": {
@@ -4074,9 +8387,415 @@
      }
     },
     "latency_ms": {
-     "median": 4.3,
-     "p95": 9.0,
-     "max": 12.5
+     "median": 4.4,
+     "p95": 6.0,
+     "max": 6.3
+    },
+    "entity": {
+     "accounts": {
+      "positive": 735,
+      "flagged": 285,
+      "tp": 138,
+      "fp": 147,
+      "fn": 597,
+      "fp_labelled_legitimate": 147,
+      "fp_unlabelled": 0,
+      "recall": 0.1878,
+      "precision": 0.4842
+     },
+     "ranking": {
+      "suspicious_networks": 92,
+      "queued_items": 5437,
+      "networks_reached": 92,
+      "average_precision": 0.1746,
+      "curve": [
+       {
+        "items": 56,
+        "networks": 1
+       },
+       {
+        "items": 61,
+        "networks": 2
+       },
+       {
+        "items": 62,
+        "networks": 3
+       },
+       {
+        "items": 64,
+        "networks": 4
+       },
+       {
+        "items": 66,
+        "networks": 5
+       },
+       {
+        "items": 67,
+        "networks": 6
+       },
+       {
+        "items": 69,
+        "networks": 7
+       },
+       {
+        "items": 70,
+        "networks": 8
+       },
+       {
+        "items": 75,
+        "networks": 9
+       },
+       {
+        "items": 76,
+        "networks": 10
+       },
+       {
+        "items": 77,
+        "networks": 11
+       },
+       {
+        "items": 78,
+        "networks": 12
+       },
+       {
+        "items": 83,
+        "networks": 13
+       },
+       {
+        "items": 87,
+        "networks": 14
+       },
+       {
+        "items": 94,
+        "networks": 15
+       },
+       {
+        "items": 95,
+        "networks": 16
+       },
+       {
+        "items": 98,
+        "networks": 17
+       },
+       {
+        "items": 104,
+        "networks": 18
+       },
+       {
+        "items": 111,
+        "networks": 19
+       },
+       {
+        "items": 112,
+        "networks": 20
+       },
+       {
+        "items": 113,
+        "networks": 21
+       },
+       {
+        "items": 117,
+        "networks": 22
+       },
+       {
+        "items": 119,
+        "networks": 23
+       },
+       {
+        "items": 130,
+        "networks": 24
+       },
+       {
+        "items": 132,
+        "networks": 25
+       },
+       {
+        "items": 141,
+        "networks": 26
+       },
+       {
+        "items": 152,
+        "networks": 27
+       },
+       {
+        "items": 153,
+        "networks": 28
+       },
+       {
+        "items": 154,
+        "networks": 29
+       },
+       {
+        "items": 155,
+        "networks": 30
+       },
+       {
+        "items": 159,
+        "networks": 31
+       },
+       {
+        "items": 161,
+        "networks": 32
+       },
+       {
+        "items": 162,
+        "networks": 33
+       },
+       {
+        "items": 166,
+        "networks": 34
+       },
+       {
+        "items": 167,
+        "networks": 35
+       },
+       {
+        "items": 172,
+        "networks": 36
+       },
+       {
+        "items": 173,
+        "networks": 37
+       },
+       {
+        "items": 174,
+        "networks": 38
+       },
+       {
+        "items": 175,
+        "networks": 39
+       },
+       {
+        "items": 178,
+        "networks": 40
+       },
+       {
+        "items": 179,
+        "networks": 41
+       },
+       {
+        "items": 180,
+        "networks": 42
+       },
+       {
+        "items": 181,
+        "networks": 43
+       },
+       {
+        "items": 190,
+        "networks": 44
+       },
+       {
+        "items": 191,
+        "networks": 45
+       },
+       {
+        "items": 193,
+        "networks": 46
+       },
+       {
+        "items": 200,
+        "networks": 47
+       },
+       {
+        "items": 201,
+        "networks": 48
+       },
+       {
+        "items": 211,
+        "networks": 49
+       },
+       {
+        "items": 212,
+        "networks": 50
+       },
+       {
+        "items": 215,
+        "networks": 51
+       },
+       {
+        "items": 216,
+        "networks": 52
+       },
+       {
+        "items": 230,
+        "networks": 53
+       },
+       {
+        "items": 231,
+        "networks": 54
+       },
+       {
+        "items": 241,
+        "networks": 55
+       },
+       {
+        "items": 244,
+        "networks": 56
+       },
+       {
+        "items": 247,
+        "networks": 57
+       },
+       {
+        "items": 249,
+        "networks": 58
+       },
+       {
+        "items": 267,
+        "networks": 59
+       },
+       {
+        "items": 272,
+        "networks": 60
+       },
+       {
+        "items": 274,
+        "networks": 61
+       },
+       {
+        "items": 285,
+        "networks": 62
+       },
+       {
+        "items": 293,
+        "networks": 63
+       },
+       {
+        "items": 314,
+        "networks": 64
+       },
+       {
+        "items": 323,
+        "networks": 65
+       },
+       {
+        "items": 365,
+        "networks": 66
+       },
+       {
+        "items": 373,
+        "networks": 67
+       },
+       {
+        "items": 377,
+        "networks": 68
+       },
+       {
+        "items": 383,
+        "networks": 69
+       },
+       {
+        "items": 423,
+        "networks": 70
+       },
+       {
+        "items": 457,
+        "networks": 71
+       },
+       {
+        "items": 463,
+        "networks": 72
+       },
+       {
+        "items": 465,
+        "networks": 73
+       },
+       {
+        "items": 471,
+        "networks": 74
+       },
+       {
+        "items": 484,
+        "networks": 75
+       },
+       {
+        "items": 498,
+        "networks": 76
+       },
+       {
+        "items": 502,
+        "networks": 77
+       },
+       {
+        "items": 514,
+        "networks": 78
+       },
+       {
+        "items": 542,
+        "networks": 79
+       },
+       {
+        "items": 564,
+        "networks": 80
+       },
+       {
+        "items": 578,
+        "networks": 81
+       },
+       {
+        "items": 588,
+        "networks": 82
+       },
+       {
+        "items": 597,
+        "networks": 83
+       },
+       {
+        "items": 610,
+        "networks": 84
+       },
+       {
+        "items": 631,
+        "networks": 85
+       },
+       {
+        "items": 649,
+        "networks": 86
+       },
+       {
+        "items": 677,
+        "networks": 87
+       },
+       {
+        "items": 685,
+        "networks": 88
+       },
+       {
+        "items": 727,
+        "networks": 89
+       },
+       {
+        "items": 743,
+        "networks": 90
+       },
+       {
+        "items": 751,
+        "networks": 91
+       },
+       {
+        "items": 991,
+        "networks": 92
+       }
+      ]
+     },
+     "reliability": null,
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.1543,
+       0.2247
+      ],
+      "account_precision": [
+       0.404,
+       0.5714
+      ],
+      "average_precision": [
+       0.1497,
+       0.2191
+      ]
+     }
     }
    },
    "B2_pagerank": {
@@ -4207,9 +8926,383 @@
      }
     },
     "latency_ms": {
-     "median": 41.4,
-     "p95": 58.0,
-     "max": 75.9
+     "median": 43.4,
+     "p95": 62.1,
+     "max": 71.0
+    },
+    "entity": {
+     "accounts": {
+      "positive": 735,
+      "flagged": 285,
+      "tp": 11,
+      "fp": 274,
+      "fn": 724,
+      "fp_labelled_legitimate": 91,
+      "fp_unlabelled": 183,
+      "recall": 0.015,
+      "precision": 0.0386
+     },
+     "ranking": {
+      "suspicious_networks": 92,
+      "queued_items": 5437,
+      "networks_reached": 92,
+      "average_precision": 0.0399,
+      "curve": [
+       {
+        "items": 80,
+        "networks": 1
+       },
+       {
+        "items": 169,
+        "networks": 2
+       },
+       {
+        "items": 192,
+        "networks": 3
+       },
+       {
+        "items": 194,
+        "networks": 4
+       },
+       {
+        "items": 259,
+        "networks": 5
+       },
+       {
+        "items": 277,
+        "networks": 6
+       },
+       {
+        "items": 294,
+        "networks": 8
+       },
+       {
+        "items": 315,
+        "networks": 9
+       },
+       {
+        "items": 373,
+        "networks": 10
+       },
+       {
+        "items": 380,
+        "networks": 11
+       },
+       {
+        "items": 386,
+        "networks": 12
+       },
+       {
+        "items": 415,
+        "networks": 13
+       },
+       {
+        "items": 434,
+        "networks": 14
+       },
+       {
+        "items": 492,
+        "networks": 15
+       },
+       {
+        "items": 505,
+        "networks": 16
+       },
+       {
+        "items": 519,
+        "networks": 17
+       },
+       {
+        "items": 536,
+        "networks": 18
+       },
+       {
+        "items": 542,
+        "networks": 19
+       },
+       {
+        "items": 552,
+        "networks": 20
+       },
+       {
+        "items": 561,
+        "networks": 21
+       },
+       {
+        "items": 568,
+        "networks": 22
+       },
+       {
+        "items": 591,
+        "networks": 23
+       },
+       {
+        "items": 625,
+        "networks": 24
+       },
+       {
+        "items": 642,
+        "networks": 25
+       },
+       {
+        "items": 682,
+        "networks": 26
+       },
+       {
+        "items": 683,
+        "networks": 27
+       },
+       {
+        "items": 705,
+        "networks": 28
+       },
+       {
+        "items": 712,
+        "networks": 29
+       },
+       {
+        "items": 720,
+        "networks": 30
+       },
+       {
+        "items": 730,
+        "networks": 31
+       },
+       {
+        "items": 739,
+        "networks": 32
+       },
+       {
+        "items": 753,
+        "networks": 33
+       },
+       {
+        "items": 766,
+        "networks": 34
+       },
+       {
+        "items": 798,
+        "networks": 35
+       },
+       {
+        "items": 812,
+        "networks": 36
+       },
+       {
+        "items": 820,
+        "networks": 37
+       },
+       {
+        "items": 845,
+        "networks": 38
+       },
+       {
+        "items": 848,
+        "networks": 39
+       },
+       {
+        "items": 860,
+        "networks": 41
+       },
+       {
+        "items": 864,
+        "networks": 42
+       },
+       {
+        "items": 881,
+        "networks": 43
+       },
+       {
+        "items": 886,
+        "networks": 44
+       },
+       {
+        "items": 929,
+        "networks": 45
+       },
+       {
+        "items": 961,
+        "networks": 47
+       },
+       {
+        "items": 965,
+        "networks": 48
+       },
+       {
+        "items": 986,
+        "networks": 49
+       },
+       {
+        "items": 1014,
+        "networks": 50
+       },
+       {
+        "items": 1018,
+        "networks": 51
+       },
+       {
+        "items": 1052,
+        "networks": 52
+       },
+       {
+        "items": 1114,
+        "networks": 53
+       },
+       {
+        "items": 1121,
+        "networks": 55
+       },
+       {
+        "items": 1179,
+        "networks": 56
+       },
+       {
+        "items": 1192,
+        "networks": 57
+       },
+       {
+        "items": 1193,
+        "networks": 58
+       },
+       {
+        "items": 1220,
+        "networks": 60
+       },
+       {
+        "items": 1221,
+        "networks": 61
+       },
+       {
+        "items": 1248,
+        "networks": 62
+       },
+       {
+        "items": 1253,
+        "networks": 63
+       },
+       {
+        "items": 1265,
+        "networks": 64
+       },
+       {
+        "items": 1409,
+        "networks": 65
+       },
+       {
+        "items": 1428,
+        "networks": 66
+       },
+       {
+        "items": 1455,
+        "networks": 68
+       },
+       {
+        "items": 1501,
+        "networks": 69
+       },
+       {
+        "items": 1543,
+        "networks": 70
+       },
+       {
+        "items": 1589,
+        "networks": 71
+       },
+       {
+        "items": 1590,
+        "networks": 72
+       },
+       {
+        "items": 1669,
+        "networks": 73
+       },
+       {
+        "items": 1742,
+        "networks": 74
+       },
+       {
+        "items": 1743,
+        "networks": 75
+       },
+       {
+        "items": 1809,
+        "networks": 77
+       },
+       {
+        "items": 1904,
+        "networks": 78
+       },
+       {
+        "items": 1937,
+        "networks": 79
+       },
+       {
+        "items": 1940,
+        "networks": 80
+       },
+       {
+        "items": 2128,
+        "networks": 81
+       },
+       {
+        "items": 2168,
+        "networks": 82
+       },
+       {
+        "items": 2180,
+        "networks": 83
+       },
+       {
+        "items": 2210,
+        "networks": 84
+       },
+       {
+        "items": 2328,
+        "networks": 85
+       },
+       {
+        "items": 2450,
+        "networks": 86
+       },
+       {
+        "items": 2583,
+        "networks": 87
+       },
+       {
+        "items": 2635,
+        "networks": 88
+       },
+       {
+        "items": 2766,
+        "networks": 89
+       },
+       {
+        "items": 2876,
+        "networks": 91
+       },
+       {
+        "items": 3263,
+        "networks": 92
+       }
+      ]
+     },
+     "reliability": null,
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.0027,
+       0.0322
+      ],
+      "account_precision": [
+       0.0066,
+       0.087
+      ],
+      "average_precision": [
+       0.0332,
+       0.0513
+      ]
+     }
     }
    }
   }
@@ -4344,9 +9437,206 @@
      }
     },
     "latency_ms": {
-     "median": 83.5,
-     "p95": 156.9,
-     "max": 196.9
+     "median": 56.9,
+     "p95": 110.0,
+     "max": 214.0
+    },
+    "entity": {
+     "accounts": {
+      "positive": 414,
+      "flagged": 1115,
+      "tp": 294,
+      "fp": 821,
+      "fn": 120,
+      "fp_labelled_legitimate": 603,
+      "fp_unlabelled": 218,
+      "recall": 0.7101,
+      "precision": 0.2637
+     },
+     "ranking": {
+      "suspicious_networks": 56,
+      "queued_items": 162,
+      "networks_reached": 48,
+      "average_precision": 0.5912,
+      "curve": [
+       {
+        "items": 1,
+        "networks": 1
+       },
+       {
+        "items": 3,
+        "networks": 3
+       },
+       {
+        "items": 4,
+        "networks": 4
+       },
+       {
+        "items": 5,
+        "networks": 5
+       },
+       {
+        "items": 7,
+        "networks": 6
+       },
+       {
+        "items": 8,
+        "networks": 7
+       },
+       {
+        "items": 10,
+        "networks": 9
+       },
+       {
+        "items": 14,
+        "networks": 13
+       },
+       {
+        "items": 16,
+        "networks": 14
+       },
+       {
+        "items": 17,
+        "networks": 15
+       },
+       {
+        "items": 19,
+        "networks": 17
+       },
+       {
+        "items": 22,
+        "networks": 18
+       },
+       {
+        "items": 23,
+        "networks": 19
+       },
+       {
+        "items": 26,
+        "networks": 21
+       },
+       {
+        "items": 27,
+        "networks": 22
+       },
+       {
+        "items": 32,
+        "networks": 25
+       },
+       {
+        "items": 41,
+        "networks": 28
+       },
+       {
+        "items": 44,
+        "networks": 31
+       },
+       {
+        "items": 45,
+        "networks": 32
+       },
+       {
+        "items": 52,
+        "networks": 34
+       },
+       {
+        "items": 55,
+        "networks": 35
+       },
+       {
+        "items": 79,
+        "networks": 36
+       },
+       {
+        "items": 115,
+        "networks": 38
+       },
+       {
+        "items": 126,
+        "networks": 39
+       },
+       {
+        "items": 143,
+        "networks": 42
+       },
+       {
+        "items": 149,
+        "networks": 43
+       },
+       {
+        "items": 162,
+        "networks": 48
+       }
+      ]
+     },
+     "reliability": [
+      {
+       "band": "critical",
+       "items": 1,
+       "planted": 1,
+       "share": 1.0,
+       "wilson95": [
+        0.2065,
+        1.0
+       ]
+      },
+      {
+       "band": "high",
+       "items": 54,
+       "planted": 34,
+       "share": 0.6296,
+       "wilson95": [
+        0.4963,
+        0.7458
+       ]
+      },
+      {
+       "band": "medium",
+       "items": 102,
+       "planted": 15,
+       "share": 0.1471,
+       "wilson95": [
+        0.0912,
+        0.2285
+       ]
+      },
+      {
+       "band": "insufficient_evidence",
+       "items": 5,
+       "planted": 5,
+       "share": 1.0,
+       "wilson95": [
+        0.5655,
+        1.0
+       ]
+      },
+      {
+       "band": "low",
+       "items": 865,
+       "planted": 12,
+       "share": 0.0139,
+       "wilson95": [
+        0.008,
+        0.0241
+       ]
+      }
+     ],
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.6111,
+       0.7957
+      ],
+      "account_precision": [
+       0.1939,
+       0.3504
+      ],
+      "average_precision": [
+       0.4828,
+       0.7104
+      ]
+     }
     }
    },
    "minus_temporal": {
@@ -4477,9 +9767,9 @@
      }
     },
     "latency_ms": {
-     "median": 91.2,
-     "p95": 190.6,
-     "max": 200.7
+     "median": 67.5,
+     "p95": 181.5,
+     "max": 266.3
     }
    },
    "minus_peer": {
@@ -4610,9 +9900,9 @@
      }
     },
     "latency_ms": {
-     "median": 93.6,
-     "p95": 195.1,
-     "max": 210.7
+     "median": 64.4,
+     "p95": 140.4,
+     "max": 216.8
     }
    },
    "minus_fan_out_cycle": {
@@ -4743,9 +10033,9 @@
      }
     },
     "latency_ms": {
-     "median": 58.7,
-     "p95": 124.1,
-     "max": 163.4
+     "median": 47.3,
+     "p95": 92.0,
+     "max": 157.6
     }
    },
    "minus_returning_feeder_rule": {
@@ -4876,9 +10166,9 @@
      }
     },
     "latency_ms": {
-     "median": 96.7,
-     "p95": 183.4,
-     "max": 411.9
+     "median": 68.4,
+     "p95": 150.9,
+     "max": 192.2
     }
    },
    "minus_coverage_abstention": {
@@ -5009,9 +10299,9 @@
      }
     },
     "latency_ms": {
-     "median": 103.8,
-     "p95": 188.0,
-     "max": 352.2
+     "median": 73.0,
+     "p95": 148.6,
+     "max": 239.5
     }
    }
   },
@@ -5144,9 +10434,234 @@
      }
     },
     "latency_ms": {
-     "median": 86.2,
-     "p95": 202.0,
-     "max": 229.4
+     "median": 70.2,
+     "p95": 161.7,
+     "max": 171.9
+    },
+    "entity": {
+     "accounts": {
+      "positive": 735,
+      "flagged": 1799,
+      "tp": 544,
+      "fp": 1255,
+      "fn": 191,
+      "fp_labelled_legitimate": 878,
+      "fp_unlabelled": 377,
+      "recall": 0.7401,
+      "precision": 0.3024
+     },
+     "ranking": {
+      "suspicious_networks": 92,
+      "queued_items": 293,
+      "networks_reached": 81,
+      "average_precision": 0.6259,
+      "curve": [
+       {
+        "items": 4,
+        "networks": 4
+       },
+       {
+        "items": 6,
+        "networks": 6
+       },
+       {
+        "items": 7,
+        "networks": 7
+       },
+       {
+        "items": 8,
+        "networks": 8
+       },
+       {
+        "items": 11,
+        "networks": 11
+       },
+       {
+        "items": 12,
+        "networks": 12
+       },
+       {
+        "items": 14,
+        "networks": 13
+       },
+       {
+        "items": 15,
+        "networks": 14
+       },
+       {
+        "items": 16,
+        "networks": 15
+       },
+       {
+        "items": 17,
+        "networks": 16
+       },
+       {
+        "items": 20,
+        "networks": 17
+       },
+       {
+        "items": 24,
+        "networks": 21
+       },
+       {
+        "items": 28,
+        "networks": 25
+       },
+       {
+        "items": 31,
+        "networks": 28
+       },
+       {
+        "items": 33,
+        "networks": 29
+       },
+       {
+        "items": 37,
+        "networks": 31
+       },
+       {
+        "items": 39,
+        "networks": 33
+       },
+       {
+        "items": 43,
+        "networks": 36
+       },
+       {
+        "items": 46,
+        "networks": 38
+       },
+       {
+        "items": 48,
+        "networks": 40
+       },
+       {
+        "items": 52,
+        "networks": 43
+       },
+       {
+        "items": 63,
+        "networks": 52
+       },
+       {
+        "items": 80,
+        "networks": 53
+       },
+       {
+        "items": 83,
+        "networks": 55
+       },
+       {
+        "items": 89,
+        "networks": 57
+       },
+       {
+        "items": 93,
+        "networks": 58
+       },
+       {
+        "items": 96,
+        "networks": 59
+       },
+       {
+        "items": 102,
+        "networks": 60
+       },
+       {
+        "items": 150,
+        "networks": 61
+       },
+       {
+        "items": 162,
+        "networks": 62
+       },
+       {
+        "items": 209,
+        "networks": 65
+       },
+       {
+        "items": 253,
+        "networks": 71
+       },
+       {
+        "items": 285,
+        "networks": 73
+       },
+       {
+        "items": 293,
+        "networks": 81
+       }
+      ]
+     },
+     "reliability": [
+      {
+       "band": "critical",
+       "items": 8,
+       "planted": 8,
+       "share": 1.0,
+       "wilson95": [
+        0.6756,
+        1.0
+       ]
+      },
+      {
+       "band": "high",
+       "items": 93,
+       "planted": 51,
+       "share": 0.5484,
+       "wilson95": [
+        0.4473,
+        0.6456
+       ]
+      },
+      {
+       "band": "medium",
+       "items": 184,
+       "planted": 40,
+       "share": 0.2174,
+       "wilson95": [
+        0.1639,
+        0.2824
+       ]
+      },
+      {
+       "band": "insufficient_evidence",
+       "items": 8,
+       "planted": 8,
+       "share": 1.0,
+       "wilson95": [
+        0.6756,
+        1.0
+       ]
+      },
+      {
+       "band": "low",
+       "items": 1445,
+       "planted": 18,
+       "share": 0.0125,
+       "wilson95": [
+        0.0079,
+        0.0196
+       ]
+      }
+     ],
+     "bootstrap": {
+      "draws": 2000,
+      "seed": 20261123,
+      "account_recall": [
+       0.6515,
+       0.8237
+      ],
+      "account_precision": [
+       0.258,
+       0.3557
+      ],
+      "average_precision": [
+       0.5259,
+       0.7272
+      ]
+     }
     }
    },
    "minus_temporal": {
@@ -5277,9 +10792,9 @@
      }
     },
     "latency_ms": {
-     "median": 104.4,
-     "p95": 192.8,
-     "max": 213.2
+     "median": 77.0,
+     "p95": 121.4,
+     "max": 203.3
     }
    },
    "minus_peer": {
@@ -5410,9 +10925,9 @@
      }
     },
     "latency_ms": {
-     "median": 95.6,
-     "p95": 177.9,
-     "max": 228.0
+     "median": 70.5,
+     "p95": 111.9,
+     "max": 146.9
     }
    },
    "minus_fan_out_cycle": {
@@ -5543,9 +11058,9 @@
      }
     },
     "latency_ms": {
-     "median": 64.6,
-     "p95": 108.0,
-     "max": 175.5
+     "median": 47.6,
+     "p95": 84.6,
+     "max": 99.5
     }
    },
    "minus_returning_feeder_rule": {
@@ -5676,9 +11191,9 @@
      }
     },
     "latency_ms": {
-     "median": 104.5,
-     "p95": 178.9,
-     "max": 222.7
+     "median": 79.9,
+     "p95": 130.9,
+     "max": 193.8
     }
    },
    "minus_coverage_abstention": {
@@ -5809,9 +11324,9 @@
      }
     },
     "latency_ms": {
-     "median": 99.2,
-     "p95": 180.6,
-     "max": 197.9
+     "median": 71.7,
+     "p95": 167.5,
+     "max": 199.2
     }
    }
   }
@@ -6377,9 +11892,9 @@
     }
    },
    "latency_ms": {
-    "median": 110.9,
-    "p95": 239.4,
-    "max": 337.8
+    "median": 65.5,
+    "p95": 145.5,
+    "max": 176.5
    }
   },
   "perturbations": [
@@ -6515,9 +12030,9 @@
       }
      },
      "latency_ms": {
-      "median": 85.3,
-      "p95": 247.7,
-      "max": 308.4
+      "median": 65.9,
+      "p95": 227.2,
+      "max": 309.0
      }
     }
    },
@@ -6653,9 +12168,9 @@
       }
      },
      "latency_ms": {
-      "median": 76.8,
-      "p95": 153.2,
-      "max": 200.9
+      "median": 66.4,
+      "p95": 170.8,
+      "max": 192.8
      }
     }
    },
@@ -6791,9 +12306,9 @@
       }
      },
      "latency_ms": {
-      "median": 78.2,
-      "p95": 198.5,
-      "max": 322.7
+      "median": 54.8,
+      "p95": 117.5,
+      "max": 226.2
      }
     }
    },
@@ -6929,9 +12444,9 @@
       }
      },
      "latency_ms": {
-      "median": 104.3,
-      "p95": 211.8,
-      "max": 325.0
+      "median": 66.4,
+      "p95": 129.0,
+      "max": 179.2
      }
     }
    },
@@ -7067,9 +12582,9 @@
       }
      },
      "latency_ms": {
-      "median": 80.5,
-      "p95": 145.4,
-      "max": 271.4
+      "median": 61.8,
+      "p95": 170.6,
+      "max": 173.9
      }
     }
    },
@@ -7205,9 +12720,9 @@
       }
      },
      "latency_ms": {
-      "median": 82.4,
-      "p95": 172.2,
-      "max": 205.3
+      "median": 72.0,
+      "p95": 130.2,
+      "max": 276.9
      }
     }
    },
@@ -7343,9 +12858,9 @@
       }
      },
      "latency_ms": {
-      "median": 74.5,
-      "p95": 167.8,
-      "max": 268.2
+      "median": 62.6,
+      "p95": 135.8,
+      "max": 237.1
      }
     }
    },
@@ -7481,9 +12996,9 @@
       }
      },
      "latency_ms": {
-      "median": 79.5,
-      "p95": 171.8,
-      "max": 212.7
+      "median": 67.8,
+      "p95": 161.9,
+      "max": 180.9
      }
     }
    }
@@ -7622,9 +13137,9 @@
       }
      },
      "latency_ms": {
-      "median": 85.9,
-      "p95": 250.6,
-      "max": 401.3
+      "median": 66.8,
+      "p95": 181.1,
+      "max": 210.7
      }
     }
    },
@@ -7758,9 +13273,9 @@
       }
      },
      "latency_ms": {
-      "median": 91.6,
-      "p95": 180.8,
-      "max": 294.6
+      "median": 58.8,
+      "p95": 125.3,
+      "max": 239.7
      }
     }
    },
@@ -7894,9 +13409,9 @@
       }
      },
      "latency_ms": {
-      "median": 75.3,
-      "p95": 189.8,
-      "max": 220.1
+      "median": 66.4,
+      "p95": 177.1,
+      "max": 184.6
      }
     }
    },
@@ -8030,9 +13545,9 @@
       }
      },
      "latency_ms": {
-      "median": 88.6,
-      "p95": 211.2,
-      "max": 286.4
+      "median": 65.0,
+      "p95": 182.9,
+      "max": 188.7
      }
     }
    },
@@ -8166,9 +13681,9 @@
       }
      },
      "latency_ms": {
-      "median": 77.2,
-      "p95": 137.6,
-      "max": 227.1
+      "median": 71.2,
+      "p95": 151.6,
+      "max": 240.7
      }
     }
    },
@@ -8302,9 +13817,9 @@
       }
      },
      "latency_ms": {
-      "median": 79.0,
-      "p95": 165.6,
-      "max": 172.1
+      "median": 59.1,
+      "p95": 133.3,
+      "max": 155.0
      }
     }
    },
@@ -8438,9 +13953,9 @@
       }
      },
      "latency_ms": {
-      "median": 98.2,
-      "p95": 185.5,
-      "max": 387.1
+      "median": 70.6,
+      "p95": 138.1,
+      "max": 266.5
      }
     }
    },
@@ -8574,15 +14089,15 @@
       }
      },
      "latency_ms": {
-      "median": 78.6,
-      "p95": 218.3,
-      "max": 285.7
+      "median": 63.8,
+      "p95": 109.6,
+      "max": 182.7
      }
     }
    }
   ]
  },
- "runtime_seconds": 92.6,
+ "runtime_seconds": 161.3,
  "limitations": [
   "All datasets are synthetic and generated by the same team that wrote the detectors; typologies, parameter ranges and hard negatives reflect our assumptions, not observed bank data.",
   "Scenario counts per split are small (tens per family); differences of one or two scenarios are noise.",
