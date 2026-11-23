@@ -178,3 +178,63 @@ Decision checks: {'recall_drop_at_most_2pp': True, 'high_band_fpr_not_increased'
   with F-06 this is the most important open detection risk.
 * No real-data validation; no calibration (no independent labels exist).
 * Authorization is absent (F-05).
+
+## Sealed-v2
+
+Protocol: [`EXPERIMENT_PROTOCOL_SEALED_V2.md`](EXPERIMENT_PROTOCOL_SEALED_V2.md) (locked at `c6dbc6b` before any run).
+Artifact: `benchmarks/results/sealed-v2-evaluation.json` — 80 datasets, seeds 9100–9179, generator `sealed-gen-v2`
+(`a2a8dc7a89ac…`), split sha256 `39652b9d8840…`, candidate config `1f9e2a64aaa1…`, baseline config `489b477a3da5…`.
+**All data is synthetic**; the same project wrote the detectors and the generator.
+
+**Pre-registered question**: does the candidate's improvement over `baseline_v2` replicate on an independently
+generated split with new families and label-blind boundaries? **Outcome: replicated** (all three rule conditions hold).
+
+| Metric (scenario level) | `baseline_v2` | `candidate` | Paired bootstrap 95 % CI of the difference |
+|---|---:|---:|---|
+| Recall | 191/262 = 0.729 | 197/262 = 0.752 | +0.0075 … +0.0428 |
+| FPR | 191/394 = 0.485 | 100/394 = 0.254 | −0.2745 … −0.1896 |
+| High-band FPR | 92/394 = 0.234 | 82/394 = 0.208 | −0.0418 … −0.0102 |
+| Distinct P@5 (mean over datasets) | 0.3881 | 0.4358 | +0.0271 … +0.0696 |
+
+All methods (entity metrics are descriptive, B-041; AP = distinct-network average precision over the pooled queue,
+95 % dataset bootstrap):
+
+| Method | Recall | FPR | High-band FPR | Distinct P@5 | Alerts/dataset | Account recall | Account precision | AP (95 % CI) |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| `candidate` | 197/262 = 0.752 | 100/394 = 0.254 | 82/394 = 0.208 | 0.4358 | 6.42 | 2009/2540 = 0.791 | 2009/3729 = 0.539 | 0.377 (0.338–0.430) |
+| `baseline_v2` | 191/262 = 0.729 | 191/394 = 0.485 | 92/394 = 0.234 | 0.3881 | 8.62 | 1968/2540 = 0.775 | 1968/5594 = 0.352 | 0.342 (0.306–0.394) |
+| `ablation_engine_without_gate` | 197/262 = 0.752 | 191/394 = 0.485 | 92/394 = 0.234 | 0.4006 | 8.70 | 2009/2540 = 0.791 | 2009/5635 = 0.357 | 0.358 (0.321–0.410) |
+| `ablation_without_hypotheses` | 197/262 = 0.752 | 191/394 = 0.485 | 92/394 = 0.234 | 0.3981 | 8.70 | 2009/2540 = 0.791 | 2009/5635 = 0.357 | 0.358 (0.321–0.410) |
+| `ablation_minus_peer` | 194/262 = 0.740 | 108/394 = 0.274 | 96/394 = 0.244 | 0.4240 | 6.31 | 1973/2540 = 0.777 | 1973/3846 = 0.513 | 0.347 (0.312–0.390) |
+| `ablation_minus_temporal` | 161/262 = 0.615 | 116/394 = 0.294 | 16/394 = 0.041 | 0.3775 | 6.66 | 1659/2540 = 0.653 | 1659/3988 = 0.416 | 0.287 (0.238–0.347) |
+| `ablation_minus_abstention` | 217/262 = 0.828 | 127/394 = 0.322 | 85/394 = 0.216 | 0.4694 | 7.12 | 2174/2540 = 0.856 | 2174/4177 = 0.520 | 0.381 (0.342–0.434) |
+| `v1_shipped` | 174/262 = 0.664 | 147/394 = 0.373 | 128/394 = 0.325 | 0.3551 | 7.14 | 1764/2540 = 0.694 | 1764/4959 = 0.356 | 0.269 (0.233–0.314) |
+| `B3_structure_only` | 240/262 = 0.916 | 329/394 = 0.835 | — | 0.2750 | 37.62 | 2354/2540 = 0.927 | 2354/12426 = 0.189 | 0.175 (0.147–0.206) |
+| `B1_rules` | 257/262 = 0.981 | 374/394 = 0.949 | — | 0.1975 | 71.34 | 971/2540 = 0.382 | 971/5707 = 0.170 | 0.134 (0.118–0.155) |
+| `B0_volume` | 68/262 = 0.260 | 181/394 = 0.459 | — | 0.0975 | 6.42 | 135/2540 = 0.053 | 135/514 = 0.263 | 0.095 (0.082–0.110) |
+
+Planted share by band, candidate (all assessed items; a triage order, not a probability):
+
+| Band | Items | Planted | Share | Wilson 95 % |
+|---|---:|---:|---:|---:|
+| critical | 10 | 4 | 0.400 | 0.168–0.687 |
+| high | 368 | 279 | 0.758 | 0.712–0.799 |
+| medium | 136 | 92 | 0.676 | 0.594–0.749 |
+| insufficient_evidence | 166 | 34 | 0.205 | 0.150–0.273 |
+| low | 2330 | 52 | 0.022 | 0.017–0.029 |
+
+What these numbers say and do not say:
+
+* The v3-over-v2 improvement held on new data — mostly through fewer legitimate networks alerted (FPR
+  0.485 → 0.254), with recall slightly up. It is still synthetic behaviour, not banking accuracy.
+* The candidate's high-band FPR (0.208) is about twice its `sealed-v1` value: new legitimate lookalikes reach the top
+  bands — payroll agency 25/25 flagged, event ticketing 32/42, group gift 20/29, property escrow 11/32 (identical for the
+  baseline). Missed adversarial fraud: salary-like pass-through 0/17, recurring-feeder mules 1/12, boundary
+  collection 0/17 flagged (by design it abstains; abstentions are not "flagged").
+* `critical` is not more reliable than `high` here (4/10 vs 279/368), so the top band's ordering is not supported by
+  this split.
+* With label-blind boundaries, abstentions are no longer planted by construction: 34/166 abstention items are
+  planted (on `bench-v1`, whose boundary list leaks labels, 8/8).
+* These observations must **not** drive changes evaluated on `sealed-v2` again (protocol, "Use after the run"):
+  improvements are developed on `bench-v1` dev (and an adversarial dev suite, B-045), frozen, then evaluated once.
+

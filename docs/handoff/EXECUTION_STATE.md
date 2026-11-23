@@ -30,13 +30,13 @@ real Nginx image, ORM load/publish at 200k rows.
 
 ## Tasks
 
-* **Completed backlog tasks**: B-001 (L-0005), B-010 (L-0006), B-003 (L-0007), B-015 (L-0008), B-012 (L-0009), B-031 (L-0010), B-020 (L-0011), B-041 (L-0013). (Earlier, outside the backlog: the four fixes and the verification checklist in commit
+* **Completed backlog tasks**: B-001 (L-0005), B-010 (L-0006), B-003 (L-0007), B-015 (L-0008), B-012 (L-0009), B-031 (L-0010), B-020 (L-0011), B-041 (L-0013), B-040 (L-0015). (Earlier, outside the backlog: the four fixes and the verification checklist in commit
   `7abd9a5` — MediaPipe pre-bundling, worker network guard for all four channels, `INFO:` stderr routing, `toCanvasColor`.)
-* **Active**: B-040.
-* **Ready now (autonomous, no human input, dependencies met)**: B-013, B-017, B-022, B-040,
-  B-047, B-050, B-053, B-021 (B-001 done). Recommended order: **B-040**, then by priority (B-011, B-004, B-016, B-021, B-013, B-014, B-022 …).
+* **Active**: B-011.
+* **Ready now (autonomous, no human input, dependencies met)**: B-013, B-017, B-022,
+  B-047, B-050, B-053, B-021 (B-001 done). Recommended order: **B-011**, then B-004, B-016, B-021, B-013, B-014, B-022, B-042 … (evaluation work: develop on dev, freeze, then at most 3 sealed-v2 uses).
 * **Now ready after this session's work**: B-004, B-011, B-014, B-016, B-021, B-024 (after B-021), B-032, B-042, B-046 (B-041 done).
-* **Pending (waiting on dependencies)**: B-018*, B-019, B-023, B-024, B-033, B-043..B-045 (need B-040), B-052, B-054
+* **Pending (waiting on dependencies)**: B-018*, B-019, B-023, B-024, B-033, B-043, B-044, B-045 (B-040 done → ready; B-045 should come first so candidates have an adversarial dev suite), B-052, B-054
   (*B-018 has no dependency and may start any time).
 * **Human-gated**: B-002 (approve merges/closures), B-005 (live Railway access), B-030 (a person with a webcam), B-051 (live backups, owner
   decisions D-5), B-055 (deployment approval).
@@ -70,4 +70,4 @@ git checkout -b feat/b-001-migration-chain-guard             # then start B-001 
 
 1. Two open PRs define migration `0003`; never renumber the auth migration (production reportedly at `0003`). 2. ~~The CSV import route is open to
 any signed-in user~~ — closed by default (B-010 done). 3. ~~Published benchmark arithmetic off by ≤ 0.1 pp~~ — fixed and artifacts regenerated under A2 (B-003 done); the pitch still carries old numbers (B-004). 4. `sealed-v1` is
-consumed — do not tune against it (B-040). 5. Camera recognition has never run on a real hand (B-030); the camera now starts only after the model has loaded (B-031). 6. ~~Graph layout freezes the UI~~ — layout runs in a worker (B-020 done). 7. Live deployment state is unverified (B-005). 8. Every figure above is synthetic-data behaviour, not banking accuracy.
+consumed — do not tune against it; `sealed-v2` exists (B-040), 0 of 3 uses spent. 5. Camera recognition has never run on a real hand (B-030); the camera now starts only after the model has loaded (B-031). 6. ~~Graph layout freezes the UI~~ — layout runs in a worker (B-020 done). 7. Live deployment state is unverified (B-005). 8. Every figure above is synthetic-data behaviour, not banking accuracy.

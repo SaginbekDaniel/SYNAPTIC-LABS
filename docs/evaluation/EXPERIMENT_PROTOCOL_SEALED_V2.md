@@ -101,3 +101,12 @@ Per-family results are reported regardless. Entity-level, ranking and band-relia
   locked before any run, no detector output consulted while writing it), not organisational. New families were
   chosen from typologies and legitimate lookalikes, not from detector behaviour on this split, which was never run.
 * 80 datasets give wide intervals for rare families; per-family numbers are descriptive.
+
+## Run record (2026-11-23)
+
+* Lock commit `c6dbc6b` (pushed before the run). Run on a clean tree at `c6dbc6b`; artifact committed unchanged in
+  the next commit (`benchmarks/results/sealed-v2-evaluation.json`); all six recorded hashes equal the values above.
+* **Outcome: replicated** — recall drop ≤ 2 pp ✓, high-band FPR not increased ✓, FPR improved with CI excluding
+  zero ✓, distinct P@5 improved with CI excluding zero ✓ (numbers in [`RESULTS.md`](RESULTS.md#sealed-v2)).
+* Reproducibility: a second run at `1a387ce` (clean tree) differs only in latency, runtime, timestamp and commit.
+* Uses of `sealed-v2` for candidate evaluation since the run: **0 of 3**.

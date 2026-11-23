@@ -272,3 +272,31 @@ Entry template:
 * Verification: ruff clean (incl. scripts), format 98 files, mypy clean (63 files), pytest **236 passed** 0 skipped; gen:api regenerated; tsc
   clean; vitest **128**; Playwright cold **36 passed**.
 * State file updated: yes.
+
+### L-0014 · 2026-11-23 · lint slip in B-041 · status: done
+* `d5dae0d` contained a test edit verified with pytest but not re-linted (ruff B905/RUF007 in `tests/unit/test_benchmark.py`), so CI's lint
+  step would fail on it. Fixed and pushed alone as `84fa317` before any further work. Rule kept from here on: re-run the whole lint/format/
+  mypy gate after the last edit, not just pytest.
+
+### L-0015 · 2026-11-23 · B-040 · status: done
+* Commits: lock `c6dbc6b` (generator, tests, runner, protocol — **pushed before the run**), artifact commit (unchanged run output), then
+  docs/test commit; working branch fast-forwarded and pushed.
+* Generator `src/nexora/evaluation/sealed_generator_v2.py` (v1 untouched): seeds 9100–9179 (80), 60-day window from 2026-05-04, log-normal
+  amounts, business-hours timing and weekend shifts, changed ranges; new families SV2 two-tier collection, SV3 scatter-gather, SV11 salary-like
+  pass-through, LV10 merchant with unobserved outflows, LV11 property escrow, LV12 payroll agency, LV13 group gift; label-blind boundaries
+  (5 % sample of accounts present in the data from an independent seed stream + boundary centres of **both** labels); truth lists = exactly
+  the accounts in the scenario's transactions. `benchmark.py`: split `sealed_v2`, `CONSUMED_SPLITS = {"sealed"}`. Runner: per-split protocol,
+  generator hash, artifact name; also hashes `entity_metrics.py` and itself.
+* Generator tests (10, data only — no detector ran on sealed-v2 before the lock): they caught builders listing accounts that never transact
+  (and the boundary sample drawing them) — fixed. The same data check on sealed-v1: 4/1,740 suspicious and 45 legitimate truth accounts and
+  9 declared boundary accounts never occur in any row (v1 scenario-level results unaffected; v1 consumed, not re-run) — new finding **H-25**.
+* Run: clean tree at `c6dbc6b`, 276 s; hashes equal the pinned ones. **Pre-registered outcome: replicated** (recall 191→197/262, CI +0.0075…
+  +0.0428; FPR 191→100/394, CI −0.2745…−0.1896; high-band FPR 92→82/394, CI −0.0418…−0.0102; distinct P@5 0.3881→0.4358, CI +0.0271…
+  +0.0696). Re-run at `1a387ce`: identical except latency/runtime/timestamp/commit. Synthetic data only.
+* Descriptive findings (for B-043/B-044/B-045/B-046 — to be addressed on dev/adversarial dev only, never tuned on sealed-v2): new legitimate
+  lookalikes reach high bands (payroll agency 25/25 flagged, event ticketing 32/42, group gift 20/29, property escrow 11/32; candidate
+  high-band FPR 0.208 vs 0.098 on v1); misses: salary-like pass-through 0/17, recurring mules 1/12; `critical` 4/10 planted vs `high` 279/368;
+  abstentions 34/166 planted (label-blind boundaries work; bench-v1 showed 8/8).
+* Verification: ruff/format/mypy clean; pytest **246 passed** at the lock (+1 consistency case after the artifact: test_benchmark 26 passed).
+  No web change.
+* State file updated: yes.

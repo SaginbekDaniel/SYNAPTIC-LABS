@@ -259,7 +259,7 @@ def test_committed_benchmark_artifact_validates_against_the_api_schema():
 
 
 # -- published arithmetic (H-08, backlog B-003) ---------------------------------------------------
-_ARTIFACTS = ("bench-v1.json", "dev-evaluation.json", "sealed-evaluation.json")
+_ARTIFACTS = ("bench-v1.json", "dev-evaluation.json", "sealed-evaluation.json", "sealed-v2-evaluation.json")
 
 
 def _summaries(node, path=""):
