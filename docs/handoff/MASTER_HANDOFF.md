@@ -519,6 +519,24 @@ recompute every summary from counts. *Cost* M.
 **H-23 · P3 · Graph stage below the fold at 1440 × 900** (stage starts ≈ y 580 of 900; observed in a screenshot this
 project) → B-022. **H-24 · P3 · `apps/web` has no ESLint** (`apps/pitch` does) `[code]` → B-053.
 
+**H-25 · P3 · Ground-truth lists name accounts that never transact** (found 2026-11-23 by the `sealed-gen-v2` data
+checks, L-0015; scope re-measured in L-0017). *Evidence* `[local]`, summed over each split's datasets, accounts absent
+from every row / listed: `sealed-gen-v1` (`sealed`) suspicious 4/1,740 (`SX8_mule_distribution`), legitimate-only
+45/5,099 (mostly `LX2_marketplace_with_refunds`), declared boundary 9/872; development generator (suite `bench-v1`,
+behind `bench-v1.json` and the dev evaluation) holdout suspicious 1/735 (`S3_coordinated_distribution`), legitimate-only
+dev 25/1,809, validation 10/1,202, holdout 17/1,810 (`N2`/`N3`/`N4`/`N7` families), suspicious and boundary 0 elsewhere;
+`sealed-gen-v2` 0 everywhere. *Reproduce*: `tests/unit/test_truth_account_presence.py` (pins these counts).
+*Root cause*: some builders allocate accounts and list them before a random draw decides whether any transfer uses
+them (e.g. `sx_distribution`: each mule pays an exit with probability 0.85); v2's builders were fixed before its lock,
+v1 and the development generator are frozen. *Impact*: only **account-level
+recall** — an absent suspicious account is a positive no method can flag. Published: `bench-v1` holdout account
+recall is understated by at most 0.0013 (B3 686/735 = 0.9333 vs 686/734 = 0.9346; nexora_v2 0.7401 vs 0.7411), the
+method ordering is unchanged, dev and validation are unaffected, and no README or pitch figure uses account metrics.
+`sealed-evaluation.json` (sealed-v1) carries no account-level metrics. Unaffected by construction: network/scenario
+metrics (absent accounts never enter a review item and every scenario keeps ≥ 2 transacting accounts, asserted by the
+same test), false-positive counts and account precision (an absent account is never flagged), sealed-v2 results.
+*Fix*: B-048 — never by editing frozen generators or hand-editing artifacts. *Cost* S + protocol amendment.
+
 ### 16.2 Design risks
 
 | ID | Sev | Risk and evidence | Impact | Fix / verify |

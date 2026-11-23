@@ -21,17 +21,17 @@ Conventions
 |---|---|---|---|
 | 0 | Integration and ground truth | B-001, B-002*, B-003, B-004, B-005* | — (B-004 after B-003) |
 | 1 | Security and observability | B-010, B-011, B-012, B-013, B-014, B-015, B-016, B-017, B-018, B-019 | B-011 after B-001+B-010; B-014 after B-012 |
-| 2 | Graph Workspace | B-020, B-021, B-022, B-023, B-024 | B-021 after B-001; B-023 after B-022 |
+| 2 | Graph Workspace | B-020, B-021, B-022, B-023, B-024, B-025 | B-021 after B-001; B-023 after B-022; B-025 after B-020 |
 | 3 | Gesture control | B-030*, B-031, B-032, B-033 | B-032 after B-031; B-033 after B-030 |
-| 4 | Fraud intelligence and evaluation | B-040, B-041, B-042, B-043, B-044, B-045, B-046, B-047 | B-040, B-041 after B-003 |
+| 4 | Fraud intelligence and evaluation | B-040, B-041, B-042, B-043, B-044, B-045, B-046, B-047, B-048 | B-040, B-041 after B-003; B-048 after B-041 |
 | 5 | Platform and product | B-050, B-051*, B-052, B-053, B-054, B-055* | B-052 after B-002..B-004; B-055 after B-001, B-002, B-005, B-010, B-012, B-050 |
 
 `*` = human-gated. Waves are guidance, not barriers: any task whose listed dependencies are done may
 start. **Recommended first autonomous queue:** B-001 → B-010 → B-003 → B-015 → B-012 → B-031 → B-020 →
 B-040/B-041. Edges (task → prerequisites): B-003 has none (it ports commits onto the current branch and
 does not need the merge decision); B-002→B-001; B-004→B-003; B-011→B-001,B-010; B-014→B-012; B-016→B-015;
-B-019→B-011; B-021→B-001; B-023→B-022; B-024→B-020,B-021; B-032→B-031; B-033→B-030; B-040→B-003;
-B-041→B-003; B-042→B-041; B-043→B-040,B-041; B-044→B-040; B-045→B-040; B-046→B-041; B-051→B-005;
+B-019→B-011; B-021→B-001; B-023→B-022; B-024→B-020,B-021; B-025→B-020; B-032→B-031; B-033→B-030; B-040→B-003;
+B-041→B-003; B-042→B-041; B-043→B-040,B-041; B-044→B-040; B-045→B-040; B-046→B-041; B-048→B-041; B-051→B-005;
 B-052→B-002,B-003,B-004; B-054→B-047; B-055→B-001,B-002,B-005,B-010,B-012,B-050. The graph is acyclic.
 
 Mapping from the earlier `ZENCODER_TASKS.md` (kept for history): T1→B-002, T2→B-030, T3→B-050 (CI
@@ -387,6 +387,33 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Expected improvement**: faster link analysis.
 * **Risk / rollback**: new read endpoint; revert.
 
+### B-025 · P2 · Keep the drawn graph during relayout; budget the whole main-thread path
+* **Rationale**: follow-up to B-020 (L-0016 observations, confirmed in the code in L-0017). (1) The build effect in
+  `GraphCanvas.tsx` destroys the drawn instance in its cleanup as soon as the element set changes, so every filter
+  change or expansion shows an empty stage until the worker returns — up to ~2.6 s at 300 accounts (L-0011). (2) The
+  headless sizing probe and `layoutDimensions` run synchronously *before* `LAYOUT_MARK_START`, outside the window the
+  E2E long-task assertion measures; L-0011 recorded main-thread tasks of 67–229 ms around it, i.e. up to 29 ms over
+  B-020's 200 ms budget, unattributed.
+* **Modules**: `apps/web/src/components/graph/GraphCanvas.tsx`, `apps/web/src/components/graph/layoutClient.ts`,
+  `apps/web/src/components/graph/controller.ts`, `apps/web/src/lib/i18n.ts`, `apps/web/e2e/graph-workspace.spec.ts`.
+* **Depends on**: B-020.
+* **Implementation**: measure first — mark the probe, worker, mount and first-paint phases at 100/200/300/400
+  accounts on the production bundle and attribute each long task (Cytoscape construction, React, application code).
+  Then keep the previous instance mounted but inert while a relayout runs (marked stale: `aria-busy`, controller
+  and gestures detached so nothing acts on elements about to change, status announced through `i18n.ts`), swap
+  atomically on the new positions, destroy the old instance after the swap; a superseded result is dropped (already
+  `LayoutCancelled`); unmount still cancels the worker. Move or split the sizing probe only if it is the measured cost.
+* **Acceptance**: during a relayout the stage is never empty and the old drawing accepts no selection/expansion;
+  exactly one drawn instance exists after the swap (no leaked Cytoscape instances over 20 relayouts); no long task
+  over 200 ms anywhere between the triggering change and the interactive new graph at 300 accounts (production
+  bundle, Chromium); gestures keep tracking; existing determinism and cache tests unchanged.
+* **Tests**: E2E long-task assertion over the whole path; E2E stale-stage behaviour (old drawing visible, inert,
+  `aria-busy`); unit for instance lifecycle (swap, supersede, unmount).
+* **Expected improvement**: no blank stage on relayout; the 200 ms budget holds end to end instead of only inside
+  the worker window.
+* **Risk / rollback**: graph lifecycle is core UX and gesture-coupled; keep the change inside `GraphCanvas`, revert
+  restores B-020's behaviour.
+
 ---
 
 ## Wave 3 — Gesture control
@@ -571,6 +598,25 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Tests**: the perf tests themselves.
 * **Expected improvement**: a performance regression is caught before users feel it.
 * **Risk / rollback**: CI-minutes cost; keep it non-blocking.
+
+### B-048 · P3 · Account-level positives: count only accounts present in the data
+* **Rationale**: H-25. Truth lists of the frozen development generator and of `sealed-gen-v1` name accounts that
+  never transact; account-level recall counts them as unreachable positives (`bench-v1` holdout: 1 of 735, effect
+  ≤ 0.0013). The generators and artifacts are frozen, so the correction belongs in the metric definition.
+* **Modules**: `src/nexora/evaluation/entity_metrics.py`, `scripts/run_benchmark.py`,
+  `docs/evaluation/EXPERIMENT_PROTOCOL.md` (amendment), `tests/unit/test_entity_metrics.py`,
+  `tests/unit/test_truth_account_presence.py`, `benchmarks/results/`.
+* **Depends on**: B-041.
+* **Implementation**: record a protocol amendment (A3, metric definition only) *before* regenerating; then count as
+  positives (and as labelled legitimate) only truth accounts that occur in the dataset's rows, report the excluded
+  count next to the denominator, regenerate `bench-v1.json` and the dev artifact. `sealed-evaluation.json` is not
+  re-run (consumed); sealed-v2 has no absent accounts, so its numbers cannot change.
+* **Acceptance**: artifacts regenerated with only account-level positives/recall changing, by exactly the absent
+  counts in `test_truth_account_presence.py`; every other count identical; amendment committed first.
+* **Tests**: fixture with an absent truth account in `test_entity_metrics.py`; artifact-consistency test.
+* **Expected improvement**: account recall that no method is structurally prevented from reaching.
+* **Risk / rollback**: touches published artifacts; owner may prefer to leave them and keep H-25 as a documented
+  limitation — decide before starting. Rollback: revert the commit and the artifacts.
 
 ---
 

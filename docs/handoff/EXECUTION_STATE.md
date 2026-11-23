@@ -1,22 +1,25 @@
 # Execution state
 
 The live snapshot. **Update this file at the end of every task** (and append to
-[`EXECUTION_LEDGER.md`](EXECUTION_LEDGER.md)). Everything here was checked on 2026-11-22; stale facts must be
+[`EXECUTION_LEDGER.md`](EXECUTION_LEDGER.md)). Facts were last checked on 2026-11-23 (L-0017); stale facts must be
 re-verified, not trusted. Context: [`MASTER_HANDOFF.md`](MASTER_HANDOFF.md), queue:
 [`EXECUTION_BACKLOG.md`](EXECUTION_BACKLOG.md).
 
 ## Repository position
 
+Re-checked 2026-11-23 (L-0017). Before writing: `git fetch`, compare with `origin/claude/peaceful-darwin-nrquu9`, and check
+that no other session is working on this branch (two sessions collided here, L-0016) — never force-push.
+
 | Item | Value |
 |---|---|
-| Working branch (this handoff) | `claude/peaceful-darwin-nrquu9` |
-| Verified code base | `7abd9a549629338c710d69403fbce2c019bee285` (`graph-workspace-wip`, identical content) |
-| Handoff commit | the commit after the base that adds `docs/handoff/*` — `git log -1 --format=%H -- docs/handoff/MASTER_HANDOFF.md` |
-| `graph-workspace-wip` on GitHub | still at `7abd9a5` (the handoff commit was pushed only to the working branch); to align without force: `git push origin claude/peaceful-darwin-nrquu9:graph-workspace-wip` (fast-forward) |
-| Default branch | `claude/brave-dirac-c80nwq` at `ea5ca9c` (no `main`); integration line is 25 commits ahead, 0 behind |
-| Open PRs | #15, #5, #3 (superseded in effect by the integration line — owner decides, B-002) and Dependabot #6–#14 |
+| Working branch | `claude/peaceful-darwin-nrquu9` (the only line with B-001…B-041 work; `graph-workspace-wip` stays at `0c8d21b`) |
+| Last verified pushed commit before L-0017 | `3528265` — CI run 79 success |
+| L-0017 commit | the commit that adds `tests/unit/test_handoff_docs_checker.py` — `git log -1 --format=%H -- tests/unit/test_handoff_docs_checker.py`; its CI run is in the ledger/final report |
+| Default branch | `claude/brave-dirac-c80nwq` at `ea5ca9c` (no `main`) |
+| Open PRs | #15, #5, #3 (superseded in effect by the integration line — owner decides, B-002) and Dependabot PRs |
 | Unmerged branches without PRs | `eloquent-planck-pwnbd8`, `sharp-cannon-xkrybs`, `admiring-fermat-9fc4nx`, `great-lovelace-0gmpmi`, `peaceful-babbage-cyqrox` (see MASTER_HANDOFF §6) |
-| GitHub CI | run 64 on `7abd9a5` → success; run 65 on `da681c2` → one intermittent auth E2E test failed (test race, fixed — ledger L-0003); the fix commit's run is recorded in the final report / ledger |
+| Migration head | `0004` (production reportedly `0003`) |
+| Handoff checker | `python3 docs/handoff/probes/check_handoff_docs.py` → OK at L-0017 (machine-independent since L-0017) |
 
 ## Baseline verification (2026-11-22, this container)
 
@@ -30,16 +33,18 @@ real Nginx image, ORM load/publish at 200k rows.
 
 ## Tasks
 
-* **Completed backlog tasks**: B-001 (L-0005), B-010 (L-0006), B-003 (L-0007), B-015 (L-0008), B-012 (L-0009), B-031 (L-0010), B-020 (L-0011), B-041 (L-0013), B-040 (L-0015). (Earlier, outside the backlog: the four fixes and the verification checklist in commit
-  `7abd9a5` — MediaPipe pre-bundling, worker network guard for all four channels, `INFO:` stderr routing, `toCanvasColor`.)
-* **Active**: B-011.
-* **Ready now (autonomous, no human input, dependencies met)**: B-013, B-017, B-022,
-  B-047, B-050, B-053, B-021 (B-001 done). Recommended order: **B-011**, then B-004, B-016, B-021, B-013, B-014, B-022, B-042 … (evaluation work: develop on dev, freeze, then at most 3 sealed-v2 uses).
-* **Now ready after this session's work**: B-004, B-011, B-014, B-016, B-021, B-024 (after B-021), B-032, B-042, B-046 (B-041 done).
-* **Pending (waiting on dependencies)**: B-018*, B-019, B-023, B-024, B-033, B-043, B-044, B-045 (B-040 done → ready; B-045 should come first so candidates have an adversarial dev suite), B-052, B-054
-  (*B-018 has no dependency and may start any time).
-* **Human-gated**: B-002 (approve merges/closures), B-005 (live Railway access), B-030 (a person with a webcam), B-051 (live backups, owner
-  decisions D-5), B-055 (deployment approval).
+* **Completed backlog tasks**: B-001 (L-0005), B-010 (L-0006), B-003 (L-0007), B-015 (L-0008), B-012 (L-0009), B-031 (L-0010),
+  B-020 (L-0011), B-041 (L-0013), B-040 (L-0015). Outside the backlog: handoff-checker fixes and finding H-25 (L-0017).
+* **Active**: B-011 (taken by session `session_01YM4H2VbXza5W7vAoVxRamj` after L-0017).
+* **Ready (dependencies met, autonomous)**: B-004, B-013, B-014, B-016, B-017, B-018, B-021, B-022, B-025, B-032, B-042,
+  B-043, B-044, B-045, B-046, B-047, B-048 (owner decides first), B-050, B-053. Recommended order after B-011: B-004, B-016,
+  B-021, B-013, B-014, B-022, B-025, B-042, B-045 (adversarial dev suite before tuning anything on sealed-v2 findings).
+* **Pending (waiting on dependencies)**: B-019 (B-011 + decision D-3), B-023 (B-022), B-024 (B-021), B-033 (B-030),
+  B-052 (B-002, B-004), B-054 (B-047).
+* **Human-gated**: B-002 (approve merges/closures), B-005 (live Railway access), B-030 (a person with a webcam), B-051 (live
+  backups, owner decisions D-5), B-055 (deployment approval).
+* **Evaluation state**: `sealed-v1` consumed; `sealed-v2` pre-registered run done (L-0015), 0 of 3 later candidate uses
+  spent. Never tune on either.
 
 ## Explicit blockers and environment constraints
 
@@ -52,22 +57,22 @@ real Nginx image, ORM load/publish at 200k rows.
 ## Next exact commands
 
 ```bash
-git fetch origin --prune && git checkout claude/peaceful-darwin-nrquu9 && git status -sb
-service postgresql start && pg_lsclusters
+git fetch origin --prune && git checkout claude/peaceful-darwin-nrquu9 && git status -sb   # fast-forward only
+service postgresql start && pg_lsclusters      # fresh container: create role + 3 databases (docs/development/local-setup.md)
 export UV_SYSTEM_CERTS=1 && unset UV_NATIVE_TLS && uv sync --frozen && (cd apps/web && npm ci)
-uv run pytest -p no:cacheprovider -rs                       # expect 190 passed, 0 skipped
-(cd apps/web && npx tsc -b && npx vitest run)               # expect 99 passed
-git checkout -b feat/b-001-migration-chain-guard             # then start B-001 (see EXECUTION_BACKLOG.md)
+python3 docs/handoff/probes/check_handoff_docs.py            # expect OK
+uv run pytest -p no:cacheprovider -rs                         # expect 268 passed, 0 skipped (L-0017)
+(cd apps/web && npx tsc -b && npx vitest run)                 # expect 128 passed (L-0013)
 ```
 
 ## Open these files first
 
-`CLAUDE.md` · `docs/handoff/MASTER_HANDOFF.md` (§1, §6, §16, §18, §23) · `docs/handoff/EXECUTION_BACKLOG.md` (B-001, B-010, B-003) ·
-`migrations/versions/` · `src/nexora/api/routes/datasets.py` · `src/nexora/evaluation/benchmark.py` · `apps/web/src/features/gestures/gestureSession.ts` ·
+`CLAUDE.md` · `docs/handoff/MASTER_HANDOFF.md` (§1, §6, §16, §18, §23) · `docs/handoff/EXECUTION_BACKLOG.md` (B-011, B-019, B-025) ·
+`migrations/versions/` · `src/nexora/api/deps.py` · `src/nexora/auth/service.py` · `src/nexora/api/routes/` · `tests/integration/test_auth.py` ·
 `docs/handoff/probes/README.md`.
 
 ## Known risks right now
 
 1. Two open PRs define migration `0003`; never renumber the auth migration (production reportedly at `0003`). 2. ~~The CSV import route is open to
 any signed-in user~~ — closed by default (B-010 done). 3. ~~Published benchmark arithmetic off by ≤ 0.1 pp~~ — fixed and artifacts regenerated under A2 (B-003 done); the pitch still carries old numbers (B-004). 4. `sealed-v1` is
-consumed — do not tune against it; `sealed-v2` exists (B-040), 0 of 3 uses spent. 5. Camera recognition has never run on a real hand (B-030); the camera now starts only after the model has loaded (B-031). 6. ~~Graph layout freezes the UI~~ — layout runs in a worker (B-020 done). 7. Live deployment state is unverified (B-005). 8. Every figure above is synthetic-data behaviour, not banking accuracy.
+consumed — do not tune against it; `sealed-v2` pre-registered run done (B-040), 0 of 3 later uses spent. 5. Camera recognition has never run on a real hand (B-030); the camera now starts only after the model has loaded (B-031). 6. ~~Graph layout freezes the UI~~ — layout runs in a worker (B-020 done); the stage still blanks during relayout (B-025). 9. Account-level recall on frozen generators counts a few never-transacting truth accounts (H-25, B-048). 7. Live deployment state is unverified (B-005). 8. Every figure above is synthetic-data behaviour, not banking accuracy.

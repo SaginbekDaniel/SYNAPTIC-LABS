@@ -320,3 +320,33 @@ Entry template:
   alternative measured 138–165 ms for the whole 300-account path. The alternative is kept as a patch outside the repository.
 * Verification: `python3 docs/handoff/probes/check_handoff_docs.py` → OK; probe output above is literal.
 * State file updated: no (its Active task belongs to the original session).
+
+### L-0017 · 2026-11-23 · session recovery; handoff checker and finding H-25 · status: done
+* Session `session_01YM4H2VbXza5W7vAoVxRamj`. Recovery: the container held the branch at `0c8d21b`, 24 commits behind
+  `origin/claude/peaceful-darwin-nrquu9` = `3528265` (fast-forward, no local work); every SHA of L-0005…L-0016 is reachable
+  from origin; CI run 79 on `3528265` success. The other two sessions on this branch were idle (session list) before any
+  write. Correction to L-0016: its "checker → OK" does not reproduce on a fresh checkout — 4 problems (that container
+  had built the web app and still held its local B-020 commit); the commit message of `3528265` says 2.
+* Checker (`docs/handoff/probes/check_handoff_docs.py`), root causes, each reproduced: (1) the prose idiom "docs/test
+  commit" (L-0015, docs and tests) read as a path — 409 of 411 path tokens sit in code spans or link targets, the other
+  two are `configs/detectors.yaml` (real) and that idiom; prose tokens now count only when unambiguous (two segments
+  below the top level, an extension or a trailing slash), code spans are checked as before. (2)
+  `apps/web/public/vendor/mediapipe/` is git-ignored build output: present only where `vite build` ran — ignored paths
+  are now counted as generated, not checked. (3) The local-only B-020 duplicate named in L-0016 passed in the container
+  that held it and failed everywhere else — commits must now be reachable from HEAD or an origin branch, a deliberately
+  unpublished one is written as "local commit" + SHA (L-0016 already is). (4) H-25 was referenced, never defined.
+  Refactored into functions (sections 4–6 unchanged); old checker on this tree: 4 problems; new: H-25 only, then OK.
+  Path coverage unchanged otherwise: 387 checked + 1 git-ignored + 1 prose idiom = the old 389.
+* H-25 defined in MASTER_HANDOFF §16.1 after re-measuring it: sealed-v1 4/1,740 suspicious, 45/5,099 legitimate-only,
+  9/872 boundary (as L-0015 said) **and** the development generator too — holdout 1/735 suspicious, legitimate-only
+  25/10/17 on dev/validation/holdout; sealed-v2 0. Published impact: `bench-v1` holdout account recall understated by
+  ≤ 0.0013, ordering unchanged; network-level metrics unaffected by construction (asserted). No artifact or generator
+  touched. New tasks: B-048 (metric-definition fix, owner decides), B-025 (B-020 follow-up: blank stage on relayout and
+  the unmeasured sizing probe before `LAYOUT_MARK_START`, confirmed in `GraphCanvas.tsx`).
+* Tests: `tests/unit/test_handoff_docs_checker.py` (15: the reported idiom, same token in code still checked,
+  unambiguous prose still checked, similar prefixes, exemptions, link/fence spans, broken vs valid, git-ignored, local
+  vs unknown vs unpublished commits); `tests/unit/test_truth_account_presence.py` (6: exact H-25 counts per split,
+  sealed-v2 = 0, ≥ 2 transacting accounts per scenario).
+* Verification: checker OK (399 paths, 40 tasks, 25 findings); ruff, format, mypy clean; pytest **268 passed**, 0 skipped
+  (local PostgreSQL 16, databases created per `docs/development/local-setup.md`). No web change, web gates not re-run.
+* State file updated: yes.
