@@ -88,6 +88,8 @@ def test_production_path_upgrades_stepwise_and_matches_the_orm(probe: tuple[Conf
     assert "hypothesis_assessments" in _tables(engine)
     with engine.connect() as conn:
         assert conn.execute(text("SELECT count(*) FROM users WHERE username = 'prod-analyst'")).scalar_one() == 1
+        # 0005 (B-011): an account from before roles keeps its permissions, i.e. becomes an analyst.
+        assert conn.execute(text("SELECT role FROM users WHERE username = 'prod-analyst'")).scalar_one() == "analyst"
         # `alembic check` equivalent: the stepwise result is exactly what the ORM declares.
         diff = compare_metadata(MigrationContext.configure(conn, opts={"compare_type": True}), Base.metadata)
     assert diff == []

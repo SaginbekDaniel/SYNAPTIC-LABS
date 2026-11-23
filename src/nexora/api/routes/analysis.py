@@ -5,7 +5,7 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, Query, Request, Response
 
 from nexora.api import schemas
-from nexora.api.deps import SessionDep, actor, parse_uuid
+from nexora.api.deps import SessionDep, actor, parse_uuid, requires
 from nexora.application import analysis_service, graph_view, queries
 from nexora.application.errors import Invalid, NotFound
 from nexora.persistence import orm
@@ -13,7 +13,7 @@ from nexora.persistence import orm
 router = APIRouter(prefix="/api/v1", tags=["analysis"])
 
 
-@router.post("/analysis/jobs", response_model=schemas.Job, status_code=202)
+@router.post("/analysis/jobs", response_model=schemas.Job, status_code=202, dependencies=[requires("analyst")])
 def create_job(
     body: schemas.AnalysisJobRequest,
     request: Request,

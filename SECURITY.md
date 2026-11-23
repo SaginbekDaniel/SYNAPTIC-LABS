@@ -46,8 +46,11 @@ What is in place (see [docs/deployment/railway.md](docs/deployment/railway.md#se
 
 What is **not** in place — and why this must not hold real data:
 
-* **No SSO, MFA or role model.** Accounts are local passwords managed by an operator CLI; every
-  analyst can perform every action. There is no self-service password reset. An identity provider
+* **No SSO or MFA; global roles only.** Accounts are local passwords managed by an operator CLI. Each
+  account has a role — `viewer` (reads only), `analyst` (generates synthetic data, runs analyses, works
+  cases; the default) or `admin` (also CSV import when enabled) — enforced on the server per route and
+  changed only through the operator CLI. Every account still sees every dataset: there is no per-dataset
+  isolation (backlog B-019, decision D-3). There is no self-service password reset. An identity provider
   (OIDC) with MFA is the right next step for anything beyond a demo (see ADR 020).
 * Sign-in throttling counts in the database and is approximate under concurrent bursts; the gateway
   rate limit bounds it. There is no CAPTCHA or anomaly detection.

@@ -163,8 +163,10 @@ Implemented and tested (unit, integration, `smoke/deployed.spec.ts`, CI `contain
 
 Remaining risks (documented, not solved):
 
-* **Local passwords, no MFA or roles.** Every analyst can do everything; there is no SSO. An
-  identity provider (OIDC) with MFA is the next step for anything beyond a demo (ADR 020).
+* **Local passwords, no MFA; global roles only.** Accounts are `viewer`, `analyst` (default; every
+  account created before migration `0005` became one) or `admin`, set with
+  `python -m nexora.auth.cli set-role <user> <role>`; every account still sees every dataset. There is
+  no SSO. An identity provider (OIDC) with MFA is the next step for anything beyond a demo (ADR 020).
 * Writes are rate-limited but not quota-limited; a credential holder could fill the database
   slowly. Monitor volume usage.
 * No WAF, intrusion detection, backup-restore drill, penetration test or compliance review.

@@ -7,7 +7,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
 from scripts import reset_disposable_db
-from tests.auth_helpers import BASE_URL, ensure_user, login
+from tests.auth_helpers import ADMIN, ADMIN_PASSWORD, BASE_URL, ensure_user, login
 
 TEST_URL = os.environ.get("NEXORA_TEST_DATABASE_URL", "postgresql+psycopg://nexora:nexora@localhost:5432/nexora_test")
 
@@ -65,4 +65,17 @@ def client(settings, factory):
     ensure_user(factory)
     with TestClient(create_app(settings), base_url=BASE_URL) as c:
         login(c)
+        yield c
+
+
+@pytest.fixture()
+def admin_client(settings, factory):
+    """An API client signed in as an admin (CSV import, decision D-11)."""
+    from fastapi.testclient import TestClient
+
+    from nexora.api.main import create_app
+
+    ensure_user(factory, ADMIN, ADMIN_PASSWORD, role="admin")
+    with TestClient(create_app(settings), base_url=BASE_URL) as c:
+        login(c, ADMIN, ADMIN_PASSWORD)
         yield c

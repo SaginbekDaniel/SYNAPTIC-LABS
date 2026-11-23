@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { Link, useParams } from "react-router";
+import { useCan } from "../../app/auth";
 import { SegmentedMeter } from "../../components/charts/Progress";
 import { GraphCanvas, GraphLegend, type GraphEdgeSpec, type NodeRole } from "../../components/graph/GraphCanvas";
 import { AccountId, BandBadge, CaseStatusBadge, Disclosure, ErrorState, EvidenceBadge, Icon, Loading, Panel, TxTable } from "../../components/ui";
@@ -50,6 +51,7 @@ function Workspace({
   const [selection, setSelection] = useState<Selection>(null);
   const [openedCase, setOpenedCase] = useState<string | null>(null);
   const caseId = a.case_id ?? openedCase;
+  const canAct = useCan("analyst");
   const opener = useOpenCase(a.id, (id) => {
     setOpenedCase(id);
     reloadAlert();
@@ -140,12 +142,12 @@ function Workspace({
                 <Icon name="cases" size={16} />
                 {t("case.toDecision")}
               </a>
-            ) : (
+            ) : canAct ? (
               <button type="button" className="btn btn--primary" disabled={opener.opening} data-testid="open-case" onClick={() => void opener.open()}>
                 <Icon name="cases" size={16} />
                 {opener.opening ? t("case.opening") : t("case.open")}
               </button>
-            )}
+            ) : null}
           </div>
         </div>
         {opener.error && <ErrorState error={opener.error} />}

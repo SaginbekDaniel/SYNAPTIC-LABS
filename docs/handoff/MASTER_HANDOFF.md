@@ -37,6 +37,8 @@ green on GitHub `[CI]`.
 endpoint — H-02, H-09), its fraud numbers are synthetic and come from scenarios written by the same team as
 the detectors (H-14), the camera mode has never seen a real hand (H-17), and the live demo predates all of
 the graph/gesture work and is unverified from here (H-22).
+*Update 2026-11-23*: the CSV import is off by default (B-010) and needs the `admin` role when on; writes need the
+`analyst` role (B-011). Still not safe for real data: every account reads every dataset (H-09 → B-019).
 
 **Most serious engineering risks** (detail in §16): H-01 two open PRs each define migration `0003` (merged
 separately → two Alembic heads; production is reportedly at `0003`); H-02/H-09 no authorization and an open
@@ -347,19 +349,27 @@ PostgreSQL; the camera never crosses the browser boundary.
 | Uniform failures (no account enumeration), per-name and per-client throttling, gateway rate limits | `auth/service.py`, gateway template | reviewed `[code]` |
 | Gateway token on every non-health request; gateway fails closed | `api/main.py`, `docker/10-nexora-gateway.envsh` | `[CI]` fail-closed checks |
 | CSP (hash-pinned inline script), `X-Frame-Options`, `nosniff`, HSTS over HTTPS, `no-store` on API | `docker/csp.mjs`, API middleware | `[local]` generated headers, `[CI]` smoke |
+| Global roles `viewer` < `analyst` < `admin` (B-011): per-route `requires(...)`, app refuses to build if a write route declares none; role read from the user row per request; CLI-only role changes end the user's sessions and are audited | `auth/roles.py`, `api/deps.py`, migration `0005` | `[local]` matrix test over every OpenAPI operation × role |
+
+**Authorization matrix** (B-011; `tests/integration/test_authorization.py` pins it). Every `GET` under `/api` is open to
+every role. Writes: `POST /auth/logout` viewer · `POST /lab/datasets`, `/analysis/jobs`, `/cases`, `/cases/{id}/decisions`,
+`/cases/{id}/notes` analyst · `POST /datasets/import` admin (and only when `allow_csv_import` is on; decision D-11).
+User and role management: operator CLI only, no HTTP surface. Refusal: `403 FORBIDDEN_ROLE`, the same message for every
+route, after authentication, origin and CSRF checks and — for the import — before the upload is read. Roles are global:
+which datasets an account may see is B-019 (D-3); there is no tenant model to isolate yet.
 
 **Reviewed and found sound** (negative result N-4): constant-work failure paths, session fixation handling, token
 digests, CSRF derivation, route protection by default. No defect found in the authentication primitives.
 
-**Gaps** (§16): no authorization or tenancy (H-09); open CSV import (H-02); two DB sessions per request (H-10);
+**Gaps** (§16): no tenancy — every account reads every dataset (H-09, B-019); CSV import gated by flag and role (H-02); two DB sessions per request (H-10);
 no self-service password change, MFA or session list (H-21); no metrics/error tracking/backup drill/retention
 (H-20); Python dependencies never audited (H-07); no penetration test or threat-model review (`SECURITY.md`).
 
 **Threat model, condensed** — *Asset*: investigation data and case decisions. *Actors*: anonymous internet,
 signed-in analyst (over-privileged today), malicious page (CSRF), supply chain (npm/PyPI/model asset), a user's
 own camera. *Top threats and state*: anonymous access → mitigated (default-deny, gateway token); CSRF → mitigated;
-brute force → mitigated (approximate under bursts, per `SECURITY.md`); privilege abuse by any analyst →
-**unmitigated** (H-09); real data in a demo → **unmitigated** (H-02); open redirect via router → **open** (H-07);
+brute force → mitigated (approximate under bursts, per `SECURITY.md`); writes by read-only reviewers → mitigated
+by roles (B-011); cross-dataset reading by any account → **unmitigated** (H-09, B-019); real data in a demo → **unmitigated** (H-02); open redirect via router → **open** (H-07);
 camera exfiltration → mitigated by two independent layers (guard + CSP), verified by E2E; poisoned model/WASM →
 mitigated by SHA-256 pins; denial of service via large graph/import → bounded by caps (probe: 200k rows in 22.5 s).
 
@@ -541,7 +551,7 @@ same test), false-positive counts and account precision (an absent account is ne
 
 | ID | Sev | Risk and evidence | Impact | Fix / verify |
 |---|---|---|---|---|
-| H-09 | P1 | No authorization or tenancy: `Dataset` and other tables have no owner; no route uses the principal for *authorization* (case and analysis routes use it only to attribute audit events via `actor`) `[code]`; audit F-05 still open | any analyst reads/changes everything; blocks multi-user and real data | B-011 roles, B-019 isolation (decision D-3) |
+| H-09 | P1 | No authorization or tenancy: `Dataset` and other tables have no owner; no route uses the principal for *authorization* (case and analysis routes use it only to attribute audit events via `actor`) `[code]`; audit F-05 still open | any analyst reads/changes everything; blocks multi-user and real data | B-011 roles (done 2026-11-23: writes need `analyst`, import `admin`), B-019 isolation (decision D-3) — reading is still unrestricted |
 | H-10 | P2 | `enforce_authentication` opens its own DB session and `SessionDep` another → up to 2 connections per request, pool 5 + 5 `[code]`, unmeasured | latency cliff under concurrent dashboards | B-017: measure first |
 | H-11 | P1 | No cross-view alert grouping: a funnel and a fan-out on one hub open separate alerts `[code]`; sealed alerts per flagged network 1.232 (candidate) vs 1.667 `[doc]` | repeated review of one hub | B-042 (query-time grouping) |
 | H-12 | P1 | No entity-level, PR-curve or calibration metrics (grep: none); priority uncalibrated | cannot compare fairly with account-level baselines or state what a band means | B-041 |
@@ -633,6 +643,7 @@ read-only command port; layout is seeded and deterministic; the Railway token is
 | D-8 | Browser support policy for gestures | Chromium-only with explicit messaging (recommended until B-032) · broader | B-032 |
 | D-9 | CSP violation reporting | skip (keeps the public surface at two routes) · add an unauthenticated report endpoint | B-016 |
 | D-10 | Near-real-time requirement | owner states a latency target · otherwise stay batch | B-054 |
+| D-11 | Minimum role for CSV import (when enabled) | `admin` (assumed by B-011: real data enters a system without per-dataset isolation) · `analyst` (one line in `routes/datasets.py` plus the matrix test) | — |
 
 ---
 

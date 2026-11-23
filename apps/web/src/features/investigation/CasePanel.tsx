@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useCan } from "../../app/auth";
 import { CaseStatusBadge, ErrorState, Icon, Loading } from "../../components/ui";
 import { api, ApiError } from "../../lib/api";
 import { formatDateTime } from "../../lib/format";
@@ -29,29 +30,45 @@ export function useOpenCase(alertId: string, onOpened: (id: string) => void) {
   return { open, opening, error };
 }
 
+function ReadOnlyNotice() {
+  return (
+    <div className="callout" role="note" data-testid="case-read-only">
+      <Icon name="info" size={16} />
+      {t("role.readOnlyCase")}
+    </div>
+  );
+}
+
 export function CasePanel({ caseId, onOpen, opening, onChanged }: { caseId: string | null; onOpen: () => void; opening: boolean; onChanged?: () => void }) {
+  const canAct = useCan("analyst");
   if (!caseId) {
     return (
       <section className="panel decision" id="case" aria-labelledby="case-title">
         <div className="panel__head">
           <div className="panel__titles">
             <h2 id="case-title">{t("case.title")}</h2>
-            <p className="panel__hint">{t("case.noCase")}</p>
+            <p className="panel__hint">{canAct ? t("case.noCase") : t("case.noCaseReadOnly")}</p>
           </div>
         </div>
         <div className="panel__body">
-          <button type="button" className="btn btn--block" onClick={onOpen} disabled={opening}>
-            {opening ? t("case.opening") : t("case.open")}
-          </button>
-          <p className="decision__note">{t("case.humanOnly")}</p>
+          {canAct ? (
+            <>
+              <button type="button" className="btn btn--block" onClick={onOpen} disabled={opening}>
+                {opening ? t("case.opening") : t("case.open")}
+              </button>
+              <p className="decision__note">{t("case.humanOnly")}</p>
+            </>
+          ) : (
+            <ReadOnlyNotice />
+          )}
         </div>
       </section>
     );
   }
-  return <CaseWorkspace caseId={caseId} onChanged={onChanged} />;
+  return <CaseWorkspace caseId={caseId} onChanged={onChanged} canAct={canAct} />;
 }
 
-function CaseWorkspace({ caseId, onChanged }: { caseId: string; onChanged?: () => void }) {
+function CaseWorkspace({ caseId, onChanged, canAct }: { caseId: string; onChanged?: () => void; canAct: boolean }) {
   const kase = useApi(`case:${caseId}`, (s) => api.get<Case>(`/api/v1/cases/${caseId}`, undefined, s));
   const audit = useApi(`audit:${caseId}`, (s) => api.get<AuditEvent[]>(`/api/v1/cases/${caseId}/audit`, undefined, s));
   const [action, setAction] = useState<CaseStatus | "">("");
@@ -159,7 +176,9 @@ function CaseWorkspace({ caseId, onChanged }: { caseId: string; onChanged?: () =
               </div>
             )}
 
-            {c.allowed_transitions.length > 0 && (
+            {!canAct && <ReadOnlyNotice />}
+
+            {canAct && c.allowed_transitions.length > 0 && (
               <form
                 className="decision__form"
                 onSubmit={(e) => {
@@ -243,28 +262,30 @@ function CaseWorkspace({ caseId, onChanged }: { caseId: string; onChanged?: () =
                   </li>
                 ))}
               </ul>
-              <form
-                className="note-form"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  void submitNote();
-                }}
-              >
-                <label className="field">
-                  <span className="visually-hidden">{t("case.notes")}</span>
-                  <textarea
-                    className="textarea textarea--sm"
-                    value={note}
-                    maxLength={4000}
-                    placeholder={t("case.notePlaceholder")}
-                    onChange={(e) => setNote(e.target.value)}
-                    data-testid="case-note-input"
-                  />
-                </label>
-                <button type="submit" className="btn btn--sm" disabled={!note.trim() || saving !== null}>
-                  {t("case.addNote")}
-                </button>
-              </form>
+              {canAct && (
+                <form
+                  className="note-form"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    void submitNote();
+                  }}
+                >
+                  <label className="field">
+                    <span className="visually-hidden">{t("case.notes")}</span>
+                    <textarea
+                      className="textarea textarea--sm"
+                      value={note}
+                      maxLength={4000}
+                      placeholder={t("case.notePlaceholder")}
+                      onChange={(e) => setNote(e.target.value)}
+                      data-testid="case-note-input"
+                    />
+                  </label>
+                  <button type="submit" className="btn btn--sm" disabled={!note.trim() || saving !== null}>
+                    {t("case.addNote")}
+                  </button>
+                </form>
+              )}
             </div>
 
             <div className="decision__block">

@@ -765,6 +765,9 @@ class LoginRequest(Model):
 class AuthUser(Model):
     username: str
     display_name: str
+    # viewer < analyst < admin (nexora.auth.roles). The client hides actions the role cannot take;
+    # the server enforces them regardless.
+    role: Literal["viewer", "analyst", "admin"]
 
 
 class AuthSession(Model):

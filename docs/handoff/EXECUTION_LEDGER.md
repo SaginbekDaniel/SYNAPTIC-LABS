@@ -350,3 +350,36 @@ Entry template:
 * Verification: checker OK (399 paths, 40 tasks, 25 findings); ruff, format, mypy clean; pytest **268 passed**, 0 skipped
   (local PostgreSQL 16, databases created per `docs/development/local-setup.md`). No web change, web gates not re-run.
 * State file updated: yes.
+
+### L-0018 · 2026-11-23 · B-011 · status: done
+* Session `session_01YM4H2VbXza5W7vAoVxRamj`, branch `claude/peaceful-darwin-nrquu9` (no other session active; remote unchanged since L-0017).
+* Policy: the backlog's documented model (viewer < analyst < admin), not the admin/manager/analyst set in the session prompt —
+  no `manager` duty exists in the product. Matrix in MASTER_HANDOFF §11: every read for every role; writes `analyst`;
+  `POST /datasets/import` `admin` (new decision D-11, assumed; one line to relax); logout any role; roles changed only by the
+  operator CLI (`create-user --role`, `set-role`, which ends the user's sessions and is audited `user.set_role`). Roles are
+  global; dataset visibility stays B-019 (D-3); no tenant model exists to isolate.
+* Implementation: migration `0005` (`users.role` NOT NULL DEFAULT 'analyst' + CHECK; additive, reversible — upgrade/downgrade
+  round trip run; legacy accounts become analyst = unchanged permissions); `auth/roles.py`; `Principal.role` read from the
+  user row on every request (a lowered role applies to the next request); `api/deps.py` `requires(...)` per route and
+  `check_route_roles` at app build: a write route without a declared role stops the app from starting (deny by default).
+  The import gate checks the role before the multipart body is read (same reason as B-010) and therefore authenticates
+  once more than other routes on that path only. `AuthUser.role` in the API (OpenAPI client regenerated). UI: `useCan()`
+  hides open-case / decision / note / generate / analyse for viewers and says why (i18n); the account card shows the role.
+* Found while testing: FastAPI 0.163 keeps included routers as lazy `_IncludedRouter` entries, so `app.routes` lists none
+  of the API routes — a check iterating it would pass vacuously. Uses `fastapi.routing.iter_route_contexts`, and refuses
+  an app in which it finds no `/api` route at all.
+* Tests: `tests/integration/test_authorization.py` (13: documented matrix == declared; every OpenAPI operation × each role
+  → `FORBIDDEN_ROLE` iff below minimum, identical message without role names; viewer reads all and changes nothing, row
+  counts unchanged; auth and CSRF before role; no API input carries a role; login ignores a role field; role read per
+  request; `set_role` ends sessions + audit; defaults, unknown roles refused by service and by the database CHECK; CLI);
+  `tests/unit/test_roles.py` (14); analyst refused by role before the upload is read with import on; legacy row backfilled
+  in the stepwise migration test; migration-chain tests made head-relative (they hard-coded `0005` as "the next free
+  revision"); import tests that ran as analyst now run as admin (D-11). Mutation checks: lowering `notes` to viewer → 2
+  failures; removing its declaration → app refuses to build. Web: vitest +7 (`roleAllows`); E2E viewer journey.
+* Visual check (scratch spec, deleted): viewer at 1440 and 390 px — fixed three things it showed: role truncated in the
+  account card, the lab empty state told a viewer to generate, the case hint told a viewer to open a case.
+* Verification: ruff, format, mypy clean; pytest **296 passed**, 0 skipped; `alembic upgrade head` + `alembic check` clean,
+  single head `0005`; gen:api idempotent; tsc clean; vitest **135**; Playwright cold cache **37 passed**; checker OK.
+  Not run: production-bundle CSP run (no change to headers or assets), Docker image.
+* Production note: deploying `0005` makes every existing account an analyst (current behaviour). Nothing deployed (B-055).
+* State file updated: yes.

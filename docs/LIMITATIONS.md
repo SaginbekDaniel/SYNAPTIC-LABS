@@ -6,7 +6,8 @@
 * Not a real-time authorisation/blocking system. It is batch snapshot analysis triggered by jobs.
 * Not proof of fraud or money laundering: outputs are review candidates for a human analyst.
 * Authentication is named accounts with local passwords and server-side sessions. No SSO, no MFA, no
-  role model (every analyst can do everything), no self-service password reset (operator CLI only).
+  self-service password reset (operator CLI only). Roles are global (`viewer` / `analyst` / `admin`):
+  they limit what an account may change, not which datasets it may see.
 
 ## Evaluation limits
 
@@ -35,7 +36,8 @@ See `docs/architecture/DEEP_AUDIT.md` and `docs/evaluation/RESULTS.md`.
   side is fixed (funnel-v3); for fan-out the ratio cannot separate kickbacks from instalments.
 * **`bench-v1` abstention numbers are optimistic**: its boundary list contains only planted centres
   (audit L-01). Its holdout is exposed and no longer an unbiased test.
-* **No authorization or tenancy** (audit F-05) — demo identity only.
+* **No tenancy** (audit F-05): every account reads every dataset. Global roles limit writes since B-011;
+  per-dataset isolation is backlog B-019 (decision D-3).
 
 ## Analytical limitations observed with v2 (bench-v1 holdout, historical)
 

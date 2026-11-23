@@ -53,7 +53,7 @@ def test_successful_login_sets_a_hardened_session_cookie(anon_client, factory):
     r = anon_client.post("/api/v1/auth/login", json={"username": name.upper(), "password": password})
     assert r.status_code == 200, r.text
     body = r.json()
-    assert body["user"] == {"username": name, "display_name": "User Analyst"}
+    assert body["user"] == {"username": name, "display_name": "User Analyst", "role": "analyst"}
     assert re.fullmatch(r"[0-9a-f]{64}", body["csrf_token"])
     assert body["idle_timeout_seconds"] == 120 * 60
     assert password not in r.text

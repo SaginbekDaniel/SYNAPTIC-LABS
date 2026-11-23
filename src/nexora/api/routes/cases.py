@@ -5,7 +5,7 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, Query, Response
 
 from nexora.api import schemas
-from nexora.api.deps import SessionDep, actor, parse_uuid, request_id
+from nexora.api.deps import SessionDep, actor, parse_uuid, request_id, requires
 from nexora.application import case_service, queries
 
 router = APIRouter(prefix="/api/v1", tags=["cases"])
@@ -13,7 +13,13 @@ ActorDep = Annotated[str, Depends(actor)]
 RequestIdDep = Annotated[str, Depends(request_id)]
 
 
-@router.post("/cases", response_model=schemas.Case, status_code=201, responses={200: {"model": schemas.Case}})
+@router.post(
+    "/cases",
+    response_model=schemas.Case,
+    status_code=201,
+    responses={200: {"model": schemas.Case}},
+    dependencies=[requires("analyst")],
+)
 def open_case(
     body: schemas.OpenCaseRequest, response: Response, session: SessionDep, who: ActorDep, rid: RequestIdDep
 ) -> Any:
@@ -48,7 +54,7 @@ def get_case(case_id: str, session: SessionDep) -> Any:
     return queries.get_case(session, parse_uuid(case_id, "case_id"))
 
 
-@router.post("/cases/{case_id}/decisions", response_model=schemas.Case)
+@router.post("/cases/{case_id}/decisions", response_model=schemas.Case, dependencies=[requires("analyst")])
 def decide(case_id: str, body: schemas.DecisionRequest, session: SessionDep, who: ActorDep, rid: RequestIdDep) -> Any:
     case = case_service.transition(
         session,
@@ -63,7 +69,7 @@ def decide(case_id: str, body: schemas.DecisionRequest, session: SessionDep, who
     return queries.case_dict(session, case)
 
 
-@router.post("/cases/{case_id}/notes", response_model=schemas.Case, status_code=201)
+@router.post("/cases/{case_id}/notes", response_model=schemas.Case, status_code=201, dependencies=[requires("analyst")])
 def add_note(case_id: str, body: schemas.NoteRequest, session: SessionDep, who: ActorDep, rid: RequestIdDep) -> Any:
     cid = parse_uuid(case_id, "case_id")
     case_service.add_note(session, case_id=cid, body=body.body, actor=who, request_id=rid)

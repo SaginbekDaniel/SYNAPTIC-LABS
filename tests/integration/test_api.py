@@ -75,7 +75,8 @@ def test_end_to_end_transaction_to_audited_decision(client, settings):  # UI-001
     assert client.get("/api/v1/alerts", params={"dataset_id": ds_id, "status": "in_case"}).json()["total"] == 1
 
 
-def test_big_account_ids_round_trip_exactly(client, settings):  # DATA-001
+def test_big_account_ids_round_trip_exactly(admin_client, settings):  # DATA-001
+    client = admin_client  # CSV import needs the admin role (B-011, decision D-11)
     settings.allow_csv_import = True  # the import route is off by default (B-010)
     big = "9007199254740993"  # 2^53 + 1
     csv = (
@@ -305,18 +306,35 @@ def _asgi_import(app, client) -> tuple[int, list[str]]:
     return status[0], events
 
 
-def test_disabled_csv_import_refuses_before_reading_the_upload(client, settings):
+def test_disabled_csv_import_refuses_before_reading_the_upload(admin_client, settings):
     from nexora.api.main import create_app
 
-    status, events = _asgi_import(create_app(settings), client)
+    status, events = _asgi_import(create_app(settings), admin_client)
     assert status == 403
     assert "body-read" not in events[: events.index("response")], events
 
     # Control: with the import enabled the same request is read (and accepted), so the probe detects reads.
     settings.allow_csv_import = True
     try:
-        status, events = _asgi_import(create_app(settings), client)
+        status, events = _asgi_import(create_app(settings), admin_client)
     finally:
         settings.allow_csv_import = False
     assert status == 201
     assert events.index("body-read") < events.index("response"), events
+
+
+def test_enabled_csv_import_refuses_a_role_below_admin_before_reading_the_upload(client, settings):
+    """B-011: with the import switched on, an analyst is refused by role, also before the upload is read."""
+    from nexora.api.main import create_app
+
+    before = _row_counts(settings)
+    settings.allow_csv_import = True
+    try:
+        status, events = _asgi_import(create_app(settings), client)
+        r = client.post("/api/v1/datasets/import", files={"file": ("x.csv", _IMPORT_CSV.encode())}, data={"name": "x"})
+    finally:
+        settings.allow_csv_import = False
+    assert status == 403
+    assert "body-read" not in events[: events.index("response")], events
+    assert r.status_code == 403 and r.json()["error"]["code"] == "FORBIDDEN_ROLE"
+    assert _row_counts(settings) == before

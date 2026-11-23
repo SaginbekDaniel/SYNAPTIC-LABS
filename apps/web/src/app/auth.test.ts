@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { safeNext } from "./auth";
+import { roleAllows, safeNext } from "./auth";
 import { api, ApiError, configureApiAuth } from "../lib/api";
 
 describe("safeNext (open-redirect guard)", () => {
@@ -49,4 +49,16 @@ describe("api client and the session", () => {
     stubFetch(204, null);
     await expect(api.post("/api/v1/auth/logout")).resolves.toBeUndefined();
   });
+});
+
+describe("roleAllows (mirrors nexora.auth.roles; display only, the server enforces)", () => {
+  it.each([
+    ["viewer", "viewer", true],
+    ["viewer", "analyst", false],
+    ["analyst", "analyst", true],
+    ["analyst", "admin", false],
+    ["admin", "analyst", true],
+    ["admin", "admin", true],
+  ] as const)("%s may act as %s: %s", (role, minimum, allowed) => expect(roleAllows(role, minimum)).toBe(allowed));
+  it("allows nothing without a signed-in user", () => expect(roleAllows(undefined, "viewer")).toBe(false));
 });

@@ -814,6 +814,11 @@ export interface components {
         AuthUser: {
             /** Display Name */
             display_name: string;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "viewer" | "analyst" | "admin";
             /** Username */
             username: string;
         };

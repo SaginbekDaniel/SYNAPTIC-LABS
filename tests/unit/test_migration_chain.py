@@ -163,6 +163,15 @@ def test_alembic_agrees_there_is_one_head_at_the_newest_revision() -> None:
     assert [s.revision for s in script.walk_revisions()][-1] == "0001"
 
 
+def _rev(n: int) -> str:
+    return f"{n:04d}"
+
+
+# The scenarios below add revisions on top of whatever the repository's head is today.
+HEAD = max(r.revision for r in read_revisions(VERSIONS))
+NEXT, AFTER = _rev(int(HEAD) + 1), _rev(int(HEAD) + 2)
+
+
 def _copy_versions(tmp_path: Path) -> Path:
     target = tmp_path / "versions"
     shutil.copytree(VERSIONS, target, ignore=shutil.ignore_patterns("__pycache__"))
@@ -188,26 +197,26 @@ def test_a_second_0003_like_the_two_open_prs_is_rejected(tmp_path: Path) -> None
 
 def test_two_heads_from_a_parallel_new_revision_are_rejected(tmp_path: Path) -> None:
     versions = _copy_versions(tmp_path)
-    _write(versions / "0005_a.py", "0005", "0004")
-    _write(versions / "0006_b.py", "0006", "0004")
+    _write(versions / f"{NEXT}_a.py", NEXT, HEAD)
+    _write(versions / f"{AFTER}_b.py", AFTER, HEAD)
     problems = chain_problems(versions)
     assert any("expected exactly one head" in p for p in problems), problems
-    assert any("must revise '0005'" in p for p in problems), problems
+    assert any(f"must revise '{NEXT}'" in p for p in problems), problems
 
 
 def test_the_next_free_revision_is_accepted(tmp_path: Path) -> None:
     versions = _copy_versions(tmp_path)
-    _write(versions / "0005_next.py", "0005", "0004")
+    _write(versions / f"{NEXT}_next.py", NEXT, HEAD)
     assert chain_problems(versions) == []
 
 
 @pytest.mark.parametrize(
     ("name", "revision", "down", "expected"),
     [
-        ("0005_x.py", "0006", "0004", "file name must start with its revision id"),
-        ("0007_gap.py", "0007", "0004", "consecutive from 0001"),
-        ("0005_merge.py", "0005", ("0003", "0004"), "must be one revision or None"),
-        ("abcd_named.py", "abcd", "0004", "must be four digits"),
+        (f"{NEXT}_x.py", AFTER, HEAD, "file name must start with its revision id"),
+        (f"{_rev(int(HEAD) + 3)}_gap.py", _rev(int(HEAD) + 3), HEAD, "consecutive from 0001"),
+        (f"{NEXT}_merge.py", NEXT, ("0003", HEAD), "must be one revision or None"),
+        ("abcd_named.py", "abcd", HEAD, "must be four digits"),
     ],
 )
 def test_convention_breaks_are_named(tmp_path: Path, name: str, revision: str, down: object, expected: str) -> None:

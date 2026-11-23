@@ -20,7 +20,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from nexora import __version__
 from nexora.analytics.config import AnalysisConfig, default_config
 from nexora.api import schemas
-from nexora.api.deps import enforce_authentication, presented_token
+from nexora.api.deps import check_route_roles, enforce_authentication, presented_token
 from nexora.api.routes import alerts, analysis, auth, cases, datasets, evaluation
 from nexora.application.errors import AppError, TooManyRequests
 from nexora.auth.service import AUTH_REQUIRED, bootstrap_from_settings
@@ -196,6 +196,7 @@ def create_app(settings: Settings | None = None, config: AnalysisConfig | None =
 
     for module in (auth, datasets, analysis, alerts, cases, evaluation):
         app.include_router(module.router)
+    check_route_roles(app)
     return app
 
 

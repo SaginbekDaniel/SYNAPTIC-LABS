@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
+import { useCan } from "../../app/auth";
 import { useDataset } from "../../app/dataset";
 import { BandBadge, Disclosure, Empty, ErrorState, Icon, Loading, PageHeader, Panel } from "../../components/ui";
 import { api, ApiError } from "../../lib/api";
@@ -42,6 +43,7 @@ export function FraudLab() {
   const [job, setJob] = useState<Job | null>(null);
   const [top, setTop] = useState<{ total: number; items: AlertSummary[] } | null>(null);
   const [busy, setBusy] = useState<"generate" | "analyse" | null>(null);
+  const canAct = useCan("analyst");
   const [error, setError] = useState<ApiError | null>(null);
 
   const seedNum = Number.parseInt(seed, 10);
@@ -124,7 +126,7 @@ export function FraudLab() {
               className="lab-form"
               onSubmit={(e) => {
                 e.preventDefault();
-                if (seedValid && !busy) void generate();
+                if (canAct && seedValid && !busy) void generate();
               }}
             >
               <fieldset className="suite-grid">
@@ -177,16 +179,24 @@ export function FraudLab() {
                   </label>
                 </div>
               </Disclosure>
-              <div className="lab-actions">
-                <button type="submit" className="btn btn--primary" disabled={!seedValid || busy !== null}>
-                  <Icon name="database" size={16} />
-                  {busy === "generate" ? t("lab.generating") : t("lab.generate")}
-                </button>
-                <button type="button" className="btn" onClick={() => void analyse()} disabled={!result || busy !== null || job?.status === "succeeded"}>
-                  <Icon name="play" size={16} />
-                  {busy === "analyse" ? t("lab.analysing") : t("lab.analyse")}
-                </button>
-              </div>
+              {!canAct && (
+                <div className="callout" role="note" data-testid="lab-read-only">
+                  <Icon name="info" size={16} />
+                  {t("role.readOnlyLab")}
+                </div>
+              )}
+              {canAct && (
+                <div className="lab-actions">
+                  <button type="submit" className="btn btn--primary" disabled={!seedValid || busy !== null}>
+                    <Icon name="database" size={16} />
+                    {busy === "generate" ? t("lab.generating") : t("lab.generate")}
+                  </button>
+                  <button type="button" className="btn" onClick={() => void analyse()} disabled={!result || busy !== null || job?.status === "succeeded"}>
+                    <Icon name="play" size={16} />
+                    {busy === "analyse" ? t("lab.analysing") : t("lab.analyse")}
+                  </button>
+                </div>
+              )}
             </form>
           )}
         </Panel>
@@ -196,7 +206,7 @@ export function FraudLab() {
             {error && <ErrorState error={error} />}
             {!result && !error && (
               <Empty title={t("lab.resultEmpty")} icon="lab">
-                <p>{t("lab.resultEmptyHint")}</p>
+                <p>{canAct ? t("lab.resultEmptyHint") : t("lab.resultEmptyReadOnly")}</p>
               </Empty>
             )}
             {result && (

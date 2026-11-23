@@ -2,14 +2,16 @@ from __future__ import annotations
 
 import uuid
 from collections.abc import Iterator
-from typing import Annotated
+from typing import Annotated, Any
 
-from fastapi import Depends, Request
+from fastapi import Depends, FastAPI, Request
+from fastapi.dependencies.models import Dependant
+from fastapi.routing import APIRoute, iter_route_contexts
 from sqlalchemy.orm import Session
 
 from nexora.application.errors import Forbidden, Invalid, Unauthorized
+from nexora.auth import roles, tokens
 from nexora.auth import service as auth
-from nexora.auth import tokens
 from nexora.settings import Settings
 
 CSRF_HEADER = "X-CSRF-Token"
@@ -117,6 +119,79 @@ def current_principal(request: Request) -> auth.Principal:
 
 
 PrincipalDep = Annotated[auth.Principal, Depends(current_principal)]
+
+
+# -- authorization (B-011) -----------------------------------------------------------------------
+FORBIDDEN_ROLE = "FORBIDDEN_ROLE"
+
+
+class RoleRequirement:
+    """Route dependency: the signed-in user's role must be at least ``minimum``.
+
+    Declared per route with ``dependencies=[requires("analyst")]``. Runs after the global authentication
+    dependency (FastAPI resolves app-level dependencies first), so CSRF and origin are already checked.
+    """
+
+    def __init__(self, minimum: roles.Role) -> None:
+        self.minimum = minimum
+
+    def __call__(self, request: Request) -> None:
+        check_role(current_principal(request), self.minimum)
+
+
+def check_role(principal: auth.Principal, minimum: roles.Role) -> None:
+    if not roles.allows(principal.role, minimum):
+        # Same answer for every refused route: it names neither the route's requirement nor the user's role.
+        raise Forbidden(FORBIDDEN_ROLE, "your role does not permit this action")
+
+
+def requires(minimum: roles.Role) -> Any:
+    return Depends(RoleRequirement(minimum))
+
+
+def declared_role(route: APIRoute) -> roles.Role | None:
+    """The strictest role a route declares through ``requires`` (None when it declares none)."""
+    found: list[roles.Role] = []
+
+    def walk(dependant: Dependant) -> None:
+        for dep in dependant.dependencies:
+            if isinstance(dep.call, RoleRequirement):
+                found.append(dep.call.minimum)
+            walk(dep)
+
+    walk(route.dependant)
+    return max(found, key=roles.ROLES.index) if found else None
+
+
+def minimum_role(route: APIRoute) -> roles.Role:
+    """Effective minimum role: reads default to ``viewer``; a write must declare its own (see below)."""
+    return declared_role(route) or "viewer"
+
+
+def api_routes(app: FastAPI) -> list[tuple[str, frozenset[str], APIRoute]]:
+    """(full path, methods, route) of every /api operation. Included routers are expanded lazily by
+    FastAPI, so ``app.routes`` alone does not list them; ``iter_route_contexts`` does."""
+    out: list[tuple[str, frozenset[str], APIRoute]] = []
+    for ctx in iter_route_contexts(app.routes):
+        route, path = ctx.original_route, ctx.path or ""
+        if isinstance(route, APIRoute) and path.startswith("/api/"):
+            out.append((path, frozenset(ctx.methods or ()), route))
+    return out
+
+
+def check_route_roles(app: FastAPI) -> None:
+    """Deny by default, enforced when the app is built: every state-changing /api route must declare a
+    minimum role, so a new write endpoint cannot ship open to viewers by omission."""
+    routes = api_routes(app)
+    if not routes:  # an empty walk would pass silently (a FastAPI change to how routers are included)
+        raise RuntimeError("no /api routes found to check")
+    undeclared = sorted(
+        f"{','.join(sorted(methods))} {path}"
+        for path, methods, route in routes
+        if path not in PUBLIC_API_PATHS and methods - _SAFE_METHODS and declared_role(route) is None
+    )
+    if undeclared:
+        raise RuntimeError(f"state-changing routes without a declared minimum role: {undeclared}")
 
 
 def actor(request: Request) -> str:

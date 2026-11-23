@@ -8,7 +8,15 @@ from fastapi.routing import APIRoute
 from starlette.concurrency import run_in_threadpool
 
 from nexora.api import schemas
-from nexora.api.deps import SessionDep, enforce_authentication, parse_uuid
+from nexora.api.deps import (
+    SessionDep,
+    check_role,
+    current_principal,
+    declared_role,
+    enforce_authentication,
+    parse_uuid,
+    requires,
+)
 from nexora.application import ingest_service, queries
 from nexora.application.errors import Forbidden, Invalid, PayloadTooLarge
 from nexora.evaluation.generator import SUITES, suite_families
@@ -33,24 +41,28 @@ def overview(dataset_id: str, session: SessionDep) -> Any:
 
 
 class _CsvImportRoute(APIRoute):
-    """Refuses CSV imports while ``allow_csv_import`` is off, *before* the upload is read.
+    """Refuses a CSV import *before* the upload is read: while ``allow_csv_import`` is off, and when the
+    caller's role is below the route's declared minimum (B-011).
 
     FastAPI parses a multipart body before it runs any dependency, so a dependency could only refuse
     after receiving up to ``max_upload_bytes``. This handler runs first: it authenticates exactly like the
     global dependency (anonymous callers still get 401 and learn nothing about the setting; writes still
-    need origin + CSRF), then refuses. With the setting on, the normal route runs unchanged.
+    need origin + CSRF), then refuses. Otherwise the normal route runs, dependencies included.
     """
 
     def get_route_handler(self) -> Callable[[Request], Coroutine[Any, Any, Response]]:
         handler = super().get_route_handler()
+        minimum = declared_role(self)
 
         async def gated(request: Request) -> Response:
+            await run_in_threadpool(enforce_authentication, request)
             if not request.app.state.settings.allow_csv_import:
-                await run_in_threadpool(enforce_authentication, request)
                 raise Forbidden(
                     "CSV_IMPORT_DISABLED",
                     "CSV import is disabled on this deployment: it holds synthetic data only",
                 )
+            if minimum is not None:
+                check_role(current_principal(request), minimum)
             return await handler(request)
 
         return gated
@@ -115,6 +127,8 @@ router.add_api_route(
     response_model=schemas.ImportResult,
     status_code=201,
     route_class_override=_CsvImportRoute,
+    # Real data enters a system without per-dataset isolation (B-019): operators only (decision D-11).
+    dependencies=[requires("admin")],
 )
 
 
@@ -130,7 +144,13 @@ def lab_suites() -> Any:
     ]
 
 
-@router.post("/lab/datasets", response_model=schemas.ImportResult, status_code=201, tags=["lab"])
+@router.post(
+    "/lab/datasets",
+    response_model=schemas.ImportResult,
+    status_code=201,
+    tags=["lab"],
+    dependencies=[requires("analyst")],
+)
 def create_synthetic(body: schemas.SyntheticDatasetRequest, session: SessionDep) -> Any:
     if body.suite not in SUITES:
         raise Invalid("UNKNOWN_SUITE", "unknown synthetic suite", {"suite": body.suite, "available": sorted(SUITES)})

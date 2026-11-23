@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { collectErrors, E2E_PASSWORD, E2E_SECOND_USER, E2E_USER, signIn } from "./helpers";
+import { collectErrors, E2E_PASSWORD, E2E_SECOND_USER, E2E_USER, E2E_VIEWER, seedAndAnalyse, signIn } from "./helpers";
 
 // These flows start signed out (the "auth" project has no stored session).
 const shots = process.env.NEXORA_E2E_SCREENSHOTS;
@@ -210,4 +210,47 @@ test("reduced motion: the network illustration is still", async ({ page }) => {
   await page.goto("/login");
   const running = await page.evaluate(() => document.getAnimations().filter((a) => (a.effect as KeyframeEffect | null)?.target instanceof SVGElement).length);
   expect(running).toBe(0);
+});
+
+test("a viewer reviews everything and is offered no write action (B-011)", async ({ browser }) => {
+  // An analyst produces something to look at.
+  const analystContext = await browser.newContext();
+  const analyst = await analystContext.newPage();
+  await analyst.goto("/login");
+  await signIn(analyst);
+  await seedAndAnalyse(analyst, "7401");
+  await analystContext.close();
+
+  const viewerContext = await browser.newContext();
+  const page = await viewerContext.newPage();
+  const errors = collectErrors(page);
+  await page.goto("/login");
+  await signIn(page, E2E_VIEWER);
+  await expect(page.getByTestId("account-role")).toContainText("Наблюдатель");
+
+  await page.goto("/lab");
+  await expect(page.getByTestId("lab-read-only")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Сгенерировать набор" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Запустить анализ" })).toHaveCount(0);
+
+  await page.goto("/alerts");
+  await page.locator('[data-testid="alert-row"][data-band="high"]').first().click();
+  await page.getByTestId("open-investigation").click();
+  await expect(page.getByTestId("reasons")).toBeVisible(); // evidence is readable
+  await expect(page.getByTestId("open-case")).toHaveCount(0);
+  await expect(page.getByTestId("case-read-only")).toBeVisible();
+  expect(errors).toEqual([]); // before the deliberate 403 below, which the browser logs
+
+  // The server refuses regardless of what the page shows.
+  const status = await page.evaluate(async () => {
+    const s = await (await fetch("/api/v1/auth/session")).json();
+    const r = await fetch("/api/v1/lab/datasets", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-CSRF-Token": s.session.csrf_token },
+      body: JSON.stringify({ suite: "demo-v1", seed: 1 }),
+    });
+    return [r.status, (await r.json()).error.code];
+  });
+  expect(status).toEqual([403, "FORBIDDEN_ROLE"]);
+  await viewerContext.close();
 });

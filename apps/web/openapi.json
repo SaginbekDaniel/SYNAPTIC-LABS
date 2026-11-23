@@ -767,6 +767,15 @@
             "title": "Display Name",
             "type": "string"
           },
+          "role": {
+            "enum": [
+              "viewer",
+              "analyst",
+              "admin"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
           "username": {
             "title": "Username",
             "type": "string"
@@ -774,7 +783,8 @@
         },
         "required": [
           "username",
-          "display_name"
+          "display_name",
+          "role"
         ],
         "title": "AuthUser",
         "type": "object"

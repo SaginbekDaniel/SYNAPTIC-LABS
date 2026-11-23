@@ -105,6 +105,22 @@ export function useAuth(): AuthState {
   return useSyncExternalStore(subscribe, () => state);
 }
 
+export type Role = AuthUser["role"];
+/** Mirrors nexora.auth.roles: each role may do everything the roles before it may. */
+const ROLE_ORDER: readonly Role[] = ["viewer", "analyst", "admin"];
+
+export function roleAllows(role: Role | undefined, minimum: Role): boolean {
+  return role !== undefined && ROLE_ORDER.indexOf(role) >= ROLE_ORDER.indexOf(minimum);
+}
+
+/**
+ * Whether the signed-in user's role permits an action. Only hides controls that would be refused:
+ * the server enforces every permission on its own (B-011) and never trusts this.
+ */
+export function useCan(minimum: Role): boolean {
+  return roleAllows(useAuth().user?.role, minimum);
+}
+
 /**
  * Where to go after signing in. Only same-origin application paths are accepted: an attacker-crafted
  * `?next=https://evil.example` or `//evil.example` falls back to the overview (open-redirect guard).

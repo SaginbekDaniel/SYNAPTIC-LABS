@@ -9,7 +9,15 @@ from typing import Any
 from fastapi import APIRouter, Request, Response
 
 from nexora.api import schemas
-from nexora.api.deps import PrincipalDep, SessionDep, client_address, presented_token, request_id, session_cookie_name
+from nexora.api.deps import (
+    PrincipalDep,
+    SessionDep,
+    client_address,
+    presented_token,
+    request_id,
+    requires,
+    session_cookie_name,
+)
 from nexora.application.errors import Invalid, Unauthorized
 from nexora.auth import service as auth
 from nexora.settings import Settings
@@ -25,7 +33,7 @@ _ERRORS: dict[int | str, dict[str, Any]] = {
 
 def _session_body(principal: auth.Principal, settings: Settings) -> dict[str, Any]:
     return {
-        "user": {"username": principal.username, "display_name": principal.display_name},
+        "user": {"username": principal.username, "display_name": principal.display_name, "role": principal.role},
         "csrf_token": principal.csrf_token,
         "expires_at": principal.session_expires_at,
         "idle_timeout_seconds": settings.session_idle_minutes * 60,
@@ -91,7 +99,7 @@ def me(principal: PrincipalDep, request: Request) -> Any:
     return _session_body(principal, request.app.state.settings)
 
 
-@router.post("/logout", status_code=204, responses=_ERRORS)
+@router.post("/logout", status_code=204, responses=_ERRORS, dependencies=[requires("viewer")])
 def logout(principal: PrincipalDep, request: Request, response: Response, session: SessionDep) -> Response:
     token = presented_token(request) or ""
     auth.sign_out(session, principal, token=token, request_id=request_id(request))
