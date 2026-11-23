@@ -1,0 +1,7581 @@
+{
+ "schema_version": 1,
+ "protocol": "docs/evaluation/EXPERIMENT_PROTOCOL_SEALED_V2.md",
+ "split": "sealed_v2",
+ "seeds": [
+  9100,
+  9179
+ ],
+ "datasets": 80,
+ "split_sha256": "39652b9d88409bd46f99fc89c9222401599e594ad04ca9ab7f8110d7e6e684fc",
+ "generated_at": "2026-11-23T06:20:35+00:00",
+ "synthetic": true,
+ "code": {
+  "commit": "c6dbc6bf6adad911b2ded4eb683c4a64ee1996c1",
+  "dirty_paths": []
+ },
+ "hashes": {
+  "sealed_generator": "a2a8dc7a89acff82cbdae84874cd582cf126c7897de4f0d508b024789ec9c31a",
+  "harness": "ab6f162f0f30da5d42961494308ad13ef9e617a21c517831a22c6862f880d248",
+  "entity_metrics": "649060f972254ec2871788d9b8c9d5f839c9d62a8df0f1edb186af1111034abe",
+  "runner": "d707a5eaa68610c7ed103d30bfce0071ef430470d0b6e149c327eef154d3c852",
+  "candidate_config_sha256": "1f9e2a64aaa1d563ebe71efc9d5aa8207bbac7dc2405b450b8b19bcf460f1055",
+  "baseline_config_sha256": "489b477a3da5ac1bac8ae3a7e3c1f5f22d9aac2a826e966d04d700347f194153"
+ },
+ "environment": {
+  "python": "3.13.18"
+ },
+ "results": {
+  "candidate": {
+   "datasets": 80,
+   "scenario": {
+    "suspicious": 262,
+    "legitimate": 394,
+    "tp": 197,
+    "fp": 100,
+    "fn": 65,
+    "tn": 294,
+    "precision": 0.6633,
+    "recall": 0.7519,
+    "f1": 0.7048,
+    "fpr": 0.2538,
+    "fnr": 0.2481,
+    "surfaced_recall": 0.8359,
+    "tp_high": 163,
+    "fp_high": 82,
+    "high_band_recall": 0.6221,
+    "high_band_fpr": 0.2081
+   },
+   "alerts": {
+    "flagged": 514,
+    "per_dataset": 6.42,
+    "relevant": 375,
+    "precision": 0.7296,
+    "unmatched": 37,
+    "per_flagged_network": 1.6061,
+    "networks_with_duplicates": 0.3131
+   },
+   "abstention": {
+    "rate": 0.2441,
+    "suspicious_share": 0.2048
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.3619,
+    "distinct_p_at_5": 0.4358,
+    "p_at_10": 0.625,
+    "p_at_5": 0.6731,
+    "recall_at_10": 0.8173,
+    "recall_at_5": 0.6621
+   },
+   "by_family": {
+    "LV10_boundary_merchant": {
+     "total": 27,
+     "flagged": 0,
+     "surfaced": 27
+    },
+    "LV11_property_escrow": {
+     "total": 32,
+     "flagged": 11,
+     "surfaced": 11
+    },
+    "LV12_payroll_agency": {
+     "total": 25,
+     "flagged": 25,
+     "surfaced": 25
+    },
+    "LV13_group_gift": {
+     "total": 29,
+     "flagged": 20,
+     "surfaced": 21
+    },
+    "LV1_rent_collection": {
+     "total": 33,
+     "flagged": 2,
+     "surfaced": 2
+    },
+    "LV2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 0,
+     "surfaced": 2
+    },
+    "LV3_payroll_with_spending": {
+     "total": 29,
+     "flagged": 0,
+     "surfaced": 4
+    },
+    "LV4_family_remittance": {
+     "total": 32,
+     "flagged": 6,
+     "surfaced": 8
+    },
+    "LV5_cash_pooling": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 7
+    },
+    "LV6_lending": {
+     "total": 27,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LV7_event_ticketing": {
+     "total": 42,
+     "flagged": 32,
+     "surfaced": 39
+    },
+    "LV8_charity_campaign": {
+     "total": 23,
+     "flagged": 4,
+     "surfaced": 5
+    },
+    "LV9_wholesale_supplier": {
+     "total": 33,
+     "flagged": 0,
+     "surfaced": 3
+    },
+    "SV10_round_trip": {
+     "total": 25,
+     "flagged": 23,
+     "surfaced": 23
+    },
+    "SV11_salary_pass_through": {
+     "total": 17,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SV12_activation_collection": {
+     "total": 15,
+     "flagged": 15,
+     "surfaced": 15
+    },
+    "SV1_mule_collection": {
+     "total": 30,
+     "flagged": 27,
+     "surfaced": 30
+    },
+    "SV2_two_tier_collection": {
+     "total": 41,
+     "flagged": 41,
+     "surfaced": 41
+    },
+    "SV3_scatter_gather": {
+     "total": 27,
+     "flagged": 22,
+     "surfaced": 22
+    },
+    "SV4_boundary_collection": {
+     "total": 17,
+     "flagged": 0,
+     "surfaced": 17
+    },
+    "SV5_recurring_mule_collection": {
+     "total": 12,
+     "flagged": 1,
+     "surfaced": 1
+    },
+    "SV6_slow_collection": {
+     "total": 9,
+     "flagged": 6,
+     "surfaced": 6
+    },
+    "SV7_layering_chain": {
+     "total": 33,
+     "flagged": 32,
+     "surfaced": 33
+    },
+    "SV8_partially_observed_chain": {
+     "total": 6,
+     "flagged": 3,
+     "surfaced": 3
+    },
+    "SV9_mule_distribution": {
+     "total": 30,
+     "flagged": 27,
+     "surfaced": 28
+    }
+   },
+   "latency_ms": {
+    "median": 77.3,
+    "p95": 391.6,
+    "max": 858.4
+   },
+   "entity": {
+    "accounts": {
+     "positive": 2540,
+     "flagged": 3729,
+     "tp": 2009,
+     "fp": 1720,
+     "fn": 531,
+     "fp_labelled_legitimate": 1491,
+     "fp_unlabelled": 229,
+     "recall": 0.7909,
+     "precision": 0.5388
+    },
+    "ranking": {
+     "suspicious_networks": 262,
+     "queued_items": 680,
+     "networks_reached": 219,
+     "average_precision": 0.3765,
+     "curve": [
+      {
+       "items": 4,
+       "networks": 1
+      },
+      {
+       "items": 10,
+       "networks": 4
+      },
+      {
+       "items": 13,
+       "networks": 5
+      },
+      {
+       "items": 17,
+       "networks": 7
+      },
+      {
+       "items": 23,
+       "networks": 10
+      },
+      {
+       "items": 26,
+       "networks": 13
+      },
+      {
+       "items": 31,
+       "networks": 14
+      },
+      {
+       "items": 35,
+       "networks": 18
+      },
+      {
+       "items": 36,
+       "networks": 19
+      },
+      {
+       "items": 38,
+       "networks": 20
+      },
+      {
+       "items": 40,
+       "networks": 21
+      },
+      {
+       "items": 41,
+       "networks": 22
+      },
+      {
+       "items": 43,
+       "networks": 23
+      },
+      {
+       "items": 45,
+       "networks": 24
+      },
+      {
+       "items": 54,
+       "networks": 26
+      },
+      {
+       "items": 66,
+       "networks": 30
+      },
+      {
+       "items": 94,
+       "networks": 46
+      },
+      {
+       "items": 124,
+       "networks": 59
+      },
+      {
+       "items": 148,
+       "networks": 72
+      },
+      {
+       "items": 171,
+       "networks": 84
+      },
+      {
+       "items": 187,
+       "networks": 93
+      },
+      {
+       "items": 199,
+       "networks": 97
+      },
+      {
+       "items": 207,
+       "networks": 100
+      },
+      {
+       "items": 226,
+       "networks": 108
+      },
+      {
+       "items": 251,
+       "networks": 124
+      },
+      {
+       "items": 272,
+       "networks": 132
+      },
+      {
+       "items": 292,
+       "networks": 137
+      },
+      {
+       "items": 307,
+       "networks": 142
+      },
+      {
+       "items": 322,
+       "networks": 143
+      },
+      {
+       "items": 334,
+       "networks": 147
+      },
+      {
+       "items": 347,
+       "networks": 153
+      },
+      {
+       "items": 358,
+       "networks": 159
+      },
+      {
+       "items": 370,
+       "networks": 162
+      },
+      {
+       "items": 375,
+       "networks": 163
+      },
+      {
+       "items": 380,
+       "networks": 164
+      },
+      {
+       "items": 393,
+       "networks": 169
+      },
+      {
+       "items": 403,
+       "networks": 170
+      },
+      {
+       "items": 406,
+       "networks": 171
+      },
+      {
+       "items": 410,
+       "networks": 172
+      },
+      {
+       "items": 420,
+       "networks": 177
+      },
+      {
+       "items": 430,
+       "networks": 179
+      },
+      {
+       "items": 451,
+       "networks": 183
+      },
+      {
+       "items": 453,
+       "networks": 185
+      },
+      {
+       "items": 455,
+       "networks": 187
+      },
+      {
+       "items": 463,
+       "networks": 188
+      },
+      {
+       "items": 479,
+       "networks": 190
+      },
+      {
+       "items": 485,
+       "networks": 191
+      },
+      {
+       "items": 494,
+       "networks": 193
+      },
+      {
+       "items": 502,
+       "networks": 195
+      },
+      {
+       "items": 511,
+       "networks": 197
+      },
+      {
+       "items": 680,
+       "networks": 219
+      }
+     ]
+    },
+    "reliability": [
+     {
+      "band": "critical",
+      "items": 10,
+      "planted": 4,
+      "share": 0.4,
+      "wilson95": [
+       0.1682,
+       0.6873
+      ]
+     },
+     {
+      "band": "high",
+      "items": 368,
+      "planted": 279,
+      "share": 0.7582,
+      "wilson95": [
+       0.7119,
+       0.7991
+      ]
+     },
+     {
+      "band": "medium",
+      "items": 136,
+      "planted": 92,
+      "share": 0.6765,
+      "wilson95": [
+       0.5939,
+       0.7493
+      ]
+     },
+     {
+      "band": "insufficient_evidence",
+      "items": 166,
+      "planted": 34,
+      "share": 0.2048,
+      "wilson95": [
+       0.1504,
+       0.2726
+      ]
+     },
+     {
+      "band": "low",
+      "items": 2330,
+      "planted": 52,
+      "share": 0.0223,
+      "wilson95": [
+       0.0171,
+       0.0291
+      ]
+     }
+    ],
+    "bootstrap": {
+     "draws": 2000,
+     "seed": 20261123,
+     "account_recall": [
+      0.7467,
+      0.8328
+     ],
+     "account_precision": [
+      0.4895,
+      0.5883
+     ],
+     "average_precision": [
+      0.3378,
+      0.43
+     ]
+    }
+   }
+  },
+  "baseline_v2": {
+   "datasets": 80,
+   "scenario": {
+    "suspicious": 262,
+    "legitimate": 394,
+    "tp": 191,
+    "fp": 191,
+    "fn": 71,
+    "tn": 203,
+    "precision": 0.5,
+    "recall": 0.729,
+    "f1": 0.5932,
+    "fpr": 0.4848,
+    "fnr": 0.271,
+    "surfaced_recall": 0.813,
+    "tp_high": 157,
+    "fp_high": 92,
+    "high_band_recall": 0.5992,
+    "high_band_fpr": 0.2335
+   },
+   "alerts": {
+    "flagged": 690,
+    "per_dataset": 8.62,
+    "relevant": 369,
+    "precision": 0.5348,
+    "unmatched": 37,
+    "per_flagged_network": 1.7094,
+    "networks_with_duplicates": 0.4241
+   },
+   "abstention": {
+    "rate": 0.1939,
+    "suspicious_share": 0.2048
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.291,
+    "distinct_p_at_5": 0.3881,
+    "p_at_10": 0.5181,
+    "p_at_5": 0.6031,
+    "recall_at_10": 0.7481,
+    "recall_at_5": 0.5992
+   },
+   "by_family": {
+    "LV10_boundary_merchant": {
+     "total": 27,
+     "flagged": 0,
+     "surfaced": 27
+    },
+    "LV11_property_escrow": {
+     "total": 32,
+     "flagged": 11,
+     "surfaced": 11
+    },
+    "LV12_payroll_agency": {
+     "total": 25,
+     "flagged": 25,
+     "surfaced": 25
+    },
+    "LV13_group_gift": {
+     "total": 29,
+     "flagged": 20,
+     "surfaced": 21
+    },
+    "LV1_rent_collection": {
+     "total": 33,
+     "flagged": 8,
+     "surfaced": 8
+    },
+    "LV2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 28,
+     "surfaced": 30
+    },
+    "LV3_payroll_with_spending": {
+     "total": 29,
+     "flagged": 7,
+     "surfaced": 10
+    },
+    "LV4_family_remittance": {
+     "total": 32,
+     "flagged": 6,
+     "surfaced": 8
+    },
+    "LV5_cash_pooling": {
+     "total": 32,
+     "flagged": 26,
+     "surfaced": 26
+    },
+    "LV6_lending": {
+     "total": 27,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LV7_event_ticketing": {
+     "total": 42,
+     "flagged": 32,
+     "surfaced": 39
+    },
+    "LV8_charity_campaign": {
+     "total": 23,
+     "flagged": 4,
+     "surfaced": 5
+    },
+    "LV9_wholesale_supplier": {
+     "total": 33,
+     "flagged": 24,
+     "surfaced": 27
+    },
+    "SV10_round_trip": {
+     "total": 25,
+     "flagged": 23,
+     "surfaced": 23
+    },
+    "SV11_salary_pass_through": {
+     "total": 17,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SV12_activation_collection": {
+     "total": 15,
+     "flagged": 9,
+     "surfaced": 9
+    },
+    "SV1_mule_collection": {
+     "total": 30,
+     "flagged": 27,
+     "surfaced": 30
+    },
+    "SV2_two_tier_collection": {
+     "total": 41,
+     "flagged": 41,
+     "surfaced": 41
+    },
+    "SV3_scatter_gather": {
+     "total": 27,
+     "flagged": 22,
+     "surfaced": 22
+    },
+    "SV4_boundary_collection": {
+     "total": 17,
+     "flagged": 0,
+     "surfaced": 17
+    },
+    "SV5_recurring_mule_collection": {
+     "total": 12,
+     "flagged": 1,
+     "surfaced": 1
+    },
+    "SV6_slow_collection": {
+     "total": 9,
+     "flagged": 6,
+     "surfaced": 6
+    },
+    "SV7_layering_chain": {
+     "total": 33,
+     "flagged": 32,
+     "surfaced": 33
+    },
+    "SV8_partially_observed_chain": {
+     "total": 6,
+     "flagged": 3,
+     "surfaced": 3
+    },
+    "SV9_mule_distribution": {
+     "total": 30,
+     "flagged": 27,
+     "surfaced": 28
+    }
+   },
+   "latency_ms": {
+    "median": 87.3,
+    "p95": 355.1,
+    "max": 729.2
+   },
+   "entity": {
+    "accounts": {
+     "positive": 2540,
+     "flagged": 5594,
+     "tp": 1968,
+     "fp": 3626,
+     "fn": 572,
+     "fp_labelled_legitimate": 3397,
+     "fp_unlabelled": 229,
+     "recall": 0.7748,
+     "precision": 0.3518
+    },
+    "ranking": {
+     "suspicious_networks": 262,
+     "queued_items": 856,
+     "networks_reached": 213,
+     "average_precision": 0.3423,
+     "curve": [
+      {
+       "items": 4,
+       "networks": 1
+      },
+      {
+       "items": 10,
+       "networks": 4
+      },
+      {
+       "items": 13,
+       "networks": 5
+      },
+      {
+       "items": 17,
+       "networks": 7
+      },
+      {
+       "items": 22,
+       "networks": 9
+      },
+      {
+       "items": 25,
+       "networks": 12
+      },
+      {
+       "items": 30,
+       "networks": 13
+      },
+      {
+       "items": 33,
+       "networks": 16
+      },
+      {
+       "items": 34,
+       "networks": 17
+      },
+      {
+       "items": 37,
+       "networks": 18
+      },
+      {
+       "items": 38,
+       "networks": 19
+      },
+      {
+       "items": 40,
+       "networks": 20
+      },
+      {
+       "items": 43,
+       "networks": 22
+      },
+      {
+       "items": 54,
+       "networks": 26
+      },
+      {
+       "items": 66,
+       "networks": 30
+      },
+      {
+       "items": 94,
+       "networks": 46
+      },
+      {
+       "items": 124,
+       "networks": 59
+      },
+      {
+       "items": 148,
+       "networks": 72
+      },
+      {
+       "items": 170,
+       "networks": 83
+      },
+      {
+       "items": 185,
+       "networks": 91
+      },
+      {
+       "items": 196,
+       "networks": 94
+      },
+      {
+       "items": 204,
+       "networks": 96
+      },
+      {
+       "items": 224,
+       "networks": 105
+      },
+      {
+       "items": 250,
+       "networks": 121
+      },
+      {
+       "items": 270,
+       "networks": 128
+      },
+      {
+       "items": 289,
+       "networks": 132
+      },
+      {
+       "items": 304,
+       "networks": 136
+      },
+      {
+       "items": 325,
+       "networks": 139
+      },
+      {
+       "items": 337,
+       "networks": 143
+      },
+      {
+       "items": 350,
+       "networks": 149
+      },
+      {
+       "items": 364,
+       "networks": 155
+      },
+      {
+       "items": 374,
+       "networks": 156
+      },
+      {
+       "items": 379,
+       "networks": 157
+      },
+      {
+       "items": 420,
+       "networks": 158
+      },
+      {
+       "items": 453,
+       "networks": 163
+      },
+      {
+       "items": 475,
+       "networks": 164
+      },
+      {
+       "items": 486,
+       "networks": 165
+      },
+      {
+       "items": 502,
+       "networks": 166
+      },
+      {
+       "items": 520,
+       "networks": 171
+      },
+      {
+       "items": 532,
+       "networks": 173
+      },
+      {
+       "items": 575,
+       "networks": 177
+      },
+      {
+       "items": 578,
+       "networks": 179
+      },
+      {
+       "items": 587,
+       "networks": 181
+      },
+      {
+       "items": 597,
+       "networks": 182
+      },
+      {
+       "items": 631,
+       "networks": 184
+      },
+      {
+       "items": 641,
+       "networks": 185
+      },
+      {
+       "items": 662,
+       "networks": 187
+      },
+      {
+       "items": 674,
+       "networks": 189
+      },
+      {
+       "items": 687,
+       "networks": 191
+      },
+      {
+       "items": 856,
+       "networks": 213
+      }
+     ]
+    },
+    "reliability": [
+     {
+      "band": "critical",
+      "items": 10,
+      "planted": 4,
+      "share": 0.4,
+      "wilson95": [
+       0.1682,
+       0.6873
+      ]
+     },
+     {
+      "band": "high",
+      "items": 373,
+      "planted": 273,
+      "share": 0.7319,
+      "wilson95": [
+       0.6848,
+       0.7743
+      ]
+     },
+     {
+      "band": "medium",
+      "items": 307,
+      "planted": 92,
+      "share": 0.2997,
+      "wilson95": [
+       0.2512,
+       0.3531
+      ]
+     },
+     {
+      "band": "insufficient_evidence",
+      "items": 166,
+      "planted": 34,
+      "share": 0.2048,
+      "wilson95": [
+       0.1504,
+       0.2726
+      ]
+     },
+     {
+      "band": "low",
+      "items": 2144,
+      "planted": 52,
+      "share": 0.0243,
+      "wilson95": [
+       0.0185,
+       0.0317
+      ]
+     }
+    ],
+    "bootstrap": {
+     "draws": 2000,
+     "seed": 20261123,
+     "account_recall": [
+      0.7306,
+      0.8171
+     ],
+     "account_precision": [
+      0.3124,
+      0.3973
+     ],
+     "average_precision": [
+      0.3059,
+      0.3941
+     ]
+    }
+   }
+  },
+  "ablation_engine_without_gate": {
+   "datasets": 80,
+   "scenario": {
+    "suspicious": 262,
+    "legitimate": 394,
+    "tp": 197,
+    "fp": 191,
+    "fn": 65,
+    "tn": 203,
+    "precision": 0.5077,
+    "recall": 0.7519,
+    "f1": 0.6062,
+    "fpr": 0.4848,
+    "fnr": 0.2481,
+    "surfaced_recall": 0.8359,
+    "tp_high": 163,
+    "fp_high": 92,
+    "high_band_recall": 0.6221,
+    "high_band_fpr": 0.2335
+   },
+   "alerts": {
+    "flagged": 696,
+    "per_dataset": 8.7,
+    "relevant": 375,
+    "precision": 0.5388,
+    "unmatched": 37,
+    "per_flagged_network": 1.6985,
+    "networks_with_duplicates": 0.4175
+   },
+   "abstention": {
+    "rate": 0.1926,
+    "suspicious_share": 0.2048
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.2956,
+    "distinct_p_at_5": 0.4006,
+    "p_at_10": 0.5229,
+    "p_at_5": 0.6106,
+    "recall_at_10": 0.7638,
+    "recall_at_5": 0.6152
+   },
+   "by_family": {
+    "LV10_boundary_merchant": {
+     "total": 27,
+     "flagged": 0,
+     "surfaced": 27
+    },
+    "LV11_property_escrow": {
+     "total": 32,
+     "flagged": 11,
+     "surfaced": 11
+    },
+    "LV12_payroll_agency": {
+     "total": 25,
+     "flagged": 25,
+     "surfaced": 25
+    },
+    "LV13_group_gift": {
+     "total": 29,
+     "flagged": 20,
+     "surfaced": 21
+    },
+    "LV1_rent_collection": {
+     "total": 33,
+     "flagged": 8,
+     "surfaced": 8
+    },
+    "LV2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 28,
+     "surfaced": 30
+    },
+    "LV3_payroll_with_spending": {
+     "total": 29,
+     "flagged": 7,
+     "surfaced": 10
+    },
+    "LV4_family_remittance": {
+     "total": 32,
+     "flagged": 6,
+     "surfaced": 8
+    },
+    "LV5_cash_pooling": {
+     "total": 32,
+     "flagged": 26,
+     "surfaced": 26
+    },
+    "LV6_lending": {
+     "total": 27,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LV7_event_ticketing": {
+     "total": 42,
+     "flagged": 32,
+     "surfaced": 39
+    },
+    "LV8_charity_campaign": {
+     "total": 23,
+     "flagged": 4,
+     "surfaced": 5
+    },
+    "LV9_wholesale_supplier": {
+     "total": 33,
+     "flagged": 24,
+     "surfaced": 27
+    },
+    "SV10_round_trip": {
+     "total": 25,
+     "flagged": 23,
+     "surfaced": 23
+    },
+    "SV11_salary_pass_through": {
+     "total": 17,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SV12_activation_collection": {
+     "total": 15,
+     "flagged": 15,
+     "surfaced": 15
+    },
+    "SV1_mule_collection": {
+     "total": 30,
+     "flagged": 27,
+     "surfaced": 30
+    },
+    "SV2_two_tier_collection": {
+     "total": 41,
+     "flagged": 41,
+     "surfaced": 41
+    },
+    "SV3_scatter_gather": {
+     "total": 27,
+     "flagged": 22,
+     "surfaced": 22
+    },
+    "SV4_boundary_collection": {
+     "total": 17,
+     "flagged": 0,
+     "surfaced": 17
+    },
+    "SV5_recurring_mule_collection": {
+     "total": 12,
+     "flagged": 1,
+     "surfaced": 1
+    },
+    "SV6_slow_collection": {
+     "total": 9,
+     "flagged": 6,
+     "surfaced": 6
+    },
+    "SV7_layering_chain": {
+     "total": 33,
+     "flagged": 32,
+     "surfaced": 33
+    },
+    "SV8_partially_observed_chain": {
+     "total": 6,
+     "flagged": 3,
+     "surfaced": 3
+    },
+    "SV9_mule_distribution": {
+     "total": 30,
+     "flagged": 27,
+     "surfaced": 28
+    }
+   },
+   "latency_ms": {
+    "median": 84.1,
+    "p95": 385.2,
+    "max": 689.3
+   },
+   "entity": {
+    "accounts": {
+     "positive": 2540,
+     "flagged": 5635,
+     "tp": 2009,
+     "fp": 3626,
+     "fn": 531,
+     "fp_labelled_legitimate": 3397,
+     "fp_unlabelled": 229,
+     "recall": 0.7909,
+     "precision": 0.3565
+    },
+    "ranking": {
+     "suspicious_networks": 262,
+     "queued_items": 862,
+     "networks_reached": 219,
+     "average_precision": 0.3582,
+     "curve": [
+      {
+       "items": 4,
+       "networks": 1
+      },
+      {
+       "items": 10,
+       "networks": 4
+      },
+      {
+       "items": 13,
+       "networks": 5
+      },
+      {
+       "items": 17,
+       "networks": 7
+      },
+      {
+       "items": 23,
+       "networks": 10
+      },
+      {
+       "items": 26,
+       "networks": 13
+      },
+      {
+       "items": 31,
+       "networks": 14
+      },
+      {
+       "items": 35,
+       "networks": 18
+      },
+      {
+       "items": 36,
+       "networks": 19
+      },
+      {
+       "items": 38,
+       "networks": 20
+      },
+      {
+       "items": 40,
+       "networks": 21
+      },
+      {
+       "items": 41,
+       "networks": 22
+      },
+      {
+       "items": 43,
+       "networks": 23
+      },
+      {
+       "items": 45,
+       "networks": 24
+      },
+      {
+       "items": 54,
+       "networks": 26
+      },
+      {
+       "items": 66,
+       "networks": 30
+      },
+      {
+       "items": 94,
+       "networks": 46
+      },
+      {
+       "items": 124,
+       "networks": 59
+      },
+      {
+       "items": 148,
+       "networks": 72
+      },
+      {
+       "items": 171,
+       "networks": 84
+      },
+      {
+       "items": 187,
+       "networks": 93
+      },
+      {
+       "items": 199,
+       "networks": 97
+      },
+      {
+       "items": 208,
+       "networks": 100
+      },
+      {
+       "items": 227,
+       "networks": 108
+      },
+      {
+       "items": 253,
+       "networks": 124
+      },
+      {
+       "items": 274,
+       "networks": 132
+      },
+      {
+       "items": 294,
+       "networks": 137
+      },
+      {
+       "items": 310,
+       "networks": 142
+      },
+      {
+       "items": 329,
+       "networks": 143
+      },
+      {
+       "items": 341,
+       "networks": 147
+      },
+      {
+       "items": 354,
+       "networks": 153
+      },
+      {
+       "items": 368,
+       "networks": 159
+      },
+      {
+       "items": 380,
+       "networks": 162
+      },
+      {
+       "items": 385,
+       "networks": 163
+      },
+      {
+       "items": 424,
+       "networks": 164
+      },
+      {
+       "items": 459,
+       "networks": 169
+      },
+      {
+       "items": 481,
+       "networks": 170
+      },
+      {
+       "items": 492,
+       "networks": 171
+      },
+      {
+       "items": 508,
+       "networks": 172
+      },
+      {
+       "items": 526,
+       "networks": 177
+      },
+      {
+       "items": 538,
+       "networks": 179
+      },
+      {
+       "items": 581,
+       "networks": 183
+      },
+      {
+       "items": 584,
+       "networks": 185
+      },
+      {
+       "items": 593,
+       "networks": 187
+      },
+      {
+       "items": 603,
+       "networks": 188
+      },
+      {
+       "items": 637,
+       "networks": 190
+      },
+      {
+       "items": 647,
+       "networks": 191
+      },
+      {
+       "items": 668,
+       "networks": 193
+      },
+      {
+       "items": 680,
+       "networks": 195
+      },
+      {
+       "items": 693,
+       "networks": 197
+      },
+      {
+       "items": 862,
+       "networks": 219
+      }
+     ]
+    },
+    "reliability": [
+     {
+      "band": "critical",
+      "items": 10,
+      "planted": 4,
+      "share": 0.4,
+      "wilson95": [
+       0.1682,
+       0.6873
+      ]
+     },
+     {
+      "band": "high",
+      "items": 379,
+      "planted": 279,
+      "share": 0.7361,
+      "wilson95": [
+       0.6896,
+       0.778
+      ]
+     },
+     {
+      "band": "medium",
+      "items": 307,
+      "planted": 92,
+      "share": 0.2997,
+      "wilson95": [
+       0.2512,
+       0.3531
+      ]
+     },
+     {
+      "band": "insufficient_evidence",
+      "items": 166,
+      "planted": 34,
+      "share": 0.2048,
+      "wilson95": [
+       0.1504,
+       0.2726
+      ]
+     },
+     {
+      "band": "low",
+      "items": 2148,
+      "planted": 52,
+      "share": 0.0242,
+      "wilson95": [
+       0.0185,
+       0.0316
+      ]
+     }
+    ],
+    "bootstrap": {
+     "draws": 2000,
+     "seed": 20261123,
+     "account_recall": [
+      0.7467,
+      0.8328
+     ],
+     "account_precision": [
+      0.3173,
+      0.4008
+     ],
+     "average_precision": [
+      0.3209,
+      0.4098
+     ]
+    }
+   }
+  },
+  "ablation_without_hypotheses": {
+   "datasets": 80,
+   "scenario": {
+    "suspicious": 262,
+    "legitimate": 394,
+    "tp": 197,
+    "fp": 191,
+    "fn": 65,
+    "tn": 203,
+    "precision": 0.5077,
+    "recall": 0.7519,
+    "f1": 0.6062,
+    "fpr": 0.4848,
+    "fnr": 0.2481,
+    "surfaced_recall": 0.8359,
+    "tp_high": 163,
+    "fp_high": 92,
+    "high_band_recall": 0.6221,
+    "high_band_fpr": 0.2335
+   },
+   "alerts": {
+    "flagged": 696,
+    "per_dataset": 8.7,
+    "relevant": 375,
+    "precision": 0.5388,
+    "unmatched": 37,
+    "per_flagged_network": 1.6985,
+    "networks_with_duplicates": 0.4175
+   },
+   "abstention": {
+    "rate": 0.1926,
+    "suspicious_share": 0.2048
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.2981,
+    "distinct_p_at_5": 0.3981,
+    "p_at_10": 0.5241,
+    "p_at_5": 0.6081,
+    "recall_at_10": 0.7742,
+    "recall_at_5": 0.6127
+   },
+   "by_family": {
+    "LV10_boundary_merchant": {
+     "total": 27,
+     "flagged": 0,
+     "surfaced": 27
+    },
+    "LV11_property_escrow": {
+     "total": 32,
+     "flagged": 11,
+     "surfaced": 11
+    },
+    "LV12_payroll_agency": {
+     "total": 25,
+     "flagged": 25,
+     "surfaced": 25
+    },
+    "LV13_group_gift": {
+     "total": 29,
+     "flagged": 20,
+     "surfaced": 21
+    },
+    "LV1_rent_collection": {
+     "total": 33,
+     "flagged": 8,
+     "surfaced": 8
+    },
+    "LV2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 28,
+     "surfaced": 30
+    },
+    "LV3_payroll_with_spending": {
+     "total": 29,
+     "flagged": 7,
+     "surfaced": 10
+    },
+    "LV4_family_remittance": {
+     "total": 32,
+     "flagged": 6,
+     "surfaced": 8
+    },
+    "LV5_cash_pooling": {
+     "total": 32,
+     "flagged": 26,
+     "surfaced": 26
+    },
+    "LV6_lending": {
+     "total": 27,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LV7_event_ticketing": {
+     "total": 42,
+     "flagged": 32,
+     "surfaced": 39
+    },
+    "LV8_charity_campaign": {
+     "total": 23,
+     "flagged": 4,
+     "surfaced": 5
+    },
+    "LV9_wholesale_supplier": {
+     "total": 33,
+     "flagged": 24,
+     "surfaced": 27
+    },
+    "SV10_round_trip": {
+     "total": 25,
+     "flagged": 23,
+     "surfaced": 23
+    },
+    "SV11_salary_pass_through": {
+     "total": 17,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SV12_activation_collection": {
+     "total": 15,
+     "flagged": 15,
+     "surfaced": 15
+    },
+    "SV1_mule_collection": {
+     "total": 30,
+     "flagged": 27,
+     "surfaced": 30
+    },
+    "SV2_two_tier_collection": {
+     "total": 41,
+     "flagged": 41,
+     "surfaced": 41
+    },
+    "SV3_scatter_gather": {
+     "total": 27,
+     "flagged": 22,
+     "surfaced": 22
+    },
+    "SV4_boundary_collection": {
+     "total": 17,
+     "flagged": 0,
+     "surfaced": 17
+    },
+    "SV5_recurring_mule_collection": {
+     "total": 12,
+     "flagged": 1,
+     "surfaced": 1
+    },
+    "SV6_slow_collection": {
+     "total": 9,
+     "flagged": 6,
+     "surfaced": 6
+    },
+    "SV7_layering_chain": {
+     "total": 33,
+     "flagged": 32,
+     "surfaced": 33
+    },
+    "SV8_partially_observed_chain": {
+     "total": 6,
+     "flagged": 3,
+     "surfaced": 3
+    },
+    "SV9_mule_distribution": {
+     "total": 30,
+     "flagged": 27,
+     "surfaced": 28
+    }
+   },
+   "latency_ms": {
+    "median": 92.0,
+    "p95": 357.8,
+    "max": 641.7
+   },
+   "entity": {
+    "accounts": {
+     "positive": 2540,
+     "flagged": 5635,
+     "tp": 2009,
+     "fp": 3626,
+     "fn": 531,
+     "fp_labelled_legitimate": 3397,
+     "fp_unlabelled": 229,
+     "recall": 0.7909,
+     "precision": 0.3565
+    },
+    "ranking": {
+     "suspicious_networks": 262,
+     "queued_items": 862,
+     "networks_reached": 219,
+     "average_precision": 0.3582,
+     "curve": [
+      {
+       "items": 4,
+       "networks": 1
+      },
+      {
+       "items": 10,
+       "networks": 4
+      },
+      {
+       "items": 13,
+       "networks": 5
+      },
+      {
+       "items": 17,
+       "networks": 7
+      },
+      {
+       "items": 23,
+       "networks": 10
+      },
+      {
+       "items": 26,
+       "networks": 13
+      },
+      {
+       "items": 31,
+       "networks": 14
+      },
+      {
+       "items": 35,
+       "networks": 18
+      },
+      {
+       "items": 36,
+       "networks": 19
+      },
+      {
+       "items": 38,
+       "networks": 20
+      },
+      {
+       "items": 40,
+       "networks": 21
+      },
+      {
+       "items": 41,
+       "networks": 22
+      },
+      {
+       "items": 43,
+       "networks": 23
+      },
+      {
+       "items": 45,
+       "networks": 24
+      },
+      {
+       "items": 54,
+       "networks": 26
+      },
+      {
+       "items": 66,
+       "networks": 30
+      },
+      {
+       "items": 94,
+       "networks": 46
+      },
+      {
+       "items": 124,
+       "networks": 59
+      },
+      {
+       "items": 148,
+       "networks": 72
+      },
+      {
+       "items": 171,
+       "networks": 84
+      },
+      {
+       "items": 187,
+       "networks": 93
+      },
+      {
+       "items": 199,
+       "networks": 97
+      },
+      {
+       "items": 208,
+       "networks": 100
+      },
+      {
+       "items": 227,
+       "networks": 108
+      },
+      {
+       "items": 253,
+       "networks": 124
+      },
+      {
+       "items": 274,
+       "networks": 132
+      },
+      {
+       "items": 294,
+       "networks": 137
+      },
+      {
+       "items": 310,
+       "networks": 142
+      },
+      {
+       "items": 329,
+       "networks": 143
+      },
+      {
+       "items": 341,
+       "networks": 147
+      },
+      {
+       "items": 354,
+       "networks": 153
+      },
+      {
+       "items": 368,
+       "networks": 159
+      },
+      {
+       "items": 380,
+       "networks": 162
+      },
+      {
+       "items": 385,
+       "networks": 163
+      },
+      {
+       "items": 424,
+       "networks": 164
+      },
+      {
+       "items": 459,
+       "networks": 169
+      },
+      {
+       "items": 481,
+       "networks": 170
+      },
+      {
+       "items": 492,
+       "networks": 171
+      },
+      {
+       "items": 508,
+       "networks": 172
+      },
+      {
+       "items": 526,
+       "networks": 177
+      },
+      {
+       "items": 538,
+       "networks": 179
+      },
+      {
+       "items": 581,
+       "networks": 183
+      },
+      {
+       "items": 584,
+       "networks": 185
+      },
+      {
+       "items": 593,
+       "networks": 187
+      },
+      {
+       "items": 603,
+       "networks": 188
+      },
+      {
+       "items": 637,
+       "networks": 190
+      },
+      {
+       "items": 647,
+       "networks": 191
+      },
+      {
+       "items": 668,
+       "networks": 193
+      },
+      {
+       "items": 680,
+       "networks": 195
+      },
+      {
+       "items": 693,
+       "networks": 197
+      },
+      {
+       "items": 862,
+       "networks": 219
+      }
+     ]
+    },
+    "reliability": [
+     {
+      "band": "critical",
+      "items": 10,
+      "planted": 4,
+      "share": 0.4,
+      "wilson95": [
+       0.1682,
+       0.6873
+      ]
+     },
+     {
+      "band": "high",
+      "items": 379,
+      "planted": 279,
+      "share": 0.7361,
+      "wilson95": [
+       0.6896,
+       0.778
+      ]
+     },
+     {
+      "band": "medium",
+      "items": 307,
+      "planted": 92,
+      "share": 0.2997,
+      "wilson95": [
+       0.2512,
+       0.3531
+      ]
+     },
+     {
+      "band": "insufficient_evidence",
+      "items": 166,
+      "planted": 34,
+      "share": 0.2048,
+      "wilson95": [
+       0.1504,
+       0.2726
+      ]
+     },
+     {
+      "band": "low",
+      "items": 2148,
+      "planted": 52,
+      "share": 0.0242,
+      "wilson95": [
+       0.0185,
+       0.0316
+      ]
+     }
+    ],
+    "bootstrap": {
+     "draws": 2000,
+     "seed": 20261123,
+     "account_recall": [
+      0.7467,
+      0.8328
+     ],
+     "account_precision": [
+      0.3173,
+      0.4008
+     ],
+     "average_precision": [
+      0.3209,
+      0.4098
+     ]
+    }
+   }
+  },
+  "ablation_minus_peer": {
+   "datasets": 80,
+   "scenario": {
+    "suspicious": 262,
+    "legitimate": 394,
+    "tp": 194,
+    "fp": 108,
+    "fn": 68,
+    "tn": 286,
+    "precision": 0.6424,
+    "recall": 0.7405,
+    "f1": 0.6879,
+    "fpr": 0.2741,
+    "fnr": 0.2595,
+    "surfaced_recall": 0.8282,
+    "tp_high": 166,
+    "fp_high": 96,
+    "high_band_recall": 0.6336,
+    "high_band_fpr": 0.2437
+   },
+   "alerts": {
+    "flagged": 505,
+    "per_dataset": 6.31,
+    "relevant": 353,
+    "precision": 0.699,
+    "unmatched": 37,
+    "per_flagged_network": 1.5497,
+    "networks_with_duplicates": 0.2649
+   },
+   "abstention": {
+    "rate": 0.2474,
+    "suspicious_share": 0.2048
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.3693,
+    "distinct_p_at_5": 0.424,
+    "p_at_10": 0.6017,
+    "p_at_5": 0.6519,
+    "recall_at_10": 0.815,
+    "recall_at_5": 0.6367
+   },
+   "by_family": {
+    "LV10_boundary_merchant": {
+     "total": 27,
+     "flagged": 0,
+     "surfaced": 27
+    },
+    "LV11_property_escrow": {
+     "total": 32,
+     "flagged": 11,
+     "surfaced": 11
+    },
+    "LV12_payroll_agency": {
+     "total": 25,
+     "flagged": 25,
+     "surfaced": 25
+    },
+    "LV13_group_gift": {
+     "total": 29,
+     "flagged": 20,
+     "surfaced": 21
+    },
+    "LV1_rent_collection": {
+     "total": 33,
+     "flagged": 8,
+     "surfaced": 8
+    },
+    "LV2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 0,
+     "surfaced": 2
+    },
+    "LV3_payroll_with_spending": {
+     "total": 29,
+     "flagged": 1,
+     "surfaced": 4
+    },
+    "LV4_family_remittance": {
+     "total": 32,
+     "flagged": 6,
+     "surfaced": 8
+    },
+    "LV5_cash_pooling": {
+     "total": 32,
+     "flagged": 1,
+     "surfaced": 8
+    },
+    "LV6_lending": {
+     "total": 27,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LV7_event_ticketing": {
+     "total": 42,
+     "flagged": 32,
+     "surfaced": 39
+    },
+    "LV8_charity_campaign": {
+     "total": 23,
+     "flagged": 4,
+     "surfaced": 5
+    },
+    "LV9_wholesale_supplier": {
+     "total": 33,
+     "flagged": 0,
+     "surfaced": 3
+    },
+    "SV10_round_trip": {
+     "total": 25,
+     "flagged": 23,
+     "surfaced": 23
+    },
+    "SV11_salary_pass_through": {
+     "total": 17,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SV12_activation_collection": {
+     "total": 15,
+     "flagged": 15,
+     "surfaced": 15
+    },
+    "SV1_mule_collection": {
+     "total": 30,
+     "flagged": 27,
+     "surfaced": 30
+    },
+    "SV2_two_tier_collection": {
+     "total": 41,
+     "flagged": 41,
+     "surfaced": 41
+    },
+    "SV3_scatter_gather": {
+     "total": 27,
+     "flagged": 19,
+     "surfaced": 20
+    },
+    "SV4_boundary_collection": {
+     "total": 17,
+     "flagged": 0,
+     "surfaced": 17
+    },
+    "SV5_recurring_mule_collection": {
+     "total": 12,
+     "flagged": 1,
+     "surfaced": 1
+    },
+    "SV6_slow_collection": {
+     "total": 9,
+     "flagged": 6,
+     "surfaced": 6
+    },
+    "SV7_layering_chain": {
+     "total": 33,
+     "flagged": 32,
+     "surfaced": 33
+    },
+    "SV8_partially_observed_chain": {
+     "total": 6,
+     "flagged": 3,
+     "surfaced": 3
+    },
+    "SV9_mule_distribution": {
+     "total": 30,
+     "flagged": 27,
+     "surfaced": 28
+    }
+   },
+   "latency_ms": {
+    "median": 82.8,
+    "p95": 519.6,
+    "max": 656.8
+   },
+   "entity": {
+    "accounts": {
+     "positive": 2540,
+     "flagged": 3846,
+     "tp": 1973,
+     "fp": 1873,
+     "fn": 567,
+     "fp_labelled_legitimate": 1644,
+     "fp_unlabelled": 229,
+     "recall": 0.7768,
+     "precision": 0.513
+    },
+    "ranking": {
+     "suspicious_networks": 262,
+     "queued_items": 671,
+     "networks_reached": 217,
+     "average_precision": 0.3475,
+     "curve": [
+      {
+       "items": 13,
+       "networks": 2
+      },
+      {
+       "items": 31,
+       "networks": 6
+      },
+      {
+       "items": 61,
+       "networks": 25
+      },
+      {
+       "items": 94,
+       "networks": 39
+      },
+      {
+       "items": 118,
+       "networks": 52
+      },
+      {
+       "items": 147,
+       "networks": 70
+      },
+      {
+       "items": 166,
+       "networks": 79
+      },
+      {
+       "items": 183,
+       "networks": 87
+      },
+      {
+       "items": 195,
+       "networks": 93
+      },
+      {
+       "items": 214,
+       "networks": 101
+      },
+      {
+       "items": 244,
+       "networks": 118
+      },
+      {
+       "items": 274,
+       "networks": 129
+      },
+      {
+       "items": 297,
+       "networks": 134
+      },
+      {
+       "items": 317,
+       "networks": 142
+      },
+      {
+       "items": 337,
+       "networks": 143
+      },
+      {
+       "items": 355,
+       "networks": 147
+      },
+      {
+       "items": 373,
+       "networks": 153
+      },
+      {
+       "items": 390,
+       "networks": 161
+      },
+      {
+       "items": 404,
+       "networks": 165
+      },
+      {
+       "items": 409,
+       "networks": 166
+      },
+      {
+       "items": 424,
+       "networks": 167
+      },
+      {
+       "items": 432,
+       "networks": 168
+      },
+      {
+       "items": 443,
+       "networks": 170
+      },
+      {
+       "items": 449,
+       "networks": 171
+      },
+      {
+       "items": 463,
+       "networks": 173
+      },
+      {
+       "items": 480,
+       "networks": 186
+      },
+      {
+       "items": 494,
+       "networks": 188
+      },
+      {
+       "items": 505,
+       "networks": 194
+      },
+      {
+       "items": 671,
+       "networks": 217
+      }
+     ]
+    },
+    "reliability": [
+     {
+      "band": "high",
+      "items": 412,
+      "planted": 304,
+      "share": 0.7379,
+      "wilson95": [
+       0.6933,
+       0.778
+      ]
+     },
+     {
+      "band": "medium",
+      "items": 93,
+      "planted": 49,
+      "share": 0.5269,
+      "wilson95": [
+       0.4264,
+       0.6253
+      ]
+     },
+     {
+      "band": "insufficient_evidence",
+      "items": 166,
+      "planted": 34,
+      "share": 0.2048,
+      "wilson95": [
+       0.1504,
+       0.2726
+      ]
+     },
+     {
+      "band": "low",
+      "items": 2339,
+      "planted": 74,
+      "share": 0.0316,
+      "wilson95": [
+       0.0253,
+       0.0395
+      ]
+     }
+    ],
+    "bootstrap": {
+     "draws": 2000,
+     "seed": 20261123,
+     "account_recall": [
+      0.7316,
+      0.82
+     ],
+     "account_precision": [
+      0.4641,
+      0.5625
+     ],
+     "average_precision": [
+      0.3124,
+      0.3897
+     ]
+    }
+   }
+  },
+  "ablation_minus_temporal": {
+   "datasets": 80,
+   "scenario": {
+    "suspicious": 262,
+    "legitimate": 394,
+    "tp": 161,
+    "fp": 116,
+    "fn": 101,
+    "tn": 278,
+    "precision": 0.5812,
+    "recall": 0.6145,
+    "f1": 0.5974,
+    "fpr": 0.2944,
+    "fnr": 0.3855,
+    "surfaced_recall": 0.6985,
+    "tp_high": 44,
+    "fp_high": 16,
+    "high_band_recall": 0.1679,
+    "high_band_fpr": 0.0406
+   },
+   "alerts": {
+    "flagged": 533,
+    "per_dataset": 6.66,
+    "relevant": 287,
+    "precision": 0.5385,
+    "unmatched": 130,
+    "per_flagged_network": 1.4549,
+    "networks_with_duplicates": 0.2563
+   },
+   "abstention": {
+    "rate": 0.2375,
+    "suspicious_share": 0.2048
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.3279,
+    "distinct_p_at_5": 0.3775,
+    "p_at_10": 0.5049,
+    "p_at_5": 0.5392,
+    "recall_at_10": 0.681,
+    "recall_at_5": 0.5631
+   },
+   "by_family": {
+    "LV10_boundary_merchant": {
+     "total": 27,
+     "flagged": 0,
+     "surfaced": 27
+    },
+    "LV11_property_escrow": {
+     "total": 32,
+     "flagged": 11,
+     "surfaced": 11
+    },
+    "LV12_payroll_agency": {
+     "total": 25,
+     "flagged": 17,
+     "surfaced": 17
+    },
+    "LV13_group_gift": {
+     "total": 29,
+     "flagged": 20,
+     "surfaced": 21
+    },
+    "LV1_rent_collection": {
+     "total": 33,
+     "flagged": 9,
+     "surfaced": 9
+    },
+    "LV2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 0,
+     "surfaced": 2
+    },
+    "LV3_payroll_with_spending": {
+     "total": 29,
+     "flagged": 0,
+     "surfaced": 4
+    },
+    "LV4_family_remittance": {
+     "total": 32,
+     "flagged": 2,
+     "surfaced": 4
+    },
+    "LV5_cash_pooling": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 7
+    },
+    "LV6_lending": {
+     "total": 27,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LV7_event_ticketing": {
+     "total": 42,
+     "flagged": 35,
+     "surfaced": 42
+    },
+    "LV8_charity_campaign": {
+     "total": 23,
+     "flagged": 22,
+     "surfaced": 23
+    },
+    "LV9_wholesale_supplier": {
+     "total": 33,
+     "flagged": 0,
+     "surfaced": 3
+    },
+    "SV10_round_trip": {
+     "total": 25,
+     "flagged": 8,
+     "surfaced": 8
+    },
+    "SV11_salary_pass_through": {
+     "total": 17,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SV12_activation_collection": {
+     "total": 15,
+     "flagged": 11,
+     "surfaced": 11
+    },
+    "SV1_mule_collection": {
+     "total": 30,
+     "flagged": 26,
+     "surfaced": 29
+    },
+    "SV2_two_tier_collection": {
+     "total": 41,
+     "flagged": 35,
+     "surfaced": 35
+    },
+    "SV3_scatter_gather": {
+     "total": 27,
+     "flagged": 22,
+     "surfaced": 22
+    },
+    "SV4_boundary_collection": {
+     "total": 17,
+     "flagged": 0,
+     "surfaced": 17
+    },
+    "SV5_recurring_mule_collection": {
+     "total": 12,
+     "flagged": 7,
+     "surfaced": 7
+    },
+    "SV6_slow_collection": {
+     "total": 9,
+     "flagged": 9,
+     "surfaced": 9
+    },
+    "SV7_layering_chain": {
+     "total": 33,
+     "flagged": 19,
+     "surfaced": 20
+    },
+    "SV8_partially_observed_chain": {
+     "total": 6,
+     "flagged": 1,
+     "surfaced": 1
+    },
+    "SV9_mule_distribution": {
+     "total": 30,
+     "flagged": 23,
+     "surfaced": 24
+    }
+   },
+   "latency_ms": {
+    "median": 89.7,
+    "p95": 481.0,
+    "max": 836.0
+   },
+   "entity": {
+    "accounts": {
+     "positive": 2540,
+     "flagged": 3988,
+     "tp": 1659,
+     "fp": 2329,
+     "fn": 881,
+     "fp_labelled_legitimate": 1989,
+     "fp_unlabelled": 340,
+     "recall": 0.6531,
+     "precision": 0.416
+    },
+    "ranking": {
+     "suspicious_networks": 262,
+     "queued_items": 699,
+     "networks_reached": 183,
+     "average_precision": 0.2869,
+     "curve": [
+      {
+       "items": 8,
+       "networks": 7
+      },
+      {
+       "items": 9,
+       "networks": 8
+      },
+      {
+       "items": 11,
+       "networks": 10
+      },
+      {
+       "items": 18,
+       "networks": 13
+      },
+      {
+       "items": 34,
+       "networks": 26
+      },
+      {
+       "items": 44,
+       "networks": 30
+      },
+      {
+       "items": 48,
+       "networks": 31
+      },
+      {
+       "items": 60,
+       "networks": 38
+      },
+      {
+       "items": 63,
+       "networks": 41
+      },
+      {
+       "items": 67,
+       "networks": 44
+      },
+      {
+       "items": 77,
+       "networks": 47
+      },
+      {
+       "items": 79,
+       "networks": 48
+      },
+      {
+       "items": 97,
+       "networks": 51
+      },
+      {
+       "items": 98,
+       "networks": 52
+      },
+      {
+       "items": 483,
+       "networks": 142
+      },
+      {
+       "items": 485,
+       "networks": 143
+      },
+      {
+       "items": 489,
+       "networks": 144
+      },
+      {
+       "items": 533,
+       "networks": 161
+      },
+      {
+       "items": 699,
+       "networks": 183
+      }
+     ]
+    },
+    "reliability": [
+     {
+      "band": "high",
+      "items": 67,
+      "planted": 51,
+      "share": 0.7612,
+      "wilson95": [
+       0.6467,
+       0.8473
+      ]
+     },
+     {
+      "band": "medium",
+      "items": 466,
+      "planted": 236,
+      "share": 0.5064,
+      "wilson95": [
+       0.4612,
+       0.5516
+      ]
+     },
+     {
+      "band": "insufficient_evidence",
+      "items": 166,
+      "planted": 34,
+      "share": 0.2048,
+      "wilson95": [
+       0.1504,
+       0.2726
+      ]
+     },
+     {
+      "band": "low",
+      "items": 2311,
+      "planted": 140,
+      "share": 0.0606,
+      "wilson95": [
+       0.0516,
+       0.0711
+      ]
+     }
+    ],
+    "bootstrap": {
+     "draws": 2000,
+     "seed": 20261123,
+     "account_recall": [
+      0.6057,
+      0.6974
+     ],
+     "account_precision": [
+      0.3722,
+      0.4659
+     ],
+     "average_precision": [
+      0.2383,
+      0.3466
+     ]
+    }
+   }
+  },
+  "ablation_minus_abstention": {
+   "datasets": 80,
+   "scenario": {
+    "suspicious": 262,
+    "legitimate": 394,
+    "tp": 217,
+    "fp": 127,
+    "fn": 45,
+    "tn": 267,
+    "precision": 0.6308,
+    "recall": 0.8282,
+    "f1": 0.7162,
+    "fpr": 0.3223,
+    "fnr": 0.1718,
+    "surfaced_recall": 0.8282,
+    "tp_high": 168,
+    "fp_high": 85,
+    "high_band_recall": 0.6412,
+    "high_band_fpr": 0.2157
+   },
+   "alerts": {
+    "flagged": 570,
+    "per_dataset": 7.12,
+    "relevant": 403,
+    "precision": 0.707,
+    "unmatched": 38,
+    "per_flagged_network": 1.5465,
+    "networks_with_duplicates": 0.2733
+   },
+   "abstention": {
+    "rate": 0.0,
+    "suspicious_share": null
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.4122,
+    "distinct_p_at_5": 0.4694,
+    "p_at_10": 0.6897,
+    "p_at_5": 0.7035,
+    "recall_at_10": 0.8173,
+    "recall_at_5": 0.6717
+   },
+   "by_family": {
+    "LV10_boundary_merchant": {
+     "total": 27,
+     "flagged": 21,
+     "surfaced": 21
+    },
+    "LV11_property_escrow": {
+     "total": 32,
+     "flagged": 11,
+     "surfaced": 11
+    },
+    "LV12_payroll_agency": {
+     "total": 25,
+     "flagged": 25,
+     "surfaced": 25
+    },
+    "LV13_group_gift": {
+     "total": 29,
+     "flagged": 21,
+     "surfaced": 21
+    },
+    "LV1_rent_collection": {
+     "total": 33,
+     "flagged": 2,
+     "surfaced": 2
+    },
+    "LV2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LV3_payroll_with_spending": {
+     "total": 29,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LV4_family_remittance": {
+     "total": 32,
+     "flagged": 7,
+     "surfaced": 7
+    },
+    "LV5_cash_pooling": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LV6_lending": {
+     "total": 27,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LV7_event_ticketing": {
+     "total": 42,
+     "flagged": 35,
+     "surfaced": 35
+    },
+    "LV8_charity_campaign": {
+     "total": 23,
+     "flagged": 5,
+     "surfaced": 5
+    },
+    "LV9_wholesale_supplier": {
+     "total": 33,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SV10_round_trip": {
+     "total": 25,
+     "flagged": 23,
+     "surfaced": 23
+    },
+    "SV11_salary_pass_through": {
+     "total": 17,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SV12_activation_collection": {
+     "total": 15,
+     "flagged": 15,
+     "surfaced": 15
+    },
+    "SV1_mule_collection": {
+     "total": 30,
+     "flagged": 30,
+     "surfaced": 30
+    },
+    "SV2_two_tier_collection": {
+     "total": 41,
+     "flagged": 41,
+     "surfaced": 41
+    },
+    "SV3_scatter_gather": {
+     "total": 27,
+     "flagged": 22,
+     "surfaced": 22
+    },
+    "SV4_boundary_collection": {
+     "total": 17,
+     "flagged": 15,
+     "surfaced": 15
+    },
+    "SV5_recurring_mule_collection": {
+     "total": 12,
+     "flagged": 1,
+     "surfaced": 1
+    },
+    "SV6_slow_collection": {
+     "total": 9,
+     "flagged": 6,
+     "surfaced": 6
+    },
+    "SV7_layering_chain": {
+     "total": 33,
+     "flagged": 33,
+     "surfaced": 33
+    },
+    "SV8_partially_observed_chain": {
+     "total": 6,
+     "flagged": 3,
+     "surfaced": 3
+    },
+    "SV9_mule_distribution": {
+     "total": 30,
+     "flagged": 28,
+     "surfaced": 28
+    }
+   },
+   "latency_ms": {
+    "median": 87.2,
+    "p95": 537.1,
+    "max": 668.5
+   },
+   "entity": {
+    "accounts": {
+     "positive": 2540,
+     "flagged": 4177,
+     "tp": 2174,
+     "fp": 2003,
+     "fn": 366,
+     "fp_labelled_legitimate": 1770,
+     "fp_unlabelled": 233,
+     "recall": 0.8559,
+     "precision": 0.5205
+    },
+    "ranking": {
+     "suspicious_networks": 262,
+     "queued_items": 570,
+     "networks_reached": 217,
+     "average_precision": 0.3806,
+     "curve": [
+      {
+       "items": 4,
+       "networks": 1
+      },
+      {
+       "items": 11,
+       "networks": 4
+      },
+      {
+       "items": 14,
+       "networks": 5
+      },
+      {
+       "items": 18,
+       "networks": 7
+      },
+      {
+       "items": 24,
+       "networks": 10
+      },
+      {
+       "items": 27,
+       "networks": 13
+      },
+      {
+       "items": 32,
+       "networks": 14
+      },
+      {
+       "items": 36,
+       "networks": 18
+      },
+      {
+       "items": 37,
+       "networks": 19
+      },
+      {
+       "items": 39,
+       "networks": 20
+      },
+      {
+       "items": 41,
+       "networks": 21
+      },
+      {
+       "items": 42,
+       "networks": 22
+      },
+      {
+       "items": 44,
+       "networks": 23
+      },
+      {
+       "items": 46,
+       "networks": 24
+      },
+      {
+       "items": 55,
+       "networks": 26
+      },
+      {
+       "items": 67,
+       "networks": 30
+      },
+      {
+       "items": 95,
+       "networks": 46
+      },
+      {
+       "items": 126,
+       "networks": 60
+      },
+      {
+       "items": 152,
+       "networks": 74
+      },
+      {
+       "items": 175,
+       "networks": 86
+      },
+      {
+       "items": 191,
+       "networks": 95
+      },
+      {
+       "items": 204,
+       "networks": 100
+      },
+      {
+       "items": 212,
+       "networks": 103
+      },
+      {
+       "items": 233,
+       "networks": 111
+      },
+      {
+       "items": 258,
+       "networks": 127
+      },
+      {
+       "items": 279,
+       "networks": 135
+      },
+      {
+       "items": 300,
+       "networks": 141
+      },
+      {
+       "items": 315,
+       "networks": 146
+      },
+      {
+       "items": 331,
+       "networks": 147
+      },
+      {
+       "items": 345,
+       "networks": 151
+      },
+      {
+       "items": 358,
+       "networks": 157
+      },
+      {
+       "items": 370,
+       "networks": 164
+      },
+      {
+       "items": 382,
+       "networks": 167
+      },
+      {
+       "items": 387,
+       "networks": 168
+      },
+      {
+       "items": 393,
+       "networks": 169
+      },
+      {
+       "items": 416,
+       "networks": 181
+      },
+      {
+       "items": 428,
+       "networks": 183
+      },
+      {
+       "items": 433,
+       "networks": 184
+      },
+      {
+       "items": 439,
+       "networks": 185
+      },
+      {
+       "items": 452,
+       "networks": 191
+      },
+      {
+       "items": 464,
+       "networks": 194
+      },
+      {
+       "items": 486,
+       "networks": 198
+      },
+      {
+       "items": 492,
+       "networks": 203
+      },
+      {
+       "items": 494,
+       "networks": 205
+      },
+      {
+       "items": 502,
+       "networks": 206
+      },
+      {
+       "items": 519,
+       "networks": 208
+      },
+      {
+       "items": 525,
+       "networks": 209
+      },
+      {
+       "items": 534,
+       "networks": 211
+      },
+      {
+       "items": 556,
+       "networks": 215
+      },
+      {
+       "items": 565,
+       "networks": 217
+      }
+     ]
+    },
+    "reliability": [
+     {
+      "band": "critical",
+      "items": 11,
+      "planted": 4,
+      "share": 0.3636,
+      "wilson95": [
+       0.1517,
+       0.6462
+      ]
+     },
+     {
+      "band": "high",
+      "items": 380,
+      "planted": 289,
+      "share": 0.7605,
+      "wilson95": [
+       0.7151,
+       0.8007
+      ]
+     },
+     {
+      "band": "medium",
+      "items": 179,
+      "planted": 110,
+      "share": 0.6145,
+      "wilson95": [
+       0.5415,
+       0.6827
+      ]
+     },
+     {
+      "band": "low",
+      "items": 2440,
+      "planted": 58,
+      "share": 0.0238,
+      "wilson95": [
+       0.0184,
+       0.0306
+      ]
+     }
+    ],
+    "bootstrap": {
+     "draws": 2000,
+     "seed": 20261123,
+     "account_recall": [
+      0.8217,
+      0.8872
+     ],
+     "account_precision": [
+      0.473,
+      0.5687
+     ],
+     "average_precision": [
+      0.3419,
+      0.4336
+     ]
+    }
+   }
+  },
+  "v1_shipped": {
+   "datasets": 80,
+   "scenario": {
+    "suspicious": 262,
+    "legitimate": 394,
+    "tp": 174,
+    "fp": 147,
+    "fn": 88,
+    "tn": 247,
+    "precision": 0.5421,
+    "recall": 0.6641,
+    "f1": 0.5969,
+    "fpr": 0.3731,
+    "fnr": 0.3359,
+    "surfaced_recall": 0.7481,
+    "tp_high": 140,
+    "fp_high": 128,
+    "high_band_recall": 0.5344,
+    "high_band_fpr": 0.3249
+   },
+   "alerts": {
+    "flagged": 571,
+    "per_dataset": 7.14,
+    "relevant": 350,
+    "precision": 0.613,
+    "unmatched": 36,
+    "per_flagged_network": 1.6667,
+    "networks_with_duplicates": 0.2897
+   },
+   "abstention": {
+    "rate": 0.2189,
+    "suspicious_share": 0.2188
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.3008,
+    "distinct_p_at_5": 0.3551,
+    "p_at_10": 0.5472,
+    "p_at_5": 0.5924,
+    "recall_at_10": 0.7048,
+    "recall_at_5": 0.541
+   },
+   "by_family": {
+    "LV10_boundary_merchant": {
+     "total": 27,
+     "flagged": 0,
+     "surfaced": 27
+    },
+    "LV11_property_escrow": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LV12_payroll_agency": {
+     "total": 25,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LV13_group_gift": {
+     "total": 29,
+     "flagged": 20,
+     "surfaced": 21
+    },
+    "LV1_rent_collection": {
+     "total": 33,
+     "flagged": 8,
+     "surfaced": 8
+    },
+    "LV2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 28,
+     "surfaced": 30
+    },
+    "LV3_payroll_with_spending": {
+     "total": 29,
+     "flagged": 5,
+     "surfaced": 8
+    },
+    "LV4_family_remittance": {
+     "total": 32,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LV5_cash_pooling": {
+     "total": 32,
+     "flagged": 26,
+     "surfaced": 26
+    },
+    "LV6_lending": {
+     "total": 27,
+     "flagged": 0,
+     "surfaced": 1
+    },
+    "LV7_event_ticketing": {
+     "total": 42,
+     "flagged": 32,
+     "surfaced": 39
+    },
+    "LV8_charity_campaign": {
+     "total": 23,
+     "flagged": 4,
+     "surfaced": 5
+    },
+    "LV9_wholesale_supplier": {
+     "total": 33,
+     "flagged": 24,
+     "surfaced": 27
+    },
+    "SV10_round_trip": {
+     "total": 25,
+     "flagged": 21,
+     "surfaced": 21
+    },
+    "SV11_salary_pass_through": {
+     "total": 17,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SV12_activation_collection": {
+     "total": 15,
+     "flagged": 15,
+     "surfaced": 15
+    },
+    "SV1_mule_collection": {
+     "total": 30,
+     "flagged": 27,
+     "surfaced": 30
+    },
+    "SV2_two_tier_collection": {
+     "total": 41,
+     "flagged": 41,
+     "surfaced": 41
+    },
+    "SV3_scatter_gather": {
+     "total": 27,
+     "flagged": 19,
+     "surfaced": 20
+    },
+    "SV4_boundary_collection": {
+     "total": 17,
+     "flagged": 0,
+     "surfaced": 17
+    },
+    "SV5_recurring_mule_collection": {
+     "total": 12,
+     "flagged": 1,
+     "surfaced": 1
+    },
+    "SV6_slow_collection": {
+     "total": 9,
+     "flagged": 6,
+     "surfaced": 6
+    },
+    "SV7_layering_chain": {
+     "total": 33,
+     "flagged": 32,
+     "surfaced": 33
+    },
+    "SV8_partially_observed_chain": {
+     "total": 6,
+     "flagged": 3,
+     "surfaced": 3
+    },
+    "SV9_mule_distribution": {
+     "total": 30,
+     "flagged": 9,
+     "surfaced": 9
+    }
+   },
+   "latency_ms": {
+    "median": 61.3,
+    "p95": 221.2,
+    "max": 505.0
+   },
+   "entity": {
+    "accounts": {
+     "positive": 2540,
+     "flagged": 4959,
+     "tp": 1764,
+     "fp": 3195,
+     "fn": 776,
+     "fp_labelled_legitimate": 2972,
+     "fp_unlabelled": 223,
+     "recall": 0.6945,
+     "precision": 0.3557
+    },
+    "ranking": {
+     "suspicious_networks": 262,
+     "queued_items": 731,
+     "networks_reached": 196,
+     "average_precision": 0.269,
+     "curve": [
+      {
+       "items": 16,
+       "networks": 4
+      },
+      {
+       "items": 51,
+       "networks": 22
+      },
+      {
+       "items": 90,
+       "networks": 34
+      },
+      {
+       "items": 117,
+       "networks": 45
+      },
+      {
+       "items": 146,
+       "networks": 60
+      },
+      {
+       "items": 167,
+       "networks": 68
+      },
+      {
+       "items": 183,
+       "networks": 74
+      },
+      {
+       "items": 199,
+       "networks": 80
+      },
+      {
+       "items": 225,
+       "networks": 90
+      },
+      {
+       "items": 257,
+       "networks": 104
+      },
+      {
+       "items": 285,
+       "networks": 113
+      },
+      {
+       "items": 309,
+       "networks": 117
+      },
+      {
+       "items": 335,
+       "networks": 124
+      },
+      {
+       "items": 364,
+       "networks": 125
+      },
+      {
+       "items": 385,
+       "networks": 130
+      },
+      {
+       "items": 401,
+       "networks": 133
+      },
+      {
+       "items": 423,
+       "networks": 138
+      },
+      {
+       "items": 440,
+       "networks": 140
+      },
+      {
+       "items": 467,
+       "networks": 141
+      },
+      {
+       "items": 469,
+       "networks": 142
+      },
+      {
+       "items": 502,
+       "networks": 144
+      },
+      {
+       "items": 506,
+       "networks": 145
+      },
+      {
+       "items": 545,
+       "networks": 162
+      },
+      {
+       "items": 560,
+       "networks": 163
+      },
+      {
+       "items": 571,
+       "networks": 174
+      },
+      {
+       "items": 731,
+       "networks": 196
+      }
+     ]
+    },
+    "reliability": [
+     {
+      "band": "high",
+      "items": 450,
+      "planted": 288,
+      "share": 0.64,
+      "wilson95": [
+       0.5946,
+       0.683
+      ]
+     },
+     {
+      "band": "medium",
+      "items": 121,
+      "planted": 62,
+      "share": 0.5124,
+      "wilson95": [
+       0.4243,
+       0.5997
+      ]
+     },
+     {
+      "band": "insufficient_evidence",
+      "items": 160,
+      "planted": 35,
+      "share": 0.2188,
+      "wilson95": [
+       0.1617,
+       0.289
+      ]
+     },
+     {
+      "band": "low",
+      "items": 2130,
+      "planted": 73,
+      "share": 0.0343,
+      "wilson95": [
+       0.0273,
+       0.0429
+      ]
+     }
+    ],
+    "bootstrap": {
+     "draws": 2000,
+     "seed": 20261123,
+     "account_recall": [
+      0.6404,
+      0.7466
+     ],
+     "account_precision": [
+      0.3111,
+      0.4059
+     ],
+     "average_precision": [
+      0.233,
+      0.3143
+     ]
+    }
+   }
+  },
+  "B3_structure_only": {
+   "datasets": 80,
+   "scenario": {
+    "suspicious": 262,
+    "legitimate": 394,
+    "tp": 240,
+    "fp": 329,
+    "fn": 22,
+    "tn": 65,
+    "precision": 0.4218,
+    "recall": 0.916,
+    "f1": 0.5776,
+    "fpr": 0.835,
+    "fnr": 0.084,
+    "surfaced_recall": 0.916,
+    "tp_high": null,
+    "fp_high": null,
+    "high_band_recall": null,
+    "high_band_fpr": null
+   },
+   "alerts": {
+    "flagged": 3010,
+    "per_dataset": 37.62,
+    "relevant": 461,
+    "precision": 0.1532,
+    "unmatched": 1985,
+    "per_flagged_network": 1.8014,
+    "networks_with_duplicates": 0.4183
+   },
+   "abstention": {
+    "rate": 0.0,
+    "suspicious_share": null
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.2188,
+    "distinct_p_at_5": 0.275,
+    "p_at_10": 0.3469,
+    "p_at_5": 0.3625,
+    "recall_at_10": 0.6871,
+    "recall_at_5": 0.436
+   },
+   "by_family": {
+    "LV10_boundary_merchant": {
+     "total": 27,
+     "flagged": 27,
+     "surfaced": 27
+    },
+    "LV11_property_escrow": {
+     "total": 32,
+     "flagged": 13,
+     "surfaced": 13
+    },
+    "LV12_payroll_agency": {
+     "total": 25,
+     "flagged": 25,
+     "surfaced": 25
+    },
+    "LV13_group_gift": {
+     "total": 29,
+     "flagged": 21,
+     "surfaced": 21
+    },
+    "LV1_rent_collection": {
+     "total": 33,
+     "flagged": 33,
+     "surfaced": 33
+    },
+    "LV2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 30,
+     "surfaced": 30
+    },
+    "LV3_payroll_with_spending": {
+     "total": 29,
+     "flagged": 29,
+     "surfaced": 29
+    },
+    "LV4_family_remittance": {
+     "total": 32,
+     "flagged": 21,
+     "surfaced": 21
+    },
+    "LV5_cash_pooling": {
+     "total": 32,
+     "flagged": 32,
+     "surfaced": 32
+    },
+    "LV6_lending": {
+     "total": 27,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "LV7_event_ticketing": {
+     "total": 42,
+     "flagged": 42,
+     "surfaced": 42
+    },
+    "LV8_charity_campaign": {
+     "total": 23,
+     "flagged": 23,
+     "surfaced": 23
+    },
+    "LV9_wholesale_supplier": {
+     "total": 33,
+     "flagged": 33,
+     "surfaced": 33
+    },
+    "SV10_round_trip": {
+     "total": 25,
+     "flagged": 25,
+     "surfaced": 25
+    },
+    "SV11_salary_pass_through": {
+     "total": 17,
+     "flagged": 0,
+     "surfaced": 0
+    },
+    "SV12_activation_collection": {
+     "total": 15,
+     "flagged": 15,
+     "surfaced": 15
+    },
+    "SV1_mule_collection": {
+     "total": 30,
+     "flagged": 30,
+     "surfaced": 30
+    },
+    "SV2_two_tier_collection": {
+     "total": 41,
+     "flagged": 41,
+     "surfaced": 41
+    },
+    "SV3_scatter_gather": {
+     "total": 27,
+     "flagged": 27,
+     "surfaced": 27
+    },
+    "SV4_boundary_collection": {
+     "total": 17,
+     "flagged": 17,
+     "surfaced": 17
+    },
+    "SV5_recurring_mule_collection": {
+     "total": 12,
+     "flagged": 12,
+     "surfaced": 12
+    },
+    "SV6_slow_collection": {
+     "total": 9,
+     "flagged": 9,
+     "surfaced": 9
+    },
+    "SV7_layering_chain": {
+     "total": 33,
+     "flagged": 33,
+     "surfaced": 33
+    },
+    "SV8_partially_observed_chain": {
+     "total": 6,
+     "flagged": 3,
+     "surfaced": 3
+    },
+    "SV9_mule_distribution": {
+     "total": 30,
+     "flagged": 28,
+     "surfaced": 28
+    }
+   },
+   "latency_ms": {
+    "median": 90.3,
+    "p95": 464.1,
+    "max": 943.8
+   },
+   "entity": {
+    "accounts": {
+     "positive": 2540,
+     "flagged": 12426,
+     "tp": 2354,
+     "fp": 10072,
+     "fn": 186,
+     "fp_labelled_legitimate": 5803,
+     "fp_unlabelled": 4269,
+     "recall": 0.9268,
+     "precision": 0.1894
+    },
+    "ranking": {
+     "suspicious_networks": 262,
+     "queued_items": 3010,
+     "networks_reached": 240,
+     "average_precision": 0.175,
+     "curve": [
+      {
+       "items": 642,
+       "networks": 136
+      },
+      {
+       "items": 661,
+       "networks": 139
+      },
+      {
+       "items": 767,
+       "networks": 168
+      },
+      {
+       "items": 790,
+       "networks": 169
+      },
+      {
+       "items": 1146,
+       "networks": 187
+      },
+      {
+       "items": 1173,
+       "networks": 189
+      },
+      {
+       "items": 1318,
+       "networks": 212
+      },
+      {
+       "items": 1322,
+       "networks": 215
+      },
+      {
+       "items": 1357,
+       "networks": 220
+      },
+      {
+       "items": 3010,
+       "networks": 240
+      }
+     ]
+    },
+    "reliability": null,
+    "bootstrap": {
+     "draws": 2000,
+     "seed": 20261123,
+     "account_recall": [
+      0.9065,
+      0.9447
+     ],
+     "account_precision": [
+      0.1709,
+      0.2093
+     ],
+     "average_precision": [
+      0.1472,
+      0.2063
+     ]
+    }
+   }
+  },
+  "B1_rules": {
+   "datasets": 80,
+   "scenario": {
+    "suspicious": 262,
+    "legitimate": 394,
+    "tp": 257,
+    "fp": 374,
+    "fn": 5,
+    "tn": 20,
+    "precision": 0.4073,
+    "recall": 0.9809,
+    "f1": 0.5756,
+    "fpr": 0.9492,
+    "fnr": 0.0191,
+    "surfaced_recall": 0.9809,
+    "tp_high": null,
+    "fp_high": null,
+    "high_band_recall": null,
+    "high_band_fpr": null
+   },
+   "alerts": {
+    "flagged": 5707,
+    "per_dataset": 71.34,
+    "relevant": 971,
+    "precision": 0.1701,
+    "unmatched": 3563,
+    "per_flagged_network": 3.3978,
+    "networks_with_duplicates": 0.5975
+   },
+   "abstention": {
+    "rate": 0.0,
+    "suspicious_share": null
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.1788,
+    "distinct_p_at_5": 0.1975,
+    "p_at_10": 0.3237,
+    "p_at_5": 0.2825,
+    "recall_at_10": 0.5675,
+    "recall_at_5": 0.3275
+   },
+   "by_family": {
+    "LV10_boundary_merchant": {
+     "total": 27,
+     "flagged": 20,
+     "surfaced": 20
+    },
+    "LV11_property_escrow": {
+     "total": 32,
+     "flagged": 32,
+     "surfaced": 32
+    },
+    "LV12_payroll_agency": {
+     "total": 25,
+     "flagged": 25,
+     "surfaced": 25
+    },
+    "LV13_group_gift": {
+     "total": 29,
+     "flagged": 29,
+     "surfaced": 29
+    },
+    "LV1_rent_collection": {
+     "total": 33,
+     "flagged": 33,
+     "surfaced": 33
+    },
+    "LV2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 30,
+     "surfaced": 30
+    },
+    "LV3_payroll_with_spending": {
+     "total": 29,
+     "flagged": 29,
+     "surfaced": 29
+    },
+    "LV4_family_remittance": {
+     "total": 32,
+     "flagged": 24,
+     "surfaced": 24
+    },
+    "LV5_cash_pooling": {
+     "total": 32,
+     "flagged": 32,
+     "surfaced": 32
+    },
+    "LV6_lending": {
+     "total": 27,
+     "flagged": 27,
+     "surfaced": 27
+    },
+    "LV7_event_ticketing": {
+     "total": 42,
+     "flagged": 40,
+     "surfaced": 40
+    },
+    "LV8_charity_campaign": {
+     "total": 23,
+     "flagged": 20,
+     "surfaced": 20
+    },
+    "LV9_wholesale_supplier": {
+     "total": 33,
+     "flagged": 33,
+     "surfaced": 33
+    },
+    "SV10_round_trip": {
+     "total": 25,
+     "flagged": 25,
+     "surfaced": 25
+    },
+    "SV11_salary_pass_through": {
+     "total": 17,
+     "flagged": 17,
+     "surfaced": 17
+    },
+    "SV12_activation_collection": {
+     "total": 15,
+     "flagged": 15,
+     "surfaced": 15
+    },
+    "SV1_mule_collection": {
+     "total": 30,
+     "flagged": 30,
+     "surfaced": 30
+    },
+    "SV2_two_tier_collection": {
+     "total": 41,
+     "flagged": 41,
+     "surfaced": 41
+    },
+    "SV3_scatter_gather": {
+     "total": 27,
+     "flagged": 27,
+     "surfaced": 27
+    },
+    "SV4_boundary_collection": {
+     "total": 17,
+     "flagged": 15,
+     "surfaced": 15
+    },
+    "SV5_recurring_mule_collection": {
+     "total": 12,
+     "flagged": 12,
+     "surfaced": 12
+    },
+    "SV6_slow_collection": {
+     "total": 9,
+     "flagged": 8,
+     "surfaced": 8
+    },
+    "SV7_layering_chain": {
+     "total": 33,
+     "flagged": 31,
+     "surfaced": 31
+    },
+    "SV8_partially_observed_chain": {
+     "total": 6,
+     "flagged": 6,
+     "surfaced": 6
+    },
+    "SV9_mule_distribution": {
+     "total": 30,
+     "flagged": 30,
+     "surfaced": 30
+    }
+   },
+   "latency_ms": {
+    "median": 3.4,
+    "p95": 5.5,
+    "max": 17.1
+   },
+   "entity": {
+    "accounts": {
+     "positive": 2540,
+     "flagged": 5707,
+     "tp": 971,
+     "fp": 4736,
+     "fn": 1569,
+     "fp_labelled_legitimate": 1173,
+     "fp_unlabelled": 3563,
+     "recall": 0.3823,
+     "precision": 0.1701
+    },
+    "ranking": {
+     "suspicious_networks": 262,
+     "queued_items": 5707,
+     "networks_reached": 257,
+     "average_precision": 0.1342,
+     "curve": [
+      {
+       "items": 37,
+       "networks": 1
+      },
+      {
+       "items": 120,
+       "networks": 2
+      },
+      {
+       "items": 145,
+       "networks": 3
+      },
+      {
+       "items": 147,
+       "networks": 4
+      },
+      {
+       "items": 151,
+       "networks": 5
+      },
+      {
+       "items": 158,
+       "networks": 6
+      },
+      {
+       "items": 160,
+       "networks": 7
+      },
+      {
+       "items": 173,
+       "networks": 8
+      },
+      {
+       "items": 175,
+       "networks": 9
+      },
+      {
+       "items": 176,
+       "networks": 10
+      },
+      {
+       "items": 179,
+       "networks": 11
+      },
+      {
+       "items": 183,
+       "networks": 12
+      },
+      {
+       "items": 185,
+       "networks": 13
+      },
+      {
+       "items": 187,
+       "networks": 14
+      },
+      {
+       "items": 193,
+       "networks": 15
+      },
+      {
+       "items": 195,
+       "networks": 16
+      },
+      {
+       "items": 197,
+       "networks": 17
+      },
+      {
+       "items": 199,
+       "networks": 18
+      },
+      {
+       "items": 200,
+       "networks": 19
+      },
+      {
+       "items": 201,
+       "networks": 20
+      },
+      {
+       "items": 202,
+       "networks": 21
+      },
+      {
+       "items": 203,
+       "networks": 22
+      },
+      {
+       "items": 205,
+       "networks": 23
+      },
+      {
+       "items": 206,
+       "networks": 24
+      },
+      {
+       "items": 207,
+       "networks": 25
+      },
+      {
+       "items": 208,
+       "networks": 26
+      },
+      {
+       "items": 209,
+       "networks": 27
+      },
+      {
+       "items": 210,
+       "networks": 28
+      },
+      {
+       "items": 213,
+       "networks": 29
+      },
+      {
+       "items": 218,
+       "networks": 30
+      },
+      {
+       "items": 219,
+       "networks": 31
+      },
+      {
+       "items": 220,
+       "networks": 32
+      },
+      {
+       "items": 225,
+       "networks": 33
+      },
+      {
+       "items": 227,
+       "networks": 34
+      },
+      {
+       "items": 230,
+       "networks": 35
+      },
+      {
+       "items": 231,
+       "networks": 36
+      },
+      {
+       "items": 296,
+       "networks": 37
+      },
+      {
+       "items": 361,
+       "networks": 38
+      },
+      {
+       "items": 362,
+       "networks": 39
+      },
+      {
+       "items": 386,
+       "networks": 40
+      },
+      {
+       "items": 400,
+       "networks": 41
+      },
+      {
+       "items": 403,
+       "networks": 42
+      },
+      {
+       "items": 408,
+       "networks": 43
+      },
+      {
+       "items": 421,
+       "networks": 44
+      },
+      {
+       "items": 422,
+       "networks": 45
+      },
+      {
+       "items": 425,
+       "networks": 46
+      },
+      {
+       "items": 426,
+       "networks": 47
+      },
+      {
+       "items": 430,
+       "networks": 48
+      },
+      {
+       "items": 433,
+       "networks": 49
+      },
+      {
+       "items": 435,
+       "networks": 50
+      },
+      {
+       "items": 437,
+       "networks": 51
+      },
+      {
+       "items": 438,
+       "networks": 52
+      },
+      {
+       "items": 440,
+       "networks": 53
+      },
+      {
+       "items": 441,
+       "networks": 54
+      },
+      {
+       "items": 447,
+       "networks": 55
+      },
+      {
+       "items": 448,
+       "networks": 56
+      },
+      {
+       "items": 451,
+       "networks": 57
+      },
+      {
+       "items": 452,
+       "networks": 58
+      },
+      {
+       "items": 455,
+       "networks": 59
+      },
+      {
+       "items": 457,
+       "networks": 60
+      },
+      {
+       "items": 459,
+       "networks": 61
+      },
+      {
+       "items": 460,
+       "networks": 62
+      },
+      {
+       "items": 461,
+       "networks": 63
+      },
+      {
+       "items": 464,
+       "networks": 64
+      },
+      {
+       "items": 465,
+       "networks": 65
+      },
+      {
+       "items": 467,
+       "networks": 66
+      },
+      {
+       "items": 468,
+       "networks": 67
+      },
+      {
+       "items": 470,
+       "networks": 68
+      },
+      {
+       "items": 473,
+       "networks": 69
+      },
+      {
+       "items": 475,
+       "networks": 70
+      },
+      {
+       "items": 477,
+       "networks": 71
+      },
+      {
+       "items": 480,
+       "networks": 72
+      },
+      {
+       "items": 484,
+       "networks": 73
+      },
+      {
+       "items": 486,
+       "networks": 74
+      },
+      {
+       "items": 489,
+       "networks": 75
+      },
+      {
+       "items": 496,
+       "networks": 76
+      },
+      {
+       "items": 498,
+       "networks": 77
+      },
+      {
+       "items": 500,
+       "networks": 78
+      },
+      {
+       "items": 502,
+       "networks": 79
+      },
+      {
+       "items": 507,
+       "networks": 80
+      },
+      {
+       "items": 509,
+       "networks": 81
+      },
+      {
+       "items": 511,
+       "networks": 82
+      },
+      {
+       "items": 512,
+       "networks": 83
+      },
+      {
+       "items": 513,
+       "networks": 84
+      },
+      {
+       "items": 514,
+       "networks": 85
+      },
+      {
+       "items": 515,
+       "networks": 86
+      },
+      {
+       "items": 516,
+       "networks": 87
+      },
+      {
+       "items": 518,
+       "networks": 88
+      },
+      {
+       "items": 520,
+       "networks": 89
+      },
+      {
+       "items": 521,
+       "networks": 90
+      },
+      {
+       "items": 523,
+       "networks": 91
+      },
+      {
+       "items": 525,
+       "networks": 92
+      },
+      {
+       "items": 527,
+       "networks": 93
+      },
+      {
+       "items": 529,
+       "networks": 94
+      },
+      {
+       "items": 530,
+       "networks": 95
+      },
+      {
+       "items": 532,
+       "networks": 96
+      },
+      {
+       "items": 533,
+       "networks": 97
+      },
+      {
+       "items": 534,
+       "networks": 98
+      },
+      {
+       "items": 538,
+       "networks": 99
+      },
+      {
+       "items": 539,
+       "networks": 100
+      },
+      {
+       "items": 540,
+       "networks": 101
+      },
+      {
+       "items": 543,
+       "networks": 102
+      },
+      {
+       "items": 545,
+       "networks": 103
+      },
+      {
+       "items": 549,
+       "networks": 104
+      },
+      {
+       "items": 551,
+       "networks": 105
+      },
+      {
+       "items": 555,
+       "networks": 106
+      },
+      {
+       "items": 556,
+       "networks": 107
+      },
+      {
+       "items": 557,
+       "networks": 108
+      },
+      {
+       "items": 558,
+       "networks": 109
+      },
+      {
+       "items": 559,
+       "networks": 110
+      },
+      {
+       "items": 561,
+       "networks": 111
+      },
+      {
+       "items": 563,
+       "networks": 112
+      },
+      {
+       "items": 564,
+       "networks": 113
+      },
+      {
+       "items": 565,
+       "networks": 114
+      },
+      {
+       "items": 567,
+       "networks": 115
+      },
+      {
+       "items": 572,
+       "networks": 116
+      },
+      {
+       "items": 578,
+       "networks": 117
+      },
+      {
+       "items": 584,
+       "networks": 118
+      },
+      {
+       "items": 585,
+       "networks": 119
+      },
+      {
+       "items": 586,
+       "networks": 120
+      },
+      {
+       "items": 587,
+       "networks": 121
+      },
+      {
+       "items": 594,
+       "networks": 122
+      },
+      {
+       "items": 595,
+       "networks": 123
+      },
+      {
+       "items": 598,
+       "networks": 124
+      },
+      {
+       "items": 600,
+       "networks": 125
+      },
+      {
+       "items": 602,
+       "networks": 126
+      },
+      {
+       "items": 603,
+       "networks": 127
+      },
+      {
+       "items": 604,
+       "networks": 128
+      },
+      {
+       "items": 615,
+       "networks": 129
+      },
+      {
+       "items": 631,
+       "networks": 130
+      },
+      {
+       "items": 632,
+       "networks": 131
+      },
+      {
+       "items": 638,
+       "networks": 132
+      },
+      {
+       "items": 645,
+       "networks": 133
+      },
+      {
+       "items": 980,
+       "networks": 134
+      },
+      {
+       "items": 991,
+       "networks": 135
+      },
+      {
+       "items": 1025,
+       "networks": 136
+      },
+      {
+       "items": 1030,
+       "networks": 137
+      },
+      {
+       "items": 1031,
+       "networks": 138
+      },
+      {
+       "items": 1041,
+       "networks": 139
+      },
+      {
+       "items": 1043,
+       "networks": 140
+      },
+      {
+       "items": 1046,
+       "networks": 141
+      },
+      {
+       "items": 1056,
+       "networks": 142
+      },
+      {
+       "items": 1060,
+       "networks": 143
+      },
+      {
+       "items": 1077,
+       "networks": 144
+      },
+      {
+       "items": 1083,
+       "networks": 145
+      },
+      {
+       "items": 1087,
+       "networks": 146
+      },
+      {
+       "items": 1098,
+       "networks": 147
+      },
+      {
+       "items": 1099,
+       "networks": 148
+      },
+      {
+       "items": 1101,
+       "networks": 149
+      },
+      {
+       "items": 1103,
+       "networks": 150
+      },
+      {
+       "items": 1118,
+       "networks": 151
+      },
+      {
+       "items": 1141,
+       "networks": 152
+      },
+      {
+       "items": 1166,
+       "networks": 153
+      },
+      {
+       "items": 1171,
+       "networks": 154
+      },
+      {
+       "items": 1178,
+       "networks": 155
+      },
+      {
+       "items": 1191,
+       "networks": 156
+      },
+      {
+       "items": 1199,
+       "networks": 157
+      },
+      {
+       "items": 1228,
+       "networks": 158
+      },
+      {
+       "items": 1230,
+       "networks": 159
+      },
+      {
+       "items": 1252,
+       "networks": 160
+      },
+      {
+       "items": 1286,
+       "networks": 161
+      },
+      {
+       "items": 1296,
+       "networks": 162
+      },
+      {
+       "items": 1310,
+       "networks": 163
+      },
+      {
+       "items": 1317,
+       "networks": 164
+      },
+      {
+       "items": 1318,
+       "networks": 165
+      },
+      {
+       "items": 1339,
+       "networks": 166
+      },
+      {
+       "items": 1341,
+       "networks": 167
+      },
+      {
+       "items": 1343,
+       "networks": 168
+      },
+      {
+       "items": 1346,
+       "networks": 169
+      },
+      {
+       "items": 1348,
+       "networks": 170
+      },
+      {
+       "items": 1357,
+       "networks": 171
+      },
+      {
+       "items": 1376,
+       "networks": 172
+      },
+      {
+       "items": 1386,
+       "networks": 173
+      },
+      {
+       "items": 1390,
+       "networks": 174
+      },
+      {
+       "items": 1398,
+       "networks": 175
+      },
+      {
+       "items": 1402,
+       "networks": 176
+      },
+      {
+       "items": 1403,
+       "networks": 177
+      },
+      {
+       "items": 1408,
+       "networks": 178
+      },
+      {
+       "items": 1409,
+       "networks": 179
+      },
+      {
+       "items": 1410,
+       "networks": 180
+      },
+      {
+       "items": 1411,
+       "networks": 181
+      },
+      {
+       "items": 1415,
+       "networks": 182
+      },
+      {
+       "items": 1419,
+       "networks": 183
+      },
+      {
+       "items": 1422,
+       "networks": 185
+      },
+      {
+       "items": 1429,
+       "networks": 186
+      },
+      {
+       "items": 1444,
+       "networks": 187
+      },
+      {
+       "items": 1453,
+       "networks": 188
+      },
+      {
+       "items": 1459,
+       "networks": 189
+      },
+      {
+       "items": 1461,
+       "networks": 190
+      },
+      {
+       "items": 1473,
+       "networks": 191
+      },
+      {
+       "items": 1476,
+       "networks": 192
+      },
+      {
+       "items": 1490,
+       "networks": 193
+      },
+      {
+       "items": 1497,
+       "networks": 194
+      },
+      {
+       "items": 1513,
+       "networks": 195
+      },
+      {
+       "items": 1519,
+       "networks": 196
+      },
+      {
+       "items": 1521,
+       "networks": 197
+      },
+      {
+       "items": 1529,
+       "networks": 198
+      },
+      {
+       "items": 1544,
+       "networks": 199
+      },
+      {
+       "items": 1545,
+       "networks": 200
+      },
+      {
+       "items": 1547,
+       "networks": 201
+      },
+      {
+       "items": 1551,
+       "networks": 202
+      },
+      {
+       "items": 1553,
+       "networks": 203
+      },
+      {
+       "items": 1567,
+       "networks": 205
+      },
+      {
+       "items": 1578,
+       "networks": 206
+      },
+      {
+       "items": 1585,
+       "networks": 208
+      },
+      {
+       "items": 1597,
+       "networks": 209
+      },
+      {
+       "items": 1604,
+       "networks": 210
+      },
+      {
+       "items": 1609,
+       "networks": 211
+      },
+      {
+       "items": 1613,
+       "networks": 212
+      },
+      {
+       "items": 1618,
+       "networks": 213
+      },
+      {
+       "items": 1624,
+       "networks": 214
+      },
+      {
+       "items": 1633,
+       "networks": 215
+      },
+      {
+       "items": 1635,
+       "networks": 216
+      },
+      {
+       "items": 1643,
+       "networks": 217
+      },
+      {
+       "items": 1650,
+       "networks": 218
+      },
+      {
+       "items": 1675,
+       "networks": 219
+      },
+      {
+       "items": 1683,
+       "networks": 220
+      },
+      {
+       "items": 1689,
+       "networks": 222
+      },
+      {
+       "items": 1691,
+       "networks": 223
+      },
+      {
+       "items": 1692,
+       "networks": 224
+      },
+      {
+       "items": 1700,
+       "networks": 225
+      },
+      {
+       "items": 1703,
+       "networks": 226
+      },
+      {
+       "items": 1706,
+       "networks": 227
+      },
+      {
+       "items": 1725,
+       "networks": 228
+      },
+      {
+       "items": 1730,
+       "networks": 229
+      },
+      {
+       "items": 1737,
+       "networks": 230
+      },
+      {
+       "items": 1749,
+       "networks": 231
+      },
+      {
+       "items": 1774,
+       "networks": 232
+      },
+      {
+       "items": 1778,
+       "networks": 233
+      },
+      {
+       "items": 1779,
+       "networks": 234
+      },
+      {
+       "items": 1780,
+       "networks": 235
+      },
+      {
+       "items": 1788,
+       "networks": 236
+      },
+      {
+       "items": 1789,
+       "networks": 237
+      },
+      {
+       "items": 1791,
+       "networks": 239
+      },
+      {
+       "items": 1796,
+       "networks": 240
+      },
+      {
+       "items": 1804,
+       "networks": 241
+      },
+      {
+       "items": 1810,
+       "networks": 242
+      },
+      {
+       "items": 1826,
+       "networks": 243
+      },
+      {
+       "items": 1836,
+       "networks": 244
+      },
+      {
+       "items": 1839,
+       "networks": 245
+      },
+      {
+       "items": 1848,
+       "networks": 246
+      },
+      {
+       "items": 1858,
+       "networks": 247
+      },
+      {
+       "items": 1884,
+       "networks": 248
+      },
+      {
+       "items": 1888,
+       "networks": 249
+      },
+      {
+       "items": 1893,
+       "networks": 250
+      },
+      {
+       "items": 1901,
+       "networks": 252
+      },
+      {
+       "items": 1961,
+       "networks": 253
+      },
+      {
+       "items": 2131,
+       "networks": 254
+      },
+      {
+       "items": 2250,
+       "networks": 255
+      },
+      {
+       "items": 2436,
+       "networks": 256
+      },
+      {
+       "items": 3270,
+       "networks": 257
+      }
+     ]
+    },
+    "reliability": null,
+    "bootstrap": {
+     "draws": 2000,
+     "seed": 20261123,
+     "account_recall": [
+      0.3495,
+      0.4196
+     ],
+     "account_precision": [
+      0.1523,
+      0.1897
+     ],
+     "average_precision": [
+      0.118,
+      0.1553
+     ]
+    }
+   }
+  },
+  "B0_volume": {
+   "datasets": 80,
+   "scenario": {
+    "suspicious": 262,
+    "legitimate": 394,
+    "tp": 68,
+    "fp": 181,
+    "fn": 194,
+    "tn": 213,
+    "precision": 0.2731,
+    "recall": 0.2595,
+    "f1": 0.2661,
+    "fpr": 0.4594,
+    "fnr": 0.7405,
+    "surfaced_recall": 1.0,
+    "tp_high": null,
+    "fp_high": null,
+    "high_band_recall": null,
+    "high_band_fpr": null
+   },
+   "alerts": {
+    "flagged": 514,
+    "per_dataset": 6.42,
+    "relevant": 135,
+    "precision": 0.2626,
+    "unmatched": 0,
+    "per_flagged_network": 2.0643,
+    "networks_with_duplicates": 0.494
+   },
+   "abstention": {
+    "rate": 0.0,
+    "suspicious_share": null
+   },
+   "integrity": {
+    "partial_analysis_rate": 0.0,
+    "quarantined_formations": 0
+   },
+   "queue": {
+    "distinct_p_at_10": 0.1288,
+    "distinct_p_at_5": 0.0975,
+    "p_at_10": 0.265,
+    "p_at_5": 0.165,
+    "recall_at_10": 0.4288,
+    "recall_at_5": 0.1852
+   },
+   "by_family": {
+    "LV10_boundary_merchant": {
+     "total": 27,
+     "flagged": 0,
+     "surfaced": 27
+    },
+    "LV11_property_escrow": {
+     "total": 32,
+     "flagged": 30,
+     "surfaced": 32
+    },
+    "LV12_payroll_agency": {
+     "total": 25,
+     "flagged": 16,
+     "surfaced": 25
+    },
+    "LV13_group_gift": {
+     "total": 29,
+     "flagged": 0,
+     "surfaced": 29
+    },
+    "LV1_rent_collection": {
+     "total": 33,
+     "flagged": 19,
+     "surfaced": 33
+    },
+    "LV2_marketplace_with_refunds": {
+     "total": 30,
+     "flagged": 3,
+     "surfaced": 30
+    },
+    "LV3_payroll_with_spending": {
+     "total": 29,
+     "flagged": 27,
+     "surfaced": 29
+    },
+    "LV4_family_remittance": {
+     "total": 32,
+     "flagged": 1,
+     "surfaced": 32
+    },
+    "LV5_cash_pooling": {
+     "total": 32,
+     "flagged": 31,
+     "surfaced": 32
+    },
+    "LV6_lending": {
+     "total": 27,
+     "flagged": 24,
+     "surfaced": 27
+    },
+    "LV7_event_ticketing": {
+     "total": 42,
+     "flagged": 2,
+     "surfaced": 42
+    },
+    "LV8_charity_campaign": {
+     "total": 23,
+     "flagged": 1,
+     "surfaced": 23
+    },
+    "LV9_wholesale_supplier": {
+     "total": 33,
+     "flagged": 27,
+     "surfaced": 33
+    },
+    "SV10_round_trip": {
+     "total": 25,
+     "flagged": 13,
+     "surfaced": 25
+    },
+    "SV11_salary_pass_through": {
+     "total": 17,
+     "flagged": 2,
+     "surfaced": 17
+    },
+    "SV12_activation_collection": {
+     "total": 15,
+     "flagged": 4,
+     "surfaced": 15
+    },
+    "SV1_mule_collection": {
+     "total": 30,
+     "flagged": 10,
+     "surfaced": 30
+    },
+    "SV2_two_tier_collection": {
+     "total": 41,
+     "flagged": 19,
+     "surfaced": 41
+    },
+    "SV3_scatter_gather": {
+     "total": 27,
+     "flagged": 1,
+     "surfaced": 27
+    },
+    "SV4_boundary_collection": {
+     "total": 17,
+     "flagged": 1,
+     "surfaced": 17
+    },
+    "SV5_recurring_mule_collection": {
+     "total": 12,
+     "flagged": 2,
+     "surfaced": 12
+    },
+    "SV6_slow_collection": {
+     "total": 9,
+     "flagged": 1,
+     "surfaced": 9
+    },
+    "SV7_layering_chain": {
+     "total": 33,
+     "flagged": 3,
+     "surfaced": 33
+    },
+    "SV8_partially_observed_chain": {
+     "total": 6,
+     "flagged": 0,
+     "surfaced": 6
+    },
+    "SV9_mule_distribution": {
+     "total": 30,
+     "flagged": 12,
+     "surfaced": 30
+    }
+   },
+   "latency_ms": {
+    "median": 8.2,
+    "p95": 17.1,
+    "max": 59.9
+   },
+   "entity": {
+    "accounts": {
+     "positive": 2540,
+     "flagged": 514,
+     "tp": 135,
+     "fp": 379,
+     "fn": 2405,
+     "fp_labelled_legitimate": 379,
+     "fp_unlabelled": 0,
+     "recall": 0.0531,
+     "precision": 0.2626
+    },
+    "ranking": {
+     "suspicious_networks": 262,
+     "queued_items": 22171,
+     "networks_reached": 262,
+     "average_precision": 0.0947,
+     "curve": [
+      {
+       "items": 169,
+       "networks": 1
+      },
+      {
+       "items": 189,
+       "networks": 2
+      },
+      {
+       "items": 193,
+       "networks": 3
+      },
+      {
+       "items": 283,
+       "networks": 4
+      },
+      {
+       "items": 323,
+       "networks": 5
+      },
+      {
+       "items": 333,
+       "networks": 6
+      },
+      {
+       "items": 347,
+       "networks": 7
+      },
+      {
+       "items": 356,
+       "networks": 8
+      },
+      {
+       "items": 410,
+       "networks": 9
+      },
+      {
+       "items": 413,
+       "networks": 10
+      },
+      {
+       "items": 424,
+       "networks": 11
+      },
+      {
+       "items": 455,
+       "networks": 12
+      },
+      {
+       "items": 475,
+       "networks": 13
+      },
+      {
+       "items": 500,
+       "networks": 14
+      },
+      {
+       "items": 507,
+       "networks": 15
+      },
+      {
+       "items": 514,
+       "networks": 16
+      },
+      {
+       "items": 523,
+       "networks": 17
+      },
+      {
+       "items": 535,
+       "networks": 18
+      },
+      {
+       "items": 541,
+       "networks": 19
+      },
+      {
+       "items": 549,
+       "networks": 20
+      },
+      {
+       "items": 553,
+       "networks": 21
+      },
+      {
+       "items": 554,
+       "networks": 22
+      },
+      {
+       "items": 566,
+       "networks": 23
+      },
+      {
+       "items": 568,
+       "networks": 24
+      },
+      {
+       "items": 571,
+       "networks": 25
+      },
+      {
+       "items": 579,
+       "networks": 26
+      },
+      {
+       "items": 581,
+       "networks": 27
+      },
+      {
+       "items": 586,
+       "networks": 28
+      },
+      {
+       "items": 587,
+       "networks": 29
+      },
+      {
+       "items": 588,
+       "networks": 30
+      },
+      {
+       "items": 595,
+       "networks": 31
+      },
+      {
+       "items": 600,
+       "networks": 32
+      },
+      {
+       "items": 606,
+       "networks": 33
+      },
+      {
+       "items": 609,
+       "networks": 34
+      },
+      {
+       "items": 611,
+       "networks": 35
+      },
+      {
+       "items": 616,
+       "networks": 36
+      },
+      {
+       "items": 619,
+       "networks": 37
+      },
+      {
+       "items": 620,
+       "networks": 38
+      },
+      {
+       "items": 622,
+       "networks": 39
+      },
+      {
+       "items": 623,
+       "networks": 40
+      },
+      {
+       "items": 626,
+       "networks": 41
+      },
+      {
+       "items": 633,
+       "networks": 42
+      },
+      {
+       "items": 635,
+       "networks": 43
+      },
+      {
+       "items": 649,
+       "networks": 44
+      },
+      {
+       "items": 653,
+       "networks": 45
+      },
+      {
+       "items": 655,
+       "networks": 46
+      },
+      {
+       "items": 661,
+       "networks": 47
+      },
+      {
+       "items": 665,
+       "networks": 48
+      },
+      {
+       "items": 669,
+       "networks": 49
+      },
+      {
+       "items": 675,
+       "networks": 50
+      },
+      {
+       "items": 676,
+       "networks": 51
+      },
+      {
+       "items": 678,
+       "networks": 52
+      },
+      {
+       "items": 683,
+       "networks": 53
+      },
+      {
+       "items": 684,
+       "networks": 54
+      },
+      {
+       "items": 686,
+       "networks": 55
+      },
+      {
+       "items": 692,
+       "networks": 56
+      },
+      {
+       "items": 693,
+       "networks": 57
+      },
+      {
+       "items": 696,
+       "networks": 58
+      },
+      {
+       "items": 697,
+       "networks": 59
+      },
+      {
+       "items": 698,
+       "networks": 60
+      },
+      {
+       "items": 704,
+       "networks": 61
+      },
+      {
+       "items": 707,
+       "networks": 62
+      },
+      {
+       "items": 710,
+       "networks": 63
+      },
+      {
+       "items": 713,
+       "networks": 64
+      },
+      {
+       "items": 716,
+       "networks": 65
+      },
+      {
+       "items": 720,
+       "networks": 66
+      },
+      {
+       "items": 724,
+       "networks": 67
+      },
+      {
+       "items": 734,
+       "networks": 68
+      },
+      {
+       "items": 736,
+       "networks": 69
+      },
+      {
+       "items": 743,
+       "networks": 70
+      },
+      {
+       "items": 749,
+       "networks": 71
+      },
+      {
+       "items": 754,
+       "networks": 72
+      },
+      {
+       "items": 758,
+       "networks": 73
+      },
+      {
+       "items": 759,
+       "networks": 74
+      },
+      {
+       "items": 766,
+       "networks": 75
+      },
+      {
+       "items": 768,
+       "networks": 76
+      },
+      {
+       "items": 770,
+       "networks": 77
+      },
+      {
+       "items": 771,
+       "networks": 78
+      },
+      {
+       "items": 774,
+       "networks": 79
+      },
+      {
+       "items": 780,
+       "networks": 80
+      },
+      {
+       "items": 784,
+       "networks": 81
+      },
+      {
+       "items": 786,
+       "networks": 82
+      },
+      {
+       "items": 790,
+       "networks": 83
+      },
+      {
+       "items": 794,
+       "networks": 84
+      },
+      {
+       "items": 796,
+       "networks": 85
+      },
+      {
+       "items": 798,
+       "networks": 86
+      },
+      {
+       "items": 799,
+       "networks": 87
+      },
+      {
+       "items": 804,
+       "networks": 88
+      },
+      {
+       "items": 808,
+       "networks": 89
+      },
+      {
+       "items": 809,
+       "networks": 90
+      },
+      {
+       "items": 811,
+       "networks": 91
+      },
+      {
+       "items": 817,
+       "networks": 92
+      },
+      {
+       "items": 818,
+       "networks": 93
+      },
+      {
+       "items": 829,
+       "networks": 94
+      },
+      {
+       "items": 837,
+       "networks": 95
+      },
+      {
+       "items": 838,
+       "networks": 96
+      },
+      {
+       "items": 839,
+       "networks": 97
+      },
+      {
+       "items": 845,
+       "networks": 98
+      },
+      {
+       "items": 846,
+       "networks": 99
+      },
+      {
+       "items": 848,
+       "networks": 100
+      },
+      {
+       "items": 853,
+       "networks": 101
+      },
+      {
+       "items": 860,
+       "networks": 102
+      },
+      {
+       "items": 863,
+       "networks": 103
+      },
+      {
+       "items": 864,
+       "networks": 104
+      },
+      {
+       "items": 865,
+       "networks": 105
+      },
+      {
+       "items": 867,
+       "networks": 106
+      },
+      {
+       "items": 868,
+       "networks": 107
+      },
+      {
+       "items": 871,
+       "networks": 108
+      },
+      {
+       "items": 888,
+       "networks": 109
+      },
+      {
+       "items": 892,
+       "networks": 110
+      },
+      {
+       "items": 894,
+       "networks": 111
+      },
+      {
+       "items": 896,
+       "networks": 112
+      },
+      {
+       "items": 902,
+       "networks": 113
+      },
+      {
+       "items": 907,
+       "networks": 114
+      },
+      {
+       "items": 918,
+       "networks": 115
+      },
+      {
+       "items": 922,
+       "networks": 116
+      },
+      {
+       "items": 925,
+       "networks": 117
+      },
+      {
+       "items": 938,
+       "networks": 118
+      },
+      {
+       "items": 954,
+       "networks": 119
+      },
+      {
+       "items": 959,
+       "networks": 120
+      },
+      {
+       "items": 967,
+       "networks": 121
+      },
+      {
+       "items": 973,
+       "networks": 122
+      },
+      {
+       "items": 974,
+       "networks": 123
+      },
+      {
+       "items": 984,
+       "networks": 124
+      },
+      {
+       "items": 989,
+       "networks": 125
+      },
+      {
+       "items": 998,
+       "networks": 126
+      },
+      {
+       "items": 1004,
+       "networks": 127
+      },
+      {
+       "items": 1006,
+       "networks": 128
+      },
+      {
+       "items": 1016,
+       "networks": 129
+      },
+      {
+       "items": 1044,
+       "networks": 130
+      },
+      {
+       "items": 1047,
+       "networks": 131
+      },
+      {
+       "items": 1049,
+       "networks": 132
+      },
+      {
+       "items": 1053,
+       "networks": 133
+      },
+      {
+       "items": 1065,
+       "networks": 134
+      },
+      {
+       "items": 1078,
+       "networks": 135
+      },
+      {
+       "items": 1089,
+       "networks": 136
+      },
+      {
+       "items": 1108,
+       "networks": 137
+      },
+      {
+       "items": 1129,
+       "networks": 138
+      },
+      {
+       "items": 1135,
+       "networks": 139
+      },
+      {
+       "items": 1159,
+       "networks": 140
+      },
+      {
+       "items": 1161,
+       "networks": 141
+      },
+      {
+       "items": 1169,
+       "networks": 142
+      },
+      {
+       "items": 1170,
+       "networks": 143
+      },
+      {
+       "items": 1173,
+       "networks": 144
+      },
+      {
+       "items": 1175,
+       "networks": 145
+      },
+      {
+       "items": 1184,
+       "networks": 146
+      },
+      {
+       "items": 1185,
+       "networks": 147
+      },
+      {
+       "items": 1202,
+       "networks": 148
+      },
+      {
+       "items": 1205,
+       "networks": 149
+      },
+      {
+       "items": 1221,
+       "networks": 150
+      },
+      {
+       "items": 1227,
+       "networks": 151
+      },
+      {
+       "items": 1239,
+       "networks": 152
+      },
+      {
+       "items": 1241,
+       "networks": 153
+      },
+      {
+       "items": 1265,
+       "networks": 154
+      },
+      {
+       "items": 1286,
+       "networks": 155
+      },
+      {
+       "items": 1291,
+       "networks": 156
+      },
+      {
+       "items": 1295,
+       "networks": 157
+      },
+      {
+       "items": 1302,
+       "networks": 158
+      },
+      {
+       "items": 1305,
+       "networks": 159
+      },
+      {
+       "items": 1325,
+       "networks": 160
+      },
+      {
+       "items": 1350,
+       "networks": 161
+      },
+      {
+       "items": 1354,
+       "networks": 162
+      },
+      {
+       "items": 1368,
+       "networks": 163
+      },
+      {
+       "items": 1380,
+       "networks": 164
+      },
+      {
+       "items": 1399,
+       "networks": 165
+      },
+      {
+       "items": 1408,
+       "networks": 166
+      },
+      {
+       "items": 1414,
+       "networks": 167
+      },
+      {
+       "items": 1424,
+       "networks": 168
+      },
+      {
+       "items": 1431,
+       "networks": 169
+      },
+      {
+       "items": 1432,
+       "networks": 170
+      },
+      {
+       "items": 1435,
+       "networks": 171
+      },
+      {
+       "items": 1440,
+       "networks": 172
+      },
+      {
+       "items": 1451,
+       "networks": 173
+      },
+      {
+       "items": 1452,
+       "networks": 174
+      },
+      {
+       "items": 1453,
+       "networks": 175
+      },
+      {
+       "items": 1455,
+       "networks": 176
+      },
+      {
+       "items": 1464,
+       "networks": 177
+      },
+      {
+       "items": 1471,
+       "networks": 178
+      },
+      {
+       "items": 1477,
+       "networks": 180
+      },
+      {
+       "items": 1490,
+       "networks": 181
+      },
+      {
+       "items": 1491,
+       "networks": 182
+      },
+      {
+       "items": 1495,
+       "networks": 183
+      },
+      {
+       "items": 1511,
+       "networks": 184
+      },
+      {
+       "items": 1527,
+       "networks": 185
+      },
+      {
+       "items": 1542,
+       "networks": 186
+      },
+      {
+       "items": 1546,
+       "networks": 187
+      },
+      {
+       "items": 1565,
+       "networks": 188
+      },
+      {
+       "items": 1571,
+       "networks": 189
+      },
+      {
+       "items": 1597,
+       "networks": 190
+      },
+      {
+       "items": 1607,
+       "networks": 191
+      },
+      {
+       "items": 1614,
+       "networks": 192
+      },
+      {
+       "items": 1644,
+       "networks": 193
+      },
+      {
+       "items": 1674,
+       "networks": 194
+      },
+      {
+       "items": 1682,
+       "networks": 195
+      },
+      {
+       "items": 1725,
+       "networks": 196
+      },
+      {
+       "items": 1730,
+       "networks": 197
+      },
+      {
+       "items": 1754,
+       "networks": 198
+      },
+      {
+       "items": 1759,
+       "networks": 199
+      },
+      {
+       "items": 1819,
+       "networks": 200
+      },
+      {
+       "items": 1820,
+       "networks": 201
+      },
+      {
+       "items": 1829,
+       "networks": 202
+      },
+      {
+       "items": 1835,
+       "networks": 203
+      },
+      {
+       "items": 1842,
+       "networks": 204
+      },
+      {
+       "items": 1879,
+       "networks": 206
+      },
+      {
+       "items": 1915,
+       "networks": 207
+      },
+      {
+       "items": 1944,
+       "networks": 209
+      },
+      {
+       "items": 1992,
+       "networks": 210
+      },
+      {
+       "items": 2045,
+       "networks": 211
+      },
+      {
+       "items": 2062,
+       "networks": 212
+      },
+      {
+       "items": 2083,
+       "networks": 213
+      },
+      {
+       "items": 2122,
+       "networks": 214
+      },
+      {
+       "items": 2123,
+       "networks": 215
+      },
+      {
+       "items": 2124,
+       "networks": 216
+      },
+      {
+       "items": 2126,
+       "networks": 217
+      },
+      {
+       "items": 2151,
+       "networks": 218
+      },
+      {
+       "items": 2168,
+       "networks": 219
+      },
+      {
+       "items": 2238,
+       "networks": 220
+      },
+      {
+       "items": 2282,
+       "networks": 221
+      },
+      {
+       "items": 2307,
+       "networks": 222
+      },
+      {
+       "items": 2314,
+       "networks": 223
+      },
+      {
+       "items": 2332,
+       "networks": 225
+      },
+      {
+       "items": 2345,
+       "networks": 226
+      },
+      {
+       "items": 2382,
+       "networks": 227
+      },
+      {
+       "items": 2392,
+       "networks": 228
+      },
+      {
+       "items": 2423,
+       "networks": 229
+      },
+      {
+       "items": 2510,
+       "networks": 230
+      },
+      {
+       "items": 2557,
+       "networks": 231
+      },
+      {
+       "items": 2565,
+       "networks": 232
+      },
+      {
+       "items": 2653,
+       "networks": 233
+      },
+      {
+       "items": 2722,
+       "networks": 234
+      },
+      {
+       "items": 2773,
+       "networks": 235
+      },
+      {
+       "items": 2779,
+       "networks": 236
+      },
+      {
+       "items": 2785,
+       "networks": 237
+      },
+      {
+       "items": 2876,
+       "networks": 238
+      },
+      {
+       "items": 2887,
+       "networks": 239
+      },
+      {
+       "items": 2893,
+       "networks": 241
+      },
+      {
+       "items": 2986,
+       "networks": 242
+      },
+      {
+       "items": 3046,
+       "networks": 243
+      },
+      {
+       "items": 3090,
+       "networks": 244
+      },
+      {
+       "items": 3139,
+       "networks": 245
+      },
+      {
+       "items": 3194,
+       "networks": 246
+      },
+      {
+       "items": 3205,
+       "networks": 247
+      },
+      {
+       "items": 3252,
+       "networks": 248
+      },
+      {
+       "items": 3260,
+       "networks": 249
+      },
+      {
+       "items": 3317,
+       "networks": 250
+      },
+      {
+       "items": 3379,
+       "networks": 251
+      },
+      {
+       "items": 3387,
+       "networks": 252
+      },
+      {
+       "items": 3423,
+       "networks": 253
+      },
+      {
+       "items": 3452,
+       "networks": 254
+      },
+      {
+       "items": 3471,
+       "networks": 255
+      },
+      {
+       "items": 3499,
+       "networks": 257
+      },
+      {
+       "items": 3627,
+       "networks": 258
+      },
+      {
+       "items": 3817,
+       "networks": 259
+      },
+      {
+       "items": 4177,
+       "networks": 260
+      },
+      {
+       "items": 4338,
+       "networks": 261
+      },
+      {
+       "items": 5059,
+       "networks": 262
+      }
+     ]
+    },
+    "reliability": null,
+    "bootstrap": {
+     "draws": 2000,
+     "seed": 20261123,
+     "account_recall": [
+      0.0388,
+      0.0697
+     ],
+     "account_precision": [
+      0.1942,
+      0.3333
+     ],
+     "average_precision": [
+      0.0824,
+      0.1104
+     ]
+    }
+   }
+  }
+ },
+ "bootstrap": {
+  "draws": 2000,
+  "seed": 20261117,
+  "fpr": {
+   "baseline": 0.4848,
+   "candidate": 0.2538,
+   "difference": -0.231,
+   "ci95": [
+    -0.2745,
+    -0.1896
+   ],
+   "draws": 2000
+  },
+  "recall": {
+   "baseline": 0.729,
+   "candidate": 0.7519,
+   "difference": 0.0229,
+   "ci95": [
+    0.0075,
+    0.0428
+   ],
+   "draws": 2000
+  },
+  "high_band_fpr": {
+   "baseline": 0.2335,
+   "candidate": 0.2081,
+   "difference": -0.0254,
+   "ci95": [
+    -0.0418,
+    -0.0102
+   ],
+   "draws": 2000
+  },
+  "distinct_p_at_5": {
+   "baseline": 0.3881,
+   "candidate": 0.4358,
+   "difference": 0.0477,
+   "ci95": [
+    0.0271,
+    0.0696
+   ],
+   "draws": 2000
+  }
+ },
+ "decision": {
+  "checks": {
+   "recall_drop_at_most_2pp": true,
+   "high_band_fpr_not_increased": true,
+   "fpr_improved_ci_excludes_zero": true,
+   "distinct_p5_improved_ci_excludes_zero": true
+  },
+  "outcome": "improvement"
+ },
+ "examples": {
+  "false_positives": [
+   {
+    "dataset": "bench:sealed-v2:9100:timestamp",
+    "scenario_id": "sealed-v2-9100-03-LV7_event_ticketing",
+    "family": "LV7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, payout to venue/artists",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 56,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9100:timestamp",
+    "scenario_id": "sealed-v2-9100-05-LV12_payroll_agency",
+    "family": "LV12_payroll_agency",
+    "difficulty": "hard",
+    "notes": "employer funds an agency that pays employees",
+    "kind": "fan_out",
+    "band": "high",
+    "priority": 62,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_DISTRIBUTION_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9103:timestamp",
+    "scenario_id": "sealed-v2-9103-01-LV7_event_ticketing",
+    "family": "LV7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, payout to venue/artists",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 54,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9103:timestamp",
+    "scenario_id": "sealed-v2-9103-03-LV4_family_remittance",
+    "family": "LV4_family_remittance",
+    "difficulty": "hard",
+    "notes": "worker sends part of salary to relatives",
+    "kind": "fan_out",
+    "band": "medium",
+    "priority": 43,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_DISTRIBUTION_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9104:timestamp",
+    "scenario_id": "sealed-v2-9104-00-LV12_payroll_agency",
+    "family": "LV12_payroll_agency",
+    "difficulty": "hard",
+    "notes": "employer funds an agency that pays employees",
+    "kind": "fan_out",
+    "band": "critical",
+    "priority": 80,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_DISTRIBUTION_SUPPORTED",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9105:timestamp",
+    "scenario_id": "sealed-v2-9105-06-LV12_payroll_agency",
+    "family": "LV12_payroll_agency",
+    "difficulty": "hard",
+    "notes": "employer funds an agency that pays employees",
+    "kind": "fan_out",
+    "band": "high",
+    "priority": 61,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_DISTRIBUTION_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9106:day",
+    "scenario_id": "sealed-v2-9106-06-LV12_payroll_agency",
+    "family": "LV12_payroll_agency",
+    "difficulty": "hard",
+    "notes": "employer funds an agency that pays employees",
+    "kind": "fan_out",
+    "band": "high",
+    "priority": 78,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_DISTRIBUTION_SUPPORTED",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9107:day",
+    "scenario_id": "sealed-v2-9107-06-LV1_rent_collection",
+    "family": "LV1_rent_collection",
+    "difficulty": "hard",
+    "notes": "tenants pay monthly; landlord pays vendors and owner",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 53,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9107:day",
+    "scenario_id": "sealed-v2-9107-08-LV7_event_ticketing",
+    "family": "LV7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, payout to venue/artists",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 50,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9110:day",
+    "scenario_id": "sealed-v2-9110-01-LV4_family_remittance",
+    "family": "LV4_family_remittance",
+    "difficulty": "hard",
+    "notes": "worker sends part of salary to relatives",
+    "kind": "fan_out",
+    "band": "medium",
+    "priority": 39,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_SAME_DAY_AMBIGUOUS",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9111:timestamp",
+    "scenario_id": "sealed-v2-9111-00-LV8_charity_campaign",
+    "family": "LV8_charity_campaign",
+    "difficulty": "adversarial",
+    "notes": "one-off donors, transfer to beneficiaries",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 50,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9113:timestamp",
+    "scenario_id": "sealed-v2-9113-10-LV13_group_gift",
+    "family": "LV13_group_gift",
+    "difficulty": "adversarial",
+    "notes": "small contributions, then one purchase",
+    "kind": "funnel",
+    "band": "critical",
+    "priority": 82,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9114:timestamp",
+    "scenario_id": "sealed-v2-9114-06-LV13_group_gift",
+    "family": "LV13_group_gift",
+    "difficulty": "adversarial",
+    "notes": "small contributions, then one purchase",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 62,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9114:timestamp",
+    "scenario_id": "sealed-v2-9114-07-LV13_group_gift",
+    "family": "LV13_group_gift",
+    "difficulty": "adversarial",
+    "notes": "small contributions, then one purchase",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 65,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9117:timestamp",
+    "scenario_id": "sealed-v2-9117-01-LV7_event_ticketing",
+    "family": "LV7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, payout to venue/artists",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 53,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_TYPICAL_TURNOVER",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9118:timestamp",
+    "scenario_id": "sealed-v2-9118-05-LV12_payroll_agency",
+    "family": "LV12_payroll_agency",
+    "difficulty": "hard",
+    "notes": "employer funds an agency that pays employees",
+    "kind": "fan_out",
+    "band": "high",
+    "priority": 76,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_DISTRIBUTION_SUPPORTED",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9119:day",
+    "scenario_id": "sealed-v2-9119-01-LV13_group_gift",
+    "family": "LV13_group_gift",
+    "difficulty": "adversarial",
+    "notes": "small contributions, then one purchase",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 65,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9119:day",
+    "scenario_id": "sealed-v2-9119-06-LV13_group_gift",
+    "family": "LV13_group_gift",
+    "difficulty": "adversarial",
+    "notes": "small contributions, then one purchase",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 65,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9122:day",
+    "scenario_id": "sealed-v2-9122-03-LV7_event_ticketing",
+    "family": "LV7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, payout to venue/artists",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 54,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9122:day",
+    "scenario_id": "sealed-v2-9122-05-LV13_group_gift",
+    "family": "LV13_group_gift",
+    "difficulty": "adversarial",
+    "notes": "small contributions, then one purchase",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 65,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9123:day",
+    "scenario_id": "sealed-v2-9123-02-LV7_event_ticketing",
+    "family": "LV7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, payout to venue/artists",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 59,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9123:day",
+    "scenario_id": "sealed-v2-9123-03-LV7_event_ticketing",
+    "family": "LV7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, payout to venue/artists",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 56,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9123:day",
+    "scenario_id": "sealed-v2-9123-05-LV7_event_ticketing",
+    "family": "LV7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, payout to venue/artists",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 53,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9124:day",
+    "scenario_id": "sealed-v2-9124-03-LV12_payroll_agency",
+    "family": "LV12_payroll_agency",
+    "difficulty": "hard",
+    "notes": "employer funds an agency that pays employees",
+    "kind": "fan_out",
+    "band": "high",
+    "priority": 64,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_DISTRIBUTION_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9126:day",
+    "scenario_id": "sealed-v2-9126-04-LV4_family_remittance",
+    "family": "LV4_family_remittance",
+    "difficulty": "hard",
+    "notes": "worker sends part of salary to relatives",
+    "kind": "fan_out",
+    "band": "medium",
+    "priority": 39,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_SAME_DAY_AMBIGUOUS",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9127:timestamp",
+    "scenario_id": "sealed-v2-9127-00-LV7_event_ticketing",
+    "family": "LV7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, payout to venue/artists",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 47,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_TYPICAL_TURNOVER",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9127:timestamp",
+    "scenario_id": "sealed-v2-9127-04-LV12_payroll_agency",
+    "family": "LV12_payroll_agency",
+    "difficulty": "hard",
+    "notes": "employer funds an agency that pays employees",
+    "kind": "fan_out",
+    "band": "high",
+    "priority": 59,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_DISTRIBUTION_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9127:timestamp",
+    "scenario_id": "sealed-v2-9127-05-LV7_event_ticketing",
+    "family": "LV7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, payout to venue/artists",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 53,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9129:timestamp",
+    "scenario_id": "sealed-v2-9129-00-LV13_group_gift",
+    "family": "LV13_group_gift",
+    "difficulty": "adversarial",
+    "notes": "small contributions, then one purchase",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 65,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9130:timestamp",
+    "scenario_id": "sealed-v2-9130-03-LV13_group_gift",
+    "family": "LV13_group_gift",
+    "difficulty": "adversarial",
+    "notes": "small contributions, then one purchase",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 62,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9131:day",
+    "scenario_id": "sealed-v2-9131-00-LV12_payroll_agency",
+    "family": "LV12_payroll_agency",
+    "difficulty": "hard",
+    "notes": "employer funds an agency that pays employees",
+    "kind": "fan_out",
+    "band": "high",
+    "priority": 53,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_DISTRIBUTION_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9131:day",
+    "scenario_id": "sealed-v2-9131-08-LV4_family_remittance",
+    "family": "LV4_family_remittance",
+    "difficulty": "hard",
+    "notes": "worker sends part of salary to relatives",
+    "kind": "fan_out",
+    "band": "medium",
+    "priority": 39,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_SAME_DAY_AMBIGUOUS",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9132:timestamp",
+    "scenario_id": "sealed-v2-9132-09-LV7_event_ticketing",
+    "family": "LV7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, payout to venue/artists",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 53,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9132:timestamp",
+    "scenario_id": "sealed-v2-9132-10-LV8_charity_campaign",
+    "family": "LV8_charity_campaign",
+    "difficulty": "adversarial",
+    "notes": "one-off donors, transfer to beneficiaries",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 67,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_CONCENTRATION_OUTLIER",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9133:day",
+    "scenario_id": "sealed-v2-9133-00-LV7_event_ticketing",
+    "family": "LV7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, payout to venue/artists",
+    "kind": "funnel",
+    "band": "medium",
+    "priority": 55,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_TYPICAL_TURNOVER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9135:day",
+    "scenario_id": "sealed-v2-9135-00-LV11_property_escrow",
+    "family": "LV11_property_escrow",
+    "difficulty": "adversarial",
+    "notes": "escrow releases a sale to its parties",
+    "kind": "fan_out",
+    "band": "medium",
+    "priority": 53,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_SAME_DAY_AMBIGUOUS",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9136:day",
+    "scenario_id": "sealed-v2-9136-08-LV7_event_ticketing",
+    "family": "LV7_event_ticketing",
+    "difficulty": "adversarial",
+    "notes": "one-off ticket buyers, payout to venue/artists",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 55,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9136:day",
+    "scenario_id": "sealed-v2-9136-11-LV12_payroll_agency",
+    "family": "LV12_payroll_agency",
+    "difficulty": "hard",
+    "notes": "employer funds an agency that pays employees",
+    "kind": "fan_out",
+    "band": "high",
+    "priority": 64,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_DISTRIBUTION_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9137:day",
+    "scenario_id": "sealed-v2-9137-00-LV12_payroll_agency",
+    "family": "LV12_payroll_agency",
+    "difficulty": "hard",
+    "notes": "employer funds an agency that pays employees",
+    "kind": "fan_out",
+    "band": "high",
+    "priority": 56,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_DISTRIBUTION_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   },
+   {
+    "dataset": "bench:sealed-v2:9137:day",
+    "scenario_id": "sealed-v2-9137-02-LV13_group_gift",
+    "family": "LV13_group_gift",
+    "difficulty": "adversarial",
+    "notes": "small contributions, then one purchase",
+    "kind": "funnel",
+    "band": "high",
+    "priority": 64,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT"
+    ],
+    "explanation": "alerted"
+   }
+  ],
+  "false_negatives": [
+   {
+    "dataset": "bench:sealed-v2:9100:timestamp",
+    "scenario_id": "sealed-v2-9100-04-SV6_slow_collection",
+    "family": "SV6_slow_collection",
+    "difficulty": "hard",
+    "notes": "deposits over 3-5 weeks, forwarded in tranches",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 35,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v2:9106:day",
+    "scenario_id": "sealed-v2-9106-00-SV11_salary_pass_through",
+    "family": "SV11_salary_pass_through",
+    "difficulty": "adversarial",
+    "notes": "weekly deposits forwarded in round amounts",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v2:9107:day",
+    "scenario_id": "sealed-v2-9107-09-SV4_boundary_collection",
+    "family": "SV4_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v2:9108:timestamp",
+    "scenario_id": "sealed-v2-9108-03-SV9_mule_distribution",
+    "family": "SV9_mule_distribution",
+    "difficulty": "hard",
+    "notes": "proceeds split across mules",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v2:9110:day",
+    "scenario_id": "sealed-v2-9110-02-SV11_salary_pass_through",
+    "family": "SV11_salary_pass_through",
+    "difficulty": "adversarial",
+    "notes": "weekly deposits forwarded in round amounts",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v2:9110:day",
+    "scenario_id": "sealed-v2-9110-03-SV11_salary_pass_through",
+    "family": "SV11_salary_pass_through",
+    "difficulty": "adversarial",
+    "notes": "weekly deposits forwarded in round amounts",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v2:9111:timestamp",
+    "scenario_id": "sealed-v2-9111-01-SV10_round_trip",
+    "family": "SV10_round_trip",
+    "difficulty": "medium",
+    "notes": "funds return to the origin through 5 accounts",
+    "kind": "cycle",
+    "band": "low",
+    "priority": 28,
+    "reasons": [
+     "STRUCT_CYCLE_LOOP",
+     "TEMPORAL_CONTRADICTED",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v2:9113:timestamp",
+    "scenario_id": "sealed-v2-9113-00-SV11_salary_pass_through",
+    "family": "SV11_salary_pass_through",
+    "difficulty": "adversarial",
+    "notes": "weekly deposits forwarded in round amounts",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v2:9113:timestamp",
+    "scenario_id": "sealed-v2-9113-05-SV8_partially_observed_chain",
+    "family": "SV8_partially_observed_chain",
+    "difficulty": "hard",
+    "notes": "one hop of a 4-7 hop chain is not in the data",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v2:9114:timestamp",
+    "scenario_id": "sealed-v2-9114-08-SV5_recurring_mule_collection",
+    "family": "SV5_recurring_mule_collection",
+    "difficulty": "adversarial",
+    "notes": "mules imitate recurring customers",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 35,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v2:9116:day",
+    "scenario_id": "sealed-v2-9116-04-SV4_boundary_collection",
+    "family": "SV4_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v2:9120:day",
+    "scenario_id": "sealed-v2-9120-04-SV4_boundary_collection",
+    "family": "SV4_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v2:9122:day",
+    "scenario_id": "sealed-v2-9122-07-SV8_partially_observed_chain",
+    "family": "SV8_partially_observed_chain",
+    "difficulty": "hard",
+    "notes": "one hop of a 4-7 hop chain is not in the data",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v2:9124:day",
+    "scenario_id": "sealed-v2-9124-00-SV5_recurring_mule_collection",
+    "family": "SV5_recurring_mule_collection",
+    "difficulty": "adversarial",
+    "notes": "mules imitate recurring customers",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 35,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v2:9125:day",
+    "scenario_id": "sealed-v2-9125-01-SV11_salary_pass_through",
+    "family": "SV11_salary_pass_through",
+    "difficulty": "adversarial",
+    "notes": "weekly deposits forwarded in round amounts",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v2:9125:day",
+    "scenario_id": "sealed-v2-9125-07-SV7_layering_chain",
+    "family": "SV7_layering_chain",
+    "difficulty": "medium",
+    "notes": "5-hop pass-through with fees and jitter",
+    "kind": "chain",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_CHAIN_PATH",
+     "TEMPORAL_PATH_SUPPORTED",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v2:9126:day",
+    "scenario_id": "sealed-v2-9126-05-SV11_salary_pass_through",
+    "family": "SV11_salary_pass_through",
+    "difficulty": "adversarial",
+    "notes": "weekly deposits forwarded in round amounts",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v2:9129:timestamp",
+    "scenario_id": "sealed-v2-9129-01-SV4_boundary_collection",
+    "family": "SV4_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v2:9130:timestamp",
+    "scenario_id": "sealed-v2-9130-06-SV5_recurring_mule_collection",
+    "family": "SV5_recurring_mule_collection",
+    "difficulty": "adversarial",
+    "notes": "mules imitate recurring customers",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 35,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_INCONCLUSIVE",
+     "HYPOTHESIS_VERDICT",
+     "BAND_CAPPED_BY_EVIDENCE",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v2:9134:day",
+    "scenario_id": "sealed-v2-9134-03-SV4_boundary_collection",
+    "family": "SV4_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v2:9134:day",
+    "scenario_id": "sealed-v2-9134-04-SV11_salary_pass_through",
+    "family": "SV11_salary_pass_through",
+    "difficulty": "adversarial",
+    "notes": "weekly deposits forwarded in round amounts",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v2:9137:day",
+    "scenario_id": "sealed-v2-9137-01-SV11_salary_pass_through",
+    "family": "SV11_salary_pass_through",
+    "difficulty": "adversarial",
+    "notes": "weekly deposits forwarded in round amounts",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v2:9137:day",
+    "scenario_id": "sealed-v2-9137-04-SV3_scatter_gather",
+    "family": "SV3_scatter_gather",
+    "difficulty": "medium",
+    "notes": "structuring through 4-8 intermediaries to one account",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 26,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v2:9138:timestamp",
+    "scenario_id": "sealed-v2-9138-00-SV4_boundary_collection",
+    "family": "SV4_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v2:9139:day",
+    "scenario_id": "sealed-v2-9139-04-SV1_mule_collection",
+    "family": "SV1_mule_collection",
+    "difficulty": "easy",
+    "notes": "one-off mule deposits consolidated and moved on",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v2:9139:day",
+    "scenario_id": "sealed-v2-9139-06-SV11_salary_pass_through",
+    "family": "SV11_salary_pass_through",
+    "difficulty": "adversarial",
+    "notes": "weekly deposits forwarded in round amounts",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v2:9140:day",
+    "scenario_id": "sealed-v2-9140-00-SV4_boundary_collection",
+    "family": "SV4_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v2:9141:day",
+    "scenario_id": "sealed-v2-9141-04-SV9_mule_distribution",
+    "family": "SV9_mule_distribution",
+    "difficulty": "medium",
+    "notes": "proceeds split across mules",
+    "kind": "fan_out",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FAN_OUT_RECIPIENTS",
+     "TEMPORAL_DISTRIBUTION_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v2:9141:day",
+    "scenario_id": "sealed-v2-9141-08-SV8_partially_observed_chain",
+    "family": "SV8_partially_observed_chain",
+    "difficulty": "hard",
+    "notes": "one hop of a 4-7 hop chain is not in the data",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v2:9141:day",
+    "scenario_id": "sealed-v2-9141-11-SV11_salary_pass_through",
+    "family": "SV11_salary_pass_through",
+    "difficulty": "adversarial",
+    "notes": "weekly deposits forwarded in round amounts",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v2:9147:day",
+    "scenario_id": "sealed-v2-9147-11-SV4_boundary_collection",
+    "family": "SV4_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED",
+     "COVERAGE_DAY_PRECISION"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v2:9148:timestamp",
+    "scenario_id": "sealed-v2-9148-04-SV4_boundary_collection",
+    "family": "SV4_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v2:9148:timestamp",
+    "scenario_id": "sealed-v2-9148-05-SV11_salary_pass_through",
+    "family": "SV11_salary_pass_through",
+    "difficulty": "adversarial",
+    "notes": "weekly deposits forwarded in round amounts",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v2:9150:timestamp",
+    "scenario_id": "sealed-v2-9150-06-SV4_boundary_collection",
+    "family": "SV4_boundary_collection",
+    "difficulty": "hard",
+    "notes": "consolidation at an account whose outflow is unobserved",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_UNAVAILABLE",
+     "PEER_CONCENTRATION_OUTLIER",
+     "COVERAGE_BOUNDARY",
+     "COVERAGE_DOWNSTREAM_UNOBSERVED"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v2:9153:timestamp",
+    "scenario_id": "sealed-v2-9153-01-SV11_salary_pass_through",
+    "family": "SV11_salary_pass_through",
+    "difficulty": "adversarial",
+    "notes": "weekly deposits forwarded in round amounts",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v2:9153:timestamp",
+    "scenario_id": "sealed-v2-9153-02-SV1_mule_collection",
+    "family": "SV1_mule_collection",
+    "difficulty": "easy",
+    "notes": "one-off mule deposits consolidated and moved on",
+    "kind": "funnel",
+    "band": "insufficient_evidence",
+    "priority": null,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_PASS_THROUGH_SUPPORTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_BOUNDARY"
+    ],
+    "explanation": "abstained"
+   },
+   {
+    "dataset": "bench:sealed-v2:9153:timestamp",
+    "scenario_id": "sealed-v2-9153-03-SV11_salary_pass_through",
+    "family": "SV11_salary_pass_through",
+    "difficulty": "adversarial",
+    "notes": "weekly deposits forwarded in round amounts",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v2:9155:day",
+    "scenario_id": "sealed-v2-9155-00-SV5_recurring_mule_collection",
+    "family": "SV5_recurring_mule_collection",
+    "difficulty": "adversarial",
+    "notes": "mules imitate recurring customers",
+    "kind": "funnel",
+    "band": "low",
+    "priority": 21,
+    "reasons": [
+     "STRUCT_FUNNEL_FEEDERS",
+     "TEMPORAL_CONTRADICTED",
+     "PEER_INCONCLUSIVE",
+     "COVERAGE_DAY_PRECISION",
+     "HYPOTHESIS_VERDICT",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   },
+   {
+    "dataset": "bench:sealed-v2:9156:timestamp",
+    "scenario_id": "sealed-v2-9156-06-SV11_salary_pass_through",
+    "family": "SV11_salary_pass_through",
+    "difficulty": "adversarial",
+    "notes": "weekly deposits forwarded in round amounts",
+    "kind": null,
+    "band": null,
+    "priority": null,
+    "reasons": [],
+    "explanation": "no_formation"
+   },
+   {
+    "dataset": "bench:sealed-v2:9157:day",
+    "scenario_id": "sealed-v2-9157-03-SV10_round_trip",
+    "family": "SV10_round_trip",
+    "difficulty": "medium",
+    "notes": "funds return to the origin through 4 accounts",
+    "kind": "cycle",
+    "band": "low",
+    "priority": 24,
+    "reasons": [
+     "STRUCT_CYCLE_LOOP",
+     "TEMPORAL_CONTRADICTED",
+     "COVERAGE_DAY_PRECISION",
+     "NO_INDEPENDENT_CORROBORATION"
+    ],
+    "explanation": "below_alert_band"
+   }
+  ]
+ },
+ "runtime_seconds": 276.4
+}
