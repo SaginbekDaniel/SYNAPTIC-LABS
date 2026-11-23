@@ -41,7 +41,8 @@ const liveTracks = (page: Page) =>
 async function openGraph(page: Page, seed: string) {
   await seedAndAnalyse(page, seed);
   await page.goto("/network");
-  await expect(page.getByTestId("graph-canvas")).toBeVisible();
+  // The force layout runs in a worker; the graph can be driven once the canvas reports "ready".
+  await expect(page.getByTestId("graph-canvas")).toHaveAttribute("data-layout", "ready", { timeout: 30_000 });
 }
 
 test("consent comes before the browser prompt, and denial leaves the graph fully usable", async ({ page, context, baseURL }) => {

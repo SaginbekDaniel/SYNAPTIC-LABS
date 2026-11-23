@@ -207,3 +207,42 @@ Entry template:
 * Behaviour note: the browser prompt now appears after the model has loaded (a second or so locally, longer on slow links), not right after the
   click; `getUserMedia` does not require transient user activation in Chromium, Firefox or Safari. Real browsers other than Chromium: B-032.
 * State file updated: yes.
+
+### L-0011 · 2026-11-22 · B-020 · status: done
+* Branch / commits: `feat/b-020-layout-worker` → fast-forwarded into `claude/peaceful-darwin-nrquu9`. Decision D-7 taken as recommended
+  (worker + cache, same algorithm).
+* Reproduction (Chromium, dev server, graph response replaced by a deterministic n-account graph): one long task of **750 ms at 100 accounts,
+  2,462 ms at 200**; at 300 the canvas did not appear within the 5 s expect timeout. CPU profile of the new mount: no application hotspot,
+  remaining main-thread time is Cytoscape's own style/draw.
+* Changes (`apps/web/src/components/graph/`): `coseLayout.ts` (pure `computeCoseLayout` — same cose options, `randomize: false`; node sizes
+  passed in; `layoutKey` = length-prefixed FNV fingerprint of every input), `layoutWorker.ts` (module worker; says "ready" once loaded),
+  `layoutClient.ts` (one worker per canvas, work sent only after "ready", a superseded *computing* job terminates the worker, an unsent one
+  is replaced, `dispose()` terminates — a loading worker as soon as it is ready; LRU cache of 24 layouts; synchronous fallback if workers are
+  unavailable or crash). `GraphCanvas.tsx`: sizes measured on a headless styled instance; the drawn instance is created only once positions
+  exist (cache hit → synchronously); while pending the stage shows the existing loading shimmer plus a visible, announced "Раскладка графа…"
+  (`graph.layingOut`), `aria-busy`, `data-layout="pending|ready"` (rendered from state from the first frame); `performance.mark`s bracket the
+  off-thread layout; selection/emphasis re-applied to a new instance (`epoch`).
+* Defects found on the way and fixed: (1) headless Cytoscape defaults to the `null` layout, which put every node at (0,0) — cose then
+  consulted `Math.random` ~3,500 times per run and the picture changed on every load (caught by the existing determinism E2E); fixed with
+  `layout: { name: "preset" }`, unit test asserts no `Math.random` call. (2) Terminating a still-loading worker (React StrictMode double mount in
+  dev) left its module requests dangling, so Playwright's `networkidle` never fired (mobile spec) — fixed by the ready handshake.
+  (3) `GestureSession.start()` silently ignored a click while the graph had no controller (now a real window during layout); the click is now
+  remembered and honoured when the controller attaches (dropped on dismiss/stop); 2 unit tests.
+* Deliberate behaviour change: cose used the container size as its gravity centre, so the picture depended on the viewport (and a 0-sized
+  container centred it at the origin). The worker's headless instance has a fixed centre near the seeds' centre, so the same snapshot now gives
+  the same arrangement on every screen size; the canvas still fits it to the stage. The determinism E2E (same snapshot, same picture) passes
+  unchanged. No position animation any more (the stage shows the result once, faded in with `--dur-2`, instant for reduced motion).
+* After (production bundle via `gateway_sim.mjs` with the generated CSP): worker time 374 / 1,618 / 2,645 / 3,879 ms at 100 / 200 / 300 / 400
+  accounts; **no long task while the worker computes at any size**; largest main-thread tasks: setup 67–229 ms before, drawing the result
+  64–199 ms after. Worker chunk `layoutWorker-*.js` 452 kB (its own Cytoscape copy; fetched by the graph page only). `worker-src 'self'` allows it.
+* Tests: `coseLayout.test.ts` 5 (determinism, no Math.random, finite distinct positions, stray edges, key sensitivity and separator safety),
+  `layoutClient.test.ts` 8 (cache, supersede-terminates, loading worker kept and only the latest sent, dispose while loading / computing,
+  crash fallback, no-Worker fallback, LRU bound), gesture 2; E2E: "a 300-account view lays out in a worker" (no long task > 200 ms inside the
+  layout window, none ≥ 1 s from navigation to a drawn graph, returning to the view reuses the cached layout). `stageSettled` and the gesture
+  `openGraph` now wait for `data-layout="ready"` instead of a fixed 900 ms. On the old canvas the new E2E fails at the ready signal (the
+  quantitative before-evidence is the reproduction above).
+* Verification: tsc clean; vitest **128**; vite build; Playwright cold cache **36 passed**; the same suite against the production bundle with the
+  gateway CSP headers **36 passed**; gestures 20/20 over 4 repetitions; graph-workspace 18/18 over 3; visual check of pending and ready states,
+  dark/light, 1440 and 390 px (scratch specs, deleted).
+* Not executed: real Nginx image (CI covers it); browsers other than Chromium.
+* State file updated: yes.

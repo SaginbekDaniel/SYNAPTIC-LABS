@@ -485,6 +485,23 @@
 .graph-stage__canvas {
   position: absolute;
   inset: 0;
+  transition: opacity var(--dur-2) var(--ease);
+}
+/* Centred in the stage while the force layout runs; announced to screen readers as a status. */
+.graph-stage__status {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  pointer-events: none;
+}
+/* While the force layout runs in its worker: nothing to see or click yet (the stage shimmers instead). */
+.graph-stage__canvas[data-layout="pending"] {
+  visibility: hidden;
+  opacity: 0;
 }
 .graph-stage__controls {
   position: absolute;

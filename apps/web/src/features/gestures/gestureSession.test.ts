@@ -11,7 +11,7 @@ function deferred<T>() {
   return { promise, resolve, reject };
 }
 
-function harness() {
+function harness(opts: { controller?: boolean } = {}) {
   const log: string[] = [];
   const engineReady = deferred<void>();
   const cameraResult = deferred<CameraState>();
@@ -47,10 +47,11 @@ function harness() {
   });
   // The session only needs a video element to hand to the camera and a controller to drive.
   session.attachVideo({ requestVideoFrameCallback: () => 0 } as unknown as HTMLVideoElement);
-  session.setController({ dispatch: () => true, stageSize: () => ({ width: 800, height: 600 }) } as unknown as GraphController);
+  const controller = { dispatch: () => true, stageSize: () => ({ width: 800, height: 600 }) } as unknown as GraphController;
+  if (opts.controller !== false) session.setController(controller);
   session.requestConsent();
   const flush = () => new Promise((r) => setTimeout(r, 0));
-  return { session, log, uis, engineReady, cameraResult, flush, fireEngineError: () => engineError?.(), endCamera: () => cameraListener?.("ended") };
+  return { session, controller, log, uis, engineReady, cameraResult, flush, fireEngineError: () => engineError?.(), endCamera: () => cameraListener?.("ended") };
 }
 
 describe("GestureSession start order (model before camera, H-05)", () => {
@@ -151,5 +152,26 @@ describe("GestureSession start order (model before camera, H-05)", () => {
     h.endCamera();
     expect(h.session.getSnapshot()).toMatchObject({ ui: "failed", failure: "ended" });
     expect(h.log).toEqual(expect.arrayContaining(["camera.stop", "engine.dispose"]));
+  });
+
+  it("a start clicked while the graph is still being laid out runs once the graph can be driven", async () => {
+    const h = harness({ controller: false });
+    await h.session.start();
+    expect(h.log).toEqual([]); // nothing yet: no controller
+    expect(h.session.getSnapshot().ui).toBe("consent");
+    h.session.setController(h.controller);
+    await h.flush();
+    expect(h.session.getSnapshot().ui).toBe("loading");
+    expect(h.log).toEqual(["engine.create", "engine.start"]);
+  });
+
+  it("a remembered start is dropped when the consent is dismissed first", async () => {
+    const h = harness({ controller: false });
+    await h.session.start();
+    h.session.dismissConsent();
+    h.session.setController(h.controller);
+    await h.flush();
+    expect(h.log).toEqual([]);
+    expect(h.session.getSnapshot().ui).toBe("off");
   });
 });

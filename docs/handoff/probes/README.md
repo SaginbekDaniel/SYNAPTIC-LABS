@@ -23,6 +23,17 @@ scale_graph     hub 20000 peers, 199996 rows: local depth1 215 ms · depth2 (200
 cose_layout     50 nodes 109 ms · 100: 355 ms · 200: 1150 ms · 300: 2791 ms
 ```
 
+Re-measured 2026-11-22 after B-020 (Chromium, synthetic graph of n accounts / 1.5 n transfers served in place of the real
+graph response, `PerformanceObserver` long tasks; scratch spec, deleted — the committed E2E in
+`apps/web/e2e/graph-workspace.spec.ts` asserts the 300-account case):
+
+```
+before (synchronous cose on the main thread, dev server)  100: one 750 ms long task · 200: 2462 ms · 300: canvas not shown within 5 s
+after  (worker, production bundle)  layout in the worker 100: 374 ms · 200: 1618 ms · 300: 2645 ms · 400: 3879 ms
+                                    long tasks while the worker computes: none at any size
+                                    largest main-thread tasks: setup 67–229 ms (before), drawing the result 64–199 ms (after)
+```
+
 ## Production-bundle run (what `gateway_sim.mjs` is for)
 
 Not the real Nginx (no rate limits, token or gzip; CI exercises the real image) — it serves `dist/` with exactly the headers `docker/csp.mjs` generates,

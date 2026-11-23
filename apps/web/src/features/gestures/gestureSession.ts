@@ -59,6 +59,8 @@ export class GestureSession {
   private running = false;
   private lastFrame = 0;
   private trackedSince: number | null = null;
+  /** "Start" was clicked while the graph was still being laid out (no controller yet): start once it is. */
+  private startRequested = false;
 
   constructor(private readonly deps: GestureDeps = browserDeps) {}
 
@@ -85,6 +87,7 @@ export class GestureSession {
     this.adapter = controller ? new GestureAdapter(controller, () => controller.stageSize()) : null;
     if (this.adapter) this.adapter.mode = this.snap.mode;
     if (!controller && this.snap.ui !== "off" && this.snap.ui !== "consent") this.stop();
+    if (controller && this.startRequested) void this.start();
   }
 
   setMode(mode: GestureMode): void {
@@ -103,12 +106,22 @@ export class GestureSession {
   }
 
   dismissConsent(): void {
+    this.startRequested = false;
     if (this.snap.ui === "consent") this.patch({ ui: "off" });
   }
 
   /** Second, deliberate click: load the local recogniser, then start the camera. */
   async start(): Promise<void> {
-    if (this.snap.ui !== "consent" || !this.video || !this.controller) return;
+    if (this.snap.ui !== "consent") {
+      this.startRequested = false;
+      return;
+    }
+    if (!this.video || !this.controller) {
+      // The graph is being laid out (or rebuilt): honour the click as soon as it can be driven.
+      this.startRequested = true;
+      return;
+    }
+    this.startRequested = false;
     const gen = ++this.generation;
 
     // 1. The model first. No camera request has been made while this runs.
@@ -208,6 +221,7 @@ export class GestureSession {
   }
 
   stop(reason: "user" | "hidden" = "user"): void {
+    this.startRequested = false;
     if (this.snap.ui === "off") return;
     this.teardown();
     this.patch({ ui: reason === "hidden" ? "failed" : "off", failure: reason === "hidden" ? "hidden" : null, pointer: null, tracking: "searching", phase: "idle" });

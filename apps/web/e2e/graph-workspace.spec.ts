@@ -8,9 +8,29 @@ async function shot(page: Page, name: string) {
 }
 
 async function stageSettled(page: Page) {
-  await expect(page.getByTestId("graph-canvas")).toBeVisible();
-  // cose settles off-screen and moves once; give the single end-animation time to finish.
-  await page.waitForTimeout(900);
+  const canvas = page.getByTestId("graph-canvas");
+  // The force layout runs in a worker; the drawn graph exists once the canvas reports "ready".
+  await expect(canvas).toHaveAttribute("data-layout", "ready", { timeout: 30_000 });
+  await expect(canvas).toHaveCSS("opacity", "1");
+  await expect(canvas.locator("canvas").first()).toBeVisible();
+}
+
+/** A deterministic connected graph of `n` accounts in the API's shape (a tree plus n/2 extra transfers). */
+function syntheticGraph(n: number) {
+  let s = n >>> 0;
+  const rnd = () => (s = (s * 1664525 + 1013904223) >>> 0) / 2 ** 32;
+  const nodes = Array.from({ length: n }, (_, i) => ({ account_id: `acc-${i}`, hop: null, is_boundary: false, formations: [], band: null, priority: null }));
+  const edges: Record<string, unknown>[] = [];
+  const seen = new Set<string>();
+  const add = (a: number, b: number) => {
+    const key = `${a}>${b}`;
+    if (a === b || seen.has(key)) return;
+    seen.add(key);
+    edges.push({ kind: "observed_transfer", sender: `acc-${a}`, receiver: `acc-${b}`, currency: "KZT", amount_minor: String(1000 + edges.length), n_transactions: 1, first_date: "2026-07-01", last_date: "2026-07-01", evidence_formation_ids: [], temporal_statuses: [] });
+  };
+  for (let i = 1; i < n; i++) add(i, Math.floor(rnd() * i));
+  for (let i = 0; i < n / 2; i++) add(Math.floor(rnd() * n), Math.floor(rnd() * n));
+  return { nodes, edges };
 }
 
 test("overview: server-ranked formations, snapshot identity, keyboard selection and expansion", async ({ page }) => {
@@ -83,6 +103,52 @@ test("the same snapshot draws the same picture on every load", async ({ page }) 
   await stageSettled(page);
   const second = await page.getByTestId("graph-canvas").screenshot();
   expect(second.equals(first)).toBe(true);
+});
+
+test("a 300-account view lays out in a worker: the main thread stays responsive (H-04)", async ({ page }) => {
+  test.setTimeout(120_000);
+  const errors = collectErrors(page);
+  await page.addInitScript(() => {
+    const w = window as unknown as { __longTasks: { start: number; duration: number }[] };
+    w.__longTasks = [];
+    new PerformanceObserver((list) => list.getEntries().forEach((e) => w.__longTasks.push({ start: e.startTime, duration: e.duration }))).observe({
+      type: "longtask",
+      buffered: true,
+    });
+  });
+  await seedAndAnalyse(page, "3106");
+  // The synthetic suites never reach 300 accounts in one view: serve the real response for this snapshot
+  // with 300 accounts and 449 transfers in place of its own.
+  await page.route("**/api/v1/snapshots/*/graph?**", async (route) => {
+    const body = await (await route.fetch()).json();
+    await route.fulfill({ json: { ...body, ...syntheticGraph(300), formations: [], limits: { ...body.limits, max_nodes: 400, truncated: false, reasons: [] } } });
+  });
+  await page.goto("/network");
+  await stageSettled(page);
+  await expect(page.getByTestId("graph-canvas")).toHaveAttribute("aria-label", /300 счетов, 449 связей/);
+
+  const timing = await page.evaluate(() => {
+    const mark = (name: string) => performance.getEntriesByName(name, "mark")[0]?.startTime ?? null;
+    const w = window as unknown as { __longTasks: { start: number; duration: number }[] };
+    return { start: mark("nexora:graph-layout:start"), end: mark("nexora:graph-layout:end"), tasks: w.__longTasks };
+  });
+  expect(timing.start).not.toBeNull();
+  expect(timing.end).not.toBeNull();
+  const [start, end] = [timing.start!, timing.end!];
+  // While the worker computes, no task blocks the main thread for more than 200 ms ...
+  const during = timing.tasks.filter((t) => t.start >= start && t.start + t.duration <= end);
+  expect(during.filter((t) => t.duration > 200)).toEqual([]);
+  // ... and nothing from navigation to a drawn graph blocks for a second (synchronous cose: 2.5 s at 200 accounts).
+  expect(timing.tasks.filter((t) => t.duration >= 1000)).toEqual([]);
+
+  // Back to the same view: the stored positions are reused, no new layout starts.
+  const layoutsStarted = () => page.evaluate(() => performance.getEntriesByName("nexora:graph-layout:start", "mark").length);
+  const before = await layoutsStarted();
+  await page.getByRole("button", { name: "Таблица" }).click();
+  await page.getByRole("button", { name: "Граф", exact: true }).click();
+  await stageSettled(page);
+  expect(await layoutsStarted()).toBe(before);
+  expect(errors).toEqual([]);
 });
 
 test("light theme and narrow widths keep the workspace usable", async ({ page }) => {

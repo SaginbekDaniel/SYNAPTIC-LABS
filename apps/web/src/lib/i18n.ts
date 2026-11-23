@@ -761,6 +761,7 @@ const ru = {
   "gesture.phase.dragging": "перенос",
   "gesture.phase.zooming": "масштаб",
   "graph.controls": "Управление графом",
+  "graph.layingOut": "Раскладка графа…",
   "graph.zoomIn": "Приблизить",
   "graph.zoomOut": "Отдалить",
   "graph.fit": "Показать формацию целиком",

@@ -7,6 +7,8 @@ import type { Band } from "../../lib/types";
 import { Icon } from "../ui/icons";
 import { toCanvasColor } from "./canvasColor";
 import { GraphController, type GraphViewport } from "./controller";
+import { layoutKey, type LayoutInput, type LayoutPositions } from "./coseLayout";
+import { cachedLayout, LayoutCancelled, LayoutClient } from "./layoutClient";
 
 export type NodeRole = "subject" | "entry" | "exit" | "member" | "boundary" | "context";
 export type EdgeStatus = "supported" | "possible_ambiguous" | "contradicted" | "unavailable" | "mixed";
@@ -240,6 +242,8 @@ export interface GraphCanvasProps {
 }
 
 const MAX_EDGE_LABELS = 14;
+export const LAYOUT_MARK_START = "nexora:graph-layout:start";
+export const LAYOUT_MARK_END = "nexora:graph-layout:end";
 
 /**
  * Cytoscape canvas. The graph is built once per element set; selection, highlight and theme are
@@ -253,6 +257,12 @@ export function GraphCanvas(props: GraphCanvasProps) {
   const [focus, setFocus] = useState(false);
   const [cursor, setCursor] = useState<string | null>(null);
   const [announce, setAnnounce] = useState("");
+  // "pending" while the force layout runs in its worker: nothing is drawn yet (no seed scatter, no clicks on
+  // nodes that are about to move) and the stage shows its loading state.
+  const [layoutPending, setLayoutPending] = useState(() => props.layout === "cose" && props.nodes.length > 0);
+  // Bumped whenever a drawn instance is created, so class-based state is applied to it.
+  const [epoch, setEpoch] = useState(0);
+  const layoutClient = useRef<LayoutClient | null>(null);
   const hintId = useId();
   const colorBy: ColorBy = props.colorBy ?? "role";
   const handlers = useRef(props);
@@ -284,78 +294,124 @@ export function GraphCanvas(props: GraphCanvasProps) {
     [props.nodes, props.edges, labelEdges],
   );
 
+  // The layout worker lives as long as the canvas; nothing keeps computing after unmount.
+  useEffect(
+    () => () => {
+      layoutClient.current?.dispose();
+      layoutClient.current = null;
+    },
+    [],
+  );
+
   // Build (and destroy) the instance only when the element set, layout or colour mode changes.
+  // Force layout ("cose"): node sizes are measured on a headless, styled instance; the positions are computed
+  // in a worker (coseLayout.ts, layoutClient.ts) or taken from the cache; only then is the drawn instance
+  // created, directly at its final positions. Nothing is drawn while the layout runs.
   useEffect(() => {
-    if (!ref.current) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const cy = cytoscape({
-      container: ref.current,
-      elements,
-      style: stylesheet(readPalette(), colorBy),
-      wheelSensitivity: 0.25,
-      minZoom: 0.15,
-      maxZoom: 3,
-      boxSelectionEnabled: false,
-      layout: { name: "preset", fit: props.layout !== "cose", padding: 48 },
-    });
-    // The force layout is owned here so it can be stopped before destroy(): destroying an instance
-    // while a layout is still iterating makes Cytoscape dereference its torn-down renderer.
-    const layout =
-      props.layout === "cose"
-        ? cy.layout({
-            name: "cose",
-            // Positions are seeded per node id (see graphModel.seedPosition); with randomize off
-            // and no coincident nodes, cose never consults Math.random → same input, same picture.
-            randomize: false,
-            // Settle off-screen, then move once to the result; no animation for reduced motion.
-            animate: reduced ? false : "end",
-            animationDuration: 260,
-            nodeRepulsion: () => 9000,
-            idealEdgeLength: () => 95,
-            nodeOverlap: 12,
-            numIter: 1000,
-            padding: 36,
-          } as cytoscape.LayoutOptions)
-        : null;
-    layout?.run();
-    const controller = new GraphController(cytoscapeViewport(cy), {
-      onSelectNode: (id) => handlers.current.onSelectNode?.(id),
-      onSelectEdge: (id) => {
-        const spec = id === null ? null : handlers.current.edges.find((e) => e.id === id) ?? null;
-        handlers.current.onSelectEdge?.(spec);
-      },
-      onHover: (id) => {
-        cy.nodes(".hover").removeClass("hover");
-        if (id) cy.getElementById(id).addClass("hover");
-      },
-      onExpand: (id) => handlers.current.onExpand?.(id),
-    });
-    cy.on("tap", "node", (evt) => controller.dispatch({ type: "selectNode", id: evt.target.id() }));
-    cy.on("tap", "edge", (evt) => controller.dispatch({ type: "selectEdge", id: evt.target.id() }));
-    cy.on("tap", (evt) => {
-      if (evt.target === cy) {
-        controller.dispatch({ type: "selectNode", id: null });
-        controller.dispatch({ type: "selectEdge", id: null });
+    const container = ref.current;
+    if (!container) return;
+    let disposed = false;
+    let destroy: (() => void) | null = null;
+    const setPending = (pending: boolean) => {
+      container.dataset.layout = pending ? "pending" : "ready";
+      setLayoutPending(pending);
+    };
+
+    const mount = (positions: LayoutPositions | null) => {
+      const placed = positions
+        ? elements.map((el, i) => (i * 2 < positions.length && !("source" in el.data) ? { ...el, position: { x: positions[2 * i]!, y: positions[2 * i + 1]! } } : el))
+        : elements;
+      const cy = cytoscape({
+        container,
+        elements: placed,
+        // Read now, not when the layout was requested: the theme may have changed while it ran.
+        style: stylesheet(readPalette(), colorBy),
+        wheelSensitivity: 0.25,
+        minZoom: 0.15,
+        maxZoom: 3,
+        boxSelectionEnabled: false,
+        layout: { name: "preset", fit: true, padding: props.layout === "cose" ? 36 : 48 },
+      });
+      const controller = new GraphController(cytoscapeViewport(cy), {
+        onSelectNode: (id) => handlers.current.onSelectNode?.(id),
+        onSelectEdge: (id) => {
+          const spec = id === null ? null : handlers.current.edges.find((e) => e.id === id) ?? null;
+          handlers.current.onSelectEdge?.(spec);
+        },
+        onHover: (id) => {
+          cy.nodes(".hover").removeClass("hover");
+          if (id) cy.getElementById(id).addClass("hover");
+        },
+        onExpand: (id) => handlers.current.onExpand?.(id),
+      });
+      cy.on("tap", "node", (evt) => controller.dispatch({ type: "selectNode", id: evt.target.id() }));
+      cy.on("tap", "edge", (evt) => controller.dispatch({ type: "selectEdge", id: evt.target.id() }));
+      cy.on("tap", (evt) => {
+        if (evt.target === cy) {
+          controller.dispatch({ type: "selectNode", id: null });
+          controller.dispatch({ type: "selectEdge", id: null });
+        }
+      });
+      cy.on("dbltap", "node", (evt) => controller.dispatch({ type: "focusNode", id: evt.target.id() }));
+      cy.on("mouseover", "node", (evt) => {
+        evt.target.addClass("hover");
+        container.style.cursor = "pointer";
+      });
+      cy.on("mouseover", "edge", () => (container.style.cursor = "pointer"));
+      cy.on("mouseout", "node", (evt) => evt.target.removeClass("hover"));
+      cy.on("mouseout", "node, edge", () => (container.style.cursor = ""));
+      cyRef.current = cy;
+      controllerRef.current = controller;
+      handlers.current.onController?.(controller);
+      setPending(false);
+      setEpoch((e) => e + 1); // re-apply selection/emphasis classes to the new instance
+      destroy = () => {
+        handlers.current.onController?.(null);
+        controllerRef.current = null;
+        cy.stop(true, false);
+        cy.destroy();
+        cyRef.current = null;
+      };
+    };
+
+    if (props.layout === "cose" && props.nodes.length > 0) {
+      // Sizes depend on the stylesheet only through shapes and dimensions, never on colours.
+      // `preset` keeps the seeded positions (a headless instance otherwise runs the "null" layout: all at 0,0).
+      const probe = cytoscape({ headless: true, styleEnabled: true, elements, style: stylesheet(readPalette(), colorBy), layout: { name: "preset" } });
+      const input: LayoutInput = {
+        nodes: probe.nodes().map((n) => {
+          const p = n.position();
+          const d = n.layoutDimensions({});
+          return { id: n.id(), x: p.x, y: p.y, w: d.w, h: d.h };
+        }),
+        edges: probe.edges().map((e) => ({ source: e.source().id(), target: e.target().id() })),
+      };
+      probe.destroy();
+      const hit = cachedLayout(layoutKey(input));
+      if (hit) mount(hit);
+      else {
+        setPending(true);
+        // Marks bracket the off-thread layout (diagnostics; the E2E long-task test measures between them).
+        performance.mark(LAYOUT_MARK_START);
+        layoutClient.current ??= new LayoutClient();
+        layoutClient.current.layout(input).then(
+          (positions) => {
+            if (disposed) return;
+            performance.mark(LAYOUT_MARK_END);
+            mount(positions);
+          },
+          (err: unknown) => {
+            // Superseded or unmounted: the next build owns the stage. Anything else: the seeded picture.
+            if (!disposed && !(err instanceof LayoutCancelled)) mount(null);
+          },
+        );
       }
-    });
-    cy.on("dbltap", "node", (evt) => controller.dispatch({ type: "focusNode", id: evt.target.id() }));
-    cy.on("mouseover", "node", (evt) => {
-      evt.target.addClass("hover");
-      if (ref.current) ref.current.style.cursor = "pointer";
-    });
-    cy.on("mouseover", "edge", () => ref.current && (ref.current.style.cursor = "pointer"));
-    cy.on("mouseout", "node", (evt) => evt.target.removeClass("hover"));
-    cy.on("mouseout", "node, edge", () => ref.current && (ref.current.style.cursor = ""));
-    cyRef.current = cy;
-    controllerRef.current = controller;
-    handlers.current.onController?.(controller);
+    } else mount(null);
+
     return () => {
-      handlers.current.onController?.(null);
-      controllerRef.current = null;
-      layout?.stop();
-      cy.stop(true, false);
-      cy.destroy();
-      cyRef.current = null;
+      disposed = true;
+      layoutClient.current?.cancel();
+      destroy?.();
     };
   }, [elements, props.layout, colorBy]);
 
@@ -395,7 +451,7 @@ export function GraphCanvas(props: GraphCanvasProps) {
       }
       if (focusSet) cy.elements().difference(focusSet).addClass("dim");
     });
-  }, [selectedNode, selectedEdge, highlightEdges, emphasis, flagged, elements, cursor]);
+  }, [selectedNode, selectedEdge, highlightEdges, emphasis, flagged, elements, cursor, epoch]);
 
   // Focus mode: the stage fills the viewport; Escape leaves it.
   useEffect(() => {
@@ -463,10 +519,14 @@ export function GraphCanvas(props: GraphCanvasProps) {
   };
 
   return (
-    <div className={`graph-stage${focus ? " graph-stage--focus" : ""}${props.className ? ` ${props.className}` : ""}`}>
+    <div className={`graph-stage${focus ? " graph-stage--focus" : ""}${layoutPending ? " graph-stage--loading" : ""}${props.className ? ` ${props.className}` : ""}`}>
       <div
         ref={ref}
         className="graph-stage__canvas"
+        aria-busy={layoutPending || undefined}
+        // "ready" = drawn and drivable (controller attached). Also set imperatively by the build effect so it
+        // is right before React re-renders.
+        data-layout={layoutPending ? "pending" : "ready"}
         role="application"
         aria-roledescription={t("graph.roledescription")}
         aria-label={props.label ?? t("graph.alt", { nodes: props.nodes.length, edges: props.edges.length })}
@@ -481,6 +541,9 @@ export function GraphCanvas(props: GraphCanvasProps) {
       </p>
       <p className="visually-hidden" aria-live="polite">
         {announce}
+      </p>
+      <p className={layoutPending ? "graph-stage__status" : "visually-hidden"} role="status" data-testid="graph-layout-status">
+        {layoutPending ? t("graph.layingOut") : ""}
       </p>
       <div className="graph-stage__controls" role="toolbar" aria-label={t("graph.controls")}>
         <button type="button" className="icon-btn" onClick={() => controllerRef.current?.dispatch({ type: "zoomStep", direction: 1 })} aria-label={t("graph.zoomIn")} title={t("graph.zoomIn")}>
