@@ -1,0 +1,27 @@
+{
+  "version": "transfer-protection-holdout-v1",
+  "seed": 412073,
+  "amount_baseline_minor": 20000000,
+  "groups": [
+    {"recipe": "regular", "fraud": false, "count": 10},
+    {"recipe": "first_recipient", "fraud": false, "count": 10},
+    {"recipe": "large_invoice", "fraud": false, "count": 8},
+    {"recipe": "family", "fraud": false, "count": 6},
+    {"recipe": "payroll", "fraud": false, "count": 6},
+    {"recipe": "settlement", "fraud": false, "count": 9},
+    {"recipe": "refund", "fraud": false, "count": 6},
+    {"recipe": "unexplained_collection", "fraud": false, "count": 5},
+    {"recipe": "partial", "fraud": false, "count": 3},
+    {"recipe": "missing", "fraud": false, "count": 2},
+    {"recipe": "timeout", "fraud": false, "count": 2},
+    {"recipe": "timed_collection", "fraud": true, "count": 12},
+    {"recipe": "timed_with_report", "fraud": true, "count": 8},
+    {"recipe": "chain", "fraud": true, "count": 5},
+    {"recipe": "report_only", "fraud": true, "count": 4},
+    {"recipe": "slow_collection", "fraud": true, "count": 5},
+    {"recipe": "ambiguous_collection", "fraud": true, "count": 4},
+    {"recipe": "partial", "fraud": true, "count": 3},
+    {"recipe": "stale", "fraud": true, "count": 2},
+    {"recipe": "dependency_failure", "fraud": true, "count": 2}
+  ]
+}

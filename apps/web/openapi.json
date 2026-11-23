@@ -1007,6 +1007,57 @@
         "title": "CasePage",
         "type": "object"
       },
+      "ContextFact": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": [
+              "FAMILY_TRANSFER",
+              "PAYROLL",
+              "MERCHANT_SETTLEMENT",
+              "REFUND",
+              "CONFIRMED_REPORT"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "known_at": {
+            "format": "date-time",
+            "title": "Known At",
+            "type": "string"
+          },
+          "occurred_at": {
+            "format": "date-time",
+            "title": "Occurred At",
+            "type": "string"
+          },
+          "recipient": {
+            "title": "Recipient",
+            "type": "string"
+          },
+          "source_ref": {
+            "title": "Source Ref",
+            "type": "string"
+          },
+          "transaction_ids": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Transaction Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "source_ref",
+          "kind",
+          "recipient",
+          "occurred_at",
+          "known_at"
+        ],
+        "title": "ContextFact",
+        "type": "object"
+      },
       "Coverage": {
         "additionalProperties": false,
         "properties": {
@@ -1967,6 +2018,59 @@
         "title": "FormationDetail",
         "type": "object"
       },
+      "FormationProfile": {
+        "additionalProperties": false,
+        "properties": {
+          "band": {
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low",
+              "insufficient_evidence"
+            ],
+            "title": "Band",
+            "type": "string"
+          },
+          "formation_id": {
+            "title": "Formation Id",
+            "type": "string"
+          },
+          "indicators": {
+            "items": {
+              "$ref": "#/components/schemas/Indicator"
+            },
+            "title": "Indicators",
+            "type": "array"
+          },
+          "kind": {
+            "enum": [
+              "funnel",
+              "chain",
+              "fan_out",
+              "cycle"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          }
+        },
+        "required": [
+          "formation_id",
+          "kind",
+          "band",
+          "limitations",
+          "indicators"
+        ],
+        "title": "FormationProfile",
+        "type": "object"
+      },
       "FormationSummary": {
         "additionalProperties": false,
         "properties": {
@@ -2292,6 +2396,55 @@
           "report"
         ],
         "title": "ImportResult",
+        "type": "object"
+      },
+      "Indicator": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence_id": {
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "family": {
+            "enum": [
+              "STRUCTURE",
+              "TEMPORAL",
+              "PEER_STATISTICS",
+              "NETWORK_CONTEXT"
+            ],
+            "title": "Family",
+            "type": "string"
+          },
+          "reason_code": {
+            "title": "Reason Code",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "supported",
+              "possible_ambiguous",
+              "contradicted",
+              "unavailable"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "transaction_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Transaction Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "evidence_id",
+          "family",
+          "status",
+          "reason_code",
+          "transaction_ids"
+        ],
+        "title": "Indicator",
         "type": "object"
       },
       "Job": {
@@ -3020,6 +3173,36 @@
         "title": "ScenarioMetrics",
         "type": "object"
       },
+      "ScenarioOption": {
+        "additionalProperties": false,
+        "properties": {
+          "amount_minor": {
+            "title": "Amount Minor",
+            "type": "string"
+          },
+          "currency": {
+            "const": "KZT",
+            "default": "KZT",
+            "title": "Currency",
+            "type": "string"
+          },
+          "recipient_id": {
+            "title": "Recipient Id",
+            "type": "string"
+          },
+          "scenario_id": {
+            "title": "Scenario Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "scenario_id",
+          "recipient_id",
+          "amount_minor"
+        ],
+        "title": "ScenarioOption",
+        "type": "object"
+      },
       "Sensitivity": {
         "additionalProperties": false,
         "properties": {
@@ -3397,6 +3580,297 @@
           "items"
         ],
         "title": "TransactionPage",
+        "type": "object"
+      },
+      "TransferCheckRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "amount_minor": {
+            "pattern": "^[1-9][0-9]{0,37}$",
+            "title": "Amount Minor",
+            "type": "string"
+          },
+          "client_context": {
+            "const": "none",
+            "default": "none",
+            "title": "Client Context",
+            "type": "string"
+          },
+          "currency": {
+            "const": "KZT",
+            "title": "Currency",
+            "type": "string"
+          },
+          "recipient_id": {
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Recipient Id",
+            "type": "string"
+          },
+          "scenario_id": {
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Scenario Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "scenario_id",
+          "recipient_id",
+          "currency",
+          "amount_minor"
+        ],
+        "title": "TransferCheckRequest",
+        "type": "object"
+      },
+      "TransferCheckResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "assessment_id": {
+            "title": "Assessment Id",
+            "type": "string"
+          },
+          "coverage": {
+            "enum": [
+              "SUFFICIENT",
+              "LIMITED",
+              "UNAVAILABLE"
+            ],
+            "title": "Coverage",
+            "type": "string"
+          },
+          "customer_message": {
+            "title": "Customer Message",
+            "type": "string"
+          },
+          "decision": {
+            "enum": [
+              "ALLOW",
+              "WARN",
+              "STEP_UP",
+              "LIMITED_SIGNAL",
+              "UNAVAILABLE"
+            ],
+            "title": "Decision",
+            "type": "string"
+          },
+          "policy_version": {
+            "title": "Policy Version",
+            "type": "string"
+          },
+          "reason_codes": {
+            "items": {
+              "enum": [
+                "INSUFFICIENT_HISTORY",
+                "INCOMPLETE_GRAPH",
+                "AMBIGUOUS_TIMESTAMPS",
+                "STALE_PROFILE",
+                "MISSING_PROFILE",
+                "DEPENDENCY_FAILURE",
+                "TIMEOUT",
+                "FEATURE_DISABLED",
+                "NO_SUPPORTED_CONCERN",
+                "SUSPICIOUS_NETWORK_LINK",
+                "TEMPORAL_FLOW_CONFIRMED",
+                "INDEPENDENT_REPORT",
+                "EXPLAINED_ACTIVITY",
+                "ESTABLISHED_RELATIONSHIP"
+              ],
+              "type": "string"
+            },
+            "title": "Reason Codes",
+            "type": "array"
+          },
+          "recommended_actions": {
+            "items": {
+              "enum": [
+                "CONTINUE_SIMULATION",
+                "CANCEL",
+                "REVIEW_DETAILS",
+                "CONTACT_OFFICIAL_SUPPORT",
+                "RETRY"
+              ],
+              "type": "string"
+            },
+            "title": "Recommended Actions",
+            "type": "array"
+          },
+          "risk_band": {
+            "enum": [
+              "LOW",
+              "ELEVATED",
+              "HIGH",
+              "UNKNOWN"
+            ],
+            "title": "Risk Band",
+            "type": "string"
+          },
+          "simulation": {
+            "const": true,
+            "default": true,
+            "title": "Simulation",
+            "type": "boolean"
+          },
+          "snapshot_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Snapshot Id"
+          }
+        },
+        "required": [
+          "assessment_id",
+          "decision",
+          "risk_band",
+          "coverage",
+          "reason_codes",
+          "customer_message",
+          "recommended_actions",
+          "snapshot_id",
+          "policy_version"
+        ],
+        "title": "TransferCheckResponse",
+        "type": "object"
+      },
+      "TransferEvidenceRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "assessment_id": {
+            "maxLength": 36,
+            "minLength": 36,
+            "title": "Assessment Id",
+            "type": "string"
+          },
+          "check": {
+            "$ref": "#/components/schemas/TransferCheckRequest"
+          }
+        },
+        "required": [
+          "check",
+          "assessment_id"
+        ],
+        "title": "TransferEvidenceRequest",
+        "type": "object"
+      },
+      "TransferEvidenceResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "format": "date-time",
+            "title": "As Of",
+            "type": "string"
+          },
+          "assessment_id": {
+            "title": "Assessment Id",
+            "type": "string"
+          },
+          "context": {
+            "items": {
+              "$ref": "#/components/schemas/ContextFact"
+            },
+            "title": "Context",
+            "type": "array"
+          },
+          "formations": {
+            "items": {
+              "$ref": "#/components/schemas/FormationProfile"
+            },
+            "title": "Formations",
+            "type": "array"
+          },
+          "graph_as_of": {
+            "format": "date-time",
+            "title": "Graph As Of",
+            "type": "string"
+          },
+          "graph_policy_version": {
+            "title": "Graph Policy Version",
+            "type": "string"
+          },
+          "graph_snapshot_id": {
+            "title": "Graph Snapshot Id",
+            "type": "string"
+          },
+          "is_repeat_recipient": {
+            "title": "Is Repeat Recipient",
+            "type": "boolean"
+          },
+          "policy_version": {
+            "title": "Policy Version",
+            "type": "string"
+          },
+          "reason_codes": {
+            "items": {
+              "enum": [
+                "INSUFFICIENT_HISTORY",
+                "INCOMPLETE_GRAPH",
+                "AMBIGUOUS_TIMESTAMPS",
+                "STALE_PROFILE",
+                "MISSING_PROFILE",
+                "DEPENDENCY_FAILURE",
+                "TIMEOUT",
+                "FEATURE_DISABLED",
+                "NO_SUPPORTED_CONCERN",
+                "SUSPICIOUS_NETWORK_LINK",
+                "TEMPORAL_FLOW_CONFIRMED",
+                "INDEPENDENT_REPORT",
+                "EXPLAINED_ACTIVITY",
+                "ESTABLISHED_RELATIONSHIP"
+              ],
+              "type": "string"
+            },
+            "title": "Reason Codes",
+            "type": "array"
+          },
+          "recipient_account_id": {
+            "title": "Recipient Account Id",
+            "type": "string"
+          },
+          "simulation": {
+            "const": true,
+            "default": true,
+            "title": "Simulation",
+            "type": "boolean"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          },
+          "transactions": {
+            "items": {
+              "$ref": "#/components/schemas/Transaction"
+            },
+            "title": "Transactions",
+            "type": "array"
+          },
+          "valid_until": {
+            "format": "date-time",
+            "title": "Valid Until",
+            "type": "string"
+          }
+        },
+        "required": [
+          "assessment_id",
+          "snapshot_id",
+          "graph_snapshot_id",
+          "graph_policy_version",
+          "policy_version",
+          "recipient_account_id",
+          "as_of",
+          "graph_as_of",
+          "valid_until",
+          "reason_codes",
+          "formations",
+          "context",
+          "transactions",
+          "is_repeat_recipient"
+        ],
+        "title": "TransferEvidenceResponse",
         "type": "object"
       },
       "ValidationError": {
@@ -4326,6 +4800,131 @@
         "summary": "Overview",
         "tags": [
           "datasets"
+        ]
+      }
+    },
+    "/api/v1/demo/transfer-checks": {
+      "post": {
+        "operationId": "check_transfer_api_v1_demo_transfer_checks_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferCheckRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransferCheckResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Check Transfer",
+        "tags": [
+          "transfer protection"
+        ]
+      }
+    },
+    "/api/v1/demo/transfer-checks/evidence": {
+      "post": {
+        "operationId": "transfer_evidence_api_v1_demo_transfer_checks_evidence_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Nexora-Transfer-Analyst-Token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Nexora-Transfer-Analyst-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferEvidenceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransferEvidenceResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Transfer Evidence",
+        "tags": [
+          "transfer protection"
+        ]
+      }
+    },
+    "/api/v1/demo/transfer-checks/scenarios": {
+      "get": {
+        "operationId": "scenarios_api_v1_demo_transfer_checks_scenarios_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ScenarioOption"
+                  },
+                  "title": "Response Scenarios Api V1 Demo Transfer Checks Scenarios Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Scenarios",
+        "tags": [
+          "transfer protection"
         ]
       }
     },

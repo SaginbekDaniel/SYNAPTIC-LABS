@@ -26,17 +26,17 @@ function withQuery(path: string, query?: Query): string {
   return qs ? `${path}?${qs}` : path;
 }
 
-async function request<T>(method: string, path: string, init?: { query?: Query; body?: unknown; signal?: AbortSignal }): Promise<T> {
+async function request<T>(method: string, path: string, init?: { query?: Query; body?: unknown; signal?: AbortSignal; headers?: Record<string, string> }): Promise<T> {
   let res: Response;
   try {
     res = await fetch(withQuery(path, init?.query), {
       method,
       signal: init?.signal,
-      headers: init?.body !== undefined ? { "Content-Type": "application/json" } : undefined,
+      headers: init?.body !== undefined ? { ...init.headers, "Content-Type": "application/json" } : init?.headers,
       body: init?.body !== undefined ? JSON.stringify(init.body) : undefined,
     });
   } catch (err) {
-    if ((err as Error).name === "AbortError") throw err;
+    if (init?.signal?.aborted) throw init.signal.reason;
     throw new ApiError(0, "NETWORK_UNAVAILABLE", "network unavailable", null);
   }
   const text = await res.text();
@@ -57,5 +57,6 @@ async function request<T>(method: string, path: string, init?: { query?: Query; 
 
 export const api = {
   get: <T>(path: string, query?: Query, signal?: AbortSignal) => request<T>("GET", path, { query, signal }),
-  post: <T>(path: string, body?: unknown) => request<T>("POST", path, { body: body ?? {} }),
+  post: <T>(path: string, body?: unknown, options?: { signal?: AbortSignal; headers?: Record<string, string> }) =>
+    request<T>("POST", path, { ...options, body: body ?? {} }),
 };

@@ -18,8 +18,9 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from nexora import __version__
 from nexora.analytics.config import AnalysisConfig, default_config
 from nexora.api import schemas
-from nexora.api.routes import alerts, analysis, cases, datasets, evaluation
+from nexora.api.routes import alerts, analysis, cases, datasets, evaluation, transfer_checks
 from nexora.application.errors import AppError
+from nexora.application.transfer_demo import PROFILE_PATH, TransferDemo, load_policy, load_profiles
 from nexora.persistence import orm
 from nexora.persistence.db import session_factory
 from nexora.settings import Settings, get_settings
@@ -57,13 +58,25 @@ def create_app(settings: Settings | None = None, config: AnalysisConfig | None =
     app.state.session_factory = session_factory(settings.database_url)
     app.state.analysis_config = config or default_config()
 
+    try:
+        transfer_policy = load_policy()
+    except (OSError, ValueError):
+        log.error("Transfer protection policy configuration is unavailable or invalid")
+        transfer_policy = None
+    app.state.transfer_demo = TransferDemo(
+        transfer_policy,
+        load_profiles(PROFILE_PATH) if settings.transfer_protection_enabled else None,
+        settings.transfer_protection_enabled,
+        app.state.analysis_config.config_sha256,
+    )
+
     gateway_token = settings.gateway_token
 
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[o.strip() for o in settings.cors_origins.split(",") if o.strip()],
         allow_methods=["GET", "POST"],
-        allow_headers=["Content-Type", "X-Request-ID"],
+        allow_headers=["Content-Type", "X-Request-ID", "X-Nexora-Transfer-Analyst-Token"],
         expose_headers=["X-Request-ID", "Location"],
     )
 
@@ -151,7 +164,7 @@ def create_app(settings: Settings | None = None, config: AnalysisConfig | None =
         }
         return JSONResponse(status_code=200 if body["status"] == "ok" else 503, content=body)
 
-    for module in (datasets, analysis, alerts, cases, evaluation):
+    for module in (datasets, analysis, alerts, cases, evaluation, transfer_checks):
         app.include_router(module.router)
     return app
 

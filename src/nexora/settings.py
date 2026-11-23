@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 
-from pydantic import field_validator
+from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # The only SQLAlchemy dialect+driver NEXORA installs (psycopg 3). Hosted PostgreSQL providers
@@ -44,6 +44,8 @@ class Settings(BaseSettings):
     # rejects requests without it, so the API stays closed even if it is accidentally given a public
     # domain. Empty disables the check (local development, tests).
     gateway_token: str = ""
+    transfer_protection_enabled: bool = True
+    transfer_analyst_token: SecretStr = SecretStr("")
     max_upload_bytes: int = 20 * 1024 * 1024
     max_csv_rows: int = 200_000
     graph_max_depth: int = 3

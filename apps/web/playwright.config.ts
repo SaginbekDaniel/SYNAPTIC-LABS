@@ -1,8 +1,11 @@
+import { randomBytes } from "node:crypto";
 import { defineConfig, devices } from "@playwright/test";
 
 const API_PORT = 8100;
 const WEB_PORT = 5180;
 const DB = process.env.NEXORA_E2E_DATABASE_URL ?? "postgresql+psycopg://nexora:nexora@localhost:5432/nexora_e2e";
+
+process.env.NEXORA_E2E_TRANSFER_TOKEN ??= randomBytes(32).toString("hex");
 
 export default defineConfig({
   testDir: "e2e",
@@ -20,7 +23,12 @@ export default defineConfig({
     {
       command: `../../scripts/e2e_stack.sh ${API_PORT}`,
       url: `http://127.0.0.1:${API_PORT}/health/ready`,
-      env: { NEXORA_DATABASE_URL: DB, NEXORA_CORS_ORIGINS: `http://127.0.0.1:${WEB_PORT}` },
+      env: {
+        NEXORA_DATABASE_URL: DB,
+        NEXORA_CORS_ORIGINS: `http://127.0.0.1:${WEB_PORT}`,
+        NEXORA_TRANSFER_ANALYST_TOKEN: process.env.NEXORA_E2E_TRANSFER_TOKEN,
+        NEXORA_TRANSFER_PROTECTION_ENABLED: "true",
+      },
       reuseExistingServer: false,
       timeout: 60_000,
     },

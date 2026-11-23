@@ -1,0 +1,866 @@
+{
+  "limited": {
+    "as_of": "2026-10-20T12:00:00Z",
+    "context": [],
+    "currency": "KZT",
+    "formations": [],
+    "graph_config_sha256": "489b477a3da5ac1bac8ae3a7e3c1f5f22d9aac2a826e966d04d700347f194153",
+    "graph_policy_version": "risk-policy-v2",
+    "graph_snapshot_id": "4902082b-ca82-5b54-bd92-e527af2dc157",
+    "is_repeat_recipient": false,
+    "limitations": [
+      "INSUFFICIENT_HISTORY"
+    ],
+    "recipient": "demo-limited",
+    "schema_version": 1,
+    "sender": "demo-sender",
+    "snapshot_id": "333a8095-187b-5a96-94d4-6774f3d59514",
+    "transactions": [
+      {
+        "known_at": "2026-10-16T12:00:00Z",
+        "observed": {
+          "amount_minor": 1500000,
+          "currency": "KZT",
+          "observed_date": "2026-10-16",
+          "occurred_at": "2026-10-16T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-limited",
+          "sender": "demo-sender",
+          "source_transaction_id": "repeat-4",
+          "status": "posted",
+          "transaction_id": "36de1532-986d-5726-9dd8-7c4face3f663"
+        }
+      }
+    ],
+    "valid_until": "2026-10-22T12:00:00Z"
+  },
+  "merchant": {
+    "as_of": "2026-10-20T12:00:00Z",
+    "context": [
+      {
+        "kind": "MERCHANT_SETTLEMENT",
+        "known_at": "2026-10-19T12:00:00Z",
+        "occurred_at": "2026-10-19T12:00:00Z",
+        "recipient": "demo-merchant",
+        "source_ref": "demo-settlement-register",
+        "transaction_ids": [
+          "85f72847-aada-562b-b075-6a90fc45a12a",
+          "c9e58529-1f3a-5fe8-9d80-45620e1bc0ae",
+          "0a3e39d8-25c3-5195-a075-7d79f3ac6a98",
+          "b18be50c-42eb-5e23-84ec-6a07cde1ed31",
+          "8be2fb9f-517f-5367-9aea-955b9c07f2bf",
+          "978f1824-b571-55cc-a1c9-caa5be5ce3a3",
+          "ce40356c-15a3-5938-851d-03b61d341dcb",
+          "31df684d-d07d-555a-b6dc-da455fbe9cdd"
+        ]
+      }
+    ],
+    "currency": "KZT",
+    "formations": [
+      {
+        "band": "high",
+        "formation_id": "0c6d48ef-6c13-503d-a01b-0cc2ac53f950",
+        "indicators": [
+          {
+            "evidence_id": "6b200c39-4906-5bcd-89b1-f58722cd4a93",
+            "family": "TEMPORAL",
+            "reason_code": "TEMPORAL_PASS_THROUGH_SUPPORTED",
+            "status": "supported",
+            "transaction_ids": [
+              "0a3e39d8-25c3-5195-a075-7d79f3ac6a98",
+              "31df684d-d07d-555a-b6dc-da455fbe9cdd",
+              "85f72847-aada-562b-b075-6a90fc45a12a",
+              "8be2fb9f-517f-5367-9aea-955b9c07f2bf",
+              "978f1824-b571-55cc-a1c9-caa5be5ce3a3",
+              "b18be50c-42eb-5e23-84ec-6a07cde1ed31",
+              "c9e58529-1f3a-5fe8-9d80-45620e1bc0ae",
+              "ce40356c-15a3-5938-851d-03b61d341dcb"
+            ]
+          },
+          {
+            "evidence_id": "d8986076-cb4d-584a-bd54-868f67777168",
+            "family": "PEER_STATISTICS",
+            "reason_code": "PEER_UNAVAILABLE",
+            "status": "unavailable",
+            "transaction_ids": [
+              "0a3e39d8-25c3-5195-a075-7d79f3ac6a98",
+              "31df684d-d07d-555a-b6dc-da455fbe9cdd",
+              "85f72847-aada-562b-b075-6a90fc45a12a",
+              "8be2fb9f-517f-5367-9aea-955b9c07f2bf",
+              "978f1824-b571-55cc-a1c9-caa5be5ce3a3",
+              "b18be50c-42eb-5e23-84ec-6a07cde1ed31",
+              "c9e58529-1f3a-5fe8-9d80-45620e1bc0ae",
+              "ce40356c-15a3-5938-851d-03b61d341dcb"
+            ]
+          },
+          {
+            "evidence_id": "4b5b8bf5-1948-5d20-bf06-87e1baa0874e",
+            "family": "STRUCTURE",
+            "reason_code": "STRUCT_FUNNEL_FEEDERS",
+            "status": "supported",
+            "transaction_ids": [
+              "0a3e39d8-25c3-5195-a075-7d79f3ac6a98",
+              "85f72847-aada-562b-b075-6a90fc45a12a",
+              "b18be50c-42eb-5e23-84ec-6a07cde1ed31",
+              "c9e58529-1f3a-5fe8-9d80-45620e1bc0ae"
+            ]
+          }
+        ],
+        "kind": "funnel",
+        "limitations": [
+          "missing_context"
+        ]
+      }
+    ],
+    "graph_config_sha256": "489b477a3da5ac1bac8ae3a7e3c1f5f22d9aac2a826e966d04d700347f194153",
+    "graph_policy_version": "risk-policy-v2",
+    "graph_snapshot_id": "96f35af7-4f69-54d0-b819-86847c46de87",
+    "is_repeat_recipient": false,
+    "limitations": [],
+    "recipient": "demo-merchant",
+    "schema_version": 1,
+    "sender": "demo-sender",
+    "snapshot_id": "5943b515-3882-5239-8163-e91ca1ecaa78",
+    "transactions": [
+      {
+        "known_at": "2026-10-18T12:00:00Z",
+        "observed": {
+          "amount_minor": 4000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-18",
+          "occurred_at": "2026-10-18T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-merchant",
+          "sender": "source-3",
+          "source_transaction_id": "deposit-3",
+          "status": "posted",
+          "transaction_id": "0a3e39d8-25c3-5195-a075-7d79f3ac6a98"
+        }
+      },
+      {
+        "known_at": "2026-10-19T12:00:00Z",
+        "observed": {
+          "amount_minor": 4000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-19",
+          "occurred_at": "2026-10-19T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "settlement-4",
+          "sender": "demo-merchant",
+          "source_transaction_id": "merchant-payout-4",
+          "status": "posted",
+          "transaction_id": "31df684d-d07d-555a-b6dc-da455fbe9cdd"
+        }
+      },
+      {
+        "known_at": "2026-10-18T12:00:00Z",
+        "observed": {
+          "amount_minor": 4000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-18",
+          "occurred_at": "2026-10-18T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-merchant",
+          "sender": "source-1",
+          "source_transaction_id": "deposit-1",
+          "status": "posted",
+          "transaction_id": "85f72847-aada-562b-b075-6a90fc45a12a"
+        }
+      },
+      {
+        "known_at": "2026-10-19T12:00:00Z",
+        "observed": {
+          "amount_minor": 4000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-19",
+          "occurred_at": "2026-10-19T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "settlement-1",
+          "sender": "demo-merchant",
+          "source_transaction_id": "merchant-payout-1",
+          "status": "posted",
+          "transaction_id": "8be2fb9f-517f-5367-9aea-955b9c07f2bf"
+        }
+      },
+      {
+        "known_at": "2026-10-19T12:00:00Z",
+        "observed": {
+          "amount_minor": 4000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-19",
+          "occurred_at": "2026-10-19T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "settlement-2",
+          "sender": "demo-merchant",
+          "source_transaction_id": "merchant-payout-2",
+          "status": "posted",
+          "transaction_id": "978f1824-b571-55cc-a1c9-caa5be5ce3a3"
+        }
+      },
+      {
+        "known_at": "2026-10-18T12:00:00Z",
+        "observed": {
+          "amount_minor": 4000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-18",
+          "occurred_at": "2026-10-18T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-merchant",
+          "sender": "source-4",
+          "source_transaction_id": "deposit-4",
+          "status": "posted",
+          "transaction_id": "b18be50c-42eb-5e23-84ec-6a07cde1ed31"
+        }
+      },
+      {
+        "known_at": "2026-10-18T12:00:00Z",
+        "observed": {
+          "amount_minor": 4000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-18",
+          "occurred_at": "2026-10-18T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-merchant",
+          "sender": "source-2",
+          "source_transaction_id": "deposit-2",
+          "status": "posted",
+          "transaction_id": "c9e58529-1f3a-5fe8-9d80-45620e1bc0ae"
+        }
+      },
+      {
+        "known_at": "2026-10-19T12:00:00Z",
+        "observed": {
+          "amount_minor": 4000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-19",
+          "occurred_at": "2026-10-19T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "settlement-3",
+          "sender": "demo-merchant",
+          "source_transaction_id": "merchant-payout-3",
+          "status": "posted",
+          "transaction_id": "ce40356c-15a3-5938-851d-03b61d341dcb"
+        }
+      }
+    ],
+    "valid_until": "2026-10-22T12:00:00Z"
+  },
+  "mule": {
+    "as_of": "2026-10-20T12:00:00Z",
+    "context": [],
+    "currency": "KZT",
+    "formations": [
+      {
+        "band": "high",
+        "formation_id": "f71a0015-65c6-52ff-8d38-1a174ec314bd",
+        "indicators": [
+          {
+            "evidence_id": "631ddb69-3635-55c7-918a-1995bdc988f1",
+            "family": "PEER_STATISTICS",
+            "reason_code": "PEER_UNAVAILABLE",
+            "status": "unavailable",
+            "transaction_ids": [
+              "101377d3-23f0-562f-b890-fa669eae6b6f",
+              "5e651a84-fc58-5ec5-ab08-a24d80b43879",
+              "896d6ca0-324d-5a2f-b01d-fc479d088d28",
+              "9468fb55-e05e-506c-983b-9b34997a1601",
+              "d05e7ce4-2a94-52e4-87d9-77509895df82"
+            ]
+          },
+          {
+            "evidence_id": "db2a5fba-105b-5758-8b76-e7eb6a3e6c6b",
+            "family": "TEMPORAL",
+            "reason_code": "TEMPORAL_PASS_THROUGH_SUPPORTED",
+            "status": "supported",
+            "transaction_ids": [
+              "101377d3-23f0-562f-b890-fa669eae6b6f",
+              "5e651a84-fc58-5ec5-ab08-a24d80b43879",
+              "896d6ca0-324d-5a2f-b01d-fc479d088d28",
+              "9468fb55-e05e-506c-983b-9b34997a1601",
+              "d05e7ce4-2a94-52e4-87d9-77509895df82"
+            ]
+          },
+          {
+            "evidence_id": "0d00e960-3762-58de-96d4-4d08f42d90d5",
+            "family": "STRUCTURE",
+            "reason_code": "STRUCT_FUNNEL_FEEDERS",
+            "status": "supported",
+            "transaction_ids": [
+              "101377d3-23f0-562f-b890-fa669eae6b6f",
+              "5e651a84-fc58-5ec5-ab08-a24d80b43879",
+              "9468fb55-e05e-506c-983b-9b34997a1601",
+              "d05e7ce4-2a94-52e4-87d9-77509895df82"
+            ]
+          }
+        ],
+        "kind": "funnel",
+        "limitations": [
+          "missing_context"
+        ]
+      }
+    ],
+    "graph_config_sha256": "489b477a3da5ac1bac8ae3a7e3c1f5f22d9aac2a826e966d04d700347f194153",
+    "graph_policy_version": "risk-policy-v2",
+    "graph_snapshot_id": "ba0e8ef5-dbc4-5877-b862-d77ecb4cfd27",
+    "is_repeat_recipient": false,
+    "limitations": [],
+    "recipient": "demo-mule",
+    "schema_version": 1,
+    "sender": "demo-sender",
+    "snapshot_id": "479273a3-ea24-5b85-a2ee-de30589e1ce9",
+    "transactions": [
+      {
+        "known_at": "2026-10-18T12:00:00Z",
+        "observed": {
+          "amount_minor": 4000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-18",
+          "occurred_at": "2026-10-18T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-mule",
+          "sender": "source-1",
+          "source_transaction_id": "deposit-1",
+          "status": "posted",
+          "transaction_id": "101377d3-23f0-562f-b890-fa669eae6b6f"
+        }
+      },
+      {
+        "known_at": "2026-10-18T12:00:00Z",
+        "observed": {
+          "amount_minor": 4000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-18",
+          "occurred_at": "2026-10-18T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-mule",
+          "sender": "source-3",
+          "source_transaction_id": "deposit-3",
+          "status": "posted",
+          "transaction_id": "5e651a84-fc58-5ec5-ab08-a24d80b43879"
+        }
+      },
+      {
+        "known_at": "2026-10-19T12:00:00Z",
+        "observed": {
+          "amount_minor": 16000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-19",
+          "occurred_at": "2026-10-19T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "payout",
+          "sender": "demo-mule",
+          "source_transaction_id": "onward",
+          "status": "posted",
+          "transaction_id": "896d6ca0-324d-5a2f-b01d-fc479d088d28"
+        }
+      },
+      {
+        "known_at": "2026-10-18T12:00:00Z",
+        "observed": {
+          "amount_minor": 4000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-18",
+          "occurred_at": "2026-10-18T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-mule",
+          "sender": "source-2",
+          "source_transaction_id": "deposit-2",
+          "status": "posted",
+          "transaction_id": "9468fb55-e05e-506c-983b-9b34997a1601"
+        }
+      },
+      {
+        "known_at": "2026-10-18T12:00:00Z",
+        "observed": {
+          "amount_minor": 4000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-18",
+          "occurred_at": "2026-10-18T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-mule",
+          "sender": "source-4",
+          "source_transaction_id": "deposit-4",
+          "status": "posted",
+          "transaction_id": "d05e7ce4-2a94-52e4-87d9-77509895df82"
+        }
+      }
+    ],
+    "valid_until": "2026-10-22T12:00:00Z"
+  },
+  "regular": {
+    "as_of": "2026-10-20T12:00:00Z",
+    "context": [],
+    "currency": "KZT",
+    "formations": [],
+    "graph_config_sha256": "489b477a3da5ac1bac8ae3a7e3c1f5f22d9aac2a826e966d04d700347f194153",
+    "graph_policy_version": "risk-policy-v2",
+    "graph_snapshot_id": "8d5889e1-4d13-5f1d-895e-56f02391a340",
+    "is_repeat_recipient": true,
+    "limitations": [],
+    "recipient": "demo-regular",
+    "schema_version": 1,
+    "sender": "demo-sender",
+    "snapshot_id": "e8e8d6f6-ac8e-5b6f-b0a6-e9002d8f8143",
+    "transactions": [
+      {
+        "known_at": "2026-10-16T12:00:00Z",
+        "observed": {
+          "amount_minor": 1500000,
+          "currency": "KZT",
+          "observed_date": "2026-10-16",
+          "occurred_at": "2026-10-16T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-regular",
+          "sender": "demo-sender",
+          "source_transaction_id": "repeat-4",
+          "status": "posted",
+          "transaction_id": "7c9c6f1c-1725-5579-9a4b-48c8f42b053e"
+        }
+      },
+      {
+        "known_at": "2026-09-25T12:00:00Z",
+        "observed": {
+          "amount_minor": 1500000,
+          "currency": "KZT",
+          "observed_date": "2026-09-25",
+          "occurred_at": "2026-09-25T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-regular",
+          "sender": "demo-sender",
+          "source_transaction_id": "repeat-25",
+          "status": "posted",
+          "transaction_id": "a41a6b80-ae68-554d-96b4-2fa9f07921e3"
+        }
+      },
+      {
+        "known_at": "2026-10-08T12:00:00Z",
+        "observed": {
+          "amount_minor": 1500000,
+          "currency": "KZT",
+          "observed_date": "2026-10-08",
+          "occurred_at": "2026-10-08T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-regular",
+          "sender": "demo-sender",
+          "source_transaction_id": "repeat-12",
+          "status": "posted",
+          "transaction_id": "fefa6c5c-1af6-55bd-af1b-5324585748e9"
+        }
+      }
+    ],
+    "valid_until": "2026-10-22T12:00:00Z"
+  },
+  "replay_early": {
+    "as_of": "2026-10-20T12:00:00Z",
+    "context": [],
+    "currency": "KZT",
+    "formations": [],
+    "graph_config_sha256": "489b477a3da5ac1bac8ae3a7e3c1f5f22d9aac2a826e966d04d700347f194153",
+    "graph_policy_version": "risk-policy-v2",
+    "graph_snapshot_id": "5c2f17fe-c78a-57c9-bc56-6668e6f74380",
+    "is_repeat_recipient": true,
+    "limitations": [],
+    "recipient": "demo-replay",
+    "schema_version": 1,
+    "sender": "demo-sender",
+    "snapshot_id": "2e88153f-5db9-5c43-a41e-6f55d8e95fa7",
+    "transactions": [
+      {
+        "known_at": "2026-10-08T12:00:00Z",
+        "observed": {
+          "amount_minor": 1500000,
+          "currency": "KZT",
+          "observed_date": "2026-10-08",
+          "occurred_at": "2026-10-08T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-replay",
+          "sender": "demo-sender",
+          "source_transaction_id": "repeat-12",
+          "status": "posted",
+          "transaction_id": "35654e39-7162-5994-b1a9-081097a9adc1"
+        }
+      },
+      {
+        "known_at": "2026-09-25T12:00:00Z",
+        "observed": {
+          "amount_minor": 1500000,
+          "currency": "KZT",
+          "observed_date": "2026-09-25",
+          "occurred_at": "2026-09-25T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-replay",
+          "sender": "demo-sender",
+          "source_transaction_id": "repeat-25",
+          "status": "posted",
+          "transaction_id": "ac6e7916-74e9-5436-9120-ac07409b31e9"
+        }
+      },
+      {
+        "known_at": "2026-10-16T12:00:00Z",
+        "observed": {
+          "amount_minor": 1500000,
+          "currency": "KZT",
+          "observed_date": "2026-10-16",
+          "occurred_at": "2026-10-16T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-replay",
+          "sender": "demo-sender",
+          "source_transaction_id": "repeat-4",
+          "status": "posted",
+          "transaction_id": "b93e9e5c-c0c7-531e-a036-43a49bd112d8"
+        }
+      }
+    ],
+    "valid_until": "2026-10-22T12:00:00Z"
+  },
+  "replay_late": {
+    "as_of": "2026-10-23T12:00:00Z",
+    "context": [
+      {
+        "kind": "CONFIRMED_REPORT",
+        "known_at": "2026-10-22T12:00:00Z",
+        "occurred_at": "2026-10-18T12:00:00Z",
+        "recipient": "demo-replay",
+        "source_ref": "demo-independent-incident-register",
+        "transaction_ids": []
+      }
+    ],
+    "currency": "KZT",
+    "formations": [
+      {
+        "band": "high",
+        "formation_id": "d17b0dd9-b1cc-533a-ac7f-e9e0de37c54a",
+        "indicators": [
+          {
+            "evidence_id": "4ed7339a-6131-5048-a83b-3fa36b0cfaba",
+            "family": "PEER_STATISTICS",
+            "reason_code": "PEER_UNAVAILABLE",
+            "status": "unavailable",
+            "transaction_ids": [
+              "0c1d354e-dc96-5c41-b366-3c424b1a9035",
+              "17c357bd-4111-5f65-a994-e5ed4ba0f12a",
+              "1b413db9-2fba-5b04-8448-570ace160c82",
+              "381b0170-4066-55de-a811-987d861aec64",
+              "ca35cb31-dfb2-580c-a1dd-143b04bae455"
+            ]
+          },
+          {
+            "evidence_id": "35d6b3ad-cde7-5729-b841-1552f11c0c04",
+            "family": "TEMPORAL",
+            "reason_code": "TEMPORAL_PASS_THROUGH_SUPPORTED",
+            "status": "supported",
+            "transaction_ids": [
+              "0c1d354e-dc96-5c41-b366-3c424b1a9035",
+              "17c357bd-4111-5f65-a994-e5ed4ba0f12a",
+              "1b413db9-2fba-5b04-8448-570ace160c82",
+              "381b0170-4066-55de-a811-987d861aec64",
+              "ca35cb31-dfb2-580c-a1dd-143b04bae455"
+            ]
+          },
+          {
+            "evidence_id": "77ca2837-fc4d-5253-ba51-3466bdf7050c",
+            "family": "STRUCTURE",
+            "reason_code": "STRUCT_FUNNEL_FEEDERS",
+            "status": "supported",
+            "transaction_ids": [
+              "0c1d354e-dc96-5c41-b366-3c424b1a9035",
+              "17c357bd-4111-5f65-a994-e5ed4ba0f12a",
+              "35654e39-7162-5994-b1a9-081097a9adc1",
+              "381b0170-4066-55de-a811-987d861aec64",
+              "ac6e7916-74e9-5436-9120-ac07409b31e9",
+              "b93e9e5c-c0c7-531e-a036-43a49bd112d8",
+              "ca35cb31-dfb2-580c-a1dd-143b04bae455"
+            ]
+          }
+        ],
+        "kind": "funnel",
+        "limitations": [
+          "missing_context"
+        ]
+      }
+    ],
+    "graph_config_sha256": "489b477a3da5ac1bac8ae3a7e3c1f5f22d9aac2a826e966d04d700347f194153",
+    "graph_policy_version": "risk-policy-v2",
+    "graph_snapshot_id": "dbf3ae85-11c1-509b-afce-70f486adb243",
+    "is_repeat_recipient": true,
+    "limitations": [],
+    "recipient": "demo-replay",
+    "schema_version": 1,
+    "sender": "demo-sender",
+    "snapshot_id": "cb70c6f6-6e0d-5b0d-b97a-1d36d4265f68",
+    "transactions": [
+      {
+        "known_at": "2026-10-22T12:00:00Z",
+        "observed": {
+          "amount_minor": 4000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-18",
+          "occurred_at": "2026-10-18T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-replay",
+          "sender": "source-3",
+          "source_transaction_id": "deposit-3",
+          "status": "posted",
+          "transaction_id": "0c1d354e-dc96-5c41-b366-3c424b1a9035"
+        }
+      },
+      {
+        "known_at": "2026-10-22T12:00:00Z",
+        "observed": {
+          "amount_minor": 4000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-18",
+          "occurred_at": "2026-10-18T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-replay",
+          "sender": "source-1",
+          "source_transaction_id": "deposit-1",
+          "status": "posted",
+          "transaction_id": "17c357bd-4111-5f65-a994-e5ed4ba0f12a"
+        }
+      },
+      {
+        "known_at": "2026-10-22T12:00:00Z",
+        "observed": {
+          "amount_minor": 16000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-19",
+          "occurred_at": "2026-10-19T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "payout",
+          "sender": "demo-replay",
+          "source_transaction_id": "onward",
+          "status": "posted",
+          "transaction_id": "1b413db9-2fba-5b04-8448-570ace160c82"
+        }
+      },
+      {
+        "known_at": "2026-10-08T12:00:00Z",
+        "observed": {
+          "amount_minor": 1500000,
+          "currency": "KZT",
+          "observed_date": "2026-10-08",
+          "occurred_at": "2026-10-08T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-replay",
+          "sender": "demo-sender",
+          "source_transaction_id": "repeat-12",
+          "status": "posted",
+          "transaction_id": "35654e39-7162-5994-b1a9-081097a9adc1"
+        }
+      },
+      {
+        "known_at": "2026-10-22T12:00:00Z",
+        "observed": {
+          "amount_minor": 4000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-18",
+          "occurred_at": "2026-10-18T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-replay",
+          "sender": "source-4",
+          "source_transaction_id": "deposit-4",
+          "status": "posted",
+          "transaction_id": "381b0170-4066-55de-a811-987d861aec64"
+        }
+      },
+      {
+        "known_at": "2026-09-25T12:00:00Z",
+        "observed": {
+          "amount_minor": 1500000,
+          "currency": "KZT",
+          "observed_date": "2026-09-25",
+          "occurred_at": "2026-09-25T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-replay",
+          "sender": "demo-sender",
+          "source_transaction_id": "repeat-25",
+          "status": "posted",
+          "transaction_id": "ac6e7916-74e9-5436-9120-ac07409b31e9"
+        }
+      },
+      {
+        "known_at": "2026-10-16T12:00:00Z",
+        "observed": {
+          "amount_minor": 1500000,
+          "currency": "KZT",
+          "observed_date": "2026-10-16",
+          "occurred_at": "2026-10-16T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-replay",
+          "sender": "demo-sender",
+          "source_transaction_id": "repeat-4",
+          "status": "posted",
+          "transaction_id": "b93e9e5c-c0c7-531e-a036-43a49bd112d8"
+        }
+      },
+      {
+        "known_at": "2026-10-22T12:00:00Z",
+        "observed": {
+          "amount_minor": 4000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-18",
+          "occurred_at": "2026-10-18T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-replay",
+          "sender": "source-2",
+          "source_transaction_id": "deposit-2",
+          "status": "posted",
+          "transaction_id": "ca35cb31-dfb2-580c-a1dd-143b04bae455"
+        }
+      }
+    ],
+    "valid_until": "2026-10-25T12:00:00Z"
+  },
+  "review": {
+    "as_of": "2026-10-20T12:00:00Z",
+    "context": [
+      {
+        "kind": "CONFIRMED_REPORT",
+        "known_at": "2026-10-18T12:00:00Z",
+        "occurred_at": "2026-10-18T12:00:00Z",
+        "recipient": "demo-review",
+        "source_ref": "demo-independent-incident-register",
+        "transaction_ids": []
+      }
+    ],
+    "currency": "KZT",
+    "formations": [
+      {
+        "band": "high",
+        "formation_id": "0032e0ea-f746-53b4-8b88-253e02946eaa",
+        "indicators": [
+          {
+            "evidence_id": "52d99f5e-1d87-5cea-a494-6a1a3d8c39ec",
+            "family": "TEMPORAL",
+            "reason_code": "TEMPORAL_PASS_THROUGH_SUPPORTED",
+            "status": "supported",
+            "transaction_ids": [
+              "2d3cc005-5ced-56f3-a0c1-0e1e38c5bd7d",
+              "5e9b461d-2076-5df8-aa26-9b6e6fedf549",
+              "98bb8648-8782-56a0-9831-592700d543e4",
+              "a187dc1f-34f4-5b1f-936c-db8eba220e9a",
+              "d5b282e4-9c40-531e-9038-105593e32556"
+            ]
+          },
+          {
+            "evidence_id": "cc912d83-f7b8-5739-bac0-4698f56ebf77",
+            "family": "STRUCTURE",
+            "reason_code": "STRUCT_FUNNEL_FEEDERS",
+            "status": "supported",
+            "transaction_ids": [
+              "2d3cc005-5ced-56f3-a0c1-0e1e38c5bd7d",
+              "5e9b461d-2076-5df8-aa26-9b6e6fedf549",
+              "98bb8648-8782-56a0-9831-592700d543e4",
+              "a187dc1f-34f4-5b1f-936c-db8eba220e9a"
+            ]
+          },
+          {
+            "evidence_id": "e7e1a93e-4457-5fdd-90b5-8d5728875cd1",
+            "family": "PEER_STATISTICS",
+            "reason_code": "PEER_UNAVAILABLE",
+            "status": "unavailable",
+            "transaction_ids": [
+              "2d3cc005-5ced-56f3-a0c1-0e1e38c5bd7d",
+              "5e9b461d-2076-5df8-aa26-9b6e6fedf549",
+              "98bb8648-8782-56a0-9831-592700d543e4",
+              "a187dc1f-34f4-5b1f-936c-db8eba220e9a",
+              "d5b282e4-9c40-531e-9038-105593e32556"
+            ]
+          }
+        ],
+        "kind": "funnel",
+        "limitations": [
+          "missing_context"
+        ]
+      }
+    ],
+    "graph_config_sha256": "489b477a3da5ac1bac8ae3a7e3c1f5f22d9aac2a826e966d04d700347f194153",
+    "graph_policy_version": "risk-policy-v2",
+    "graph_snapshot_id": "7e8b925c-17bb-5d05-bd77-79384f1c7a7e",
+    "is_repeat_recipient": false,
+    "limitations": [],
+    "recipient": "demo-review",
+    "schema_version": 1,
+    "sender": "demo-sender",
+    "snapshot_id": "91b49420-037d-5116-92ed-1419169242f4",
+    "transactions": [
+      {
+        "known_at": "2026-10-18T12:00:00Z",
+        "observed": {
+          "amount_minor": 4000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-18",
+          "occurred_at": "2026-10-18T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-review",
+          "sender": "source-4",
+          "source_transaction_id": "deposit-4",
+          "status": "posted",
+          "transaction_id": "2d3cc005-5ced-56f3-a0c1-0e1e38c5bd7d"
+        }
+      },
+      {
+        "known_at": "2026-10-18T12:00:00Z",
+        "observed": {
+          "amount_minor": 4000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-18",
+          "occurred_at": "2026-10-18T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-review",
+          "sender": "source-2",
+          "source_transaction_id": "deposit-2",
+          "status": "posted",
+          "transaction_id": "5e9b461d-2076-5df8-aa26-9b6e6fedf549"
+        }
+      },
+      {
+        "known_at": "2026-10-18T12:00:00Z",
+        "observed": {
+          "amount_minor": 4000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-18",
+          "occurred_at": "2026-10-18T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-review",
+          "sender": "source-1",
+          "source_transaction_id": "deposit-1",
+          "status": "posted",
+          "transaction_id": "98bb8648-8782-56a0-9831-592700d543e4"
+        }
+      },
+      {
+        "known_at": "2026-10-18T12:00:00Z",
+        "observed": {
+          "amount_minor": 4000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-18",
+          "occurred_at": "2026-10-18T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "demo-review",
+          "sender": "source-3",
+          "source_transaction_id": "deposit-3",
+          "status": "posted",
+          "transaction_id": "a187dc1f-34f4-5b1f-936c-db8eba220e9a"
+        }
+      },
+      {
+        "known_at": "2026-10-19T12:00:00Z",
+        "observed": {
+          "amount_minor": 16000000,
+          "currency": "KZT",
+          "observed_date": "2026-10-19",
+          "occurred_at": "2026-10-19T12:00:00Z",
+          "precision": "timestamp",
+          "receiver": "payout",
+          "sender": "demo-review",
+          "source_transaction_id": "onward",
+          "status": "posted",
+          "transaction_id": "d5b282e4-9c40-531e-9038-105593e32556"
+        }
+      }
+    ],
+    "valid_until": "2026-10-22T12:00:00Z"
+  }
+}

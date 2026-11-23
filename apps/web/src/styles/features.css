@@ -1669,3 +1669,126 @@
     padding: var(--s-3) var(--s-4) var(--s-4);
   }
 }
+
+/* Transfer protection */
+.transfer-details,
+.transfer-result {
+  display: grid;
+  gap: var(--s-2);
+  padding: var(--s-4);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+}
+
+.transfer-details h3,
+.transfer-result p,
+.transfer-muted {
+  margin: 0;
+}
+
+.transfer-details h3 {
+  font-size: var(--fs-md);
+}
+
+.transfer-facts {
+  display: grid;
+  gap: var(--s-2);
+  margin: 0;
+}
+
+.transfer-facts div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  gap: var(--s-3);
+  align-items: start;
+}
+
+.transfer-facts dt,
+.transfer-muted {
+  color: var(--text-2);
+}
+
+.transfer-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.transfer-result {
+  --transfer-tone: var(--band-unresolved);
+  --transfer-tint: var(--band-unresolved-bg);
+  border-inline-start: var(--s-1) solid var(--transfer-tone);
+  background: var(--transfer-tint);
+}
+
+.transfer-result[data-decision="ALLOW"] {
+  --transfer-tone: var(--ev-supported);
+  --transfer-tint: var(--ev-supported-bg);
+}
+
+.transfer-result[data-decision="WARN"] {
+  --transfer-tone: var(--band-medium);
+  --transfer-tint: var(--band-medium-bg);
+}
+
+.transfer-result[data-decision="STEP_UP"] {
+  --transfer-tone: var(--band-high);
+  --transfer-tint: var(--band-high-bg);
+}
+
+.transfer-result[data-decision="UNAVAILABLE"] {
+  --transfer-tone: var(--ev-unavailable);
+  --transfer-tint: var(--ev-unavailable-bg);
+}
+
+.transfer-result strong {
+  color: var(--transfer-tone);
+}
+
+.transfer-reasons {
+  margin: 0;
+  padding-inline-start: var(--s-5);
+}
+
+.transfer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-block-start: var(--s-4);
+}
+
+.transfer-analyst,
+.transfer-confirmation {
+  display: block;
+  margin-block-start: var(--s-4);
+}
+
+.transfer-error {
+  margin: 0;
+  color: var(--ev-contradicted);
+}
+
+.transfer-access {
+  max-width: 32rem;
+}
+
+.transfer-audit,
+.transfer-finding {
+  font-size: var(--fs-sm);
+}
+
+.transfer-finding {
+  margin-block-start: var(--s-3);
+  padding-block-start: var(--s-3);
+  border-block-start: 1px solid var(--line-strong);
+  overflow-wrap: anywhere;
+}
+
+.transfer-finding h3 {
+  margin: 0 0 var(--s-2);
+  font-size: var(--fs-md);
+}
+
+.transfer-provenance {
+  margin-block-start: var(--s-4);
+}

@@ -34,7 +34,10 @@ services:
   api:
     image: nexora/app:local
     build: .
-    environment: *app_env
+    environment:
+      <<: *app_env
+      NEXORA_TRANSFER_PROTECTION_ENABLED: ${NEXORA_TRANSFER_PROTECTION_ENABLED:-true}
+      NEXORA_TRANSFER_ANALYST_TOKEN: ${NEXORA_TRANSFER_ANALYST_TOKEN:-}
     depends_on:
       migrate: {condition: service_completed_successfully}
     healthcheck:

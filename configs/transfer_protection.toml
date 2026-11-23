@@ -1,0 +1,3 @@
+# Hackathon demo policy. Bump version whenever decision rules or parameters change.
+version = "transfer-protection-v1"
+warn_with_confirmed_report_alone = true

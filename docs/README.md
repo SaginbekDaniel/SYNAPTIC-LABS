@@ -9,6 +9,7 @@
 | | [ADR/0001-decisions.md](ADR/0001-decisions.md) | Architecture decision records |
 | | [PROVENANCE.md](PROVENANCE.md) | Where evidence comes from and how it is verified |
 | Deployment | [deployment/railway.md](deployment/railway.md) | Railway topology, setup, variables, security model, operations, cost, troubleshooting |
+| Transfer protection | [TRANSFER_PROTECTION.md](TRANSFER_PROTECTION.md) | Demo setup, policy, point-in-time snapshots, holdout and walkthrough |
 | Development | [development/local-setup.md](development/local-setup.md) | Docker Compose and hot-reload setups, common problems |
 | | [development/testing.md](development/testing.md) | Test layers, commands, smoke test |
 | | [../CONTRIBUTING.md](../CONTRIBUTING.md) | Project rules and workflow |

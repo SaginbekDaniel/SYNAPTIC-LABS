@@ -260,6 +260,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/demo/transfer-checks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Check Transfer */
+        post: operations["check_transfer_api_v1_demo_transfer_checks_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/demo/transfer-checks/evidence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Transfer Evidence */
+        post: operations["transfer_evidence_api_v1_demo_transfer_checks_evidence_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/demo/transfer-checks/scenarios": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Scenarios */
+        get: operations["scenarios_api_v1_demo_transfer_checks_scenarios_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/evaluation": {
         parameters: {
             query?: never;
@@ -776,6 +827,33 @@ export interface components {
             /** Total */
             total: number;
         };
+        /** ContextFact */
+        ContextFact: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "FAMILY_TRANSFER" | "PAYROLL" | "MERCHANT_SETTLEMENT" | "REFUND" | "CONFIRMED_REPORT";
+            /**
+             * Known At
+             * Format: date-time
+             */
+            known_at: string;
+            /**
+             * Occurred At
+             * Format: date-time
+             */
+            occurred_at: string;
+            /** Recipient */
+            recipient: string;
+            /** Source Ref */
+            source_ref: string;
+            /**
+             * Transaction Ids
+             * @default []
+             */
+            transaction_ids: string[];
+        };
         /** Coverage */
         Coverage: {
             /** Boundary Accounts */
@@ -1111,6 +1189,25 @@ export interface components {
              */
             window_start: string;
         };
+        /** FormationProfile */
+        FormationProfile: {
+            /**
+             * Band
+             * @enum {string}
+             */
+            band: "critical" | "high" | "medium" | "low" | "insufficient_evidence";
+            /** Formation Id */
+            formation_id: string;
+            /** Indicators */
+            indicators: components["schemas"]["Indicator"][];
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "funnel" | "chain" | "fan_out" | "cycle";
+            /** Limitations */
+            limitations: string[];
+        };
         /** FormationSummary */
         FormationSummary: {
             /** Currency */
@@ -1242,6 +1339,25 @@ export interface components {
             batch_id: string;
             dataset: components["schemas"]["Dataset"];
             report: components["schemas"]["ImportReport"];
+        };
+        /** Indicator */
+        Indicator: {
+            /** Evidence Id */
+            evidence_id: string;
+            /**
+             * Family
+             * @enum {string}
+             */
+            family: "STRUCTURE" | "TEMPORAL" | "PEER_STATISTICS" | "NETWORK_CONTEXT";
+            /** Reason Code */
+            reason_code: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "supported" | "possible_ambiguous" | "contradicted" | "unavailable";
+            /** Transaction Ids */
+            transaction_ids: string[];
         };
         /** Job */
         Job: {
@@ -1464,6 +1580,21 @@ export interface components {
             /** Tp */
             tp: number;
         };
+        /** ScenarioOption */
+        ScenarioOption: {
+            /** Amount Minor */
+            amount_minor: string;
+            /**
+             * Currency
+             * @default KZT
+             * @constant
+             */
+            currency: "KZT";
+            /** Recipient Id */
+            recipient_id: string;
+            /** Scenario Id */
+            scenario_id: string;
+        };
         /** Sensitivity */
         Sensitivity: {
             /** Split */
@@ -1603,6 +1734,114 @@ export interface components {
             offset: number;
             /** Total */
             total: number;
+        };
+        /** TransferCheckRequest */
+        TransferCheckRequest: {
+            /** Amount Minor */
+            amount_minor: string;
+            /**
+             * Client Context
+             * @default none
+             * @constant
+             */
+            client_context: "none";
+            /**
+             * Currency
+             * @constant
+             */
+            currency: "KZT";
+            /** Recipient Id */
+            recipient_id: string;
+            /** Scenario Id */
+            scenario_id: string;
+        };
+        /** TransferCheckResponse */
+        TransferCheckResponse: {
+            /** Assessment Id */
+            assessment_id: string;
+            /**
+             * Coverage
+             * @enum {string}
+             */
+            coverage: "SUFFICIENT" | "LIMITED" | "UNAVAILABLE";
+            /** Customer Message */
+            customer_message: string;
+            /**
+             * Decision
+             * @enum {string}
+             */
+            decision: "ALLOW" | "WARN" | "STEP_UP" | "LIMITED_SIGNAL" | "UNAVAILABLE";
+            /** Policy Version */
+            policy_version: string;
+            /** Reason Codes */
+            reason_codes: ("INSUFFICIENT_HISTORY" | "INCOMPLETE_GRAPH" | "AMBIGUOUS_TIMESTAMPS" | "STALE_PROFILE" | "MISSING_PROFILE" | "DEPENDENCY_FAILURE" | "TIMEOUT" | "FEATURE_DISABLED" | "NO_SUPPORTED_CONCERN" | "SUSPICIOUS_NETWORK_LINK" | "TEMPORAL_FLOW_CONFIRMED" | "INDEPENDENT_REPORT" | "EXPLAINED_ACTIVITY" | "ESTABLISHED_RELATIONSHIP")[];
+            /** Recommended Actions */
+            recommended_actions: ("CONTINUE_SIMULATION" | "CANCEL" | "REVIEW_DETAILS" | "CONTACT_OFFICIAL_SUPPORT" | "RETRY")[];
+            /**
+             * Risk Band
+             * @enum {string}
+             */
+            risk_band: "LOW" | "ELEVATED" | "HIGH" | "UNKNOWN";
+            /**
+             * Simulation
+             * @default true
+             * @constant
+             */
+            simulation: true;
+            /** Snapshot Id */
+            snapshot_id: string | null;
+        };
+        /** TransferEvidenceRequest */
+        TransferEvidenceRequest: {
+            /** Assessment Id */
+            assessment_id: string;
+            check: components["schemas"]["TransferCheckRequest"];
+        };
+        /** TransferEvidenceResponse */
+        TransferEvidenceResponse: {
+            /**
+             * As Of
+             * Format: date-time
+             */
+            as_of: string;
+            /** Assessment Id */
+            assessment_id: string;
+            /** Context */
+            context: components["schemas"]["ContextFact"][];
+            /** Formations */
+            formations: components["schemas"]["FormationProfile"][];
+            /**
+             * Graph As Of
+             * Format: date-time
+             */
+            graph_as_of: string;
+            /** Graph Policy Version */
+            graph_policy_version: string;
+            /** Graph Snapshot Id */
+            graph_snapshot_id: string;
+            /** Is Repeat Recipient */
+            is_repeat_recipient: boolean;
+            /** Policy Version */
+            policy_version: string;
+            /** Reason Codes */
+            reason_codes: ("INSUFFICIENT_HISTORY" | "INCOMPLETE_GRAPH" | "AMBIGUOUS_TIMESTAMPS" | "STALE_PROFILE" | "MISSING_PROFILE" | "DEPENDENCY_FAILURE" | "TIMEOUT" | "FEATURE_DISABLED" | "NO_SUPPORTED_CONCERN" | "SUSPICIOUS_NETWORK_LINK" | "TEMPORAL_FLOW_CONFIRMED" | "INDEPENDENT_REPORT" | "EXPLAINED_ACTIVITY" | "ESTABLISHED_RELATIONSHIP")[];
+            /** Recipient Account Id */
+            recipient_account_id: string;
+            /**
+             * Simulation
+             * @default true
+             * @constant
+             */
+            simulation: true;
+            /** Snapshot Id */
+            snapshot_id: string;
+            /** Transactions */
+            transactions: components["schemas"]["Transaction"][];
+            /**
+             * Valid Until
+             * Format: date-time
+             */
+            valid_until: string;
         };
         /** ValidationError */
         ValidationError: {
@@ -2153,6 +2392,94 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    check_transfer_api_v1_demo_transfer_checks_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TransferCheckRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TransferCheckResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    transfer_evidence_api_v1_demo_transfer_checks_evidence_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Nexora-Transfer-Analyst-Token"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TransferEvidenceRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TransferEvidenceResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    scenarios_api_v1_demo_transfer_checks_scenarios_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScenarioOption"][];
                 };
             };
         };

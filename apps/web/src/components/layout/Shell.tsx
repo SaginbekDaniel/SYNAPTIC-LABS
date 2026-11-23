@@ -24,7 +24,8 @@ const PRIMARY: NavItem[] = [
 
 /** Secondary workspace: simulation and exploration tools, out of the analyst's main path. */
 const TOOLS: NavItem[] = [
-  { to: "/lab", key: "nav.lab", icon: "lab" },
+  { to: "/lab", key: "nav.lab", icon: "lab", end: true },
+  { to: "/lab/transfer-protection", key: "nav.transfer", icon: "supported" },
   { to: "/network", key: "nav.network", icon: "network" },
 ];
 
@@ -116,7 +117,7 @@ function MoreSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
         </div>
         <nav className="sheet__nav" aria-label={t("nav.tools")}>
           {[...TOOLS, { to: "/analytics/benchmark", key: "nav.evaluation" as MessageKey, icon: "benchmark" as IconName }].map((item) => (
-            <NavLink key={item.to} to={item.to} className="sheet__link" onClick={onClose}>
+            <NavLink key={item.to} to={item.to} end={"end" in item ? item.end : undefined} className="sheet__link" onClick={onClose}>
               <Icon name={item.icon} size={20} />
               {t(item.key)}
             </NavLink>
