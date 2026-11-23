@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import itertools
+
 import pytest
 
 from nexora.analytics.config import default_config
@@ -307,7 +309,8 @@ def test_every_committed_ratio_recomputes_from_its_counts(name):
             assert acc["recall"] == _ratio(acc["tp"], acc["positive"]), path
             assert acc["precision"] == _ratio(acc["tp"], acc["flagged"]), path
             curve = rk["curve"]
-            assert all(a["items"] < b["items"] and a["networks"] < b["networks"] for a, b in zip(curve, curve[1:]))
+            steps = itertools.pairwise(curve)
+            assert all(a["items"] < b["items"] and a["networks"] < b["networks"] for a, b in steps), path
             assert rk["networks_reached"] == (curve[-1]["networks"] if curve else 0) <= rk["suspicious_networks"]
             assert rk["average_precision"] == average_precision_from_curve(curve, rk["suspicious_networks"]), path
             for row in entity["reliability"] or []:
