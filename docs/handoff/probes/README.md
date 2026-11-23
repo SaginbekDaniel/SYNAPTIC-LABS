@@ -10,7 +10,7 @@ the literal output.
 |---|---|---|
 | Analysis pipeline, time and peak RSS at N transfers | `uv run python docs/handoff/probes/scale_pipeline.py 200000` | nothing |
 | Graph read model, hub with many counterparties | `uv run python docs/handoff/probes/scale_graph.py 20000 160000` | a **development** PostgreSQL (`NEXORA_PROBE_DATABASE_URL`, default the `nexora` dev database, migrated); seeds and deletes its own dataset |
-| Cytoscape `cose` layout time (main thread in the app) | `node docs/handoff/probes/cose_layout.mjs` | `cd apps/web && npm ci` |
+| Cytoscape `cose` layout time (in the layout worker since B-020; the main-thread fallback costs the same) | `node docs/handoff/probes/cose_layout.mjs` | `cd apps/web && npm ci` |
 | Run the Playwright suite against the **production bundle** with the exact gateway headers | see below (`gateway_sim.mjs`) | `cd apps/web && npx vite build` |
 | Mechanical consistency check of the handoff documents (paths, links, branches, SHAs, commands, task graph) | `python3 docs/handoff/probes/check_handoff_docs.py` | git, python3 |
 
@@ -21,6 +21,16 @@ scale_pipeline  N=2000 0.1 s / 37 MiB · 10000 0.6 s / 51 · 50000 5.9 s / 120 �
 scale_graph     hub 20000 peers, 199996 rows: local depth1 215 ms · depth2 (200 nodes) 640 ms · depth2 (300 nodes) 437 ms;
                 one hub expansion returns 40000 aggregate rows to Python, 398 edges kept
 cose_layout     50 nodes 109 ms · 100: 355 ms · 200: 1150 ms · 300: 2791 ms
+```
+
+The `cose_layout` line above came from the original probe, which built its headless instance without a `layout`
+option and without style: Cytoscape's default null layout put every node at (0, 0) and every node measured 1 px, so
+cose started from one point and drew `Math.random()` (the same defect B-020 fixed in the app). Corrected probe,
+2026-11-23, 4-core container — `app` = exactly how `coseLayout.ts` runs it, `pre-B-020 probe` = the old setup:
+
+```
+cose_layout app              50 nodes 63 ms · 100: 199 · 200: 779 · 300: 1948 · 400: 3138   (Math.random draws: 0)
+            pre-B-020 probe  50 nodes 55 ms · 100: 173 · 200: 711 · 300: 1695 · 400: 3069   (draws: 2450 … 159600)
 ```
 
 Re-measured 2026-11-22 after B-020 (Chromium, synthetic graph of n accounts / 1.5 n transfers served in place of the real

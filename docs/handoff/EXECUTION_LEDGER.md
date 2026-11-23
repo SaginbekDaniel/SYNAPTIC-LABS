@@ -300,3 +300,23 @@ Entry template:
 * Verification: ruff/format/mypy clean; pytest **246 passed** at the lock (+1 consistency case after the artifact: test_benchmark 26 passed).
   No web change.
 * State file updated: yes.
+
+### L-0016 · 2026-11-23 · session (parallel recovery) + probe correction · status: done
+* Context: a second session (`session_01YM4H2Tng9fXjo91qVvavzm`) was started on this branch with a recovery prompt stating that B-020 had
+  not been committed. Its container held the branch at `0c8d21b`; after fast-forwarding to `d0cb21e` it found no B-020 commit anywhere and
+  re-implemented B-020 (local commit `6cb45bb`, full gate green: pytest 224, vitest 131, Playwright 37 cold cache, 37 against the production
+  bundle with CSP). Its push was rejected: meanwhile the original session (`session_01YM4H2WosRxmPZ3JnYgB7uc`) had pushed its own B-020
+  (`0340f1a`, CI run 74 success) and then B-041/B-040 (`0dd9cd7`, CI run 78 success). **The duplicate B-020 was not pushed or merged**; the
+  branch was aligned with `origin` (no force, no history rewritten). Two sessions on one branch with the same backlog is a coordination
+  hazard — the owner decides which one continues (B-011 is marked Active by the original session).
+* Change in this entry: `docs/handoff/probes/cose_layout.mjs` corrected (explicit preset layout and drawn node sizes, as `coseLayout.ts`
+  does; also runs the old setup for comparison and counts `Math.random` draws); README and H-04 annotated with the corrected figures.
+  Observed (4 cores): app 50 nodes 63 ms · 100: 199 · 200: 779 · 300: 1948 · 400: 3138, 0 random draws; old setup 300: 1695 ms with
+  89,700 draws. No product code changed.
+* Observations on the delivered B-020, from comparing the two implementations (not acted on; candidate follow-ups for the owner):
+  (1) on every relayout (filter change, expansion) the stage is emptied and shows only the status until the worker finishes — up to
+  ~2.6 s at 300 accounts — whereas keeping the previous drawing until the new positions exist avoids the blank stage; (2) L-0011 reports
+  main-thread setup tasks of 67–229 ms, i.e. up to 29 ms over the 200 ms acceptance threshold outside the measured layout window; the
+  alternative measured 138–165 ms for the whole 300-account path. The alternative is kept as a patch outside the repository.
+* Verification: `python3 docs/handoff/probes/check_handoff_docs.py` → OK; probe output above is literal.
+* State file updated: no (its Active task belongs to the original session).

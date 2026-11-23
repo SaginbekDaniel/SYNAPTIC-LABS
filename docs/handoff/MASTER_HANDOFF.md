@@ -295,7 +295,7 @@ remittance 5/20, payroll-with-spending 4/43 (H-16, `docs/LIMITATIONS.md`).
 * **Verified behaviour** `[local]`: 5 graph-workspace E2E (overview, table fallback, URL filters, determinism,
   light theme/narrow widths) pass, also against the production bundle.
 * **Measured limits** `[probe]`: layout blocks the main thread — 50 nodes 109 ms, 100 → 355 ms, **200 → 1,150 ms,
-  300 → 2,791 ms** (H-04); with a 20,000-peer hub in 200k rows the local view takes 215 ms (depth 1) to 640 ms
+  300 → 2,791 ms** (H-04; flawed probe, corrected in H-04; resolved by B-020); with a 20,000-peer hub in 200k rows the local view takes 215 ms (depth 1) to 640 ms
   (depth 2) but the database returns 40,000 aggregate rows to keep 398 edges, and depth 2 issues one query per
   depth-1 neighbour (H-06). Fixed this project: edge colours (CSS Color 4 tokens were rejected by Cytoscape,
   now `canvasColor.ts`).
@@ -486,6 +486,10 @@ returns one. *Impact*: error lines — the ones needed — break log pipelines; 
 the instance; the gesture frame loop shares the thread. *Root cause*: synchronous force layout, no caching. *Impact*: UI
 stalls 1–3 s per filter change/expansion; 400-node extrapolation > 5 s (not measured). *Fix*: B-020. *Test*: long-task
 assertion at 300 nodes. *Cost* M.
+*Correction 2026-11-23 (L-0016)*: the `cose_layout.mjs` figures above came from a probe whose instance had no `layout` option
+and no style — every node started at (0, 0) at 1 px and cose broke the ties with `Math.random()` (89,700 draws at 300 nodes).
+Corrected probe: 200 nodes 779 ms, 300 → 1,948 ms, 400 → 3,138 ms. The conclusion stands (seconds of blocking at the
+workspace's sizes; the browser measurements in L-0011 confirm it); H-04 is resolved by B-020.
 
 **H-05 · P2 · Camera is turned on before the model is loaded.** *Evidence* `[code]` `gestureSession.ts` `start()` awaits
 `camera.start` then `engine.start`; observed status sequence starting → loading → calibrating with the camera live from
