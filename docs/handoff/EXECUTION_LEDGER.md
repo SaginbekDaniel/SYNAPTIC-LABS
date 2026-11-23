@@ -246,3 +246,29 @@ Entry template:
   dark/light, 1440 and 390 px (scratch specs, deleted).
 * Not executed: real Nginx image (CI covers it); browsers other than Chromium.
 * State file updated: yes.
+
+### L-0012 · 2026-11-23 · session resume · status: done
+* The container restarted between B-020's last verification and its commit (PostgreSQL down, date rolled over). Working tree intact on
+  `feat/b-020-layout-worker`; databases survived. Re-verified before committing: tsc clean, vitest 128, Playwright cold **36 passed**. B-020
+  committed as `0340f1a`. CI: runs 72 (B-012) and 73 (B-031) success.
+
+### L-0013 · 2026-11-23 · B-041 · status: done
+* Branch / commits: `feat/b-041-entity-metrics` → fast-forwarded into `claude/peaceful-darwin-nrquu9` (code `85f8b5e`, bench artifact, dev
+  artifact, docs).
+* Changes: `src/nexora/evaluation/entity_metrics.py` (new, pure): account-level tp/fp/fn against complete truth lists with false positives split
+  into labelled-legitimate vs unlabelled background accounts; distinct-network precision–recall over the pooled analyst queue (ties grouped, so
+  order-independent; integer curve points; AP recomputable from them); planted share per band with Wilson 95 % intervals; 2,000-draw dataset
+  bootstrap (seed 20261123) for account recall/precision and AP. `summarize()` unchanged (it is called thousands of times inside the sealed
+  runner's bootstrap). Scripts attach `entity` per method; `EVALUATION.md` renders it from counts. `MethodSummary.entity` optional in the API
+  schema (older artifacts validate); OpenAPI client regenerated.
+* Artifacts: `bench-v1.json` regenerated at `85f8b5e` (clean): 0 count changes, 0 F1 changes, `entity` added to 23 summaries.
+  `dev-evaluation.json` at `5bfc0bb`: decision/bootstrap/examples identical, 0 count changes, `entity` on 11 summaries.
+  `sealed-evaluation.json` deliberately **not** re-run (consumed; RESULTS.md says why). No README/pitch claim uses the new metrics.
+* Observation, not a claim (synthetic, exposed holdout): the bench-v1 table shows `insufficient_evidence` 8/8 planted — the known L-01 leak made
+  visible by the new reliability view.
+* Tests: `test_entity_metrics.py` 12 (hand-computed fixture: account counts, distinct-network curve with a tie and a duplicate, AP = 0.5,
+  tie/input-order independence, Wilson reference values 5/10 → 0.2366–0.7634 etc., bootstrap determinism); the artifact-consistency test now
+  recomputes every entity ratio, AP and Wilson interval from counts for all three artifacts.
+* Verification: ruff clean (incl. scripts), format 98 files, mypy clean (63 files), pytest **236 passed** 0 skipped; gen:api regenerated; tsc
+  clean; vitest **128**; Playwright cold **36 passed**.
+* State file updated: yes.
