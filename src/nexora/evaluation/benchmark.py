@@ -39,6 +39,7 @@ from nexora.domain.ids import canonical_json, sha256_hex, transaction_uuid
 from nexora.domain.transfers import ObservedTransfer
 from nexora.evaluation.generator import GeneratedDataset, ScenarioTruth, generate
 from nexora.evaluation.sealed_generator import generate_sealed
+from nexora.evaluation.sealed_generator_v2 import generate_sealed_v2
 from nexora.ingest.validation import prepare_batch
 
 BENCHMARK_VERSION = "bench-harness-v1"
@@ -51,9 +52,14 @@ SPLITS: dict[str, tuple[int, ...]] = {
     # Sealed final evaluation (docs/evaluation/EXPERIMENT_PROTOCOL.md): independent generator
     # ``sealed-gen-v1``, evaluated once after the configuration and this harness were locked.
     "sealed": tuple(range(9000, 9060)),
+    # Second sealed split (docs/evaluation/EXPERIMENT_PROTOCOL_SEALED_V2.md): generator ``sealed-gen-v2``,
+    # protocol locked before any candidate was run on it.
+    "sealed_v2": tuple(range(9100, 9180)),
 }
 #: Splits whose results have been inspected during development; reported, never tuned on again.
 EXPOSED_SPLITS = frozenset({"dev", "validation", "holdout"})
+#: Sealed splits already evaluated under their protocol: never used for tuning or selection again.
+CONSUMED_SPLITS = frozenset({"sealed"})
 BAND_RANK = {"critical": 0, "high": 1, "medium": 2, "insufficient_evidence": 3, "low": 4}
 FLAG_BANDS = frozenset({"critical", "high", "medium"})
 HIGH_BANDS = frozenset({"critical", "high"})
@@ -543,6 +549,8 @@ class SplitRun:
 def load_split(split: str) -> list[GeneratedDataset]:
     if split == "sealed":
         return [generate_sealed(seed) for seed in SPLITS[split]]
+    if split == "sealed_v2":
+        return [generate_sealed_v2(seed) for seed in SPLITS[split]]
     return [generate(SUITE, seed) for seed in SPLITS[split]]
 
 
