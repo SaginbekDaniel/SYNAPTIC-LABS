@@ -383,3 +383,10 @@ Entry template:
   Not run: production-bundle CSP run (no change to headers or assets), Docker image.
 * Production note: deploying `0005` makes every existing account an analyst (current behaviour). Nothing deployed (B-055).
 * State file updated: yes.
+
+### L-0019 · 2026-11-23 · CI record and session end · status: done
+* CI: run 80 on `b47ac73` (L-0017) success; run 81 on `7b456e3` (B-011) success in all three jobs — tests and browser E2E,
+  production images + gateway smoke, Railway definition + ShellCheck.
+* Next task: B-004. It merges `admiring-fermat-9fc4nx` (pitch, ~3.9k lines) and `great-lovelace-0gmpmi` (README redesign,
+  conflicts in `README.md`) into the working line; not started in this session because it could not be finished and
+  verified (pitch unit + 29 E2E) within it. Open owner decisions touched by this session: D-11 (import role), B-048 (H-25 fix).

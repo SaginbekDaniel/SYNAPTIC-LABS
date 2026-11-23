@@ -13,7 +13,7 @@ that no other session is working on this branch (two sessions collided here, L-0
 | Item | Value |
 |---|---|
 | Working branch | `claude/peaceful-darwin-nrquu9` (the only line with B-001…B-041 work; `graph-workspace-wip` stays at `0c8d21b`) |
-| Last verified pushed commit before L-0017 | `3528265` — CI run 79 success |
+| Last verified pushed commits | `3528265` CI run 79 · `b47ac73` (L-0017) run 80 · `7b456e3` (B-011, L-0018) run 81 — all success |
 | L-0017 commit | the commit that adds `tests/unit/test_handoff_docs_checker.py` — `git log -1 --format=%H -- tests/unit/test_handoff_docs_checker.py`; its CI run is in the ledger/final report |
 | Default branch | `claude/brave-dirac-c80nwq` at `ea5ca9c` (no `main`) |
 | Open PRs | #15, #5, #3 (superseded in effect by the integration line — owner decides, B-002) and Dependabot PRs |
