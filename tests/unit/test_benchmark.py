@@ -297,6 +297,22 @@ def test_every_committed_ratio_recomputes_from_its_counts(name):
             assert sc["high_band_recall"] == _ratio(sc["tp_high"], tp + fn), path
             assert sc["high_band_fpr"] == _ratio(sc["fp_high"], fp + tn), path
         assert al["precision"] == _ratio(al["relevant"], al["flagged"]), path
+        entity = s.get("entity")
+        if entity is not None:  # B-041 metrics, present in artifacts generated after it
+            from nexora.evaluation.entity_metrics import average_precision_from_curve, wilson
+
+            acc, rk = entity["accounts"], entity["ranking"]
+            assert acc["tp"] + acc["fn"] == acc["positive"] and acc["tp"] + acc["fp"] == acc["flagged"], path
+            assert acc["fp"] == acc["fp_labelled_legitimate"] + acc["fp_unlabelled"], path
+            assert acc["recall"] == _ratio(acc["tp"], acc["positive"]), path
+            assert acc["precision"] == _ratio(acc["tp"], acc["flagged"]), path
+            curve = rk["curve"]
+            assert all(a["items"] < b["items"] and a["networks"] < b["networks"] for a, b in zip(curve, curve[1:]))
+            assert rk["networks_reached"] == (curve[-1]["networks"] if curve else 0) <= rk["suspicious_networks"]
+            assert rk["average_precision"] == average_precision_from_curve(curve, rk["suspicious_networks"]), path
+            for row in entity["reliability"] or []:
+                assert row["share"] == _ratio(row["planted"], row["items"]), path
+                assert row["wilson95"] == list(wilson(row["planted"], row["items"]) or []) or None, path
 
 
 def test_report_rounds_count_backed_ratios_once():

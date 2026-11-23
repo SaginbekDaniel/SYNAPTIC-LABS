@@ -28,6 +28,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from nexora.analytics.config import default_config  # noqa: E402
 from nexora.evaluation import benchmark as b  # noqa: E402
+from nexora.evaluation import entity_metrics as em  # noqa: E402
 
 BOOTSTRAP_DRAWS = 2000
 BOOTSTRAP_SEED = 20261117
@@ -130,6 +131,8 @@ def run(split: str) -> dict[str, Any]:
     datasets = b.load_split(split)
     res = b.run_experiments(datasets, experiments(cfg))
     summaries = {name: b.summarize(evals) for name, evals in res.items()}
+    # Entity-level, ranking and band-reliability metrics (B-041) for every method; not part of the decision rule.
+    entity = {name: em.entity_summary(evals) for name, evals in res.items()}
     boot = {
         "fpr": paired_bootstrap(res["baseline_v2"], res["candidate"], lambda e: _scen(e, "fpr")),
         "recall": paired_bootstrap(res["baseline_v2"], res["candidate"], lambda e: _scen(e, "recall")),
@@ -153,7 +156,7 @@ def run(split: str) -> dict[str, Any]:
             "baseline_config_sha256": b.config_variant(cfg, b.VARIANTS["v2_shipped"]).config_sha256,
         },
         "environment": {"python": platform.python_version()},
-        "results": summaries,
+        "results": {name: {**summary, "entity": entity[name]} for name, summary in summaries.items()},
         "bootstrap": {"draws": BOOTSTRAP_DRAWS, "seed": BOOTSTRAP_SEED, **boot},
         "decision": decide(summaries["baseline_v2"], summaries["candidate"], boot),
         "examples": b.examples(res["candidate"], limit=40),

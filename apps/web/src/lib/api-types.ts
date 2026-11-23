@@ -817,6 +817,19 @@ export interface components {
             /** Username */
             username: string;
         };
+        /** BandReliability */
+        BandReliability: {
+            /** Band */
+            band: string;
+            /** Items */
+            items: number;
+            /** Planted */
+            planted: number;
+            /** Share */
+            share: number | null;
+            /** Wilson95 */
+            wilson95: number[] | null;
+        };
         /** Body_import_csv_api_v1_datasets_import_post */
         Body_import_csv_api_v1_datasets_import_post: {
             /**
@@ -1011,6 +1024,64 @@ export interface components {
              * @enum {string}
              */
             to_status: "new" | "investigating" | "escalated" | "dismissed" | "closed" | "reopened";
+        };
+        /** EntityAccounts */
+        EntityAccounts: {
+            /** Flagged */
+            flagged: number;
+            /** Fn */
+            fn: number;
+            /** Fp */
+            fp: number;
+            /** Fp Labelled Legitimate */
+            fp_labelled_legitimate: number;
+            /** Fp Unlabelled */
+            fp_unlabelled: number;
+            /** Positive */
+            positive: number;
+            /** Precision */
+            precision: number | null;
+            /** Recall */
+            recall: number | null;
+            /** Tp */
+            tp: number;
+        };
+        /** EntityBootstrap */
+        EntityBootstrap: {
+            /** Account Precision */
+            account_precision: number[] | null;
+            /** Account Recall */
+            account_recall: number[] | null;
+            /** Average Precision */
+            average_precision: number[] | null;
+            /** Draws */
+            draws: number;
+            /** Seed */
+            seed: number;
+        };
+        /**
+         * EntityMetrics
+         * @description Account-level, ranking and band-reliability metrics (synthetic data; see evaluation/entity_metrics.py).
+         */
+        EntityMetrics: {
+            accounts: components["schemas"]["EntityAccounts"];
+            bootstrap?: components["schemas"]["EntityBootstrap"] | null;
+            ranking: components["schemas"]["EntityRanking"];
+            /** Reliability */
+            reliability: components["schemas"]["BandReliability"][] | null;
+        };
+        /** EntityRanking */
+        EntityRanking: {
+            /** Average Precision */
+            average_precision: number | null;
+            /** Curve */
+            curve: components["schemas"]["RankingPoint"][];
+            /** Networks Reached */
+            networks_reached: number;
+            /** Queued Items */
+            queued_items: number;
+            /** Suspicious Networks */
+            suspicious_networks: number;
         };
         /** ErrorBody */
         ErrorBody: {
@@ -1692,6 +1763,7 @@ export interface components {
             };
             /** Datasets */
             datasets: number;
+            entity?: components["schemas"]["EntityMetrics"] | null;
             integrity?: components["schemas"]["IntegrityMetrics"] | null;
             latency_ms: components["schemas"]["LatencyMs"];
             queue: components["schemas"]["QueueMetrics"];
@@ -1772,6 +1844,13 @@ export interface components {
             recall_at_10: number | null;
             /** Recall At 5 */
             recall_at_5: number | null;
+        };
+        /** RankingPoint */
+        RankingPoint: {
+            /** Items */
+            items: number;
+            /** Networks */
+            networks: number;
         };
         /** ReasonCode */
         ReasonCode: {

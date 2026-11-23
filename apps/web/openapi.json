@@ -779,6 +779,57 @@
         "title": "AuthUser",
         "type": "object"
       },
+      "BandReliability": {
+        "additionalProperties": false,
+        "properties": {
+          "band": {
+            "title": "Band",
+            "type": "string"
+          },
+          "items": {
+            "title": "Items",
+            "type": "integer"
+          },
+          "planted": {
+            "title": "Planted",
+            "type": "integer"
+          },
+          "share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Share"
+          },
+          "wilson95": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wilson95"
+          }
+        },
+        "required": [
+          "band",
+          "items",
+          "planted",
+          "share",
+          "wilson95"
+        ],
+        "title": "BandReliability",
+        "type": "object"
+      },
       "Body_import_csv_api_v1_datasets_import_post": {
         "properties": {
           "boundary_account_ids": {
@@ -1407,6 +1458,225 @@
           "expected_version"
         ],
         "title": "DecisionRequest",
+        "type": "object"
+      },
+      "EntityAccounts": {
+        "additionalProperties": false,
+        "properties": {
+          "flagged": {
+            "title": "Flagged",
+            "type": "integer"
+          },
+          "fn": {
+            "title": "Fn",
+            "type": "integer"
+          },
+          "fp": {
+            "title": "Fp",
+            "type": "integer"
+          },
+          "fp_labelled_legitimate": {
+            "title": "Fp Labelled Legitimate",
+            "type": "integer"
+          },
+          "fp_unlabelled": {
+            "title": "Fp Unlabelled",
+            "type": "integer"
+          },
+          "positive": {
+            "title": "Positive",
+            "type": "integer"
+          },
+          "precision": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Precision"
+          },
+          "recall": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recall"
+          },
+          "tp": {
+            "title": "Tp",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "positive",
+          "flagged",
+          "tp",
+          "fp",
+          "fn",
+          "fp_labelled_legitimate",
+          "fp_unlabelled",
+          "recall",
+          "precision"
+        ],
+        "title": "EntityAccounts",
+        "type": "object"
+      },
+      "EntityBootstrap": {
+        "additionalProperties": false,
+        "properties": {
+          "account_precision": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Precision"
+          },
+          "account_recall": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Recall"
+          },
+          "average_precision": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Average Precision"
+          },
+          "draws": {
+            "title": "Draws",
+            "type": "integer"
+          },
+          "seed": {
+            "title": "Seed",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "draws",
+          "seed",
+          "account_recall",
+          "account_precision",
+          "average_precision"
+        ],
+        "title": "EntityBootstrap",
+        "type": "object"
+      },
+      "EntityMetrics": {
+        "additionalProperties": false,
+        "description": "Account-level, ranking and band-reliability metrics (synthetic data; see evaluation/entity_metrics.py).",
+        "properties": {
+          "accounts": {
+            "$ref": "#/components/schemas/EntityAccounts"
+          },
+          "bootstrap": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EntityBootstrap"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ranking": {
+            "$ref": "#/components/schemas/EntityRanking"
+          },
+          "reliability": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/BandReliability"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reliability"
+          }
+        },
+        "required": [
+          "accounts",
+          "ranking",
+          "reliability"
+        ],
+        "title": "EntityMetrics",
+        "type": "object"
+      },
+      "EntityRanking": {
+        "additionalProperties": false,
+        "properties": {
+          "average_precision": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Average Precision"
+          },
+          "curve": {
+            "items": {
+              "$ref": "#/components/schemas/RankingPoint"
+            },
+            "title": "Curve",
+            "type": "array"
+          },
+          "networks_reached": {
+            "title": "Networks Reached",
+            "type": "integer"
+          },
+          "queued_items": {
+            "title": "Queued Items",
+            "type": "integer"
+          },
+          "suspicious_networks": {
+            "title": "Suspicious Networks",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "suspicious_networks",
+          "queued_items",
+          "networks_reached",
+          "average_precision",
+          "curve"
+        ],
+        "title": "EntityRanking",
         "type": "object"
       },
       "ErrorBody": {
@@ -3241,6 +3511,16 @@
             "title": "Datasets",
             "type": "integer"
           },
+          "entity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EntityMetrics"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "integrity": {
             "anyOf": [
               {
@@ -3510,6 +3790,25 @@
           "recall_at_10"
         ],
         "title": "QueueMetrics",
+        "type": "object"
+      },
+      "RankingPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "title": "Items",
+            "type": "integer"
+          },
+          "networks": {
+            "title": "Networks",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "networks"
+        ],
+        "title": "RankingPoint",
         "type": "object"
       },
       "ReasonCode": {

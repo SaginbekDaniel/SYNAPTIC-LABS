@@ -30,6 +30,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from nexora.analytics.config import default_config  # noqa: E402
 from nexora.evaluation import benchmark as b  # noqa: E402
+from nexora.evaluation import entity_metrics as em  # noqa: E402
 from nexora.evaluation.generator import BENCH_GENERATOR_VERSION  # noqa: E402
 
 OUTPUTS = ("benchmarks/results/bench-v1.json", "docs/EVALUATION.md")
@@ -135,7 +136,10 @@ def run(splits: list[str]) -> dict[str, Any]:
     for split, ds in loaded.items():
         print(f"[{split}] methods", flush=True)
         res = b.run_experiments(ds, experiments(cfg))
-        artifact["results"][split] = {name: b.summarize(evals) for name, evals in res.items()}
+        print(f"[{split}] entity-level metrics and bootstrap", flush=True)
+        artifact["results"][split] = {
+            name: {**b.summarize(evals), "entity": em.entity_summary(evals)} for name, evals in res.items()
+        }
         if split in ("validation", "holdout"):
             print(f"[{split}] ablations", flush=True)
             abl = b.run_experiments(
@@ -222,6 +226,55 @@ def _ratios(summary: dict[str, Any]) -> dict[str, str]:
     }
 
 
+def _ci(interval: list[float] | None) -> str:
+    return "—" if not interval else f"{interval[0]:.3f}–{interval[1]:.3f}"
+
+
+def _render_entity(a: dict[str, Any], labels: dict[str, str]) -> list[str]:
+    """Account-level, ranking and band-reliability tables (B-041); empty for artifacts without them."""
+    lines: list[str] = []
+    for split, res in a["results"].items():
+        if not all("entity" in s for s in res.values()):
+            continue
+        lines += [
+            "",
+            f"## Entity-level and ranking metrics — {split}",
+            "",
+            "Accounts: positives are the accounts of planted suspicious scenarios; flagged = every account of a "
+            "flagged item. Ranking: the pooled queue in review order, ties taken together, distinct planted "
+            "networks; AP = average precision. Intervals: 95 % dataset bootstrap. Synthetic data only.",
+            "",
+            "| Method | Account recall | Account precision | Flagged accounts (labelled legit / unlabelled FP) | "
+            "AP | AP 95 % | Account recall 95 % | Networks reached / planted | Queued items |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+        ]
+        for mid, s in res.items():
+            acc, rk, bs = s["entity"]["accounts"], s["entity"]["ranking"], s["entity"].get("bootstrap") or {}
+            lines.append(
+                f"| {labels.get(mid, mid)} | {_r(acc['tp'], acc['positive'], acc['recall'])} | "
+                f"{_r(acc['tp'], acc['flagged'], acc['precision'])} | "
+                f"{acc['flagged']} ({acc['fp_labelled_legitimate']} / {acc['fp_unlabelled']}) | "
+                f"{_f(rk['average_precision'])} | {_ci(bs.get('average_precision'))} | "
+                f"{_ci(bs.get('account_recall'))} | {rk['networks_reached']} / {rk['suspicious_networks']} | "
+                f"{rk['queued_items']} |"
+            )
+        rel = res.get("nexora_v2", {}).get("entity", {}).get("reliability")
+        if rel:
+            lines += [
+                "",
+                f"Planted share by band, NEXORA v2 — {split} (all assessed items; a triage order, not a probability):",
+                "",
+                "| Band | Items | Planted | Share | Wilson 95 % |",
+                "|---|---:|---:|---:|---:|",
+            ]
+            lines += [
+                f"| {r['band']} | {r['items']} | {r['planted']} | {_r(r['planted'], r['items'], r['share'])} | "
+                f"{_ci(r['wilson95'])} |"
+                for r in rel
+            ]
+    return lines
+
+
 def render(a: dict[str, Any]) -> str:
     labels = {m["id"]: m["label"] for m in a["methods"]}
     lines = [
@@ -268,6 +321,7 @@ def render(a: dict[str, Any]) -> str:
                 f"{_f(q['recall_at_5'])} | {_f(q['p_at_10'])} | {_f(q['recall_at_10'])} | "
                 f"{_f(s['latency_ms']['median'])} |"
             )
+    lines += _render_entity(a, labels)
     hold = a["results"].get("holdout") or next(iter(a["results"].values()))
     fams = hold["nexora_v2"]["by_family"]
     lines += [

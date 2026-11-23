@@ -593,6 +593,56 @@ class LatencyMs(Model):
     max: float | None
 
 
+class EntityAccounts(Model):
+    positive: int
+    flagged: int
+    tp: int
+    fp: int
+    fn: int
+    fp_labelled_legitimate: int
+    fp_unlabelled: int
+    recall: float | None
+    precision: float | None
+
+
+class RankingPoint(Model):
+    items: int
+    networks: int
+
+
+class EntityRanking(Model):
+    suspicious_networks: int
+    queued_items: int
+    networks_reached: int
+    average_precision: float | None
+    curve: list[RankingPoint]
+
+
+class BandReliability(Model):
+    band: str
+    items: int
+    planted: int
+    share: float | None
+    wilson95: list[float] | None
+
+
+class EntityBootstrap(Model):
+    draws: int
+    seed: int
+    account_recall: list[float] | None
+    account_precision: list[float] | None
+    average_precision: list[float] | None
+
+
+class EntityMetrics(Model):
+    """Account-level, ranking and band-reliability metrics (synthetic data; see evaluation/entity_metrics.py)."""
+
+    accounts: EntityAccounts
+    ranking: EntityRanking
+    reliability: list[BandReliability] | None
+    bootstrap: EntityBootstrap | None = None
+
+
 class MethodSummary(Model):
     datasets: int
     scenario: ScenarioMetrics
@@ -602,6 +652,8 @@ class MethodSummary(Model):
     latency_ms: LatencyMs
     abstention: AbstentionMetrics | None = None
     integrity: IntegrityMetrics | None = None
+    # Added by B-041; absent in artifacts written before it.
+    entity: EntityMetrics | None = None
 
 
 class EvaluationMethod(Model):
