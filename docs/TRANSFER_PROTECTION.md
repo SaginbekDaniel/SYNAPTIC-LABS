@@ -143,6 +143,7 @@ uv run python scripts/run_transfer_protection_evaluation.py
 `artifacts/transfer-protection-evaluation.json`. В отчёте указаны SHA Git,
 признак изменений в рабочем дереве, версии и хэши входов, результаты по
 сценариям и перцентили. Путь можно задать через `--output`.
+В репозитории сохранён [JSON финального прогона](../benchmarks/transfer_protection/results/holdout-v1.json).
 
 `benchmarks/transfer_protection/holdout-v1.json` задаёт отдельную от каталога
 демо выборку из 112 намерений, 67 легитимных и 45 мошеннических. Она фиксирует
