@@ -12,8 +12,8 @@ fresh session container (L-0020) unless marked otherwise; re-measure before quot
 | Python unit + integration | `uv run pytest -p no:cacheprovider -rs` | **312 passed, 0 skipped** (296 before L-0020 + 8 progress-probe + 3 README-traceability + 5 audit allow-list tests, L-0023) | same | domain, analytics, detectors, evaluation harness, API, auth, CSRF, roles matrix, migrations, logging, handoff docs |
 | Migrations | `uv run alembic upgrade head` · `uv run alembic check` · `uv run alembic heads` | single head `0005`, ORM in sync | same | chain linearity (B-001), stepwise upgrade from production's `0003` |
 | Web types | `cd apps/web && npx tsc -b` | clean | same | strict TS |
-| Web unit | `cd apps/web && npx vitest run` | **135 passed** (15 files) | same | graph controller, layout client/worker, gestures state machine, i18n, roles UI, formatting |
-| Web build | `cd apps/web && npx vite build` | ok (largest chunk `GraphCanvas` 471 kB / 151 kB gzip) | same | bundling, lazy routes |
+| Web unit | `cd apps/web && npx vitest run` | **135 passed** (15 files; vitest 5 since B-013) | same | graph controller, layout client/worker, gestures state machine, i18n, roles UI, formatting |
+| Web build | `cd apps/web && npx vite build` | ok — Vite 8 / Rolldown since B-013, 0.56 s (largest chunk `GraphCanvas` 461 kB / 146 kB gzip) | same | bundling, lazy routes, module workers |
 | OpenAPI client drift | `cd apps/web && npm run gen:api`, then `git diff --exit-code -- apps/web/openapi.json apps/web/src/lib/api-types.ts` | in sync | same | API ↔ client contract |
 | Browser E2E | `cd apps/web && rm -rf node_modules/.vite && npx playwright test --trace off` | **38 passed** (2.1 min, cold cache, L-0023) | same | sign-in/out, session expiry (incl. expiry during a pending lazy navigation, H-28), roles (viewer journey), queue, investigation, cases, graph workspace, layout determinism and long-task budget, gestures with a fake camera |
 | Railway definition | `cd .railway && npm ci && npm run check` | 3 services + database, all invariants hold | Deployment config | IaC invariants (no public API, gateway modes) |
@@ -22,7 +22,7 @@ fresh session container (L-0020) unless marked otherwise; re-measure before quot
 | Pitch lint / types / unit / build | `cd apps/pitch && npm run lint && npx tsc -b && npm test && npm run build` | clean · **14 passed** (redesigned pitch, L-0021; the first pitch had 17) · ok | `pitch` workflow (path-filtered: `apps/pitch/**`, `bench-v1.json`) | pitch app; results-slide figures pinned to `bench-v1.json` |
 | Pitch E2E | `cd apps/pitch && npx playwright test --trace off` | **31 passed** (L-0021) | `pitch` workflow, plus a static-server smoke test | slides, keyboard, accessibility, "no production/bank claim" guard |
 | Handoff consistency | `python3 docs/handoff/probes/check_handoff_docs.py` · `python3 docs/handoff/probes/progress.py` | OK · exit 0 | via pytest | paths, commits, findings, dependency graph, status evidence |
-| Dependency audit | `.github/workflows/audit.yml` (npm ×3 projects, pip-audit) with negative controls | production: npm 0, **Python 0 (first audit, run 1)**; dev npm (web): 6 (2 critical, 1 high, 3 moderate — vitest 2 / esbuild chain, B-013) | `audit` workflow (lockfile changes, weekly) | supply chain |
+| Dependency audit | `.github/workflows/audit.yml` (npm ×3 projects, pip-audit) with negative controls | production: npm 0, **Python 0 (first audit, run 1)**; dev npm (web): 0 after B-013 (was 6) | `audit` workflow (lockfile changes, weekly) | supply chain |
 | CodeQL | scheduled / PR workflow | last run success (default branch, 2026-11-23) | codeql | static security analysis |
 
 ## Coverage by product area

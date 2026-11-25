@@ -490,3 +490,22 @@ Entry template:
   the policy intact in the negative control → it fails ("Покажите руку в кадре" instead of the engine error).
 * Not executed: the real Nginx image (no Docker daemon) — the next CI `containers` run is the acceptance evidence.
 * State file updated: yes.
+
+### L-0024 · 2026-11-25 · B-050 CI evidence; B-013 · status: B-050 done; B-013 verified (DONE after CI)
+* B-050 evidence: ci run 90 on `27ac946`, job "Production images + gateway smoke test" (real Nginx image, compose stack):
+  "Running 7 tests using 1 worker" — desktop 3, mobile 1, **gestures 3 passed** (assets and policy 176 ms; recogniser on the fake
+  camera 6.3 s; negative control 4.1 s); "7 passed (23.0s)". Audit run 2 on `27ac946` success (hardened controls).
+* B-013: `apps/web` vite `^5.4.21` → `^8.3.8` (8.3.8, Rolldown), `@vitejs/plugin-react` `^4.7.0` → `^6.3.0`, vitest `^2.1.9` →
+  `^5.1.0` (resolves 5.1.1). An exact `5.1.0` pin cannot be installed: npm's arborist crashes ("Cannot read properties of null
+  (reading 'edgesOut')" in `#loadPeerSet`) because the newest optional peer `@vitest/browser-playwright@5.1.1` peers on vitest
+  5.1.1; the caret range (repository convention) resolves cleanly. Lockfile regenerated from the original with only these changes;
+  `npm ci` reproduces it. No source or config change was needed: `optimizeDeps.include`, `worker.format: "es"` and the
+  `gestureAssets()` plugin work unchanged.
+* Verification: `npm audit` (all deps) **0 vulnerabilities** (was 6: 2 critical, 1 high, 3 moderate); `npm audit --omit=dev` 0;
+  `tsc -b` clean; vitest **135 passed**; `vite build` ok in 0.56 s (was 3.5 s) — landmark worker still a module worker
+  (`{type: "module"}`) that lazy-imports the MediaPipe chunk, vendor assets copied; main chunk 336.6 kB / 105.0 kB gzip (was
+  313.8 / 105.7). Playwright from a cold Vite cache **38 passed**, no "optimized dependencies changed / reloading" line in the
+  output (the mid-session reload fixed in L-0001, `7abd9a5`, stays fixed); Playwright against the production bundle behind `gateway_sim.mjs` with the
+  generated CSP **38 passed**.
+* Not executed: Docker image build locally (CI `containers` job builds the gateway image with this toolchain).
+* State file updated: yes.

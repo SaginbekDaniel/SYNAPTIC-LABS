@@ -22,7 +22,7 @@ flowchart LR
   B010["B-010 P0"]:::done
   B011["B-011 P1"]:::done
   B012["B-012 P1"]:::done
-  B013["B-013 P1"]:::todo
+  B013["B-013 P1"]:::verified
   B014["B-014 P1"]:::done
   B015["B-015 P1"]:::done
   B016["B-016 P2"]:::todo
@@ -48,7 +48,7 @@ flowchart LR
   B046["B-046 P2"]:::todo
   B047["B-047 P2"]:::todo
   B048["B-048 P3"]:::blocked
-  B050["B-050 P1"]:::implemented
+  B050["B-050 P1"]:::done
   B051["B-051 P1"]:::blocked
   B052["B-052 P1"]:::todo
   B053["B-053 P2"]:::todo

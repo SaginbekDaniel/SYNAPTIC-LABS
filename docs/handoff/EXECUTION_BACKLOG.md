@@ -215,7 +215,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: routing is central; own branch, revert on regression.
 
 ### B-013 · P1 · Upgrade Vite 8 and Vitest 5
-* **Status**: TODO
+* **Status**: VERIFIED
 * **Rationale**: H-07. Dev/test-only advisories: vite ≤ 6.4.3 (high), esbuild ≤ 0.24.2, vitest ≤ 4.1.10 and
   tinypool (critical but only when the Vitest UI/API server listens), @vitest/mocker. Fixes are majors
   (Dependabot #11, #13).
@@ -663,7 +663,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 ## Wave 5 — Platform and product
 
 ### B-050 · P1 · Exercise the camera path through the real gateway image in CI
-* **Status**: IMPLEMENTED
+* **Status**: DONE · commit `27ac946` · L-0023
 * **Rationale**: H-19. CI builds both images and runs a smoke test through the gateway, which loads `/network`
   and asserts no console/CSP errors — but never starts the camera or fetches `/vendor/mediapipe/*`. The
   production-CSP gesture run in this project used a Node stand-in

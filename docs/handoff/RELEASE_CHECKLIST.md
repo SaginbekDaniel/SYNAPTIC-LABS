@@ -17,10 +17,10 @@ Tick a box only with the evidence named next to it (command output, CI run URL, 
 - [x] tsc, vitest, vite build — L-0020
 - [x] OpenAPI client in sync — L-0020
 - [x] Playwright full suite from a cold `node_modules/.vite` — L-0020 (37 passed)
-- [ ] Playwright against the production bundle with the gateway CSP headers — *last run L-0011 (B-020); re-run on the release commit*
+- [ ] Playwright against the production bundle with the gateway CSP headers — *38 passed at L-0024 (B-013); re-run on the release commit*
 - [ ] CI green on the release commit (all three jobs) — *record the run URL*
 - [x] Dependency audit gate on production dependencies with negative controls (B-014; audit run 1: npm 0, Python 0)
-- [ ] Dev toolchain advisories closed (B-013)
+- [x] Dev toolchain advisories closed (B-013: `npm audit` 0 in `apps/web`, L-0024)
 
 ## 3. Security
 
