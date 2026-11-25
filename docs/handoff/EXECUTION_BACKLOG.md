@@ -118,7 +118,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: regenerated artifacts differ in the 4th decimal and latency; revert the branch.
 
 ### B-004 · P1 · Reconcile README and pitch with the verified numbers
-* **Status**: VERIFIED
+* **Status**: DONE · commit `4599aa9` · L-0021
 * **Rationale**: H-08, H-22. Jury-facing artifacts diverged: PR #5 (and the integration branch) carry only the
   first pitch (`4e02e9b`); the redesigned pitch is on `admiring-fermat` (`ced8227`, merges cleanly) and the
   README redesign on `great-lovelace` (`e1f597c`, `058a273`; conflicts in `README.md` only). The README still
@@ -232,7 +232,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: toolchain change; own branch.
 
 ### B-014 · P1 · Dependency-audit gates in CI
-* **Status**: IMPLEMENTED
+* **Status**: DONE · commit `8e4cdd9` · L-0022
 * **Rationale**: H-07. Python dependencies have never been audited (`pip-audit` could not run in this
   environment; `uvx` was refused by the sandbox), and `npm audit` is manual.
 * **Modules**: `.github/workflows/ci.yml` (or a new `audit.yml`), `.github/dependabot.yml`.
@@ -663,7 +663,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 ## Wave 5 — Platform and product
 
 ### B-050 · P1 · Exercise the camera path through the real gateway image in CI
-* **Status**: TODO
+* **Status**: IMPLEMENTED
 * **Rationale**: H-19. CI builds both images and runs a smoke test through the gateway, which loads `/network`
   and asserts no console/CSP errors — but never starts the camera or fetches `/vendor/mediapipe/*`. The
   production-CSP gesture run in this project used a Node stand-in

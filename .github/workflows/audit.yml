@@ -46,11 +46,14 @@ jobs:
         with: {node-version: 22}
       - name: Negative control — the gate must reject a known high advisory
         working-directory: .github/audit-fixtures/npm-vulnerable
+        # Must fail AND name the planted finding: a tool that merely crashes must not count as "rejected".
         run: |
-          if npm audit --omit=dev --audit-level=high; then
+          if out="$(npm audit --omit=dev --audit-level=high 2>&1)"; then
             echo "::error::npm audit accepted a dependency with a known high advisory; the gate is broken"
             exit 1
           fi
+          echo "$out"
+          grep -q "GHSA-35jh-r3h4-6jhm" <<<"$out" || { echo "::error::npm audit failed without reporting the planted lodash advisory"; exit 1; }
       - name: Production dependencies — fail on high or critical
         working-directory: ${{ matrix.project }}
         run: npm audit --omit=dev --audit-level=high
@@ -74,12 +77,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
       - name: Negative control — the gate must reject a known vulnerable pin
+        # Must fail AND name the planted finding: a tool that merely crashes must not count as "rejected".
         run: |
           printf 'urllib3==1.24.1\n' > "$RUNNER_TEMP/vulnerable.txt"
-          if uvx --from "$PIP_AUDIT" pip-audit --no-deps --disable-pip -r "$RUNNER_TEMP/vulnerable.txt"; then
+          if out="$(uvx --from "$PIP_AUDIT" pip-audit --no-deps --disable-pip -r "$RUNNER_TEMP/vulnerable.txt" 2>&1)"; then
             echo "::error::pip-audit accepted urllib3 1.24.1 (known advisories); the gate is broken"
             exit 1
           fi
+          echo "$out"
+          grep -qE "urllib3 +1\.24\.1 +PYSEC-2019-133" <<<"$out" || { echo "::error::pip-audit failed without reporting the planted urllib3 advisory"; exit 1; }
       - name: Production dependencies — fail on any known vulnerability
         run: |
           uv export --frozen --no-dev --no-emit-project --format requirements-txt > "$RUNNER_TEMP/prod.txt"

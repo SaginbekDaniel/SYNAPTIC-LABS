@@ -450,3 +450,43 @@ Entry template:
   Not run: web Playwright (no `apps/web` change), Docker.
 * Follow-up: B-057 (move headline + results slide to v3 / sealed-v2 after deployment, B-055).
 * State file updated: yes.
+
+### L-0022 · 2026-11-25 · B-014 · status: done
+* B-004 CI outcome (L-0021's commit): ci run 88 on `4599aa9` failed in one Browser E2E test (`auth.spec.ts`, ended session) —
+  not caused by B-004 (no `apps/web` file changed); root-caused and fixed as H-28 (L-0023). Pitch workflow run 6 on
+  `4599aa9` success; ci run 89 on its descendant `8e4cdd9` (which contains every B-004 file unchanged) success in all three
+  jobs. B-004 is marked DONE on that evidence.
+* Branch / commits: `graph-workspace-wip` · `8e4cdd9` (gate) and the L-0023 commit (controls must name the planted finding).
+* Changes: `.github/workflows/audit.yml` (push/PR on lockfiles and manifests, weekly, manual): `npm audit --omit=dev
+  --audit-level=high` for `apps/web`, `apps/pitch`, `.railway`; `pip-audit==2.9.0 --disable-pip --require-hashes` over
+  `uv export --frozen --no-dev --no-emit-project`; dev advisories reported to the job summary only. Negative controls in
+  every job: `.github/audit-fixtures/npm-vulnerable` (lodash 4.17.20) and a urllib3 1.24.1 pin. Allow-list
+  `.github/pip-audit-allowlist.txt` (empty) with enforced expiry via `scripts/audit_allowlist.py` (5 unit tests). Dependabot
+  watches `apps/pitch` too.
+* Evidence: audit run 1 (`8e4cdd9`) success in all 4 jobs. Python control output "Found 13 known vulnerabilities in 1
+  package" (urllib3 1.24.1, PYSEC-2019-133 …); **first Python production audit ever: "No known vulnerabilities found"**; dev
+  set also clean. npm controls rejected lodash in all three matrix jobs; production audits clean. ci run 89 on `8e4cdd9` success.
+* Hardening after reading run 1: a control that only checked "non-zero exit" would also accept a crashing tool, so each control
+  now also requires the planted advisory id in the output (verified locally against real `npm audit` output and the CI pip-audit line).
+* Not executed locally: pip-audit (sandbox refuses `uvx`); CI is the evidence.
+* State file updated: yes.
+
+### L-0023 · 2026-11-25 · H-28 fix; B-050 · status: H-28 done; B-050 implemented (CI pending)
+* Commits: `db19947` (H-28) and the following commit (B-050, audit hardening, docs).
+* H-28: see MASTER_HANDOFF §16. Reproduction (scratch spec, deleted): hold the `/lab` chunk, clear cookies, click, dispatch
+  `visibilitychange` → `/login?reason=expired` every run. Fix in `RequireAuth` (`window.location`). Regression test fails 3/3
+  without the fix. Stress: both expiry tests `--repeat-each 30 --workers 4` → 59/60 at first (the new test lacked the API
+  parking its neighbour has: "element was detached from the DOM"), after adding it **60/60**. Full Playwright cold cache
+  **38 passed**; vitest 135; tsc clean; vite build ok.
+* B-050: `apps/web/smoke/gestures.spec.ts` + `gestures` project in `playwright.smoke.config.ts` (fake camera flags). Tests:
+  gateway serves `/vendor/mediapipe/*.wasm` as `application/wasm` with the same CSP as the shell, CSP has
+  `'wasm-unsafe-eval'`, `worker-src 'self'`, `connect-src 'self'` and no `'unsafe-eval'`, `Permissions-Policy camera=(self)`,
+  model > 1 MB and not HTML, missing vendor file 404; recogniser starts on the fake camera through the gateway, 1 live track,
+  then 0, no foreign request, no console error; **negative control** strips `'wasm-unsafe-eval'` from every non-API response
+  and expects the engine error, 0 live tracks, a CSP console error, and mouse/keyboard still working. No workflow change: the
+  `containers` job already runs every project of the smoke config against the production images.
+* Local verification (not the real Nginx): E2E API + worker (`scripts/e2e_stack.sh 8110`) behind
+  `docs/handoff/probes/gateway_sim.mjs` serving the production bundle with the generated headers → 3 passed. Mutation: leave
+  the policy intact in the negative control → it fails ("Покажите руку в кадре" instead of the engine error).
+* Not executed: the real Nginx image (no Docker daemon) — the next CI `containers` run is the acceptance evidence.
+* State file updated: yes.

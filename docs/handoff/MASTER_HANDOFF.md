@@ -573,6 +573,15 @@ deployed, but not this branch. *Fix (partial, B-004)*: every such figure is now 
 pre-registered `sealed-v2` result of v3, and `tests/unit/test_readme_numbers.py` recomputes every quoted figure from
 its artifact. *Remaining*: B-057 after deployment (B-055). *Cost* S.
 
+**H-28 · P2 · A session that ended while a screen was loading lost the return target** (found 2026-11-25, CI run 88,
+L-0023; **fixed** in `db19947`). *Evidence* `[CI]` `[local]`: `auth.spec.ts` "an ended session…" received
+`/login?reason=expired` instead of `/login?next=%2Flab&reason=expired`. *Reproduce*: hold the `/lab` chunk, clear the cookies,
+click, dispatch `visibilitychange` — fails on every run before the fix. *Root cause*: since B-012 (react-router v7) navigations
+run in a transition; while a lazy screen loads, `useLocation()` still reports the previous location, and the urgent expiry
+update made `RequireAuth` build the return target from it. *Impact*: after expiry the analyst was returned to the previous
+screen, not the one they had opened; an intermittent CI failure. *Fix*: the guard reads `window.location`; regression test
+"a session that ends while the next screen is still loading…" (fails 3/3 without the fix). *Cost* S.
+
 ### 16.2 Design risks
 
 | ID | Sev | Risk and evidence | Impact | Fix / verify |

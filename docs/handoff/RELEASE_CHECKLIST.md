@@ -19,7 +19,8 @@ Tick a box only with the evidence named next to it (command output, CI run URL, 
 - [x] Playwright full suite from a cold `node_modules/.vite` — L-0020 (37 passed)
 - [ ] Playwright against the production bundle with the gateway CSP headers — *last run L-0011 (B-020); re-run on the release commit*
 - [ ] CI green on the release commit (all three jobs) — *record the run URL*
-- [ ] Dependency audit gate: production 0 high/critical (today 0) and dev toolchain upgraded (B-013, B-014)
+- [x] Dependency audit gate on production dependencies with negative controls (B-014; audit run 1: npm 0, Python 0)
+- [ ] Dev toolchain advisories closed (B-013)
 
 ## 3. Security
 
@@ -30,7 +31,7 @@ Tick a box only with the evidence named next to it (command output, CI run URL, 
 
 ## 4. Product claims
 
-- [ ] README and pitch numbers trace to committed artifacts (B-004)
+- [x] README and pitch numbers trace to committed artifacts (B-004; `tests/unit/test_readme_numbers.py`, `apps/pitch/src/data/bench.test.ts`)
 - [ ] Gesture control: verified on a real webcam (B-030) **or** stated as an unverified limitation in README, pitch and demo script
 - [ ] Every metric labelled synthetic; no bank-accuracy, compliance or production-readiness claim
 
