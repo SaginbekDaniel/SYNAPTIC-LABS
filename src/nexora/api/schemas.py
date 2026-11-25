@@ -190,6 +190,24 @@ class RiskDetail(Risk):
     policy_sha256: str
 
 
+class AlertGroup(Model):
+    """Alerts of one snapshot whose formations share an account (B-042). A read-side view: grouping never merges,
+    alters or hides an alert; a group of one means no related alert."""
+
+    id: str = Field(description="Content-derived id of the group: same alerts, same id")
+    size: int = Field(ge=1, description="Number of alerts in the group, including this one")
+    top_band: Band = Field(description="Strongest risk band among the group's alerts")
+
+
+class RelatedAlert(Model):
+    id: str
+    status: Literal["open", "in_case", "closed"]
+    kind: FormationKind
+    subject_account_id: str
+    band: Band
+    priority: int | None
+
+
 class AlertSummary(Model):
     id: str
     dataset_id: str
@@ -207,6 +225,7 @@ class AlertSummary(Model):
     transaction_count: int
     case_id: str | None
     case_status: str | None
+    group: AlertGroup
 
 
 class AlertPage(Page):
@@ -302,6 +321,8 @@ class AlertDetail(AlertSummary):
     snapshot: Snapshot
     # Additive (hypotheses-v1): null for chain/cycle formations and for snapshots analysed before v3.
     hypotheses: HypothesisAssessment | None = None
+    # B-042: the other alerts of this alert's group, strongest band first.
+    related_alerts: list[RelatedAlert] = Field(default_factory=list)
 
 
 class EvidenceChain(Model):

@@ -289,6 +289,9 @@
           "formation": {
             "$ref": "#/components/schemas/FormationDetail"
           },
+          "group": {
+            "$ref": "#/components/schemas/AlertGroup"
+          },
           "hypotheses": {
             "anyOf": [
               {
@@ -311,6 +314,13 @@
             "format": "date-time",
             "title": "Last Seen",
             "type": "string"
+          },
+          "related_alerts": {
+            "items": {
+              "$ref": "#/components/schemas/RelatedAlert"
+            },
+            "title": "Related Alerts",
+            "type": "array"
           },
           "revision": {
             "title": "Revision",
@@ -375,12 +385,49 @@
           "transaction_count",
           "case_id",
           "case_status",
+          "group",
           "coverage",
           "signals",
           "evidence",
           "snapshot"
         ],
         "title": "AlertDetail",
+        "type": "object"
+      },
+      "AlertGroup": {
+        "additionalProperties": false,
+        "description": "Alerts of one snapshot whose formations share an account (B-042). A read-side view: grouping never merges,\nalters or hides an alert; a group of one means no related alert.",
+        "properties": {
+          "id": {
+            "description": "Content-derived id of the group: same alerts, same id",
+            "title": "Id",
+            "type": "string"
+          },
+          "size": {
+            "description": "Number of alerts in the group, including this one",
+            "minimum": 1.0,
+            "title": "Size",
+            "type": "integer"
+          },
+          "top_band": {
+            "description": "Strongest risk band among the group's alerts",
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low",
+              "insufficient_evidence"
+            ],
+            "title": "Top Band",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "size",
+          "top_band"
+        ],
+        "title": "AlertGroup",
         "type": "object"
       },
       "AlertMetrics": {
@@ -555,6 +602,9 @@
           "formation": {
             "$ref": "#/components/schemas/FormationSummary"
           },
+          "group": {
+            "$ref": "#/components/schemas/AlertGroup"
+          },
           "id": {
             "title": "Id",
             "type": "string"
@@ -620,7 +670,8 @@
           "evidence_count",
           "transaction_count",
           "case_id",
-          "case_status"
+          "case_status",
+          "group"
         ],
         "title": "AlertSummary",
         "type": "object"
@@ -3838,6 +3889,70 @@
           "code"
         ],
         "title": "ReasonCode",
+        "type": "object"
+      },
+      "RelatedAlert": {
+        "additionalProperties": false,
+        "properties": {
+          "band": {
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low",
+              "insufficient_evidence"
+            ],
+            "title": "Band",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "funnel",
+              "chain",
+              "fan_out",
+              "cycle"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "priority": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priority"
+          },
+          "status": {
+            "enum": [
+              "open",
+              "in_case",
+              "closed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "subject_account_id": {
+            "title": "Subject Account Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "kind",
+          "subject_account_id",
+          "band",
+          "priority"
+        ],
+        "title": "RelatedAlert",
         "type": "object"
       },
       "Risk": {

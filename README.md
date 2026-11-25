@@ -286,7 +286,8 @@ Controls, known gaps and private vulnerability reporting: [SECURITY.md](SECURITY
 * **Legitimate hubs still alert.** On `sealed-v2`, payroll agencies, event ticketing, group gifts and property escrow reach the top bands; peer counter-evidence is not enough to clear them.
 * **Family remittances look like distributions.** Nothing in transfer data alone separates them; KYC or MCC data would.
 * **Slow funnels are missed.** Onward transfers later than the 7-day temporal window fall below the alert band.
-* **Alerts are not yet correlated** by shared subject account, so one hub can appear as both a funnel and a fan-out.
+* **Related alerts are linked, not merged.** Alerts whose networks share an account are shown as related (on this branch), so
+  the analyst sees them together, but each is still decided on its own; one network can still open more than one alert.
 * **Batch analysis** of a snapshot, not real-time scoring.
 * **Camera gestures** have only been tested with a simulated camera in Chromium.
 
@@ -298,13 +299,15 @@ Full list: [docs/LIMITATIONS.md](docs/LIMITATIONS.md).
 |---|---|
 | Done | Ingest, four structural detectors, temporal flow, peer statistics, coverage, risk policy v2, investigation UI, cases and audit, `bench-v1` |
 | Done | Production images, fail-closed gateway, Railway as code, CI with a production-image smoke test |
-| Done | Named analyst accounts, server-side sessions, CSRF, NEXORA sign-in page; roles viewer < analyst < admin enforced on every write |
+| Done | Named analyst accounts, server-side sessions, CSRF, NEXORA sign-in page |
+| Done (this branch) | Roles viewer < analyst < admin enforced on the server for every write; dependency-audit gate in CI |
 | Done (this branch) | Competing-hypothesis engine (`risk-policy-v3`), leakage fixes, sealed evaluations (`sealed-v1` consumed, `sealed-v2` pre-registered and replicated) |
 | Done (this branch) | Graph investigation workspace: bounded overview and local views from stored snapshots, layout off the main thread |
+| Done (this branch) | Related alerts grouped on read: networks that share an account are linked in the queue and the investigation |
 | Experimental | Opt-in camera gestures for the graph (on-device MediaPipe; mouse and keyboard always work) — **not yet verified on a real webcam** |
 | In review | Merging this branch into the default branch (it supersedes PRs #3, #5 and #15) |
 | Next | Offline replay on a bank's de-identified history and closed cases — the first honest measurement on real data |
-| Planned | Correlate alerts by shared account; per-dataset isolation; SSO with MFA; adversarial evaluation suite |
+| Planned | Per-dataset isolation; SSO with MFA; adversarial evaluation suite |
 
 ## The pitch
 

@@ -58,8 +58,11 @@ See `docs/architecture/DEEP_AUDIT.md` and `docs/evaluation/RESULTS.md`.
   separate family, but corroboration between them is weaker than between structure and time.
 * **Alerts on unlabelled background activity** (mostly coincidental chains): 1.0 per dataset on dev, 1.3 on
   validation, 2.1 on holdout. They are not planted scenarios, so they count against alert precision.
-* **Duplicate views of one hub.** A merchant processor can raise both a funnel and a fan-out alert; alerts are
-  not yet correlated by shared subject account.
+* **Duplicate views of one hub.** A merchant processor can raise both a funnel and a fan-out alert. Since B-042 the
+  queue and the investigation link alerts whose networks share any account (grouped on read; nothing is merged), so the
+  analyst sees them together; each alert is still decided separately. On synthetic `bench-v1` the grouping cuts review
+  units per flagged network from 1.39 to 1.02 (dev) and 1.19 to 1.00 (validation) with no group joining two planted
+  networks (`docs/handoff/probes/alert_grouping.py`); a busy real-world account could still chain unrelated networks.
 * Temporal compatibility is an **upper bound** under unobserved intermediary balances; it never identifies the
   source of funds.
 

@@ -30,7 +30,12 @@ export const BAND_COLOR: Record<Band, string> = {
  * The exact account id is always shown next to it (never replaced).
  */
 export function alertTitle(a: Pick<AlertSummary, "formation">): string {
-  return t("alert.title", { kind: tDynamic("kind.", a.formation.kind), handle: accountHandle(a.formation.subject_account_id) });
+  return formationTitle(a.formation.kind, a.formation.subject_account_id);
+}
+
+/** The same title from a formation kind and its centre account (e.g. for a related alert). */
+export function formationTitle(kind: string, subjectAccountId: string): string {
+  return t("alert.title", { kind: tDynamic("kind.", kind), handle: accountHandle(subjectAccountId) });
 }
 
 /** "··7530": a short spoken handle for an opaque id; the full id stays visible elsewhere. */

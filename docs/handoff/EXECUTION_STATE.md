@@ -21,16 +21,16 @@ other session is working on this branch (two sessions collided once, L-0016) —
 | Migration head | `0005` (production reportedly `0003`; `0005` makes existing accounts analysts) |
 | Handoff checks | `python3 docs/handoff/probes/check_handoff_docs.py` → OK · `python3 docs/handoff/probes/progress.py` → exit 0 |
 
-## Computed progress (`python3 docs/handoff/probes/progress.py --markdown`, 2026-11-25, after L-0024)
+## Computed progress (`python3 docs/handoff/probes/progress.py --markdown`, 2026-11-25, after L-0025)
 
 | Measure | Value |
 |---|---|
-| Verified completion (weighted) | 42.3 % |
+| Verified completion (weighted) | 45.1 % |
 | Critical-path progress (weighted) | 61.2 % |
-| Tasks: total / done / remaining | 42 / 13 / 29 |
-| Done by priority (P0, P1, P2, P3) | P0 4/6, P1 9/16, P2 0/17, P3 0/3 |
+| Tasks: total / done / remaining | 42 / 14 / 28 |
+| Done by priority (P0, P1, P2, P3) | P0 4/6, P1 10/16, P2 0/17, P3 0/3 |
 | Blocked | B-002, B-005, B-019, B-030, B-048, B-051, B-054, B-055, B-056 |
-| In progress / implemented / verified | B-013 |
+| In progress / implemented / verified | B-042 |
 | Critical path still open | B-002, B-005, B-030, B-052, B-055 |
 | Open P0 tasks (release-blocking) | B-002, B-030 |
 
@@ -47,13 +47,13 @@ Railway state. Playwright against the production bundle with the generated CSP: 
 
 ## Tasks
 
-* **Completed backlog tasks** (status lines carry commit + ledger): B-001, B-003, B-004, B-010, B-011, B-012, B-014, B-015, B-020, B-031, B-040, B-041, B-050.
+* **Completed backlog tasks** (status lines carry commit + ledger): B-001, B-003, B-004, B-010, B-011, B-012, B-013, B-014, B-015, B-020, B-031, B-040, B-041, B-050.
   Defect fixed outside the backlog: H-28 (`db19947`, L-0023).
   L-0020 (outside the backlog): branch consolidation, computed progress, dependency map, risk register, test matrix, release checklist,
   H-26 / B-056 / D-12.
-* **Active**: B-013 — verified locally (L-0024); DONE once CI is green on its commit. Next recommended: B-016, B-021, B-022/B-025, B-042, B-045.
-* **Ready (autonomous)**: B-016, B-017, B-018, B-021, B-022, B-025, B-032, B-042, B-043, B-044, B-045, B-046, B-047,
-  B-053. Recommended order: B-016, B-021, B-022, B-025, B-042, B-045 (adversarial dev suite before tuning anything on
+* **Active**: B-042 — verified locally (L-0025); DONE once CI is green on its commit. Next recommended: B-022 and B-025 (graph stage), B-016, B-021, B-045.
+* **Ready (autonomous)**: B-016, B-017, B-018, B-021, B-022, B-025, B-032, B-043, B-044, B-045, B-046, B-047,
+  B-053. Recommended order: B-022, B-025, B-016, B-021, B-045 (adversarial dev suite before tuning anything on
   sealed-v2 findings). Every autonomous critical-path task is done; the rest of the critical path (B-002, B-005, B-030, B-052, B-055) is owner- or hardware-gated.
 * **Pending (waiting on dependencies)**: B-023 (B-022), B-024 (B-021), B-033 (B-030), B-052 (B-002), B-057 (B-055).
 * **Blocked (human or decision)**: B-002 (merge approval, D-1/D-2), B-005 (Railway access), B-019 (D-3), B-030 (webcam), B-048 (owner),
@@ -75,8 +75,8 @@ git fetch origin --prune && git checkout graph-workspace-wip && git status -sb  
 service postgresql start && pg_lsclusters      # fresh container: create role + 3 databases (docs/development/local-setup.md)
 export UV_SYSTEM_CERTS=1 && unset UV_NATIVE_TLS && uv sync --frozen && (cd apps/web && npm ci)
 python3 docs/handoff/probes/check_handoff_docs.py && python3 docs/handoff/probes/progress.py   # expect OK and exit 0
-uv run pytest -p no:cacheprovider -rs                         # expect 312 passed, 0 skipped (L-0023)
-(cd apps/web && npx tsc -b && npx vitest run)                 # expect 135 passed; Playwright 38
+uv run pytest -p no:cacheprovider -rs                         # expect 338 passed, 0 skipped (L-0025)
+(cd apps/web && npx tsc -b && npx vitest run)                 # expect 135 passed; Playwright 39
 ```
 
 ## Open these files first

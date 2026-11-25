@@ -338,3 +338,64 @@ def test_enabled_csv_import_refuses_a_role_below_admin_before_reading_the_upload
     assert "body-read" not in events[: events.index("response")], events
     assert r.status_code == 403 and r.json()["error"]["code"] == "FORBIDDEN_ROLE"
     assert _row_counts(settings) == before
+
+
+# -- Related-alert groups (H-11, backlog B-042) ----------------------------------------------------
+_BAND_RANK = {"critical": 0, "high": 1, "medium": 2, "insufficient_evidence": 3, "low": 4}
+
+
+def test_related_alerts_are_grouped_on_read_without_touching_any_alert(client, settings):
+    # demo-v1 seed 3 contains three alerts on one network (found offline with the publisher's alert rule).
+    ds_id, _ = _create_and_analyse(client, settings, seed=3)
+    listing = client.get("/api/v1/alerts", params={"dataset_id": ds_id, "limit": 200}).json()
+    items = listing["items"]
+    assert listing["total"] == len(items)  # grouping hides nothing
+
+    # Recompute the components independently from each alert's own accounts (subject, members, exits).
+    details = {a["id"]: client.get(f"/api/v1/alerts/{a['id']}").json() for a in items}
+    accounts = {
+        i: {d["formation"]["subject_account_id"], *d["formation"]["member_ids"], *d["formation"]["exit_ids"]}
+        for i, d in details.items()
+    }
+    parent = {i: i for i in accounts}
+
+    def find(x: str) -> str:
+        while parent[x] != x:
+            x = parent[x]
+        return x
+
+    ids = sorted(accounts)
+    for n, x in enumerate(ids):
+        for y in ids[n + 1 :]:
+            if accounts[x] & accounts[y]:
+                parent[find(y)] = find(x)
+    expected: dict[str, set[str]] = {}
+    for i in ids:
+        expected.setdefault(find(i), set()).add(i)
+    api_groups: dict[str, set[str]] = {}
+    for a in items:
+        api_groups.setdefault(a["group"]["id"], set()).add(a["id"])
+    assert sorted(map(sorted, api_groups.values())) == sorted(map(sorted, expected.values()))
+    assert any(len(members) > 1 for members in api_groups.values()), "fixture must contain related alerts"
+
+    by_id = {a["id"]: a for a in items}
+    for a in items:
+        members = api_groups[a["group"]["id"]]
+        assert a["group"]["size"] == len(members)
+        strongest = min(members, key=lambda m: _BAND_RANK[by_id[m]["risk"]["band"]])
+        assert a["group"]["top_band"] == by_id[strongest]["risk"]["band"]
+        # The detail lists exactly the other members, strongest band first; the alert itself is unchanged.
+        d = details[a["id"]]
+        assert d["group"] == a["group"]
+        related = d["related_alerts"]
+        assert {r["id"] for r in related} == members - {a["id"]}
+        ranks = [(_BAND_RANK[r["band"]], -(r["priority"] or 0)) for r in related]
+        assert ranks == sorted(ranks)
+        assert d["risk"]["band"] == a["risk"]["band"] and d["status"] == a["status"]
+
+    # A group does not depend on the view: the same alert keeps its group under a filter and on any page.
+    some_band = items[0]["risk"]["band"]
+    filtered = client.get("/api/v1/alerts", params={"dataset_id": ds_id, "band": some_band, "limit": 200}).json()
+    assert all(a["group"] == by_id[a["id"]]["group"] for a in filtered["items"])
+    one = client.get("/api/v1/alerts", params={"dataset_id": ds_id, "limit": 1, "offset": len(items) - 1}).json()
+    assert one["items"][0]["group"] == items[-1]["group"]

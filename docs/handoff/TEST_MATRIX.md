@@ -9,13 +9,13 @@ fresh session container (L-0020) unless marked otherwise; re-measure before quot
 |---|---|---|---|---|
 | Python lint / format | `uv run ruff check src tests migrations` · `uv run ruff format --check src tests migrations` | clean | Lint, types, tests, E2E | style, bugbear, imports |
 | Python types | `uv run mypy` | clean, 65 source files | same | `src/nexora` (strict per `pyproject.toml`) |
-| Python unit + integration | `uv run pytest -p no:cacheprovider -rs` | **312 passed, 0 skipped** (296 before L-0020 + 8 progress-probe + 3 README-traceability + 5 audit allow-list tests, L-0023) | same | domain, analytics, detectors, evaluation harness, API, auth, CSRF, roles matrix, migrations, logging, handoff docs |
+| Python unit + integration | `uv run pytest -p no:cacheprovider -rs` | **338 passed, 0 skipped** (296 before L-0020; + progress probe 8, README traceability 3, audit allow-list 5, alert groups 25 unit + 1 integration, L-0025) | same | domain, analytics, detectors, evaluation harness, API, auth, CSRF, roles matrix, migrations, logging, handoff docs |
 | Migrations | `uv run alembic upgrade head` · `uv run alembic check` · `uv run alembic heads` | single head `0005`, ORM in sync | same | chain linearity (B-001), stepwise upgrade from production's `0003` |
 | Web types | `cd apps/web && npx tsc -b` | clean | same | strict TS |
 | Web unit | `cd apps/web && npx vitest run` | **135 passed** (15 files; vitest 5 since B-013) | same | graph controller, layout client/worker, gestures state machine, i18n, roles UI, formatting |
 | Web build | `cd apps/web && npx vite build` | ok — Vite 8 / Rolldown since B-013, 0.56 s (largest chunk `GraphCanvas` 461 kB / 146 kB gzip) | same | bundling, lazy routes, module workers |
 | OpenAPI client drift | `cd apps/web && npm run gen:api`, then `git diff --exit-code -- apps/web/openapi.json apps/web/src/lib/api-types.ts` | in sync | same | API ↔ client contract |
-| Browser E2E | `cd apps/web && rm -rf node_modules/.vite && npx playwright test --trace off` | **38 passed** (2.1 min, cold cache, L-0023) | same | sign-in/out, session expiry (incl. expiry during a pending lazy navigation, H-28), roles (viewer journey), queue, investigation, cases, graph workspace, layout determinism and long-task budget, gestures with a fake camera |
+| Browser E2E | `cd apps/web && rm -rf node_modules/.vite && npx playwright test --trace off` | **39 passed** (2.2 min, cold cache, L-0025) | same | sign-in/out, session expiry (incl. expiry during a pending lazy navigation, H-28), roles (viewer journey), queue, investigation, cases, graph workspace, layout determinism and long-task budget, gestures with a fake camera |
 | Railway definition | `cd .railway && npm ci && npm run check` | 3 services + database, all invariants hold | Deployment config | IaC invariants (no public API, gateway modes) |
 | ShellCheck | CI only | — (not installed locally) | Deployment config | `scripts/*.sh` |
 | Production images + gateway smoke | CI only (`docker compose` with production images) | — (no Docker daemon locally); the smoke `gestures` project ran 3/3 against `gateway_sim.mjs` (L-0023) | Production images + gateway smoke | non-root images, fail-closed gateway, rollback mode, smoke journey through the gateway, **camera path through the real Nginx: assets, CSP, fake-camera start, negative control without `'wasm-unsafe-eval'` (B-050)**, graceful worker stop |
@@ -33,6 +33,7 @@ fresh session container (L-0020) unless marked otherwise; re-measure before quot
 | Authorization (roles) | yes | every OpenAPI operation × role | viewer journey | — | dataset isolation (B-019, D-3) |
 | Ingestion / CSV import | yes | yes (gate off by default) | — | — | — |
 | Detection pipeline | yes | yes | via generated datasets | — | adversarial suite (B-045), scale tests (B-047) |
+| Related-alert groups (B-042) | union-find, 20-seed permutation metamorphic test | API groups equal an independent recomputation; filter/page invariance | queue marker, header links, follow and back | — | — |
 | Evaluation harness / artifacts | consistency tests recompute every published ratio; README figures recomputed from artifacts | — | Evaluation screen | — | pitch shows v2 (as deployed) until B-057 |
 | Graph workspace | controller, layout | graph read model | overview, local view, determinism, 300-node budget | — | relayout blank stage (B-025), SQL ranking (B-021), a11y audit (B-023) |
 | Gestures (camera) | state machine, session order | — | fake camera (Chromium) | **never run on a real hand** | B-030 (human), B-032, B-033 |

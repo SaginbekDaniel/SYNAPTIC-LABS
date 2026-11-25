@@ -509,3 +509,32 @@ Entry template:
   generated CSP **38 passed**.
 * Not executed: Docker image build locally (CI `containers` job builds the gateway image with this toolchain).
 * State file updated: yes.
+
+### L-0025 · 2026-11-25 · B-042 · status: verified locally (DONE after CI)
+* Measured before building (probe `docs/handoff/probes/alert_grouping.py`, shipped configuration, synthetic bench-v1,
+  development splits only — it refuses `sealed` and `sealed_v2`): review units per flagged planted network
+  dev: none 1.3947 · subject-only 1.3947 · any shared account 1.0175 (0 wrong merges, 0 suspicious/legitimate mixes,
+  largest group 3); validation: 1.1930 · 1.1930 · 1.0000 (0 wrong merges). The subject rule does nothing because the
+  repeated alerts sit on different hubs of one network. **Decision: any shared account (subject, members, exits).**
+* Deviation from the backlog text, deliberate: it asked for the *sealed* alerts-per-network figure before/after. Not run —
+  `sealed-v1` is consumed and `sealed-v2` uses are reserved for frozen detector candidates; grouping changes no detection.
+* Implementation (read path only): `nexora.analytics.alert_groups` (pure union-find, content-derived uuid5 group ids,
+  order-independent); `queries.snapshot_alert_groups` groups *every* alert of a snapshot (independent of filters/page);
+  `AlertSummary.group {id, size, top_band}`, `AlertDetail.related_alerts` (strongest band first); OpenAPI client
+  regenerated (idempotent). UI: queue row "ещё N связанные проверки"; investigation header "Связанные проверки" with
+  a link per related alert (i18n, tokens only). README/LIMITATIONS updated (linked, not merged).
+* Tests: unit 25 (`test_alert_groups.py`: transitive grouping, both rules, 20 permutation seeds metamorphic, content-
+  derived ids, every item kept once, empty/duplicate input) — writing them exposed that `group_items` defaulted to the
+  `subject` rule, contradicting the decision; default is now `members`. Integration 1 (demo-v1 seed 3: API groups equal an
+  independent recomputation from each alert's accounts; size/top band; related list exact and ordered; same group under a
+  band filter and on a one-item page; no alert hidden). E2E 1 (`related-alerts.spec.ts`: 3 marked rows, 2 links, follow
+  and back). Visual: queue and investigation at 1440 and 390 px in both themes (the related fact takes its own row; links
+  wrap when the header column is narrower than two links).
+* Verification: ruff, format, mypy clean; pytest **338 passed, 0 skipped**; `alembic check` clean (no schema change);
+  tsc clean; vitest 135; Playwright cold cache **39 passed**.
+* Security: no new endpoint or input; related data comes from the same snapshot the caller can already list (all roles
+  read all alerts; dataset isolation remains B-019).
+* Also fixed while editing the README: roles were listed as plain "Done" though only this branch has them.
+* State file updated: yes.
+* B-013 CI evidence (recorded here, L-0025): ci run 91 and audit run 3 on `053cb5e` success — the gateway image was built with
+  Vite 8 and passed the 7 smoke tests, including the camera path.

@@ -304,6 +304,7 @@ function AlertRow({ alert, selected, onClick }: { alert: AlertSummary; selected:
           </span>
           {alert.coverage_limitations.includes("boundary_limited") && <span>{tDynamic("lim.", "boundary_limited")}</span>}
           {!alert.in_latest_snapshot && <span>{t("alerts.notInLatest")}</span>}
+          {alert.group.size > 1 && <span data-testid="alert-related">{t("alerts.related", { count: alert.group.size - 1 })}</span>}
         </span>
       </span>
       <span className="alert-row__status">

@@ -215,7 +215,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: routing is central; own branch, revert on regression.
 
 ### B-013 · P1 · Upgrade Vite 8 and Vitest 5
-* **Status**: VERIFIED
+* **Status**: DONE · commit `053cb5e` · L-0024
 * **Rationale**: H-07. Dev/test-only advisories: vite ≤ 6.4.3 (high), esbuild ≤ 0.24.2, vitest ≤ 4.1.10 and
   tinypool (critical but only when the Vitest UI/API server listens), @vitest/mocker. Fixes are majors
   (Dependabot #11, #13).
@@ -547,7 +547,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: additive metrics.
 
 ### B-042 · P1 · Group related alerts
-* **Status**: TODO
+* **Status**: VERIFIED
 * **Rationale**: H-11. A funnel and a fan-out on the same hub open separate alerts (fingerprints are per
   pattern kind); sealed candidate has 1.232 alerts per flagged network (baseline 1.667).
 * **Modules**: `src/nexora/application/queries.py`, `src/nexora/api/routes/alerts.py`, `src/nexora/api/schemas.py`,
