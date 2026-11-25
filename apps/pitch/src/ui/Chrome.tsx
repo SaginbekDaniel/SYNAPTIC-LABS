@@ -24,7 +24,7 @@ interface Props {
  */
 export function Chrome(p: Props) {
   const atStart = p.pos.slide === 0 && p.pos.step === 0;
-  const atEnd = p.pos.slide === STEP_COUNTS.length - 1;
+  const atEnd = p.pos.slide === STEP_COUNTS.length - 1 && p.pos.step === STEP_COUNTS[STEP_COUNTS.length - 1] - 1;
   return (
     <div className={`chrome ${p.visible ? "show" : ""}`}>
       <nav className="progress" aria-label="Прогресс презентации">

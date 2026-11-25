@@ -1,78 +1,93 @@
-import { useState } from "react";
 import { m } from "motion/react";
-import { METRICS, META, num, signed, type Metric } from "../data/results";
-import { CountUp, Fade, Reveal, SlideHeader } from "../ui/primitives";
+import { EASE, Head } from "../ui/primitives";
 import type { SlideProps } from "../ui/types";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+/** Real screenshots (1440 px wide, product build, synthetic demo-v1). Shown at ≤ 1:1, never upscaled. */
+const SRC_W = 1440, VIEW_H = 900;
+const FRAME_W = 1100;
+const S = FRAME_W / SRC_W; // 0.76
+const FRAME_H = VIEW_H * S;
 
-/** Paired before/after bars on a shared 0–100 % axis (honest baseline: bars start at zero). */
-function Bars({ m: metric, active, big }: { m: Metric; active: boolean; big?: boolean }) {
-  const good = metric.lowerIsBetter ? metric.after < metric.before : metric.after > metric.before;
-  return (
-    <div className={`bars ${big ? "big" : ""}`}>
-      <div className="brow">
-        <span className="bl">v2 (в main)</span>
-        <div className="track"><m.i className="fill base" initial={false} animate={{ width: active ? `${metric.before}%` : "0%" }} transition={{ duration: 1.1, ease: EASE }} /></div>
-        <b className="bv mono"><CountUp to={metric.before} active={active} suffix=" %" /></b>
-      </div>
-      <div className="brow">
-        <span className="bl">Кандидат</span>
-        <div className="track"><m.i className={`fill ${good ? "good" : "flat"}`} initial={false} animate={{ width: active ? `${metric.after}%` : "0%" }} transition={{ duration: 1.3, delay: 0.35, ease: EASE }} /></div>
-        <b className="bv mono now"><CountUp to={metric.after} active={active} suffix=" %" duration={1.6} /></b>
-      </div>
-    </div>
-  );
+interface View {
+  key: string;
+  tab: string;
+  img: "queue" | "investigation";
+  offset: number; // vertical scroll position in source px
+  marks: { x: number; y: number; text: string }[]; // source px, relative to the visible window
 }
 
-export function Slide5({ step }: SlideProps) {
-  const [limits, setLimits] = useState(false);
-  const [fpr, rec, p5, hb] = METRICS;
-  const on = (i: number) => step >= i;
+const VIEWS: View[] = [
+  {
+    key: "queue", tab: "Очередь", img: "queue", offset: 0,
+    marks: [
+      { x: 300, y: 440, text: "Сети переводов, а не отдельные платежи" },
+      { x: 905, y: 405, text: "Приоритет — очерёдность работы, не вероятность мошенничества" },
+      { x: 1045, y: 480, text: "Предпросмотр: форма сети и основания до открытия дела" },
+    ],
+  },
+  {
+    key: "case", tab: "Расследование", img: "investigation", offset: 0,
+    marks: [
+      { x: 590, y: 545, text: "Граф только из транзакций-доказательств, толщина — сумма" },
+      { x: 990, y: 296, text: "Почему это подозрительно — каждое основание раскрывается до транзакций" },
+      { x: 1000, y: 688, text: "Отдельный блок: чего система не знает" },
+    ],
+  },
+  {
+    key: "decision", tab: "Решение", img: "investigation", offset: 1100,
+    marks: [
+      { x: 248, y: 282, text: "Исходные транзакции с идентификаторами" },
+      { x: 1004, y: 90, text: "Действие и обоснование фиксирует аналитик" },
+      { x: 1004, y: 650, text: "Журнал аудита только на добавление" },
+    ],
+  },
+];
+
+export function Slide5({ step, setStep }: SlideProps) {
+  const v = VIEWS[step];
   return (
-    <section className="slide" aria-labelledby="h-5">
-      <Reveal><SlideHeader index={5} eyebrow="Verified results" /></Reveal>
-      <div className="slide-inner s5">
-        <Reveal delay={0.1}><h2 id="h-5" className="h1 s5-title">Меньше ложных тревог. <span className="grad">Больше полезных проверок</span></h2></Reveal>
+    <section className="slide s5" aria-labelledby="h-5">
+      <Head index={5} />
+      <div className="slide-body s5-body">
+        <figure className="s5-frame" style={{ width: FRAME_W, height: FRAME_H }}>
+          {(["queue", "investigation"] as const).map((img) => (
+            <m.img
+              key={img} src={`./shots/${img}.webp`} alt={img === "queue" ? "Экран «Проверки»: очередь сетей с предпросмотром" : "Экран расследования воронки ··7530"}
+              width={SRC_W} draggable={false} decoding="async"
+              style={{ width: FRAME_W }}
+              initial={false}
+              animate={{ opacity: v.img === img ? 1 : 0, y: img === "investigation" ? -(v.img === img ? v.offset : 0) * S : 0 }}
+              transition={{ opacity: { duration: 0.45 }, y: { duration: 0.9, ease: EASE } }}
+              aria-hidden={v.img !== img}
+            />
+          ))}
+          {v.marks.map((mk, i) => (
+            <m.span
+              key={`${v.key}-${i}`} className="s5-mark mono" aria-hidden="true"
+              style={{ left: mk.x * S, top: mk.y * S }}
+              initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.55 + i * 0.12, duration: 0.35, ease: EASE }}
+            >{i + 1}</m.span>
+          ))}
+        </figure>
 
-        <div className="s5-grid">
-          <m.div className="glass hero" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.7, ease: EASE }}>
-            <span className="label up">{fpr.title}</span>
-            <div className="bignum mono">
-              <span className="from">{num(fpr.before)}%</span>
-              <span className="arrow" aria-hidden="true">→</span>
-              <span className="to"><CountUp to={fpr.after} active={on(0)} suffix="%" duration={1.8} /></span>
-            </div>
-            <Bars m={fpr} active={on(0)} big />
-            <p className="small">{fpr.hint}. Разница {signed(fpr.delta)} п.п., 95 % интервал [{signed(fpr.ci[0])}; {signed(fpr.ci[1])}].</p>
-          </m.div>
-
-          <div className="trio">
-            {[rec, p5, hb].map((m, i) => (
-              <Fade key={m.key} when={on(i + 1)} className="glass card">
-                <div className="chead"><span className="h3">{m.title}</span><span className={`chip ${m.key === "recall" ? "" : "ok"}`}>{signed(m.delta)} п.п.</span></div>
-                <Bars m={m} active={on(i + 1)} />
-                <p className="label">95 % интервал [{signed(m.ci[0])}; {signed(m.ci[1])}]{m.key === "recall" ? " — «не хуже», а не «лучше»" : ""}</p>
-              </Fade>
+        <div className="s5-side">
+          <div className="s5-tabs" role="group" aria-label="Экраны продукта">
+            {VIEWS.map((x, i) => (
+              <button key={x.key} className={`s5-tab ${i === step ? "on" : ""}`} aria-pressed={i === step} onClick={() => setStep(i)}>
+                {x.tab}
+              </button>
             ))}
           </div>
-        </div>
-
-        <div className="s5-foot">
-          <div className="disclaimer" role="note">
-            <span className="chip warn">Важно</span>
-            <b>Синтетический benchmark, {META.datasets} датасетов. Не оценка точности на реальных данных банка</b>
-          </div>
-          <div className="s5-meta">
-            <span className="chip">sealed-v1 · оценён один раз · исход: улучшение</span>
-            <span className="chip warn">Артефакт в PR №3 · ещё не в main</span>
-            <button className="btn" aria-pressed={limits} onClick={() => setLimits((v) => !v)}>Что не решено</button>
-          </div>
-          {limits && (
-            <m.p className="small limits" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-              Без KYC и данных мерчантов неотличимы от схемы: продажа билетов (22 из 23 всё ещё помечены), благотворительные сборы (13 из 36), денежные переводы семьи (5 из 20). Повторяющиеся «мулы» пропущены в обеих версиях (1 из 8).
-            </m.p>
-          )}
+          <ol className="s5-notes" key={v.key}>
+            {v.marks.map((mk, i) => (
+              <m.li key={i} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 + i * 0.12, duration: 0.4, ease: EASE }}>
+                <span className="s5-mark mono static" aria-hidden="true">{i + 1}</span>
+                <span className="body t-1">{mk.text}</span>
+              </m.li>
+            ))}
+          </ol>
+          <p className="label s5-src">Реальные экраны развёрнутого прототипа. Демо-набор demo-v1, данные синтетические.</p>
         </div>
       </div>
     </section>

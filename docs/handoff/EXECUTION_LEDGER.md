@@ -423,3 +423,30 @@ Entry template:
 * Not executed: Docker, ShellCheck, pip-audit, real webcam, live Railway, Playwright against the production bundle (no change to
   product code or headers in this entry).
 * State file updated: yes.
+
+### L-0021 · 2026-11-25 · B-004 · status: done locally (DONE after CI)
+* Branch / commits: `graph-workspace-wip`, merge commit of `origin/claude/great-lovelace-0gmpmi` (`058a273`, which contains
+  `admiring-fermat-9fc4nx` `ced8227`); the collaborator-visible original commits are preserved (no cherry-pick, no rebase).
+* Merge: only `README.md` conflicted (7 hunks); every other change is confined to `apps/pitch/**` (redesign replaces the first pitch),
+  `docs/assets/readme/` and `scripts/render_readme_figures.py`; nothing under `apps/web`, `src`, `migrations` changed.
+* Finding H-27 (new): `bench-v1.json` is `risk-policy-v2` (config `489b477a…`), the branch ships `risk-policy-v3`; the live demo is
+  `f29ae56` = v2. README resolved on the redesign's structure with every stale claim corrected: named accounts and roles instead of
+  "shared login / one demo analyst / no role model"; the "PR #3 not merged" warning replaced by the exposed-holdout warning; artifact
+  commit `85f8b5e` (was `58440cc`); a second table with the pre-registered `sealed-v2` result of v3 (read from
+  `benchmarks/results/sealed-v2-evaluation.json`: rules 257/262, 374/394, 71.34; v2 191/262, 191/394, 8.62; v3 197/262, 100/394,
+  6.42; decision `improvement`) and a caution that evaluating a changed configuration spends a sealed-v2 use; graph workspace and
+  experimental gestures described (tested only with a simulated camera); roadmap and limitations brought up to date.
+* Pitch: `apps/pitch/scripts/extract-bench.mjs` (run from `apps/pitch`) re-extracted the excerpt — diff = commit, F1 −1e-4 (A2), new numerator fields; every count
+  identical. Slide 6 label now says "конфигурация v2 (как в демо)"; `bench.test.ts` pins `policy_version == risk-policy-v2`.
+  README figure re-rendered by `scripts/render_readme_figures.py`; caption now carries the policy version read from the artifact.
+* New tests: `tests/unit/test_readme_numbers.py` (3) recompute every README benchmark figure from its artifact. Mutation: README
+  `25.4 % (100/394)` → `25.3 %` → `test_sealed_v2_figures_match_the_artifact` fails; restored → passes.
+* CI: the separate `.github/workflows/pitch.yml` (path-filtered on `apps/pitch/**` and `bench-v1.json`) already runs the pitch's
+  lint, types, unit, build, server smoke and E2E; the merge updates it to the redesign's version. (I first added a duplicate job
+  to `ci.yml` and the L-0020 test matrix said "not in CI" — both wrong, both corrected before this commit.)
+* Verification: ruff (incl. `scripts`), format, mypy clean; pytest **307 passed, 0 skipped**; pitch lint clean, tsc clean, vitest
+  **14 passed**, build ok, Playwright **31 passed**; handoff checker OK; progress probe exit 0. Visual: slide 6 at 1440×900 (label
+  wraps cleanly, commit `85f8b5e`), 390 px portrait shows the deck's existing rotate-device prompt; README SVG caption fits.
+  Not run: web Playwright (no `apps/web` change), Docker.
+* Follow-up: B-057 (move headline + results slide to v3 / sealed-v2 after deployment, B-055).
+* State file updated: yes.

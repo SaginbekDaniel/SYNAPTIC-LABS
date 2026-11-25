@@ -17,7 +17,7 @@ flowchart LR
   B001["B-001 P0"]:::done
   B002["B-002 P0"]:::blocked
   B003["B-003 P0"]:::done
-  B004["B-004 P1"]:::todo
+  B004["B-004 P1"]:::verified
   B005["B-005 P1"]:::blocked
   B010["B-010 P0"]:::done
   B011["B-011 P1"]:::done
@@ -55,6 +55,7 @@ flowchart LR
   B054["B-054 P3"]:::blocked
   B055["B-055 P1"]:::blocked
   B056["B-056 P1"]:::blocked
+  B057["B-057 P2"]:::todo
   B001 --> B002
   B002 --> B003
   B003 --> B004
@@ -92,6 +93,7 @@ flowchart LR
   B012 --> B055
   B050 --> B055
   B002 --> B056
+  B055 --> B057
   class B001,B002,B003,B004,B005,B010,B011,B012,B014,B030,B050,B052,B055 critical
   classDef done fill:#1f6f43,color:#fff,stroke:#1f6f43
   classDef blocked fill:#8a2b2b,color:#fff,stroke:#8a2b2b

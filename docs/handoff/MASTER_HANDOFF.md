@@ -565,6 +565,14 @@ while the integration line was never merged (see §6, B-002). *Impact*: merging 
 deny-by-default check refuses a write route without a role) or, if forced, adds unauthenticated writes and a shared static
 secret beside named-account sessions and CSRF. *Fix*: B-056 after decision D-12. *Cost* M.
 
+**H-27 · P2 · Headline figures describe an older configuration than this branch ships** (found 2026-11-25, L-0021).
+*Evidence* `[code]`: `benchmarks/results/bench-v1.json` records `"policy_version": "risk-policy-v2"` (config sha
+`489b477a…`), while `configs/risk_policy.yaml` is `risk-policy-v3`; the redesigned README and pitch presented the
+`bench-v1` table as "NEXORA" without the version. The live demo runs `f29ae56` (v2), so the pitch matches what is
+deployed, but not this branch. *Fix (partial, B-004)*: every such figure is now labelled v2, the README adds the
+pre-registered `sealed-v2` result of v3, and `tests/unit/test_readme_numbers.py` recomputes every quoted figure from
+its artifact. *Remaining*: B-057 after deployment (B-055). *Cost* S.
+
 ### 16.2 Design risks
 
 | ID | Sev | Risk and evidence | Impact | Fix / verify |

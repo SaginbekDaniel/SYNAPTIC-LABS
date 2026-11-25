@@ -3,20 +3,20 @@
 .progress { pointer-events: auto; display: flex; align-items: center; gap: 8px; }
 .seg-bar { appearance: none; border: 0; background: transparent; cursor: pointer; padding: 10px 0; width: clamp(28px, 3.2vw, 60px); }
 .seg-bar span { display: block; height: 4px; border-radius: 4px; background: rgb(255 255 255 / 0.16); }
-.seg-bar i { display: block; height: 4px; margin-top: -4px; border-radius: 4px; background: linear-gradient(90deg, var(--violet), var(--cyan)); transform-origin: 0 50%; transition: transform var(--dur-slow) var(--ease); }
+.seg-bar i { display: block; height: 4px; margin-top: -4px; border-radius: 4px; background: var(--accent); transform-origin: 0 50%; transition: transform var(--dur-slow) var(--ease); }
 .seg-bar:hover span { background: rgb(255 255 255 / 0.3); }
 .counter { margin-left: 10px; font-size: 14px; color: var(--text-3); letter-spacing: 0.08em; }
-.toolbar { pointer-events: auto; display: flex; align-items: center; gap: 4px; padding: 5px; border-radius: 999px; background: rgb(12 13 20 / 0.82); border: 1px solid var(--line); backdrop-filter: blur(12px); opacity: 0; transform: translateY(8px); transition: opacity var(--dur), transform var(--dur); }
+.toolbar { pointer-events: auto; display: flex; align-items: center; gap: 4px; padding: 5px; border-radius: 999px; background: rgb(12 13 20 / 0.82); border: 1px solid var(--line); opacity: 0; transform: translateY(8px); transition: opacity var(--dur), transform var(--dur); }
 .chrome.show .toolbar, .toolbar:focus-within { opacity: 1; transform: none; }
 .toolbar button, .close, .timer-btns button { appearance: none; border: 0; cursor: pointer; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: transparent; color: var(--text-2); transition: background var(--dur-fast), color var(--dur-fast); }
 .toolbar button:hover:not(:disabled), .close:hover, .timer-btns button:hover { background: rgb(255 255 255 / 0.1); color: #fff; }
 .toolbar button:disabled { opacity: 0.35; cursor: default; }
-.toolbar button[aria-pressed="true"] { background: var(--violet-fill); color: #fff; }
-.toolbar .sep { width: 1px; height: 22px; background: var(--line-strong); margin: 0 4px; }
+.toolbar button[aria-pressed="true"] { background: var(--accent-fill); color: #fff; }
+.toolbar .sep { width: 1px; height: 22px; background: var(--line-2); margin: 0 4px; }
 
 /* modals */
-.modal-scrim { position: absolute; inset: 0; z-index: 40; display: grid; place-items: center; background: rgb(3 4 8 / 0.78); backdrop-filter: blur(6px); padding: 16px; }
-.modal { width: min(560px, 100%); max-height: 100%; overflow: auto; border-radius: 24px; padding: 28px; background: #0d0e16; border: 1px solid var(--line-strong); box-shadow: 0 40px 120px -20px #000; }
+.modal-scrim { position: absolute; inset: 0; z-index: 40; display: grid; place-items: center; background: rgb(3 4 8 / 0.78); padding: 16px; }
+.modal { width: min(560px, 100%); max-height: 100%; overflow: auto; border-radius: 24px; padding: 28px; background: #0d0e16; border: 1px solid var(--line-2); box-shadow: 0 40px 120px -20px #000; }
 .modal.wide { width: min(1100px, 100%); }
 .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .modal-head h2 { margin: 0; font-size: 24px; letter-spacing: -0.01em; }
@@ -25,15 +25,15 @@
 .modal .btn { font-size: 16px; padding: 10px 18px; }
 .ov-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .ov-card { appearance: none; cursor: pointer; width: 100%; height: 100%; text-align: left; display: flex; flex-direction: column; gap: 8px; padding: 20px; border-radius: 18px; background: rgb(255 255 255 / 0.04); border: 1px solid var(--line); color: var(--text); transition: border-color var(--dur-fast), background var(--dur-fast); }
-.ov-card:hover { background: rgb(255 255 255 / 0.08); border-color: var(--line-strong); }
-.ov-card.current { border-color: var(--violet); background: rgb(124 92 230 / 0.16); }
-.ov-n { color: var(--violet); font-size: 14px; font-weight: 700; }
+.ov-card:hover { background: rgb(255 255 255 / 0.08); border-color: var(--line-2); }
+.ov-card.current { border-color: var(--accent); background: rgb(124 92 230 / 0.16); }
+.ov-n { color: var(--accent); font-size: 14px; font-weight: 700; }
 .ov-eyebrow { color: var(--text-3); font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; }
 .ov-title { font-size: 20px; font-weight: 650; line-height: 1.2; flex: 1; text-wrap: balance; }
 .ov-meta { color: var(--text-3); font-size: 14px; }
 .keys { margin: 0; display: grid; gap: 4px; }
 .keys > div { display: grid; grid-template-columns: 220px 1fr; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--line); }
-.keys dt { color: var(--cyan); font-size: 15px; } .keys dd { margin: 0; color: var(--text-2); font-size: 16px; }
+.keys dt { color: var(--accent); font-size: 15px; } .keys dd { margin: 0; color: var(--text-2); font-size: 16px; }
 
 /* presenter notes drawer */
 .notes { width: 400px; flex: none; display: flex; flex-direction: column; gap: 14px; padding: 20px; background: #0b0c13; border-left: 1px solid var(--line); overflow: auto; z-index: 30; }
@@ -41,21 +41,21 @@
 .notes h2 { margin: 0; font-size: 18px; }
 .timer { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-radius: 16px; background: rgb(255 255 255 / 0.04); border: 1px solid var(--line); }
 .timer .t { font-size: 34px; font-weight: 700; } .timer .t small { font-size: 16px; color: var(--text-3); font-weight: 500; }
-.pace { font-size: 14px; color: var(--text-3); } .pace.late { color: var(--warn); } .pace.early { color: var(--cyan); }
+.pace { font-size: 14px; color: var(--text-3); } .pace.late { color: var(--amber); } .pace.early { color: var(--accent); }
 .timer-btns { display: flex; gap: 4px; }
 .n-slide { font-size: 14px; color: var(--text-3); letter-spacing: 0.04em; }
 .n-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .n-list li { display: grid; grid-template-columns: 26px 1fr; gap: 10px; padding: 12px; border-radius: 14px; border: 1px solid transparent; opacity: 0.55; }
 .n-list li.on { opacity: 1; background: rgb(124 92 230 / 0.16); border-color: rgb(165 139 245 / 0.5); }
 .n-list li.done { opacity: 0.4; }
-.n-list .mono { color: var(--violet); font-size: 14px; padding-top: 2px; }
+.n-list .mono { color: var(--accent); font-size: 14px; padding-top: 2px; }
 .n-list p { margin: 0; font-size: 16px; line-height: 1.45; color: var(--text); }
 .n-next { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line); display: grid; gap: 4px; }
 .n-next .label { font-size: 13px; } .n-next b { font-size: 16px; font-weight: 600; }
 
 /* portrait hint */
-.rotate { position: absolute; left: 12px; right: 12px; top: 12px; z-index: 35; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; background: rgb(16 17 26 / 0.94); border: 1px solid var(--line-strong); font-size: 14px; color: var(--text); }
-.rotate button { margin-left: auto; appearance: none; border: 1px solid var(--line-strong); background: transparent; color: var(--text); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+.rotate { position: absolute; left: 12px; right: 12px; top: 12px; z-index: 35; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; background: rgb(16 17 26 / 0.94); border: 1px solid var(--line-2); font-size: 14px; color: var(--text); }
+.rotate button { margin-left: auto; appearance: none; border: 1px solid var(--line-2); background: transparent; color: var(--text); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
 @media (max-width: 900px) { .notes { position: absolute; right: 0; top: 0; bottom: 0; width: min(100%, 380px); } .ov-grid { grid-template-columns: 1fr 1fr; } .keys > div { grid-template-columns: 1fr; gap: 2px; } }
 
 .counter { white-space: nowrap; }

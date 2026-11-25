@@ -1,69 +1,86 @@
 /*
- * NEXORA pitch — design tokens. Every colour, size and duration used by the presentation lives here.
- * Palette is derived from the product's "Dark Intelligence" tokens (apps/web/src/styles/tokens.css),
- * pushed to a deeper black for the stage. Canvas is a fixed 1920x1080 grid with an 80px safe area.
+ * NEXORA pitch — design tokens. Every colour, size, space, radius and duration lives here.
+ *
+ * Principles
+ *  - Flat, dark, quiet surfaces; hierarchy comes from type and space, not from glass, glow or gradients.
+ *  - One brand accent (the product's violet). Colour is semantic everywhere else:
+ *      accent  = NEXORA            baseline = monitoring rules (neutral grey)
+ *      amber   = cost / caution    risk     = suspicious flow
+ *      in/out  = money into / out of a central account (same hues as the product's graph)
+ *  - Fixed 1920×1080 canvas; content grid with 120px side margins; nothing smaller than 22px.
+ *
+ * Contrast on --bg (#090a0f): text 17.9:1 · text-2 8.9:1 · text-3 5.2:1 · accent 6.9:1 · amber 10.6:1.
  */
 :root {
   color-scheme: dark;
 
-  /* canvas */
+  /* canvas & grid */
   --canvas-w: 1920px;
   --canvas-h: 1080px;
-  --safe: 80px;
+  --safe: 80px;          /* hard limit, enforced by e2e */
+  --mx: 120px;           /* content side margin */
+  --mt: 96px;            /* content top */
+  --mb: 112px;           /* content bottom (chrome sits below) */
+  --gutter: 48px;
 
   /* surfaces */
-  --bg: #05060a;
-  --bg-2: #0a0b12;
-  --panel: rgb(255 255 255 / 0.045);
-  --panel-strong: rgb(255 255 255 / 0.075);
-  --line: rgb(255 255 255 / 0.1);
-  --line-strong: rgb(255 255 255 / 0.2);
+  --bg: #090a0f;
+  --surface: #101219;
+  --surface-2: #161924;
+  --line: rgb(255 255 255 / 0.08);
+  --line-2: rgb(255 255 255 / 0.14);
+  --line-3: rgb(255 255 255 / 0.26);
 
-  /* text (contrast on --bg: text 18:1, text-2 8.6:1, text-3 5.4:1) */
-  --text: #f6f6fb;
-  --text-2: #b4b8cc;
-  --text-3: #8c91aa;
+  /* text */
+  --text: #f3f4f8;
+  --text-2: #aab0c2;
+  --text-3: #7d8498;
 
-  /* brand */
-  --violet: #a58bf5;
-  --violet-strong: #c2b0ff;
-  --violet-fill: #7c5ce6;
-  --cyan: #62d3db;
-  --blue: #5b8cff;
-  --pink: #da7fd0;
-
-  /* semantic */
+  /* brand & semantics */
+  --accent: #a58bf5;
+  --accent-strong: #c4b3ff;
+  --accent-fill: #7c5ce6;
+  --accent-soft: rgb(165 139 245 / 0.14);
+  --baseline: #8a90a4;
+  --baseline-soft: rgb(138 144 164 / 0.18);
+  --amber: #f2b84b;
+  --amber-soft: rgb(242 184 75 / 0.12);
   --risk: #ff6b86;
-  --risk-soft: rgb(255 107 134 / 0.14);
-  --warn: #f4c152;
-  --warn-soft: rgb(244 193 82 / 0.14);
   --ok: #56d49e;
-  --ok-soft: rgb(86 212 158 / 0.14);
-  --muted: #6d7290;
-
-  --glow-violet: rgb(154 123 242 / 0.4);
-  --glow-cyan: rgb(98 211 219 / 0.3);
+  --in: #62d3db;
+  --out: #da7fd0;
+  --node: #4a5066;
 
   /* type */
   --font: "Onest Variable", "Onest", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "JetBrains Mono Variable", ui-monospace, "SF Mono", Menlo, monospace;
-  --fs-display: 112px;
-  --fs-h1: 88px;
-  --fs-h2: 52px;
-  --fs-h3: 36px;
+  --fs-display: 168px;
+  --fs-h1: 56px;    /* slide thesis: one line, ≤ 56 characters */
+  --fs-num: 96px;   /* key figures */
+  --fs-h2: 44px;
+  --fs-h3: 34px;
   --fs-lead: 32px;
   --fs-body: 28px;
   --fs-small: 24px;
   --fs-label: 22px; /* smallest text anywhere on the canvas */
 
+  /* space (8px base) */
+  --s1: 8px;
+  --s2: 16px;
+  --s3: 24px;
+  --s4: 32px;
+  --s5: 48px;
+  --s6: 64px;
+  --s7: 96px;
+
   /* shape */
-  --r-panel: 28px;
-  --r-inner: 18px;
+  --r: 14px;
+  --r-sm: 8px;
   --r-pill: 999px;
 
   /* motion */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --dur-fast: 160ms;
   --dur: 320ms;
-  --dur-slow: 900ms;
+  --dur-slow: 700ms;
 }

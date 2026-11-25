@@ -29,7 +29,7 @@ Conventions
 | 2 | Graph Workspace | B-020, B-021, B-022, B-023, B-024, B-025 | B-021 after B-001; B-023 after B-022; B-025 after B-020 |
 | 3 | Gesture control | B-030*, B-031, B-032, B-033 | B-032 after B-031; B-033 after B-030 |
 | 4 | Fraud intelligence and evaluation | B-040, B-041, B-042, B-043, B-044, B-045, B-046, B-047, B-048 | B-040, B-041 after B-003; B-048 after B-041 |
-| 5 | Platform and product | B-050, B-051*, B-052, B-053, B-054, B-055*, B-056* | B-052 after B-002..B-004; B-055 after B-001, B-002, B-005, B-010, B-012, B-050 |
+| 5 | Platform and product | B-050, B-051*, B-052, B-053, B-054, B-055*, B-056*, B-057 | B-052 after B-002..B-004; B-055 after B-001, B-002, B-005, B-010, B-012, B-050 |
 
 `*` = human-gated. Waves are guidance, not barriers: any task whose listed dependencies are done may
 start. **Recommended first autonomous queue:** B-001 → B-010 → B-003 → B-015 → B-012 → B-031 → B-020 →
@@ -37,7 +37,7 @@ B-040/B-041. Edges (task → prerequisites): B-003 has none (it ports commits on
 does not need the merge decision); B-002→B-001; B-004→B-003; B-011→B-001,B-010; B-014→B-012; B-016→B-015;
 B-019→B-011; B-021→B-001; B-023→B-022; B-024→B-020,B-021; B-025→B-020; B-032→B-031; B-033→B-030; B-040→B-003;
 B-041→B-003; B-042→B-041; B-043→B-040,B-041; B-044→B-040; B-045→B-040; B-046→B-041; B-048→B-041; B-051→B-005;
-B-052→B-002,B-003,B-004; B-054→B-047; B-055→B-001,B-002,B-005,B-010,B-012,B-050; B-056→B-002. The graph is acyclic.
+B-052→B-002,B-003,B-004; B-054→B-047; B-055→B-001,B-002,B-005,B-010,B-012,B-050; B-056→B-002; B-057→B-055. The graph is acyclic.
 
 Mapping from the earlier `ZENCODER_TASKS.md` (kept for history): T1→B-002, T2→B-030, T3→B-050 (CI
 already runs the image build and gateway smoke test; the residual gap is the camera path), T4+T5→B-052,
@@ -118,7 +118,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: regenerated artifacts differ in the 4th decimal and latency; revert the branch.
 
 ### B-004 · P1 · Reconcile README and pitch with the verified numbers
-* **Status**: TODO
+* **Status**: VERIFIED
 * **Rationale**: H-08, H-22. Jury-facing artifacts diverged: PR #5 (and the integration branch) carry only the
   first pitch (`4e02e9b`); the redesigned pitch is on `admiring-fermat` (`ced8227`, merges cleanly) and the
   README redesign on `great-lovelace` (`e1f597c`, `058a273`; conflicts in `README.md` only). The README still
@@ -127,8 +127,9 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Depends on**: B-003 (numbers must be final first).
 * **Implementation**: merge `admiring-fermat`, then `great-lovelace`, resolving the README conflicts by hand;
   update the evaluation section to the regenerated artifacts and delete the stale "PR #3 open" warning;
-  add a unit test in `apps/pitch` that every number in `apps/pitch/src/data/results.ts` / `apps/pitch/src/data/sealed-excerpt.json` equals
-  the value in `benchmarks/results/sealed-evaluation.json`.
+  add a unit test in `apps/pitch` that every number on the results slide equals the committed artifact (the redesign
+  replaced the first pitch's `results.ts` / `sealed-excerpt.json` with `apps/pitch/src/data/bench.ts` and
+  `apps/pitch/src/data/bench-excerpt.json`, pinned by `apps/pitch/src/data/bench.test.ts` against `benchmarks/results/bench-v1.json`).
 * **Acceptance**: pitch E2E (29+) and unit tests pass; every number in README and pitch traces to a committed
   artifact (the new test covers the pitch; list the README table's sources in the PR).
 * **Tests**: `cd apps/pitch && npm run lint && npx tsc -b && npm test && npm run build`, smoke and Playwright.
@@ -746,6 +747,24 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Tests**: deployed smoke test (`playwright.smoke.config.ts`).
 * **Expected improvement**: the verified work is actually live.
 * **Risk / rollback**: documented rollback (Redeploy previous deployment; migrations are additive).
+
+### B-057 · P2 · Results slide and README headline on the shipped configuration
+* **Status**: TODO
+* **Rationale**: H-27. The pitch's results slide and the README's first table show configuration v2 on the exposed
+  `bench-v1` holdout (now labelled as such, B-004). That matches the live demo, which still runs v2 (`f29ae56`), but this
+  branch ships v3, whose stronger evidence is the pre-registered `sealed-v2` run. Once v3 is deployed the pitch should lead
+  with what is deployed.
+* **Modules**: `apps/pitch/src/data/bench.ts`, `apps/pitch/scripts/extract-bench.mjs`, `apps/pitch/src/slides/Slide6.tsx`, `README.md`,
+  `tests/unit/test_readme_numbers.py`.
+* **Depends on**: B-055.
+* **Implementation**: extract the `sealed-v2` candidate and `B1_rules` figures with a script (never by hand), keep the
+  per-family misses and the limits from `docs/evaluation/RESULTS.md`, keep the "synthetic, not bank data" guard; do not
+  run anything new on `sealed-v2` (protocol "Use after the run").
+* **Acceptance**: pitch unit test pins every figure to `sealed-v2-evaluation.json`; README traceability test updated; pitch
+  E2E green; desktop screenshot checked.
+* **Tests**: `cd apps/pitch && npm test && npx playwright test`; `uv run pytest tests/unit/test_readme_numbers.py`.
+* **Expected improvement**: the deck shows the product that is live, with its best evidence.
+* **Risk / rollback**: pitch and README only; revert.
 
 ### B-056 · P1 · Integrate the transfer-protection demo (`feat/transfer-protection`) · requires decision D-12
 * **Status**: BLOCKED · waiting on decision D-12 (authentication model for the client-facing transfer check)
