@@ -232,7 +232,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: toolchain change; own branch.
 
 ### B-014 · P1 · Dependency-audit gates in CI
-* **Status**: TODO
+* **Status**: IMPLEMENTED
 * **Rationale**: H-07. Python dependencies have never been audited (`pip-audit` could not run in this
   environment; `uvx` was refused by the sandbox), and `npm audit` is manual.
 * **Modules**: `.github/workflows/ci.yml` (or a new `audit.yml`), `.github/dependabot.yml`.

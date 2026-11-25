@@ -1,0 +1,6 @@
+{
+  "name": "audit-negative-control",
+  "private": true,
+  "description": "Negative control for .github/workflows/audit.yml: pins a production dependency with a known high-severity advisory (lodash < 4.17.21, GHSA-35jh-r3h4-6jhm). The audit job must FAIL on this directory; if it passes, the gate is broken. Never installed or shipped.",
+  "dependencies": { "lodash": "4.17.20" }
+}

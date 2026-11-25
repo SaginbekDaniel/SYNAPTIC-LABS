@@ -23,7 +23,7 @@ flowchart LR
   B011["B-011 P1"]:::done
   B012["B-012 P1"]:::done
   B013["B-013 P1"]:::todo
-  B014["B-014 P1"]:::todo
+  B014["B-014 P1"]:::implemented
   B015["B-015 P1"]:::done
   B016["B-016 P2"]:::todo
   B017["B-017 P2"]:::todo

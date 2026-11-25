@@ -1,0 +1,97 @@
+name: audit
+# Dependency audit (backlog B-014). Fails on high/critical advisories in PRODUCTION dependencies of every
+# shipped project; dev/test-only advisories are reported in the job summary but do not fail the run.
+# Each job first proves it can fail: a negative control that pins a known-vulnerable version must be
+# rejected, so a broken or silently passing audit tool turns the job red instead of green.
+on:
+  push:
+    paths:
+      - "uv.lock"
+      - "pyproject.toml"
+      - "**/package-lock.json"
+      - "**/package.json"
+      - ".github/workflows/audit.yml"
+      - ".github/pip-audit-allowlist.txt"
+      - ".github/audit-fixtures/**"
+      - "scripts/audit_allowlist.py"
+  pull_request:
+    paths:
+      - "uv.lock"
+      - "pyproject.toml"
+      - "**/package-lock.json"
+      - "**/package.json"
+      - ".github/workflows/audit.yml"
+      - ".github/pip-audit-allowlist.txt"
+      - ".github/audit-fixtures/**"
+      - "scripts/audit_allowlist.py"
+  schedule:
+    - cron: "17 3 * * 1" # weekly: new advisories appear without any change here
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  npm:
+    name: npm audit (${{ matrix.project }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [apps/web, apps/pitch, .railway]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 22}
+      - name: Negative control — the gate must reject a known high advisory
+        working-directory: .github/audit-fixtures/npm-vulnerable
+        run: |
+          if npm audit --omit=dev --audit-level=high; then
+            echo "::error::npm audit accepted a dependency with a known high advisory; the gate is broken"
+            exit 1
+          fi
+      - name: Production dependencies — fail on high or critical
+        working-directory: ${{ matrix.project }}
+        run: npm audit --omit=dev --audit-level=high
+      - name: All dependencies — report only
+        working-directory: ${{ matrix.project }}
+        run: |
+          {
+            echo "### npm audit, ${{ matrix.project }} (including dev dependencies; report only)"
+            echo '```'
+            npm audit || true   # dev/test advisories are tracked in the backlog (B-013), not a release gate
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  python:
+    name: pip-audit (Python)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PIP_AUDIT: "pip-audit==2.9.0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Negative control — the gate must reject a known vulnerable pin
+        run: |
+          printf 'urllib3==1.24.1\n' > "$RUNNER_TEMP/vulnerable.txt"
+          if uvx --from "$PIP_AUDIT" pip-audit --no-deps --disable-pip -r "$RUNNER_TEMP/vulnerable.txt"; then
+            echo "::error::pip-audit accepted urllib3 1.24.1 (known advisories); the gate is broken"
+            exit 1
+          fi
+      - name: Production dependencies — fail on any known vulnerability
+        run: |
+          uv export --frozen --no-dev --no-emit-project --format requirements-txt > "$RUNNER_TEMP/prod.txt"
+          IGNORES="$(python3 scripts/audit_allowlist.py .github/pip-audit-allowlist.txt)"
+          # shellcheck disable=SC2086  # IGNORES is a list of separate --ignore-vuln arguments
+          uvx --from "$PIP_AUDIT" pip-audit --disable-pip --require-hashes -r "$RUNNER_TEMP/prod.txt" $IGNORES
+      - name: All dependencies — report only
+        run: |
+          uv export --frozen --no-emit-project --format requirements-txt > "$RUNNER_TEMP/all.txt"
+          {
+            echo "### pip-audit (including dev dependencies; report only)"
+            echo '```'
+            uvx --from "$PIP_AUDIT" pip-audit --disable-pip --require-hashes -r "$RUNNER_TEMP/all.txt" || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
