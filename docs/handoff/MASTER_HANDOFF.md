@@ -220,6 +220,13 @@ The integration branch resolved it by renumbering PR #3's migration to `0004` (`
 **The stranded fixes.** The benchmark-arithmetic and Evaluation-screen fixes (H-08) and the redesigned
 README/pitch live only on branches with no PR. They are not in the integration line.
 
+**Update 2026-11-25 (L-0020)** `[git]`: `graph-workspace-wip` was fast-forwarded from `0c8d21b` to `bd3868f`, so it is again
+identical to `claude/peaceful-darwin-nrquu9` and carries all B-001…B-041 work (54 commits ahead of the default branch at `bd3868f`, 0 behind);
+it is the working branch from this session on. B-003 ported `eloquent-planck`/`sharp-cannon` (their changes are in the line under
+new SHAs). New since the table above: **`feat/transfer-protection`** (2 commits on `ea5ca9c` by a collaborator, CI green on its
+branch, no PR) — not integrated, conflicts in 7 files and adds a second auth mechanism (H-26, B-056, decision D-12). Open PRs now
+also include Dependabot #16 (python minor/patch group).
+
 **Recommended path** (needs the owner, B-002): one PR from `graph-workspace-wip` to the default branch
 superseding #3/#5/#15, then port `eloquent-planck` (B-003) and `great-lovelace`/`admiring-fermat` (B-004);
 treat `peaceful-babbage` as dead. Do not merge, close or delete anything without approval.
@@ -547,6 +554,17 @@ metrics (absent accounts never enter a review item and every scenario keeps ≥ 
 same test), false-positive counts and account precision (an absent account is never flagged), sealed-v2 results.
 *Fix*: B-048 — never by editing frozen generators or hand-editing artifacts. *Cost* S + protocol amendment.
 
+**H-26 · P1 · Unintegrated collaborator feature with a second authentication mechanism** (found 2026-11-25, L-0020).
+*Evidence* `[git]`: `origin/feat/transfer-protection` (`1652880`, `43368ff`, author outside the agent sessions, CI run 85
+green on that branch) branches from `ea5ca9c`, not from the integration line; it adds `POST /api/v1/demo/transfer-checks`
+(no authentication) and `POST /api/v1/demo/transfer-checks/evidence` guarded by a static header
+`X-Nexora-Transfer-Analyst-Token` compared with an environment variable. *Reproduce*: `git show origin/feat/transfer-protection:<path>` for
+`src/nexora/api/routes/transfer_checks.py` (new, on that branch only); a trial `git merge --no-commit` onto the
+integration line in a scratch worktree conflicts in 7 files. *Root cause*: parallel development from the default branch
+while the integration line was never merged (see §6, B-002). *Impact*: merging as-is either stops the app at build (B-011's
+deny-by-default check refuses a write route without a role) or, if forced, adds unauthenticated writes and a shared static
+secret beside named-account sessions and CSRF. *Fix*: B-056 after decision D-12. *Cost* M.
+
 ### 16.2 Design risks
 
 | ID | Sev | Risk and evidence | Impact | Fix / verify |
@@ -644,6 +662,7 @@ read-only command port; layout is seeded and deterministic; the Railway token is
 | D-9 | CSP violation reporting | skip (keeps the public surface at two routes) · add an unauthenticated report endpoint | B-016 |
 | D-10 | Near-real-time requirement | owner states a latency target · otherwise stay batch | B-054 |
 | D-11 | Minimum role for CSV import (when enabled) | `admin` (assumed by B-011: real data enters a system without per-dataset isolation) · `analyst` (one line in `routes/datasets.py` plus the matrix test) | — |
+| D-12 | Authentication model for the transfer-protection demo (H-26) | client check as a signed-in `viewer` route and evidence as `analyst`, both on sessions + CSRF (recommended) · a deliberately public client-check route with rate limiting and its own threat-model entry; never a static shared header | B-056 |
 
 ---
 
@@ -663,6 +682,8 @@ Details, acceptance criteria and tests are in `EXECUTION_BACKLOG.md`.
 `*` human-gated. Fraud-intelligence rule: B-040 (sealed-v2) and B-041 (metrics) come **before** B-043/B-044/B-046.
 
 ## 22. Risks and mitigations
+
+Superseded by the live register [`RISK_REGISTER.md`](RISK_REGISTER.md) (L-0020); the table below is kept for history.
 
 | Risk | Likelihood / impact | Mitigation |
 |---|---|---|

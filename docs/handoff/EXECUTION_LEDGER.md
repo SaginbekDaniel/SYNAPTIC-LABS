@@ -390,3 +390,36 @@ Entry template:
 * Next task: B-004. It merges `admiring-fermat-9fc4nx` (pitch, ~3.9k lines) and `great-lovelace-0gmpmi` (README redesign,
   conflicts in `README.md`) into the working line; not started in this session because it could not be finished and
   verified (pitch unit + 29 E2E) within it. Open owner decisions touched by this session: D-11 (import role), B-048 (H-25 fix).
+
+### L-0020 · 2026-11-25 · session recovery, branch consolidation, completion-management system · status: done
+* Session `session_01YM4H2XZynKHHiV6ksQW3Rh`; harness-assigned branch `graph-workspace-wip`.
+* Recovery (read-only first): `git fetch --prune`; no `main` ref is served (default branch `claude/brave-dirac-c80nwq` = `ea5ca9c`);
+  `graph-workspace-wip` was at `0c8d21b`, `claude/peaceful-darwin-nrquu9` at `bd3868f` = 27 commits ahead of it, 0 behind (strict
+  fast-forward; last commit 2026-11-23 07:10, no session active since). GitHub: CI runs 80–82 on `peaceful-darwin` success; run 85 on
+  `feat/transfer-protection` success; CodeQL on the default branch success (2026-11-23). Open PRs #3, #5, #15, Dependabot #6–#14, #16.
+* Consolidation: `git merge --ff-only origin/claude/peaceful-darwin-nrquu9`, `git push origin graph-workspace-wip` →
+  `0c8d21b..bd3868f` (fast-forward, no rewrite). `graph-workspace-wip` is the working line from here on.
+* New finding H-26 / task B-056 / decision D-12: `feat/transfer-protection` (collaborator, 2 commits on `ea5ca9c`, ~4.2k lines) is
+  not integrated. Trial `git merge --no-commit` in a scratch worktree (removed afterwards, nothing committed): conflicts in 7 files;
+  adds unauthenticated `POST /api/v1/demo/transfer-checks` and a static-header analyst token — incompatible with sessions/CSRF/B-011.
+* Baseline on `bd3868f` (fresh container; PostgreSQL role and three databases created via `su postgres -c`): ruff, format (102 files),
+  mypy (65 files) clean; pytest **296 passed, 0 failed, 0 skipped** (junit XML, 34.1 s); `alembic upgrade head` 0001→0005,
+  `alembic check` "No new upgrade operations detected", `alembic heads` `0005 (head)`; `tsc -b` clean; vitest **135 passed** (15 files);
+  `vite build` ok; `npm run gen:api` → no diff; Playwright cold cache **37 passed** (2.2 min); `.railway` `npm run check` "3 services +
+  database, all deployment invariants hold"; pitch lint clean, tsc clean, vitest **17 passed**, build ok, Playwright **29 passed**;
+  `npm audit --omit=dev` (web) **0 vulnerabilities**; `npm audit` (web, incl. dev) 6 (3 moderate, 1 high, 2 critical; vitest 2 /
+  esbuild / tinypool chain). Handoff checker OK.
+* Management system extended (not duplicated): one machine-read `Status` line per backlog task with commit + ledger evidence for the
+  ten done tasks; **Critical path** convention line; `docs/handoff/probes/progress.py` (weighted completion per the protocol formula,
+  critical-path progress, blocked/open-P0 lists, evidence check: DONE needs a reachable commit and an existing ledger entry; `--mermaid`
+  generates the dependency graph); `docs/handoff/DEPENDENCY_MAP.md` (generated graph + critical path + parallel streams),
+  `RISK_REGISTER.md` (supersedes MASTER_HANDOFF §22), `TEST_MATRIX.md`, `RELEASE_CHECKLIST.md`; `docs/completion/README.md` maps the
+  protocol's requested document set onto these single sources. CI test job now checks out full history (`fetch-depth: 0`) so the
+  evidence test can prove reachability; without it a depth-1 clone could not.
+* Tests: `tests/unit/test_progress_probe.py` (8: formula, VERIFIED ≠ DONE, evidence rules, malformed/missing/duplicate status lines,
+  real backlog consistent, DEPENDENCY_MAP block equals the generated graph, edges from Depends on). Mutation checks: removing B-001's
+  commit from its status line → probe exits 1 ("DONE must read…"); hand-editing one diagram line → drift test fails.
+* Computed progress: 34.6 % weighted verified completion; critical path 42.5 %; 41 tasks, 10 done; open P0: B-002, B-030 (both human).
+* Not executed: Docker, ShellCheck, pip-audit, real webcam, live Railway, Playwright against the production bundle (no change to
+  product code or headers in this entry).
+* State file updated: yes.

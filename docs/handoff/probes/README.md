@@ -13,6 +13,7 @@ the literal output.
 | Cytoscape `cose` layout time (in the layout worker since B-020; the main-thread fallback costs the same) | `node docs/handoff/probes/cose_layout.mjs` | `cd apps/web && npm ci` |
 | Run the Playwright suite against the **production bundle** with the exact gateway headers | see below (`gateway_sim.mjs`) | `cd apps/web && npx vite build` |
 | Mechanical consistency check of the handoff documents (paths, links, branches, SHAs, commands, task graph) | `python3 docs/handoff/probes/check_handoff_docs.py` | git, python3 |
+| Computed completion progress and the generated dependency graph (from backlog Status / Depends on lines) | `python3 docs/handoff/probes/progress.py [--markdown \| --mermaid]` | git, python3 |
 
 Observed 2026-11-22 (single-core container; see MASTER_HANDOFF §16 for interpretation):
 

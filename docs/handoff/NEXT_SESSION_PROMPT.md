@@ -12,7 +12,7 @@ Work autonomously through as many tasks as you can finish properly; stop only at
 
 ```bash
 git fetch origin --prune
-git checkout claude/peaceful-darwin-nrquu9      # contains the verified base 7abd9a5 plus docs/handoff/*; see EXECUTION_STATE.md if it names a newer branch
+git checkout graph-workspace-wip                # the working line since L-0020 (= peaceful-darwin + later work); see EXECUTION_STATE.md if it names a newer branch
 git status -sb && git log --oneline -5 && git branch -r | grep -v dependabot && git worktree list && git stash list
 ```
 
@@ -34,12 +34,12 @@ service postgresql start; pg_lsclusters          # it does not survive container
 export UV_SYSTEM_CERTS=1; unset UV_NATIVE_TLS
 uv sync --frozen && (cd apps/web && npm ci)
 uv run ruff check src tests migrations && uv run ruff format --check src tests migrations && uv run mypy
-uv run pytest -p no:cacheprovider -rs            # expected: 190 passed, 0 skipped
+uv run pytest -p no:cacheprovider -rs            # expected: 304 passed, 0 skipped (L-0020)
 NEXORA_DATABASE_URL=postgresql+psycopg://nexora:nexora@localhost:5432/nexora uv run alembic upgrade head
 NEXORA_DATABASE_URL=postgresql+psycopg://nexora:nexora@localhost:5432/nexora uv run alembic check
-cd apps/web && npx tsc -b && npx vitest run      # expected: 99 passed
+cd apps/web && npx tsc -b && npx vitest run      # expected: 135 passed
 npx vite build && npm run gen:api && git -C "$(git rev-parse --show-toplevel)" diff --exit-code -- apps/web/openapi.json apps/web/src/lib/api-types.ts
-npx playwright install chromium && rm -rf node_modules/.vite && npx playwright test --trace off   # expected: 34 passed
+npx playwright install chromium && rm -rf node_modules/.vite && npx playwright test --trace off   # expected: 37 passed
 cd ../../.railway && npm ci && npm run check
 ```
 
@@ -49,11 +49,12 @@ Known environment limits: no Docker daemon, no ShellCheck, no `pip-audit`; if a 
 
 ## 4. Select work
 
-Take the first task that is (a) not human-gated, (b) has all its dependencies done (see the dependency list in the backlog and the
-"Completed" list in `EXECUTION_STATE.md`), and (c) is highest in this order unless the state file says otherwise:
-**B-001 → B-010 → B-003 → B-015 → B-012 → B-031 → B-020 → B-040 and B-041**, then continue by priority (P0, P1, P2) within the waves.
-Human-gated tasks (B-002, B-005, B-030, B-051, B-055): do **not** start them yourself; ask the owner once (see §8), then carry on with
-other work. Mark your task `Active` in `EXECUTION_STATE.md` before you begin.
+Take the first task that is (a) not human-gated, (b) has all its dependencies done (each task's `Status` and `Depends on` lines in the
+backlog; `python3 docs/handoff/probes/progress.py` lists what is blocked), and (c) is highest in the "Recommended order" of
+`EXECUTION_STATE.md`, then by priority (P0, P1, P2). Human-gated / decision-gated tasks (B-002, B-005, B-019, B-030, B-048, B-051, B-054,
+B-055, B-056): do **not** start them yourself; ask the owner once (see §8), then carry on with other work. Set the task's `Status` to
+`IN_PROGRESS` and mark it `Active` in `EXECUTION_STATE.md` before you begin; set `DONE · commit `<sha>` · L-nnnn` only after CI is green,
+then regenerate the dependency map (`progress.py --mermaid`) and the progress table (`progress.py --markdown`).
 
 ## 5. Per-task loop (do all of it)
 
