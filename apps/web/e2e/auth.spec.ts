@@ -182,6 +182,47 @@ test("an ended session sends the analyst to sign in and back to where they were"
   expect(unexpected(errors, 401)).toEqual([]);
 });
 
+test("a session that ends while the next screen is still loading still returns the analyst there", async ({ page }) => {
+  // CI run 88: React Router runs navigations in a transition, so while a lazily loaded screen is loading the
+  // router still reports the previous location. An expiry discovered in that window used the stale location and
+  // dropped the return target (/login?reason=expired instead of ?next=%2Flab). Hold the /lab chunk (dev server
+  // module or production asset) so the expiry is discovered exactly inside that window.
+  const errors = collectErrors(page);
+  await page.goto("/login");
+  await signIn(page);
+  await expect(page).toHaveURL("/");
+  await page.waitForLoadState("networkidle");
+  let releaseChunk!: () => void;
+  const chunk = new Promise<void>((resolve) => (releaseChunk = resolve));
+  await page.route(
+    (url) => /fraud-lab|FraudLab/.test(url.pathname),
+    async (route) => {
+      await chunk;
+      await route.continue();
+    },
+  );
+  // As in the test above: no API request may discover the cleared cookies before the click (it would replace the
+  // shell under the click). Park them until the navigation to /lab has started.
+  let releaseApi!: () => void;
+  const parked = new Promise<void>((resolve) => (releaseApi = resolve));
+  await page.route("**/api/**", async (route) => {
+    await parked;
+    await route.continue();
+  });
+  await page.context().clearCookies();
+  await page.getByRole("navigation", { name: "Инструменты" }).getByRole("link", { name: "Лаборатория" }).click();
+  await expect(page).toHaveURL("/lab");
+  releaseApi();
+  // The app's own re-check when the tab becomes visible discovers the ended session while /lab is pending.
+  await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
+  await expect(page).toHaveURL(/\/login\?next=%2Flab&reason=expired$/);
+  releaseChunk();
+  await expect(page.getByTestId("login-notice")).toContainText("Сеанс завершён");
+  await signIn(page);
+  await expect(page).toHaveURL("/lab");
+  expect(unexpected(errors, 401)).toEqual([]);
+});
+
 for (const { name, width, height } of [
   { name: "390", width: 390, height: 844 },
   { name: "1440", width: 1440, height: 900 },

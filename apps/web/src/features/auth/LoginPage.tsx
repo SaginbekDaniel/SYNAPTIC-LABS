@@ -80,7 +80,12 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   if (auth.status === "checking") return <AuthSplash />;
   if (auth.status !== "authenticated") {
     const query = new URLSearchParams();
-    const here = `${location.pathname}${location.search}${location.hash}`;
+    // The return target is the address the browser is on, not the router's last *committed* location:
+    // React Router runs navigations in a transition, so while a lazily loaded screen is still loading,
+    // useLocation() reports the previous screen. A session that ends in that window would otherwise send
+    // the analyst back to the old screen instead of the one they had opened.
+    const current = typeof window === "undefined" ? location : window.location;
+    const here = `${current.pathname}${current.search}${current.hash}`;
     // After an explicit sign-out the next user starts at the overview; after expiry, where they were.
     if (auth.status !== "signed_out" && here !== "/") query.set("next", here);
     if (auth.status === "expired" || auth.status === "signed_out") query.set("reason", auth.status);
