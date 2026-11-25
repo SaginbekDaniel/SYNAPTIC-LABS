@@ -19,7 +19,7 @@ from sqlalchemy import delete, func, select, update
 from sqlalchemy.orm import Session
 
 from nexora.application.errors import Conflict, Invalid, NotFound, TooManyRequests, Unauthorized
-from nexora.auth import passwords, tokens
+from nexora.auth import passwords, roles, tokens
 from nexora.persistence import orm
 from nexora.settings import Settings
 
@@ -40,6 +40,8 @@ class Principal:
     user_id: uuid.UUID
     username: str
     display_name: str
+    # Read from the user row on every request, so a role change applies to the next request.
+    role: str
     session_id: uuid.UUID
     session_expires_at: dt.datetime
     csrf_token: str
@@ -79,6 +81,7 @@ def _principal(user: orm.User, sess: orm.AuthSession, token: str) -> Principal:
         user_id=user.id,
         username=user.username,
         display_name=user.display_name,
+        role=user.role,
         session_id=sess.id,
         session_expires_at=sess.expires_at,
         csrf_token=tokens.csrf_token(token),
@@ -240,29 +243,52 @@ def authenticate(session: Session, settings: Settings, token: str | None) -> Pri
 
 
 # -- account management (operator CLI) ------------------------------------------------------------
-def create_user(session: Session, *, username: str, password: str, display_name: str | None = None) -> orm.User:
+def create_user(
+    session: Session,
+    *,
+    username: str,
+    password: str,
+    display_name: str | None = None,
+    role: str = roles.DEFAULT_ROLE,
+) -> orm.User:
     name = normalize_username(username)
     if problem := username_problem(name):
         raise Invalid("INVALID_USERNAME", problem)
     if problem := passwords.password_problem(password):
         raise Invalid("WEAK_PASSWORD", problem)
+    _check_role(role)
     return create_user_with_hash(
-        session, username=name, password_hash=passwords.hash_password(password), display_name=display_name
+        session, username=name, password_hash=passwords.hash_password(password), display_name=display_name, role=role
     )
 
 
+def _check_role(role: str) -> None:
+    if not roles.is_role(role):
+        raise Invalid("INVALID_ROLE", f"role must be one of {', '.join(roles.ROLES)}")
+
+
 def create_user_with_hash(
-    session: Session, *, username: str, password_hash: str, display_name: str | None = None
+    session: Session,
+    *,
+    username: str,
+    password_hash: str,
+    display_name: str | None = None,
+    role: str = roles.DEFAULT_ROLE,
 ) -> orm.User:
     name = normalize_username(username)
     if problem := username_problem(name):
         raise Invalid("INVALID_USERNAME", problem)
+    _check_role(role)
     if not passwords.is_argon2id_hash(password_hash):
         raise Invalid("INVALID_HASH", "password hash must be an Argon2id PHC string")
     if session.scalar(select(orm.User.id).where(orm.User.username == name)) is not None:
         raise Conflict("USER_EXISTS", f"user {name!r} already exists")
     user = orm.User(
-        id=uuid.uuid4(), username=name, display_name=(display_name or name).strip()[:120], password_hash=password_hash
+        id=uuid.uuid4(),
+        username=name,
+        display_name=(display_name or name).strip()[:120],
+        password_hash=password_hash,
+        role=role,
     )
     session.add(user)
     session.add(
@@ -272,7 +298,7 @@ def create_user_with_hash(
             entity_type="user",
             entity_id=name,
             before_json=None,
-            after_json={"username": name},
+            after_json={"username": name, "role": role},
             reason=None,
             request_id=None,
         )
@@ -332,6 +358,32 @@ def set_active(session: Session, *, username: str, active: bool) -> int:
             entity_id=user.username,
             before_json=None,
             after_json={"sessions_revoked": ended},
+            reason=None,
+            request_id=None,
+        )
+    )
+    return ended
+
+
+def set_role(session: Session, *, username: str, role: str) -> int:
+    """Change a user's role and end every session of that user, so no open page keeps showing actions of
+    the old role. The server would refuse them anyway: the role is read from the user row per request.
+    Returns the number of sessions ended (0 and no audit event when the role is unchanged)."""
+    _check_role(role)
+    user = _user(session, username)
+    if user.role == role:
+        return 0
+    before = user.role
+    user.role = role
+    ended = revoke_user_sessions(session, user, "role_changed")
+    session.add(
+        orm.AuditEvent(
+            actor="operator-cli",
+            action="user.set_role",
+            entity_type="user",
+            entity_id=user.username,
+            before_json={"role": before},
+            after_json={"role": role, "sessions_revoked": ended},
             reason=None,
             request_id=None,
         )

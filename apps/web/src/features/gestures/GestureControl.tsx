@@ -4,7 +4,7 @@ import { Icon, Segmented } from "../../components/ui";
 import { t, type MessageKey } from "../../lib/i18n";
 import { useMediaQuery } from "../../lib/useMediaQuery";
 import type { GestureMode } from "./adapter";
-import { GestureSession, type GestureSnapshot } from "./gestureSession";
+import { GestureSession, type GestureSnapshot, type GestureUi } from "./gestureSession";
 
 /** Create the session for a graph stage and tie its lifetime to the component and the tab. */
 export function useGestureSession(controller: GraphController | null): GestureSession {
@@ -40,12 +40,17 @@ export function useGesturesSupported(): boolean {
   return fine && typeof navigator !== "undefined" && !!navigator.mediaDevices?.getUserMedia && typeof Worker !== "undefined";
 }
 
+/** The camera is on only from calibration onwards: the model loads first, then the camera is requested. */
+function cameraLive(ui: GestureUi): boolean {
+  return ui === "calibrating" || ui === "active";
+}
+
 export function GestureToggle({ session }: { session: GestureSession }) {
   const ui = useSlice(session, (s) => s.ui);
   const supported = useGesturesSupported();
   if (!supported) return null;
   const on = ui === "starting" || ui === "loading" || ui === "calibrating" || ui === "active";
-  const label = on ? t("gesture.stop") : t("gesture.enable");
+  const label = cameraLive(ui) ? t("gesture.stop") : on ? t("gesture.cancel") : t("gesture.enable");
   return (
     <>
       <span className="graph-stage__sep" aria-hidden="true" />
@@ -105,6 +110,7 @@ export function GestureLayer({ session }: { session: GestureSession }) {
   }, [session]);
 
   const on = ui === "starting" || ui === "loading" || ui === "calibrating" || ui === "active";
+  const live = cameraLive(ui);
   const status: MessageKey | null =
     (ui === "failed" && failure ? FAILURE[failure] : ui === "active" ? STATUS[tracking] : ui === "starting" || ui === "loading" || ui === "calibrating" ? STATUS[ui] : null) ?? null;
 
@@ -117,9 +123,9 @@ export function GestureLayer({ session }: { session: GestureSession }) {
             <Icon name="camera" size={16} />
             {t("gesture.title")}
           </span>
-          {on && <span className="gesture-panel__live">{t("gesture.cameraOn")}</span>}
+          {live && <span className="gesture-panel__live">{t("gesture.cameraOn")}</span>}
         </div>
-        <video ref={videoRef} className={`gesture-panel__video${on ? "" : " visually-hidden"}`} muted playsInline aria-label={t("gesture.preview")} />
+        <video ref={videoRef} className={`gesture-panel__video${live ? "" : " visually-hidden"}`} muted playsInline aria-label={t("gesture.preview")} />
         <p className={`gesture-panel__status gesture-panel__status--${ui === "failed" ? "failed" : tracking}`} role="status" aria-live="polite" data-testid="gesture-status">
           {status ? t(status) : ""}
           {ui === "active" && tracking === "tracked" && PHASE[phase] ? ` · ${t(PHASE[phase]!)}` : ""}
@@ -160,7 +166,7 @@ export function GestureLayer({ session }: { session: GestureSession }) {
           {on ? (
             <button type="button" className="btn btn--sm" onClick={() => session.stop()} data-testid="gesture-stop">
               <Icon name="cameraOff" size={16} />
-              {t("gesture.stop")}
+              {live ? t("gesture.stop") : t("gesture.cancel")}
             </button>
           ) : (
             <button type="button" className="btn btn--sm" onClick={() => session.stop()}>

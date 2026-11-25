@@ -12,8 +12,9 @@ import { Slide3 } from "./slides/Slide3";
 import { Slide4 } from "./slides/Slide4";
 import { Slide5 } from "./slides/Slide5";
 import { Slide6 } from "./slides/Slide6";
+import { Slide7 } from "./slides/Slide7";
 
-const SLIDE_VIEWS = [Slide1, Slide2, Slide3, Slide4, Slide5, Slide6];
+const SLIDE_VIEWS = [Slide1, Slide2, Slide3, Slide4, Slide5, Slide6, Slide7];
 const isInteractive = (t: EventTarget | null) => t instanceof HTMLElement && !!t.closest("button, a, input, textarea, select, [role=button], [role=dialog]");
 
 export function App() {
@@ -94,7 +95,7 @@ export function App() {
         case "?": case "/": setHelp(true); break;
         case "Escape": if (notes) setNotes(false); break;
         default:
-          if (/^[1-6]$/.test(e.key)) deck.go({ slide: Number(e.key) - 1, step: 0 });
+          if (new RegExp(`^[1-${SLIDE_COUNT}]$`).test(e.key)) deck.go({ slide: Number(e.key) - 1, step: 0 });
           else handled = false;
       }
       if (handled) e.preventDefault();
@@ -125,7 +126,7 @@ export function App() {
   return (
     <LazyMotion features={domAnimation} strict>
     <MotionConfig reducedMotion="user">
-      <h1 className="sr-only">NEXORA AI — интерактивная презентация</h1>
+      <h1 className="sr-only">NEXORA — презентация для жюри</h1>
       <div className="app" onMouseMove={wake} onFocus={wake}>
         <div className="stage-area" ref={stage.ref} onPointerDown={onPointerDown} onPointerUp={onPointerUp} data-testid="stage">
           <div
@@ -139,12 +140,12 @@ export function App() {
                 className="slide-layer"
                 custom={d}
                 variants={{
-                  enter: (dir: number) => ({ opacity: 0, x: dir * 90, scale: 0.985 }),
-                  center: { opacity: 1, x: 0, scale: 1 },
-                  exit: (dir: number) => ({ opacity: 0, x: dir * -90, scale: 1.01 }),
+                  enter: (dir: number) => ({ opacity: 0, x: dir * 40 }),
+                  center: { opacity: 1, x: 0 },
+                  exit: (dir: number) => ({ opacity: 0, x: dir * -40 }),
                 }}
                 initial="enter" animate="center" exit="exit"
-                transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 data-slide={pos.slide + 1}
               >
                 <View step={pos.step} setStep={(n) => deck.go({ slide: pos.slide, step: n })} />

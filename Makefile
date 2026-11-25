@@ -16,7 +16,7 @@ migrate: ## Apply database migrations (NEXORA_DATABASE_URL)
 	uv run alembic upgrade head
 
 api: ## Run the API on :8000 with reload
-	uv run uvicorn nexora.api.main:app --reload --port 8000
+	uv run uvicorn nexora.api.main:app --reload --port 8000 --log-config configs/logging.json
 
 worker: ## Run the analysis worker
 	uv run python -m nexora.worker.runner

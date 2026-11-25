@@ -8,12 +8,17 @@ real but low-value until someone needs them.
 Conventions
 * **Priority**: P0 blocks any release/claim, P1 should land before a release, P2 important, P3 optional.
 * **Gate** = the full gate in MASTER_HANDOFF §15 (never weaken a test to pass it).
-* **Migrations**: take the *next free* revision when you start (today `0004` is head, so `0005`);
+* **Migrations**: take the *next free* revision when you start (today `0005` is head, so `0006`);
   rebase and renumber your own new migration if another task landed first. **Never renumber or edit
   `0001`–`0004`** (production is at `0003`, see H-01). B-001 enforces a single head.
 * **Human-gated** tasks need the owner or a person with hardware: B-002 (merge approval), B-005,
-  B-030, B-051 (partly), B-055. Everything else is autonomous.
+  B-030, B-051 (partly), B-055, B-056 (decision D-12). Everything else is autonomous.
 * Evaluation work follows the protocol rules in MASTER_HANDOFF §12: no tuning against `sealed-v1`.
+* **Status** (one line per task, machine-read by `docs/handoff/probes/progress.py`): `TODO`, `IN_PROGRESS`, `BLOCKED · waiting on …`,
+  `IMPLEMENTED` (code written, not yet verified), `VERIFIED` (gate green, not yet pushed/CI-confirmed), `DONE · commit `<sha>` · L-nnnn`
+  (acceptance met, CI green, evidence in the ledger). Never mark DONE without the commit and ledger entry.
+* **Critical path** (tasks a release cannot ship without; weighted separately by `progress.py`): B-001, B-002, B-003, B-004, B-005, B-010,
+  B-011, B-012, B-014, B-030, B-050, B-052, B-055.
 
 ## Execution waves and dependency graph
 
@@ -21,18 +26,18 @@ Conventions
 |---|---|---|---|
 | 0 | Integration and ground truth | B-001, B-002*, B-003, B-004, B-005* | — (B-004 after B-003) |
 | 1 | Security and observability | B-010, B-011, B-012, B-013, B-014, B-015, B-016, B-017, B-018, B-019 | B-011 after B-001+B-010; B-014 after B-012 |
-| 2 | Graph Workspace | B-020, B-021, B-022, B-023, B-024 | B-021 after B-001; B-023 after B-022 |
+| 2 | Graph Workspace | B-020, B-021, B-022, B-023, B-024, B-025 | B-021 after B-001; B-023 after B-022; B-025 after B-020 |
 | 3 | Gesture control | B-030*, B-031, B-032, B-033 | B-032 after B-031; B-033 after B-030 |
-| 4 | Fraud intelligence and evaluation | B-040, B-041, B-042, B-043, B-044, B-045, B-046, B-047 | B-040, B-041 after B-003 |
-| 5 | Platform and product | B-050, B-051*, B-052, B-053, B-054, B-055* | B-052 after B-002..B-004; B-055 after B-001, B-002, B-005, B-010, B-012, B-050 |
+| 4 | Fraud intelligence and evaluation | B-040, B-041, B-042, B-043, B-044, B-045, B-046, B-047, B-048 | B-040, B-041 after B-003; B-048 after B-041 |
+| 5 | Platform and product | B-050, B-051*, B-052, B-053, B-054, B-055*, B-056*, B-057 | B-052 after B-002..B-004; B-055 after B-001, B-002, B-005, B-010, B-012, B-050 |
 
 `*` = human-gated. Waves are guidance, not barriers: any task whose listed dependencies are done may
 start. **Recommended first autonomous queue:** B-001 → B-010 → B-003 → B-015 → B-012 → B-031 → B-020 →
 B-040/B-041. Edges (task → prerequisites): B-003 has none (it ports commits onto the current branch and
 does not need the merge decision); B-002→B-001; B-004→B-003; B-011→B-001,B-010; B-014→B-012; B-016→B-015;
-B-019→B-011; B-021→B-001; B-023→B-022; B-024→B-020,B-021; B-032→B-031; B-033→B-030; B-040→B-003;
-B-041→B-003; B-042→B-041; B-043→B-040,B-041; B-044→B-040; B-045→B-040; B-046→B-041; B-051→B-005;
-B-052→B-002,B-003,B-004; B-054→B-047; B-055→B-001,B-002,B-005,B-010,B-012,B-050. The graph is acyclic.
+B-019→B-011; B-021→B-001; B-023→B-022; B-024→B-020,B-021; B-025→B-020; B-032→B-031; B-033→B-030; B-040→B-003;
+B-041→B-003; B-042→B-041; B-043→B-040,B-041; B-044→B-040; B-045→B-040; B-046→B-041; B-048→B-041; B-051→B-005;
+B-052→B-002,B-003,B-004; B-054→B-047; B-055→B-001,B-002,B-005,B-010,B-012,B-050; B-056→B-002; B-057→B-055. The graph is acyclic.
 
 Mapping from the earlier `ZENCODER_TASKS.md` (kept for history): T1→B-002, T2→B-030, T3→B-050 (CI
 already runs the image build and gateway smoke test; the residual gap is the camera path), T4+T5→B-052,
@@ -43,6 +48,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 ## Wave 0 — Integration and ground truth
 
 ### B-001 · P0 · Single-head migration guard and stepwise-upgrade test
+* **Status**: DONE · commit `fdd7465` · L-0005
 * **Rationale**: H-01. PR #15 and PR #3 each add a *different* migration with revision `"0003"` on top of
   `0002`; merged separately they create two Alembic heads and `alembic upgrade head` fails at deploy.
   The integration branch renumbered PR #3's to `0004`. Production (per the deployment record) is at
@@ -63,6 +69,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: test-only; revert the commit.
 
 ### B-002 · P0 · Reconcile the open PR stack and unmerged branches · human-gated
+* **Status**: BLOCKED · waiting on owner approval to merge/close PRs #3/#5/#15 and dispose of stale branches (D-1, D-2)
 * **Rationale**: H-01, H-22. `graph-workspace-wip` locally contains PRs #15, #3 and #5 (all still open,
   each based on `ea5ca9c`) plus the graph work, 25 commits ahead of the default branch
   `claude/brave-dirac-c80nwq`. Four more branches hold unmerged work with no PR (see MASTER_HANDOFF §6).
@@ -82,6 +89,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: merge is a revert-able commit; do not delete branches until the owner confirms.
 
 ### B-003 · P0 · Port the benchmark-arithmetic fixes and regenerate the artifacts
+* **Status**: DONE · commit `ef362ac` · L-0007
 * **Rationale**: H-08. On the integration branch `benchmark.py::_f1` derives F1 from already-rounded
   precision and recall (holdout v2 stored `0.6855`, exact `146/213 = 0.68545`), and the README states
   `79.4 %` for v2 scenario recall where the committed counts give `73/92 = 79.348 %` → `79.3 %`.
@@ -110,6 +118,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: regenerated artifacts differ in the 4th decimal and latency; revert the branch.
 
 ### B-004 · P1 · Reconcile README and pitch with the verified numbers
+* **Status**: DONE · commit `4599aa9` · L-0021
 * **Rationale**: H-08, H-22. Jury-facing artifacts diverged: PR #5 (and the integration branch) carry only the
   first pitch (`4e02e9b`); the redesigned pitch is on `admiring-fermat` (`ced8227`, merges cleanly) and the
   README redesign on `great-lovelace` (`e1f597c`, `058a273`; conflicts in `README.md` only). The README still
@@ -118,8 +127,9 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Depends on**: B-003 (numbers must be final first).
 * **Implementation**: merge `admiring-fermat`, then `great-lovelace`, resolving the README conflicts by hand;
   update the evaluation section to the regenerated artifacts and delete the stale "PR #3 open" warning;
-  add a unit test in `apps/pitch` that every number in `apps/pitch/src/data/results.ts` / `apps/pitch/src/data/sealed-excerpt.json` equals
-  the value in `benchmarks/results/sealed-evaluation.json`.
+  add a unit test in `apps/pitch` that every number on the results slide equals the committed artifact (the redesign
+  replaced the first pitch's `results.ts` / `sealed-excerpt.json` with `apps/pitch/src/data/bench.ts` and
+  `apps/pitch/src/data/bench-excerpt.json`, pinned by `apps/pitch/src/data/bench.test.ts` against `benchmarks/results/bench-v1.json`).
 * **Acceptance**: pitch E2E (29+) and unit tests pass; every number in README and pitch traces to a committed
   artifact (the new test covers the pitch; list the README table's sources in the PR).
 * **Tests**: `cd apps/pitch && npm run lint && npx tsc -b && npm test && npm run build`, smoke and Playwright.
@@ -127,6 +137,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: documentation and pitch only; revert.
 
 ### B-005 · P1 · Verify the live deployment and reconcile the docs · human-gated
+* **Status**: BLOCKED · waiting on live Railway workspace/project access
 * **Rationale**: H-22. `docs/deployment/railway.md` is a record, not live evidence. In this session the
   connected Railway token authenticated but listed no projects at account level (project likely under a
   workspace), so the live state — deployed commit per service, `alembic_version`, whether the graph workspace
@@ -146,6 +157,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 ## Wave 1 — Security and observability
 
 ### B-010 · P0 · Gate the CSV import endpoint
+* **Status**: DONE · commit `bca6f9d` · L-0006
 * **Rationale**: H-02. `POST /api/v1/datasets/import` (`src/nexora/api/routes/datasets.py`) accepts any CSV from
   any signed-in user and stores it with `is_synthetic=False` and the free-text note "operator is responsible".
   There is no tenancy, no role, no retention policy and no backup drill; the product claims "synthetic data
@@ -166,6 +178,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: tests that import CSV need the opt-in; set the flag true to restore.
 
 ### B-011 · P1 · Role model and write permissions
+* **Status**: DONE · commit `7b456e3` · L-0018
 * **Rationale**: H-09 (audit F-05 still open). Authentication exists; authorization does not: every analyst can
   generate data, run analyses, decide cases and import. No route uses the principal for authorization; case and analysis routes read it only to attribute audit events (`actor` in `src/nexora/api/deps.py`).
 * **Modules**: `migrations/versions/` (new revision), `src/nexora/persistence/orm.py` (`User.role`),
@@ -187,6 +200,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: additive column; revert the code, the column is harmless.
 
 ### B-012 · P1 · Upgrade `react-router-dom` to v7
+* **Status**: DONE · commit `9271830` · L-0009
 * **Rationale**: H-07. `npm audit` reports advisories on `react-router` 6.0.0–7.17.0 (open redirect via
   backslash in `<Link>`/`useNavigate`, GHSA-wrjc-x8rr-h8h6) — the only advisory that ships to production.
   The fix is a major version (7.18.6 or later; Dependabot PR #10 targets 7.18.5).
@@ -201,6 +215,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: routing is central; own branch, revert on regression.
 
 ### B-013 · P1 · Upgrade Vite 8 and Vitest 5
+* **Status**: DONE · commit `053cb5e` · L-0024
 * **Rationale**: H-07. Dev/test-only advisories: vite ≤ 6.4.3 (high), esbuild ≤ 0.24.2, vitest ≤ 4.1.10 and
   tinypool (critical but only when the Vitest UI/API server listens), @vitest/mocker. Fixes are majors
   (Dependabot #11, #13).
@@ -217,6 +232,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: toolchain change; own branch.
 
 ### B-014 · P1 · Dependency-audit gates in CI
+* **Status**: DONE · commit `8e4cdd9` · L-0022
 * **Rationale**: H-07. Python dependencies have never been audited (`pip-audit` could not run in this
   environment; `uvx` was refused by the sandbox), and `npm audit` is manual.
 * **Modules**: `.github/workflows/ci.yml` (or a new `audit.yml`), `.github/dependabot.yml`.
@@ -231,6 +247,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: may block on a new advisory; allow-list entries need an expiry date and a reason.
 
 ### B-015 · P1 · Structured logging with request-id correlation
+* **Status**: DONE · commit `d4192c5` · L-0008
 * **Rationale**: H-03. The worker's "JSON" format string is not escaped: `msg:"…relation "transactions"
   does not exist"` is invalid JSON (reproduced), i.e. exactly the error lines break log parsers. The API logs
   plain text and never writes the `request_id` that error envelopes tell users to quote, so a user report
@@ -248,6 +265,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: log format change; update any parser before deploying.
 
 ### B-016 · P2 · Job events and queue-age signal
+* **Status**: TODO
 * **Rationale**: H-20. No metrics, error tracking or tracing exist (grep: none). A stuck worker is invisible
   except through `queue` counts in `/health/ready`.
 * **Modules**: `src/nexora/worker/runner.py`, `src/nexora/api/main.py` (`/health/ready`), `src/nexora/api/schemas.py`,
@@ -262,6 +280,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: additive fields; revert.
 
 ### B-017 · P2 · One database session per request; pool load test
+* **Status**: TODO
 * **Rationale**: H-10 (design risk, unmeasured). `enforce_authentication` opens its own session and
   `SessionDep` opens another, so each request holds up to two connections from a pool of 5 + 5.
 * **Modules**: `src/nexora/api/deps.py`, `src/nexora/settings.py`, `tests/perf/` (new, marker `perf`).
@@ -275,6 +294,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: touches the auth path — keep `test_every_api_route_rejects_anonymous_requests` green.
 
 ### B-018 · P2 · Self-service password change and own-session management
+* **Status**: TODO
 * **Rationale**: H-21. Passwords can only be changed by the operator CLI; there is no way for an analyst to see
   or end their own sessions.
 * **Modules**: `src/nexora/auth/service.py`, `src/nexora/api/routes/auth.py`, `src/nexora/api/schemas.py`,
@@ -290,6 +310,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: new write endpoints on the auth surface; own review for CSRF/throttle parity.
 
 ### B-019 · P2 · Dataset ownership and isolation · requires decision D-3
+* **Status**: BLOCKED · waiting on decision D-3 (data-isolation model)
 * **Rationale**: H-09. Every signed-in user can read every dataset, alert, transaction and case.
 * **Modules**: `migrations/versions/` (new), `src/nexora/persistence/orm.py`, `src/nexora/application/queries.py`,
   all dataset-/snapshot-/alert-/case-scoped routes, `tests/integration/`.
@@ -310,6 +331,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 ## Wave 2 — Graph Workspace
 
 ### B-020 · P1 · Layout off the main thread, and cached
+* **Status**: DONE · commit `0340f1a` · L-0011
 * **Rationale**: H-04. Cytoscape `cose` runs synchronously on the main thread: headless probe 50 nodes 109 ms,
   100 → 355 ms, 200 → 1,150 ms, 300 → 2,791 ms (`docs/handoff/probes/cose_layout.mjs`). The workspace requests
   200 nodes and caps merged expansions at 400 (`MAX_WORKSPACE_NODES`); every filter change or expansion rebuilds
@@ -330,6 +352,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: layout is core UX; keep the synchronous path behind a flag until verified.
 
 ### B-021 · P2 · Push graph ranking and expansion into SQL
+* **Status**: TODO
 * **Rationale**: H-06. `bfs_neighborhood` runs one aggregate query per expanded node (depth 2 = one per
   depth-1 neighbour: 204 ms vs 11 ms for depth 1 on only 5k rows) and truncates *after* fetching: a hub with
   20,000 peers returns 40,000 aggregate rows to Python to keep 398 edges. `_formations()` loads every formation
@@ -349,6 +372,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: query rewrite; keep the old code path in the test as the oracle.
 
 ### B-022 · P2 · Graph stage above the fold at 1440 × 900
+* **Status**: VERIFIED
 * **Rationale**: H-23. The filter panel pushes the stage to y ≈ 580 of 900 (screenshot taken this project).
 * **Modules**: `apps/web/src/features/graph/GraphWorkspace.tsx`, `apps/web/src/styles/features.css`,
   `apps/web/src/styles/layout.css`, `apps/web/e2e/graph-workspace.spec.ts`.
@@ -362,6 +386,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: layout CSS; revert.
 
 ### B-023 · P2 · Automated accessibility audit of the workspace
+* **Status**: TODO
 * **Rationale**: the graph has keyboard navigation, a live region and a table fallback, but accessibility is
   asserted only in places, never scanned. Colour contrast of band colours on the stage is unmeasured.
 * **Modules**: `apps/web/package.json` (dev dependency), `apps/web/e2e/a11y.spec.ts` (new),
@@ -376,6 +401,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: verify the dependency licence first; remove the spec if it cannot be adopted.
 
 ### B-024 · P3 · optional · Path between two accounts
+* **Status**: TODO
 * **Rationale**: an analyst question the workspace cannot answer today ("how is A connected to B?").
   Do not start without analyst feedback; it is productivity, not correctness.
 * **Modules**: `src/nexora/application/graph_view.py`, `src/nexora/api/routes/analysis.py`, `apps/web/src/features/graph/`.
@@ -387,11 +413,40 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Expected improvement**: faster link analysis.
 * **Risk / rollback**: new read endpoint; revert.
 
+### B-025 · P2 · Keep the drawn graph during relayout; budget the whole main-thread path
+* **Status**: TODO
+* **Rationale**: follow-up to B-020 (L-0016 observations, confirmed in the code in L-0017). (1) The build effect in
+  `GraphCanvas.tsx` destroys the drawn instance in its cleanup as soon as the element set changes, so every filter
+  change or expansion shows an empty stage until the worker returns — up to ~2.6 s at 300 accounts (L-0011). (2) The
+  headless sizing probe and `layoutDimensions` run synchronously *before* `LAYOUT_MARK_START`, outside the window the
+  E2E long-task assertion measures; L-0011 recorded main-thread tasks of 67–229 ms around it, i.e. up to 29 ms over
+  B-020's 200 ms budget, unattributed.
+* **Modules**: `apps/web/src/components/graph/GraphCanvas.tsx`, `apps/web/src/components/graph/layoutClient.ts`,
+  `apps/web/src/components/graph/controller.ts`, `apps/web/src/lib/i18n.ts`, `apps/web/e2e/graph-workspace.spec.ts`.
+* **Depends on**: B-020.
+* **Implementation**: measure first — mark the probe, worker, mount and first-paint phases at 100/200/300/400
+  accounts on the production bundle and attribute each long task (Cytoscape construction, React, application code).
+  Then keep the previous instance mounted but inert while a relayout runs (marked stale: `aria-busy`, controller
+  and gestures detached so nothing acts on elements about to change, status announced through `i18n.ts`), swap
+  atomically on the new positions, destroy the old instance after the swap; a superseded result is dropped (already
+  `LayoutCancelled`); unmount still cancels the worker. Move or split the sizing probe only if it is the measured cost.
+* **Acceptance**: during a relayout the stage is never empty and the old drawing accepts no selection/expansion;
+  exactly one drawn instance exists after the swap (no leaked Cytoscape instances over 20 relayouts); no long task
+  over 200 ms anywhere between the triggering change and the interactive new graph at 300 accounts (production
+  bundle, Chromium); gestures keep tracking; existing determinism and cache tests unchanged.
+* **Tests**: E2E long-task assertion over the whole path; E2E stale-stage behaviour (old drawing visible, inert,
+  `aria-busy`); unit for instance lifecycle (swap, supersede, unmount).
+* **Expected improvement**: no blank stage on relayout; the 200 ms budget holds end to end instead of only inside
+  the worker window.
+* **Risk / rollback**: graph lifecycle is core UX and gesture-coupled; keep the change inside `GraphCanvas`, revert
+  restores B-020's behaviour.
+
 ---
 
 ## Wave 3 — Gesture control
 
 ### B-030 · P0 · Real-webcam verification and sign-off · human-gated
+* **Status**: BLOCKED · waiting on a person with a physical webcam
 * **Rationale**: H-17/B8. Every gesture test uses Chromium's synthetic camera (no hand) or a scripted landmark
   worker. Recognition on real hands has never been observed.
 * **Modules**: `docs/implementation/GRAPH_GESTURE_VERIFICATION.md` (results log).
@@ -404,6 +459,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: none.
 
 ### B-031 · P1 · Load the model before asking for the camera
+* **Status**: DONE · commit `d0cb21e` · L-0010
 * **Rationale**: H-05. `GestureSession.start()` starts the camera, then loads the model: the camera light is on
   while ~22.8 MB of WASM and model (7.8 MB model, 14.6 MB WASM, 0.33 MB loader, uncompressed) downloads and
   initialises, up to the 30 s timeout. The sequence observed in the E2E trace was starting → loading →
@@ -421,6 +477,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: lifecycle code; keep the existing stop-path tests green.
 
 ### B-032 · P2 · Browser support policy and capability detection
+* **Status**: TODO
 * **Rationale**: H-17 (hypothetical, untested). Only Chromium is exercised. MediaPipe inside a worker needs
   module workers, `OffscreenCanvas` and WebGL2; `createImageBitmap` resize options are not uniformly supported.
 * **Modules**: `apps/web/src/features/gestures/GestureControl.tsx` (`useGesturesSupported`),
@@ -436,6 +493,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: extra CI time; the new projects may be non-blocking until stable.
 
 ### B-033 · P2 · Recorded-landmark fixtures and threshold tuning
+* **Status**: TODO
 * **Rationale**: B8. Recogniser thresholds are untuned on real hands.
 * **Modules**: `apps/web/src/features/gestures/recognizer.ts`, `landmarks.ts`, `oneEuro.ts`,
   `apps/web/src/features/gestures/fixtures/` (new), `recognizer.test.ts`.
@@ -453,6 +511,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 ## Wave 4 — Fraud intelligence and evaluation
 
 ### B-040 · P0 (before any detector tuning) · Create `sealed-v2` and lock its protocol
+* **Status**: DONE · commit `0dd9cd7` · L-0015
 * **Rationale**: H-14. `sealed-v1` was evaluated once and has been **consumed**: any further detector or policy
   change judged on it is selection on the test set. The `bench-v1` holdout was already exposed.
 * **Modules**: `src/nexora/evaluation/sealed_generator.py` (or a new `sealed_generator_v2.py`),
@@ -470,6 +529,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: none for the product; the cost is discipline — never peek before the protocol is locked.
 
 ### B-041 · P1 · Entity-level, ranking and calibration metrics
+* **Status**: DONE · commit `85f8b5e` · L-0013
 * **Rationale**: H-12. The harness reports network-level precision/recall/P@K only (grep for account-level,
   AUC, calibration, Brier: none). Priority is uncalibrated by design (ADR-005) but nothing measures how bands
   relate to the planted fraction, and classical account-level baselines cannot be compared fairly.
@@ -487,6 +547,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: additive metrics.
 
 ### B-042 · P1 · Group related alerts
+* **Status**: DONE · commit `3e43bd8` · L-0025
 * **Rationale**: H-11. A funnel and a fan-out on the same hub open separate alerts (fingerprints are per
   pattern kind); sealed candidate has 1.232 alerts per flagged network (baseline 1.667).
 * **Modules**: `src/nexora/application/queries.py`, `src/nexora/api/routes/alerts.py`, `src/nexora/api/schemas.py`,
@@ -502,6 +563,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: read-path only; revert.
 
 ### B-043 · P2 · Detect slow accumulation without raising false positives
+* **Status**: TODO
 * **Rationale**: H-16, audit F-06. Recurring-mule collection is flagged 1/8 and slow collection 9/12 on sealed
   because deposits held longer than `max_hop_lag_days: 7` contradict the temporal flow.
 * **Modules**: `src/nexora/analytics/temporal/flow.py` (new flow version), `configs/detectors.yaml`,
@@ -516,6 +578,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: config-versioned; old behaviour reproducible.
 
 ### B-044 · P2 · Competing-explanation engine for chains and cycles
+* **Status**: TODO
 * **Rationale**: H-15. The hypothesis engine covers only `funnel` and `fan_out` (`configs/detectors.yaml:
   hypotheses.kinds`); chains and loops have no benign-explanation test.
 * **Modules**: `src/nexora/analytics/hypotheses/engine.py`, `configs/detectors.yaml`, `docs/architecture/HYPOTHESIS_ENGINE.md`,
@@ -530,6 +593,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: config flag `hypotheses.kinds`.
 
 ### B-045 · P2 · Adversarial evasion suite
+* **Status**: TODO
 * **Rationale**: H-14/H-16, audit F-02/F-07. Known evasions (token repayments ≥ 10 % in fan-out, amounts below
   materiality floors, timing beyond the lag, synthetic recurrence/active span to win the benign verdict) are
   documented but not measured as a suite.
@@ -543,6 +607,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: evaluation-only.
 
 ### B-046 · P2 · Resolve `NETWORK_CONTEXT`
+* **Status**: TODO
 * **Rationale**: H-13. The family carries weight 0.15 in `risk-policy-v3` but no code ever produces a
   `NETWORK_CONTEXT` signal, so the practical priority ceiling is 85 and `critical` (≥ 80 and three supported
   families) needs 94 % of that ceiling.
@@ -558,6 +623,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: policy is versioned; old snapshots keep their policy hash.
 
 ### B-047 · P2 · Scale regression tests
+* **Status**: TODO
 * **Rationale**: H-18/N-1. Measured (probe): the pure pipeline takes 22.5 s and 381 MiB peak RSS at the documented
   200,000-row cap (worker limit 1,024 MiB), 10.4 s / 208 MiB at 100k, 5.9 s / 120 MiB at 50k. Not measured: ORM
   load of 200k rows and the publish transaction. No committed test exceeds ~1k transfers per dataset.
@@ -572,11 +638,32 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Expected improvement**: a performance regression is caught before users feel it.
 * **Risk / rollback**: CI-minutes cost; keep it non-blocking.
 
+### B-048 · P3 · Account-level positives: count only accounts present in the data
+* **Status**: BLOCKED · waiting on owner decision on fixing the frozen generators (H-25)
+* **Rationale**: H-25. Truth lists of the frozen development generator and of `sealed-gen-v1` name accounts that
+  never transact; account-level recall counts them as unreachable positives (`bench-v1` holdout: 1 of 735, effect
+  ≤ 0.0013). The generators and artifacts are frozen, so the correction belongs in the metric definition.
+* **Modules**: `src/nexora/evaluation/entity_metrics.py`, `scripts/run_benchmark.py`,
+  `docs/evaluation/EXPERIMENT_PROTOCOL.md` (amendment), `tests/unit/test_entity_metrics.py`,
+  `tests/unit/test_truth_account_presence.py`, `benchmarks/results/`.
+* **Depends on**: B-041.
+* **Implementation**: record a protocol amendment (A3, metric definition only) *before* regenerating; then count as
+  positives (and as labelled legitimate) only truth accounts that occur in the dataset's rows, report the excluded
+  count next to the denominator, regenerate `bench-v1.json` and the dev artifact. `sealed-evaluation.json` is not
+  re-run (consumed); sealed-v2 has no absent accounts, so its numbers cannot change.
+* **Acceptance**: artifacts regenerated with only account-level positives/recall changing, by exactly the absent
+  counts in `test_truth_account_presence.py`; every other count identical; amendment committed first.
+* **Tests**: fixture with an absent truth account in `test_entity_metrics.py`; artifact-consistency test.
+* **Expected improvement**: account recall that no method is structurally prevented from reaching.
+* **Risk / rollback**: touches published artifacts; owner may prefer to leave them and keep H-25 as a documented
+  limitation — decide before starting. Rollback: revert the commit and the artifacts.
+
 ---
 
 ## Wave 5 — Platform and product
 
 ### B-050 · P1 · Exercise the camera path through the real gateway image in CI
+* **Status**: DONE · commit `27ac946` · L-0023
 * **Rationale**: H-19. CI builds both images and runs a smoke test through the gateway, which loads `/network`
   and asserts no console/CSP errors — but never starts the camera or fetches `/vendor/mediapipe/*`. The
   production-CSP gesture run in this project used a Node stand-in
@@ -593,6 +680,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: CI time; the spec can be marked non-blocking while stabilising.
 
 ### B-051 · P1 · Backup/restore drill and retention policy · partly human-gated
+* **Status**: BLOCKED · waiting on B-005 and decision D-5 (retention)
 * **Rationale**: H-20. No backup/restore drill, retention policy or key-management review exists
   (`SECURITY.md`, `docs/deployment/railway.md` say so).
 * **Modules**: `docs/deployment/railway.md`, `docs/runbooks/restore.md` (new), `SECURITY.md`.
@@ -606,6 +694,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: never restore over a live database.
 
 ### B-052 · P1 · Documentation consolidation
+* **Status**: TODO
 * **Rationale**: H-08, H-22. README, `docs/ARCHITECTURE.md`, `docs/INTERFACES.md`, `SECURITY.md`,
   `docs/LIMITATIONS.md` and `CHANGELOG.md` do not describe the graph workspace, graph-view-v1, the camera
   mode or its privacy model; the README carries a stale "PR #3 open" warning.
@@ -621,6 +710,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: documentation only.
 
 ### B-053 · P2 · ESLint for `apps/web`
+* **Status**: TODO
 * **Rationale**: H-24. `apps/pitch` lints; `apps/web` only type-checks.
 * **Modules**: `apps/web/eslint.config.js` (new), `apps/web/package.json`, `.github/workflows/ci.yml`, `Makefile`.
 * **Depends on**: none.
@@ -632,6 +722,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: may surface many findings; fix in one dedicated commit.
 
 ### B-054 · P3 · optional · Near-real-time ingestion: decide with numbers
+* **Status**: BLOCKED · waiting on decision D-10 (latency target) and B-047
 * **Rationale**: H-18. The system is batch and full-recompute by design (ADR-011); a full recompute costs
   22.5 s / 381 MiB at 200k transfers. Whether incremental analysis is worth building depends on a stated latency need.
 * **Modules**: `docs/ADR/0001-decisions.md` (ADR-022), `docs/handoff/probes/`.
@@ -645,6 +736,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: documentation only.
 
 ### B-055 · P1 · Deploy the integrated line · owner approval required
+* **Status**: BLOCKED · waiting on owner deployment approval; prerequisites B-002, B-005, B-050
 * **Rationale**: the live demo predates the graph workspace and gestures (per the deployment record; see B-005).
 * **Modules**: `docs/deployment/railway.md`, `.github/workflows/deploy-railway.yml`.
 * **Depends on**: B-001, B-002, B-005, B-010, B-012, B-050.
@@ -655,3 +747,44 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Tests**: deployed smoke test (`playwright.smoke.config.ts`).
 * **Expected improvement**: the verified work is actually live.
 * **Risk / rollback**: documented rollback (Redeploy previous deployment; migrations are additive).
+
+### B-057 · P2 · Results slide and README headline on the shipped configuration
+* **Status**: TODO
+* **Rationale**: H-27. The pitch's results slide and the README's first table show configuration v2 on the exposed
+  `bench-v1` holdout (now labelled as such, B-004). That matches the live demo, which still runs v2 (`f29ae56`), but this
+  branch ships v3, whose stronger evidence is the pre-registered `sealed-v2` run. Once v3 is deployed the pitch should lead
+  with what is deployed.
+* **Modules**: `apps/pitch/src/data/bench.ts`, `apps/pitch/scripts/extract-bench.mjs`, `apps/pitch/src/slides/Slide6.tsx`, `README.md`,
+  `tests/unit/test_readme_numbers.py`.
+* **Depends on**: B-055.
+* **Implementation**: extract the `sealed-v2` candidate and `B1_rules` figures with a script (never by hand), keep the
+  per-family misses and the limits from `docs/evaluation/RESULTS.md`, keep the "synthetic, not bank data" guard; do not
+  run anything new on `sealed-v2` (protocol "Use after the run").
+* **Acceptance**: pitch unit test pins every figure to `sealed-v2-evaluation.json`; README traceability test updated; pitch
+  E2E green; desktop screenshot checked.
+* **Tests**: `cd apps/pitch && npm test && npx playwright test`; `uv run pytest tests/unit/test_readme_numbers.py`.
+* **Expected improvement**: the deck shows the product that is live, with its best evidence.
+* **Risk / rollback**: pitch and README only; revert.
+
+### B-056 · P1 · Integrate the transfer-protection demo (`feat/transfer-protection`) · requires decision D-12
+* **Status**: BLOCKED · waiting on decision D-12 (authentication model for the client-facing transfer check)
+* **Rationale**: H-26. A collaborator's branch `feat/transfer-protection` (`1652880`, `43368ff`; 32 files, ~4.2k lines; CI run 85 green on
+  that branch) adds a point-in-time transfer check for a client and an evidence view for an analyst. It branches from the default branch
+  (`ea5ca9c`) and predates server-side sessions, CSRF and roles (B-011). A trial merge onto the integration line (2026-11-25, scratch
+  worktree, not committed) conflicts in 7 files (`src/nexora/api/main.py`, `src/nexora/settings.py`, `apps/web/src/app/App.tsx`,
+  `apps/web/src/lib/api.ts`, `apps/web/src/lib/api-types.ts`, `apps/web/openapi.json`, `apps/web/playwright.config.ts`). More important than the text conflicts: it adds
+  a second authentication mechanism (static header `X-Nexora-Transfer-Analyst-Token`) and unauthenticated `POST` routes, which contradicts the
+  invariant "public surface = `login` + `session`" and the deny-by-default role check (a write route without a declared role stops the app).
+* **Modules**: `src/nexora/api/routes/transfer_checks.py` (new, from the branch), `src/nexora/application/transfer_protection.py` (new, from the branch),
+  `src/nexora/api/main.py`, `apps/web/src/features/transfer-protection/` (new, from the branch), `apps/web/src/lib/i18n.ts`, generated API files.
+* **Depends on**: B-002.
+* **Implementation**: after D-12, merge the branch onto the integration line (no rebase of the collaborator's commits); replace the static
+  analyst token with the session + `requires("analyst")` model; decide whether the client check is a signed-in route (`viewer`) or a deliberately
+  public demo route with rate limiting and its own threat-model entry; CSRF on every `POST`; regenerate the API client; keep the branch's tests
+  and add authorization-matrix coverage; review the "client chooses an action" flow against the rule "no automatic action against customers".
+* **Acceptance**: full gate green; authorization matrix covers the new routes; no second auth mechanism; the holdout results file is quoted
+  only with its own limits (synthetic, the branch's protocol).
+* **Tests**: the branch's `test_transfer_checks.py`, `test_transfer_protection.py`, `test_transfer_evaluation.py`, its E2E specs, plus
+  `test_authorization.py` extended.
+* **Expected improvement**: the collaborator's work ships on the same security model as the rest of the product.
+* **Risk / rollback**: revert the merge commit; no migration is involved.

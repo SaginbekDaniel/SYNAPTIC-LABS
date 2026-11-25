@@ -29,6 +29,13 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
+    supplied = config.attributes.get("connection")
+    if supplied is not None:
+        # In-process callers (tests) may hand over an open connection, e.g. one bound to a probe schema.
+        context.configure(connection=supplied, target_metadata=target_metadata, compare_type=True)
+        with context.begin_transaction():
+            context.run_migrations()
+        return
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}), prefix="sqlalchemy.", poolclass=pool.NullPool
     )

@@ -30,7 +30,10 @@ jobs:
       NEXORA_TEST_DATABASE_URL: postgresql+psycopg://nexora:nexora@localhost:5432/nexora_test
       NEXORA_E2E_DATABASE_URL: postgresql+psycopg://nexora:nexora@localhost:5432/nexora_test
     steps:
+      # Full history and origin branches: tests/unit/test_progress_probe.py proves every DONE task's commit is
+      # reachable, which a depth-1 clone cannot show.
       - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
       - uses: astral-sh/setup-uv@v6
         with: {enable-cache: true}
       - uses: actions/setup-node@v4
@@ -43,6 +46,8 @@ jobs:
           uv run mypy
       - name: Migrations apply and match ORM
         run: |
+          # Exactly one head (H-01: two branches once each added a different 0003).
+          test "$(uv run alembic heads | wc -l)" -eq 1 || { uv run alembic heads; echo "::error::multiple Alembic heads"; exit 1; }
           uv run alembic upgrade head
           uv run alembic check
       - name: Python unit + integration tests

@@ -39,6 +39,7 @@ from nexora.domain.ids import canonical_json, sha256_hex, transaction_uuid
 from nexora.domain.transfers import ObservedTransfer
 from nexora.evaluation.generator import GeneratedDataset, ScenarioTruth, generate
 from nexora.evaluation.sealed_generator import generate_sealed
+from nexora.evaluation.sealed_generator_v2 import generate_sealed_v2
 from nexora.ingest.validation import prepare_batch
 
 BENCHMARK_VERSION = "bench-harness-v1"
@@ -51,9 +52,14 @@ SPLITS: dict[str, tuple[int, ...]] = {
     # Sealed final evaluation (docs/evaluation/EXPERIMENT_PROTOCOL.md): independent generator
     # ``sealed-gen-v1``, evaluated once after the configuration and this harness were locked.
     "sealed": tuple(range(9000, 9060)),
+    # Second sealed split (docs/evaluation/EXPERIMENT_PROTOCOL_SEALED_V2.md): generator ``sealed-gen-v2``,
+    # protocol locked before any candidate was run on it.
+    "sealed_v2": tuple(range(9100, 9180)),
 }
 #: Splits whose results have been inspected during development; reported, never tuned on again.
 EXPOSED_SPLITS = frozenset({"dev", "validation", "holdout"})
+#: Sealed splits already evaluated under their protocol: never used for tuning or selection again.
+CONSUMED_SPLITS = frozenset({"sealed"})
 BAND_RANK = {"critical": 0, "high": 1, "medium": 2, "insufficient_evidence": 3, "low": 4}
 FLAG_BANDS = frozenset({"critical", "high", "medium"})
 HIGH_BANDS = frozenset({"critical", "high"})
@@ -352,12 +358,6 @@ def _ratio(num: int, den: int) -> float | None:
     return None if den == 0 else round(num / den, 4)
 
 
-def _f1(p: float | None, r: float | None) -> float | None:
-    if p is None or r is None or p + r == 0:
-        return None if p is None or r is None else 0.0
-    return round(2 * p * r / (p + r), 4)
-
-
 def _mean(values: Iterable[float | None]) -> float | None:
     vals = [v for v in values if v is not None]
     return round(statistics.fmean(vals), 4) if vals else None
@@ -447,17 +447,21 @@ def summarize(evals: list[DatasetEval]) -> dict[str, Any]:
             "tn": tn,
             "precision": precision,
             "recall": recall,
-            "f1": _f1(precision, recall),
+            # From counts, not from the rounded precision/recall: F1 = 2tp / (2tp + fp + fn).
+            "f1": _ratio(2 * tp, 2 * tp + fp + fn),
             "fpr": _ratio(fp, legit_total),
             "fnr": _ratio(fn, susp_total),
             "surfaced_recall": _ratio(surfaced, susp_total),
             # Only meaningful for methods that assign bands (NEXORA); None for account rankings.
+            "tp_high": tp_high if banded else None,
+            "fp_high": fp_high if banded else None,
             "high_band_recall": _ratio(tp_high, susp_total) if banded else None,
             "high_band_fpr": _ratio(fp_high, legit_total) if banded else None,
         },
         "alerts": {
             "flagged": flagged_items,
             "per_dataset": round(flagged_items / len(evals), 2) if evals else None,
+            "relevant": relevant_flagged,
             "precision": _ratio(relevant_flagged, flagged_items),
             "unmatched": unmatched_flagged,
             "per_flagged_network": _mean(float(c) for c in dup_counts),
@@ -545,6 +549,8 @@ class SplitRun:
 def load_split(split: str) -> list[GeneratedDataset]:
     if split == "sealed":
         return [generate_sealed(seed) for seed in SPLITS[split]]
+    if split == "sealed_v2":
+        return [generate_sealed_v2(seed) for seed in SPLITS[split]]
     return [generate(SUITE, seed) for seed in SPLITS[split]]
 
 

@@ -381,11 +381,14 @@ class User(Base):
     display_name: Mapped[str] = mapped_column(Text, nullable=False)
     password_hash: Mapped[str] = mapped_column(Text, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="true")
+    # nexora.auth.roles: viewer < analyst < admin. Existing accounts were backfilled as analyst (0005).
+    role: Mapped[str] = mapped_column(Text, nullable=False, server_default="analyst")
     created_at: Mapped[dt.datetime] = _now()
     password_changed_at: Mapped[dt.datetime] = _now()
     last_login_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
     __table_args__ = (
         CheckConstraint("username = lower(username) AND length(username) BETWEEN 3 AND 64", name="ck_users_username"),
+        CheckConstraint("role IN ('viewer','analyst','admin')", name="ck_users_role"),
     )
 
 

@@ -5,11 +5,17 @@ from __future__ import annotations
 # Test-only credentials for a disposable database; never used anywhere else.
 ANALYST = "analyst.one"
 ANALYST_PASSWORD = "test-only-password-analyst-one"
+ADMIN = "admin.one"
+ADMIN_PASSWORD = "test-only-password-admin-one"
 BASE_URL = "https://testserver"  # HTTPS so the Secure __Host- session cookie round-trips
 
 
 def ensure_user(
-    factory, username: str = ANALYST, password: str = ANALYST_PASSWORD, display_name: str | None = None
+    factory,
+    username: str = ANALYST,
+    password: str = ANALYST_PASSWORD,
+    display_name: str | None = None,
+    role: str = "analyst",
 ) -> None:
     from sqlalchemy import select
 
@@ -18,7 +24,7 @@ def ensure_user(
 
     with factory() as s:
         if s.scalar(select(orm.User.id).where(orm.User.username == username)) is None:
-            service.create_user(s, username=username, password=password, display_name=display_name)
+            service.create_user(s, username=username, password=password, display_name=display_name, role=role)
             s.commit()
 
 

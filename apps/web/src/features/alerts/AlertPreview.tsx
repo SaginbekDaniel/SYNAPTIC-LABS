@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import type { NodeRole } from "../../components/graph/GraphCanvas";
 import { AccountId, BandBadge, CaseStatusBadge, ErrorState, EvidenceBadge, Icon, Loading } from "../../components/ui";
 import { api } from "../../lib/api";

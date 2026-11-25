@@ -7,7 +7,17 @@ import { t, tDynamic, type MessageKey } from "../../lib/i18n";
 import type { EvaluationReport, MethodSummary } from "../../lib/types";
 import { useApi } from "../../lib/useApi";
 import { AnalyticsTabs } from "../analytics/AnalyticsTabs";
-import { defaultSplit, familyRows, groupExamples, num, pct, SPLIT_ORDER, type FamilyRow } from "./evaluationView";
+import {
+  defaultSplit,
+  familyRows,
+  formatMetric,
+  groupExamples,
+  methodMetrics,
+  metricValue,
+  num,
+  SPLIT_ORDER,
+  type FamilyRow,
+} from "./evaluationView";
 
 const PRIMARY = "nexora_v2";
 const REFERENCE = "nexora_v1";
@@ -40,11 +50,11 @@ export function Evaluation() {
 }
 
 type CompareMetric = "recall" | "alertPrecision" | "p5" | "highFpr";
-const COMPARE: Record<CompareMetric, { get: (s: MethodSummary) => number | null; lowerIsBetter?: boolean }> = {
-  recall: { get: (s) => s.scenario.recall },
-  alertPrecision: { get: (s) => s.alerts.precision },
-  p5: { get: (s) => s.queue.p_at_5 },
-  highFpr: { get: (s) => s.scenario.high_band_fpr, lowerIsBetter: true },
+const COMPARE: Record<CompareMetric, { lowerIsBetter?: boolean }> = {
+  recall: {},
+  alertPrecision: {},
+  p5: {},
+  highFpr: { lowerIsBetter: true },
 };
 
 function EvaluationBody({ report }: { report: EvaluationReport }) {
@@ -93,12 +103,13 @@ function EvaluationBody({ report }: { report: EvaluationReport }) {
             max={1}
             scaleLabel={t("eval.scalePct")}
             rows={methods.map((m) => {
-              const v = cmp.get(results[m.id]!);
+              const shown = methodMetrics(results[m.id]!)[metric];
+              const v = metricValue(shown);
               return {
                 key: m.id,
                 label: tDynamic("eval.method.", m.id, m.label),
                 value: v ?? 0,
-                display: pct(v),
+                display: formatMetric(shown),
                 color: m.id === PRIMARY ? "var(--accent)" : m.id === REFERENCE ? "var(--cyan)" : "var(--neutral-series)",
                 note: v === null ? t("eval.notApplicable") : undefined,
               };
@@ -218,34 +229,41 @@ function FamilyChart({ results }: { results: Record<string, MethodSummary> }) {
 
 function Headline({ current, reference }: { current?: MethodSummary; reference?: MethodSummary }) {
   if (!current) return null;
-  const items: { key: MessageKey; value: number | null; ref: number | null | undefined; testId: string; lower?: boolean }[] = [
-    { key: "eval.kpi.recall", value: current.scenario.recall, ref: reference?.scenario.recall, testId: "kpi-recall" },
-    { key: "eval.kpi.highFpr", value: current.scenario.high_band_fpr, ref: reference?.scenario.high_band_fpr, testId: "kpi-high-fpr", lower: true },
-    // Distinct planted networks among the first five alerts: a second alert on an already found network is
-    // not a new find (audit L-02). Artifacts written before that metric fall back to raw P@5.
-    current.queue.distinct_p_at_5 != null
-      ? { key: "eval.kpi.p5Distinct", value: current.queue.distinct_p_at_5, ref: reference?.queue.distinct_p_at_5, testId: "kpi-p5" }
-      : { key: "eval.kpi.p5", value: current.queue.p_at_5, ref: reference?.queue.p_at_5, testId: "kpi-p5" },
-    { key: "eval.kpi.r5", value: current.queue.recall_at_5, ref: reference?.queue.recall_at_5, testId: "kpi-r5" },
+  const cur = methodMetrics(current);
+  const ref = reference ? methodMetrics(reference) : undefined;
+  // Distinct planted networks among the first five alerts: a second alert on an already found network is
+  // not a new find (audit L-02). Artifacts written before that metric fall back to raw P@5.
+  const distinct = cur.p5Distinct.kind !== "none";
+  const items: { key: MessageKey; metric: "recall" | "highFpr" | "p5" | "p5Distinct" | "r5"; testId: string; lower?: boolean }[] = [
+    { key: "eval.kpi.recall", metric: "recall", testId: "kpi-recall" },
+    { key: "eval.kpi.highFpr", metric: "highFpr", testId: "kpi-high-fpr", lower: true },
+    distinct
+      ? { key: "eval.kpi.p5Distinct", metric: "p5Distinct", testId: "kpi-p5" }
+      : { key: "eval.kpi.p5", metric: "p5", testId: "kpi-p5" },
+    { key: "eval.kpi.r5", metric: "r5", testId: "kpi-r5" },
   ];
   return (
     <section aria-label={t("eval.headline")} className="kpi-strip">
-      {items.map((i) => (
-        <div key={i.key} className="stat stat--metric" data-testid={i.testId}>
-          <div className="stat__label">{t(i.key)}</div>
-          <div className="stat__value num">{pct(i.value)}</div>
-          <div className="metric-bar" aria-hidden="true">
-            <span className="metric-bar__fill" data-lower={i.lower ? "true" : undefined} style={{ width: `${(i.value ?? 0) * 100}%` }} />
-            {typeof i.ref === "number" && <span className="metric-bar__ref" style={{ left: `${i.ref * 100}%` }} />}
-          </div>
-          {reference && (
-            <div className="stat__hint">
-              {t("eval.vsV1", { value: pct(i.ref) })}
-              {i.lower && <span> · {t("eval.lowerBetter")}</span>}
+      {items.map((i) => {
+        const value = metricValue(cur[i.metric]);
+        const refValue = ref ? metricValue(ref[i.metric]) : null;
+        return (
+          <div key={i.key} className="stat stat--metric" data-testid={i.testId}>
+            <div className="stat__label">{t(i.key)}</div>
+            <div className="stat__value num">{formatMetric(cur[i.metric])}</div>
+            <div className="metric-bar" aria-hidden="true">
+              <span className="metric-bar__fill" data-lower={i.lower ? "true" : undefined} style={{ width: `${(value ?? 0) * 100}%` }} />
+              {refValue !== null && <span className="metric-bar__ref" style={{ left: `${refValue * 100}%` }} />}
             </div>
-          )}
-        </div>
-      ))}
+            {ref && (
+              <div className="stat__hint">
+                {t("eval.vsV1", { value: formatMetric(ref[i.metric]) })}
+                {i.lower && <span> · {t("eval.lowerBetter")}</span>}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </section>
   );
 }
@@ -269,20 +287,21 @@ function MethodTable({ report, results }: { report: EvaluationReport; results: R
         <tbody>
           {methods.map((m) => {
             const s = results[m.id]!;
+            const mm = methodMetrics(s);
             return (
               <tr key={m.id} data-emphasis={m.id === PRIMARY ? "true" : undefined}>
                 <th scope="row" title={m.description}>
                   {tDynamic("eval.method.", m.id, m.label)}
                 </th>
-                <td className="right num">{pct(s.scenario.precision)}</td>
-                <td className="right num">{pct(s.scenario.recall)}</td>
-                <td className="right num">{pct(s.scenario.f1)}</td>
-                <td className="right num">{pct(s.scenario.fpr)}</td>
-                <td className="right num">{pct(s.scenario.high_band_fpr)}</td>
-                <td className="right num">{num(s.alerts.per_dataset)}</td>
-                <td className="right num">{pct(s.alerts.precision)}</td>
-                <td className="right num">{pct(s.queue.p_at_5)}</td>
-                <td className="right num">{pct(s.queue.recall_at_5)}</td>
+                <td className="right num">{formatMetric(mm.precision)}</td>
+                <td className="right num">{formatMetric(mm.recall)}</td>
+                <td className="right num">{formatMetric(mm.f1)}</td>
+                <td className="right num">{formatMetric(mm.fpr)}</td>
+                <td className="right num">{formatMetric(mm.highFpr)}</td>
+                <td className="right num">{num(mm.alertsPerDataset)}</td>
+                <td className="right num">{formatMetric(mm.alertPrecision)}</td>
+                <td className="right num">{formatMetric(mm.p5)}</td>
+                <td className="right num">{formatMetric(mm.r5)}</td>
                 <td className="right num">{num(s.latency_ms.median)}</td>
               </tr>
             );
@@ -374,17 +393,20 @@ function VariantTable({
           </tr>
         </thead>
         <tbody>
-          {rows.map((r) => (
-            <tr key={r.label}>
-              <th scope="row">{r.mono ? <code className="mono">{r.label}</code> : r.label}</th>
-              {showIdentical && <td>{r.identical === undefined ? "—" : r.identical ? t("common.yes") : t("common.no")}</td>}
-              <td className="right num">{pct(r.summary.scenario.recall)}</td>
-              <td className="right num">{pct(r.summary.scenario.fpr)}</td>
-              <td className="right num">{pct(r.summary.scenario.high_band_fpr)}</td>
-              <td className="right num">{pct(r.summary.alerts.precision)}</td>
-              <td className="right num">{pct(r.summary.queue.p_at_5)}</td>
-            </tr>
-          ))}
+          {rows.map((r) => {
+            const mm = methodMetrics(r.summary);
+            return (
+              <tr key={r.label}>
+                <th scope="row">{r.mono ? <code className="mono">{r.label}</code> : r.label}</th>
+                {showIdentical && <td>{r.identical === undefined ? "—" : r.identical ? t("common.yes") : t("common.no")}</td>}
+                <td className="right num">{formatMetric(mm.recall)}</td>
+                <td className="right num">{formatMetric(mm.fpr)}</td>
+                <td className="right num">{formatMetric(mm.highFpr)}</td>
+                <td className="right num">{formatMetric(mm.alertPrecision)}</td>
+                <td className="right num">{formatMetric(mm.p5)}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

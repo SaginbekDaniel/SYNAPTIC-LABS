@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { collectErrors, E2E_PASSWORD, E2E_SECOND_USER, E2E_USER, signIn } from "./helpers";
+import { collectErrors, E2E_PASSWORD, E2E_SECOND_USER, E2E_USER, E2E_VIEWER, seedAndAnalyse, signIn } from "./helpers";
 
 // These flows start signed out (the "auth" project has no stored session).
 const shots = process.env.NEXORA_E2E_SCREENSHOTS;
@@ -182,6 +182,47 @@ test("an ended session sends the analyst to sign in and back to where they were"
   expect(unexpected(errors, 401)).toEqual([]);
 });
 
+test("a session that ends while the next screen is still loading still returns the analyst there", async ({ page }) => {
+  // CI run 88: React Router runs navigations in a transition, so while a lazily loaded screen is loading the
+  // router still reports the previous location. An expiry discovered in that window used the stale location and
+  // dropped the return target (/login?reason=expired instead of ?next=%2Flab). Hold the /lab chunk (dev server
+  // module or production asset) so the expiry is discovered exactly inside that window.
+  const errors = collectErrors(page);
+  await page.goto("/login");
+  await signIn(page);
+  await expect(page).toHaveURL("/");
+  await page.waitForLoadState("networkidle");
+  let releaseChunk!: () => void;
+  const chunk = new Promise<void>((resolve) => (releaseChunk = resolve));
+  await page.route(
+    (url) => /fraud-lab|FraudLab/.test(url.pathname),
+    async (route) => {
+      await chunk;
+      await route.continue();
+    },
+  );
+  // As in the test above: no API request may discover the cleared cookies before the click (it would replace the
+  // shell under the click). Park them until the navigation to /lab has started.
+  let releaseApi!: () => void;
+  const parked = new Promise<void>((resolve) => (releaseApi = resolve));
+  await page.route("**/api/**", async (route) => {
+    await parked;
+    await route.continue();
+  });
+  await page.context().clearCookies();
+  await page.getByRole("navigation", { name: "Инструменты" }).getByRole("link", { name: "Лаборатория" }).click();
+  await expect(page).toHaveURL("/lab");
+  releaseApi();
+  // The app's own re-check when the tab becomes visible discovers the ended session while /lab is pending.
+  await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
+  await expect(page).toHaveURL(/\/login\?next=%2Flab&reason=expired$/);
+  releaseChunk();
+  await expect(page.getByTestId("login-notice")).toContainText("Сеанс завершён");
+  await signIn(page);
+  await expect(page).toHaveURL("/lab");
+  expect(unexpected(errors, 401)).toEqual([]);
+});
+
 for (const { name, width, height } of [
   { name: "390", width: 390, height: 844 },
   { name: "1440", width: 1440, height: 900 },
@@ -210,4 +251,47 @@ test("reduced motion: the network illustration is still", async ({ page }) => {
   await page.goto("/login");
   const running = await page.evaluate(() => document.getAnimations().filter((a) => (a.effect as KeyframeEffect | null)?.target instanceof SVGElement).length);
   expect(running).toBe(0);
+});
+
+test("a viewer reviews everything and is offered no write action (B-011)", async ({ browser }) => {
+  // An analyst produces something to look at.
+  const analystContext = await browser.newContext();
+  const analyst = await analystContext.newPage();
+  await analyst.goto("/login");
+  await signIn(analyst);
+  await seedAndAnalyse(analyst, "7401");
+  await analystContext.close();
+
+  const viewerContext = await browser.newContext();
+  const page = await viewerContext.newPage();
+  const errors = collectErrors(page);
+  await page.goto("/login");
+  await signIn(page, E2E_VIEWER);
+  await expect(page.getByTestId("account-role")).toContainText("Наблюдатель");
+
+  await page.goto("/lab");
+  await expect(page.getByTestId("lab-read-only")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Сгенерировать набор" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Запустить анализ" })).toHaveCount(0);
+
+  await page.goto("/alerts");
+  await page.locator('[data-testid="alert-row"][data-band="high"]').first().click();
+  await page.getByTestId("open-investigation").click();
+  await expect(page.getByTestId("reasons")).toBeVisible(); // evidence is readable
+  await expect(page.getByTestId("open-case")).toHaveCount(0);
+  await expect(page.getByTestId("case-read-only")).toBeVisible();
+  expect(errors).toEqual([]); // before the deliberate 403 below, which the browser logs
+
+  // The server refuses regardless of what the page shows.
+  const status = await page.evaluate(async () => {
+    const s = await (await fetch("/api/v1/auth/session")).json();
+    const r = await fetch("/api/v1/lab/datasets", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-CSRF-Token": s.session.csrf_token },
+      body: JSON.stringify({ suite: "demo-v1", seed: 1 }),
+    });
+    return [r.status, (await r.json()).error.code];
+  });
+  expect(status).toEqual([403, "FORBIDDEN_ROLE"]);
+  await viewerContext.close();
 });

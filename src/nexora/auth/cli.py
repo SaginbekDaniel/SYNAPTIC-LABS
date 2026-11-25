@@ -5,6 +5,8 @@ stdin (``--password-stdin``), or generated (``--generate``, printed once to stdo
     python -m nexora.auth.cli create-user alice --display-name "Alice Analyst" --generate
     printf '%s' "$PW" | python -m nexora.auth.cli create-user alice --password-stdin
     python -m nexora.auth.cli set-password alice --generate      # also ends alice's sessions
+    python -m nexora.auth.cli create-user bob --role viewer --generate   # roles: viewer, analyst (default), admin
+    python -m nexora.auth.cli set-role bob analyst               # also ends bob's sessions
     python -m nexora.auth.cli disable alice | enable alice | revoke-sessions alice
     python -m nexora.auth.cli hash-password --generate           # prints password + Argon2id hash
     python -m nexora.auth.cli bootstrap                           # see below
@@ -26,7 +28,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from nexora.application.errors import AppError
-from nexora.auth import passwords, service
+from nexora.auth import passwords, roles, service
 from nexora.persistence import orm
 from nexora.persistence.db import session_factory, session_scope
 from nexora.settings import get_settings
@@ -58,13 +60,17 @@ def _add_password_source(p: argparse.ArgumentParser) -> None:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m nexora.auth.cli", description="Manage NEXORA analyst accounts.")
     sub = parser.add_subparsers(dest="command", required=True)
-    p = sub.add_parser("create-user", help="create an analyst account")
+    p = sub.add_parser("create-user", help="create an account (role analyst unless --role is given)")
     p.add_argument("username")
     p.add_argument("--display-name")
+    p.add_argument("--role", choices=roles.ROLES, default=roles.DEFAULT_ROLE)
     _add_password_source(p)
     p = sub.add_parser("set-password", help="change a password and end all of the user's sessions")
     p.add_argument("username")
     _add_password_source(p)
+    p = sub.add_parser("set-role", help="change a user's role and end all of the user's sessions")
+    p.add_argument("username")
+    p.add_argument("role", choices=roles.ROLES)
     for name in ("disable", "enable", "revoke-sessions"):
         sub.add_parser(name).add_argument("username")
     sub.add_parser("list-users")
@@ -90,8 +96,10 @@ def main(argv: list[str] | None = None) -> int:
                 return _bootstrap(s)
             if args.command == "create-user":
                 password, generated = _read_password(args)
-                user = service.create_user(s, username=args.username, password=password, display_name=args.display_name)
-                print(f"created user {user.username}")
+                user = service.create_user(
+                    s, username=args.username, password=password, display_name=args.display_name, role=args.role
+                )
+                print(f"created user {user.username} ({user.role})")
                 if generated:
                     print(f"password: {password}")
             elif args.command == "set-password":
@@ -103,12 +111,15 @@ def main(argv: list[str] | None = None) -> int:
             elif args.command in ("disable", "enable"):
                 ended = service.set_active(s, username=args.username, active=args.command == "enable")
                 print(f"user {args.command}d; {ended} session(s) ended")
+            elif args.command == "set-role":
+                ended = service.set_role(s, username=args.username, role=args.role)
+                print(f"role of {args.username} is {args.role}; {ended} session(s) ended")
             elif args.command == "revoke-sessions":
                 print(f"{service.revoke_sessions(s, username=args.username)} session(s) ended")
             elif args.command == "list-users":
                 for u in s.scalars(select(orm.User).order_by(orm.User.username)):
                     state = "active" if u.is_active else "disabled"
-                    print(f"{u.username}\t{state}\tlast sign-in {u.last_login_at or '-'}")
+                    print(f"{u.username}\t{u.role}\t{state}\tlast sign-in {u.last_login_at or '-'}")
     except AppError as exc:
         print(f"error: {exc.message}", file=sys.stderr)
         return 1

@@ -1,9 +1,9 @@
 name: pitch
 on:
   push:
-    paths: ["apps/pitch/**", ".github/workflows/pitch.yml"]
+    paths: ["apps/pitch/**", "benchmarks/results/bench-v1.json", ".github/workflows/pitch.yml"]
   pull_request:
-    paths: ["apps/pitch/**", ".github/workflows/pitch.yml"]
+    paths: ["apps/pitch/**", "benchmarks/results/bench-v1.json", ".github/workflows/pitch.yml"]
 
 jobs:
   pitch:

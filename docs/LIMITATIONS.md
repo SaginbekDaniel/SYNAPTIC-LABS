@@ -6,7 +6,8 @@
 * Not a real-time authorisation/blocking system. It is batch snapshot analysis triggered by jobs.
 * Not proof of fraud or money laundering: outputs are review candidates for a human analyst.
 * Authentication is named accounts with local passwords and server-side sessions. No SSO, no MFA, no
-  role model (every analyst can do everything), no self-service password reset (operator CLI only).
+  self-service password reset (operator CLI only). Roles are global (`viewer` / `analyst` / `admin`):
+  they limit what an account may change, not which datasets it may see.
 
 ## Evaluation limits
 
@@ -35,7 +36,8 @@ See `docs/architecture/DEEP_AUDIT.md` and `docs/evaluation/RESULTS.md`.
   side is fixed (funnel-v3); for fan-out the ratio cannot separate kickbacks from instalments.
 * **`bench-v1` abstention numbers are optimistic**: its boundary list contains only planted centres
   (audit L-01). Its holdout is exposed and no longer an unbiased test.
-* **No authorization or tenancy** (audit F-05) — demo identity only.
+* **No tenancy** (audit F-05): every account reads every dataset. Global roles limit writes since B-011;
+  per-dataset isolation is backlog B-019 (decision D-3).
 
 ## Analytical limitations observed with v2 (bench-v1 holdout, historical)
 
@@ -56,8 +58,11 @@ See `docs/architecture/DEEP_AUDIT.md` and `docs/evaluation/RESULTS.md`.
   separate family, but corroboration between them is weaker than between structure and time.
 * **Alerts on unlabelled background activity** (mostly coincidental chains): 1.0 per dataset on dev, 1.3 on
   validation, 2.1 on holdout. They are not planted scenarios, so they count against alert precision.
-* **Duplicate views of one hub.** A merchant processor can raise both a funnel and a fan-out alert; alerts are
-  not yet correlated by shared subject account.
+* **Duplicate views of one hub.** A merchant processor can raise both a funnel and a fan-out alert. Since B-042 the
+  queue and the investigation link alerts whose networks share any account (grouped on read; nothing is merged), so the
+  analyst sees them together; each alert is still decided separately. On synthetic `bench-v1` the grouping cuts review
+  units per flagged network from 1.39 to 1.02 (dev) and 1.19 to 1.00 (validation) with no group joining two planted
+  networks (`docs/handoff/probes/alert_grouping.py`); a busy real-world account could still chain unrelated networks.
 * Temporal compatibility is an **upper bound** under unobserved intermediary balances; it never identifies the
   source of funds.
 

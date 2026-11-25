@@ -163,8 +163,10 @@ Implemented and tested (unit, integration, `smoke/deployed.spec.ts`, CI `contain
 
 Remaining risks (documented, not solved):
 
-* **Local passwords, no MFA or roles.** Every analyst can do everything; there is no SSO. An
-  identity provider (OIDC) with MFA is the next step for anything beyond a demo (ADR 020).
+* **Local passwords, no MFA; global roles only.** Accounts are `viewer`, `analyst` (default; every
+  account created before migration `0005` became one) or `admin`, set with
+  `python -m nexora.auth.cli set-role <user> <role>`; every account still sees every dataset. There is
+  no SSO. An identity provider (OIDC) with MFA is the next step for anything beyond a demo (ADR 020).
 * Writes are rate-limited but not quota-limited; a credential holder could fill the database
   slowly. Monitor volume usage.
 * No WAF, intrusion detection, backup-restore drill, penetration test or compliance review.
@@ -223,7 +225,13 @@ afterwards.
 
 ## Operations
 
-* **Logs:** `railway logs --service api` (or `worker`, `web`). The worker logs JSON lines per job.
+* **Logs:** `railway logs --service api` (or `worker`, `web`). The API (including uvicorn's access and
+  startup lines) and the worker write one JSON object per line on stderr: `ts` (UTC), `level`, `logger`,
+  `msg`, `exc` (traceback, when there is one) and, for anything written while serving a request,
+  `request_id`. That is the id an error envelope and the `X-Request-ID` header show the user, so a quoted id
+  finds its lines: `railway logs --service api | grep '"request_id": "req-…"'`. Configuration:
+  `configs/logging.json` = `nexora.logging_config.LOGGING_CONFIG` (a test keeps them identical). The gateway
+  (`web`) keeps Nginx's own log format.
 * **Status:** `railway deployment list --service api --json`.
 * **Rollback:** in the dashboard, *Deployments → ⋯ → Redeploy* on the last good deployment, or
   check out the last good commit and run `scripts/railway/deploy.sh`. Code rolls back; the schema

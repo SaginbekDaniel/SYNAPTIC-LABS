@@ -1,78 +1,100 @@
-import { useMemo } from "react";
-import { m, useReducedMotion } from "motion/react";
-import { Reveal, SlideHeader } from "../ui/primitives";
+import { m } from "motion/react";
+import { BENCH, MISSED_TOTAL, MISSES, RECALL_COST, dec } from "../data/bench";
+import { EASE, Head } from "../ui/primitives";
 import type { SlideProps } from "../ui/types";
 
-const W = 1920, H = 1080;
-
-/** Deterministic pseudo-random (LCG) so the background is identical on every load. */
-function field() {
-  let s = 20261118;
-  const rnd = () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
-  const nodes = Array.from({ length: 44 }, () => ({ x: rnd() * W, y: rnd() * H, r: 3 + rnd() * 4 }));
-  const edges: [number, number][] = [];
-  nodes.forEach((a, i) => {
-    nodes
-      .map((b, j) => ({ j, d: Math.hypot(a.x - b.x, a.y - b.y) }))
-      .filter((o) => o.j > i && o.d < 330)
-      .sort((p, q) => p.d - q.d)
-      .slice(0, 2)
-      .forEach((o) => edges.push([i, o.j]));
-  });
-  return { nodes, edges };
+interface Row {
+  key: string;
+  title: string;
+  better: string;
+  max: number;
+  rules: { v: number; sub?: string };
+  nexora: { v: number; sub?: string };
+  unit: string;
+  cost?: boolean;
 }
 
-const PILLARS = ["Объяснимость", "Доказательства", "Решение аналитика"];
+const pctRow = (x: { n: number; of: number; pct: number }) => ({ v: x.pct, sub: `${x.n} из ${x.of}` });
 
-export function Slide6(props: SlideProps) {
-  void props;
-  const reduced = useReducedMotion();
-  const { nodes, edges } = useMemo(field, []);
-  const pulses = edges.filter((_, i) => i % 6 === 0).slice(0, 8);
+const ROWS: Row[] = [
+  { key: "alerts", title: "Алертов на один набор данных", better: "меньше — лучше", max: 45, unit: "", rules: { v: BENCH.alertsPerDataset.rules }, nexora: { v: BENCH.alertsPerDataset.nexora } },
+  { key: "legit", title: "Легитимных сетей попало в очередь", better: "меньше — лучше", max: 100, unit: " %", rules: pctRow(BENCH.legitFlagged.rules), nexora: pctRow(BENCH.legitFlagged.nexora) },
+  { key: "recall", title: "Найдено подозрительных сетей", better: "полнота · больше — лучше", max: 100, unit: " %", rules: pctRow(BENCH.recall.rules), nexora: pctRow(BENCH.recall.nexora), cost: true },
+];
 
+function Bar({ label, v, max, unit, sub, kind, delay }: { label: string; v: number; max: number; unit: string; sub?: string; kind: "rules" | "nexora"; delay: number }) {
+  return (
+    <div className={`s6-bar ${kind}`}>
+      <span className="s6-who small">{label}</span>
+      <div className="s6-track">
+        <m.i initial={{ scaleX: 0 }} animate={{ scaleX: v / max }} transition={{ delay, duration: 0.9, ease: EASE }} />
+      </div>
+      <span className="s6-val num">{dec(v)}{unit}</span>
+      <span className="s6-sub label">{sub ?? ""}</span>
+    </div>
+  );
+}
+
+export function Slide6({ step }: SlideProps) {
   return (
     <section className="slide s6" aria-labelledby="h-6">
-      <svg className="s6-bg" viewBox={`0 0 ${W} ${H}`} aria-hidden="true">
-        <g className="drift">
-          {edges.map(([a, b], i) => (
-            <line key={i} x1={nodes[a].x} y1={nodes[a].y} x2={nodes[b].x} y2={nodes[b].y} stroke="rgb(165 139 245 / 0.16)" strokeWidth="1.5" />
-          ))}
-          {nodes.map((n, i) => (
-            <circle key={i} cx={n.x} cy={n.y} r={n.r} fill={i % 5 === 0 ? "var(--cyan)" : "var(--violet)"} opacity="0.55" />
-          ))}
-          {!reduced && pulses.map(([a, b], i) => (
-            <m.circle
-              key={i} r="5" fill="var(--cyan)"
-              initial={{ cx: nodes[a].x, cy: nodes[a].y, opacity: 0 }}
-              animate={{ cx: [nodes[a].x, nodes[b].x], cy: [nodes[a].y, nodes[b].y], opacity: [0, 1, 1, 0] }}
-              transition={{ duration: 3.2, delay: i * 0.55, repeat: Infinity, repeatDelay: 1.5, ease: "linear" }}
-            />
-          ))}
-        </g>
-      </svg>
-
-      <Reveal><SlideHeader index={6} eyebrow="The finale" /></Reveal>
-      <div className="slide-inner s6-inner">
-        <div className="wm-wrap">
-          <span className="wm wm-glow" aria-hidden="true">NEXORA&nbsp;AI</span>
-          <m.h2
-            id="h-6" className="wm wm-main"
-            aria-label="NEXORA AI"
-            initial={{ clipPath: "inset(0 100% 0 0)", scale: 1.04 }} animate={{ clipPath: "inset(0 0% 0 0)", scale: 1 }}
-            transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-          >
-            NEXORA&nbsp;AI
-          </m.h2>
+      <Head index={6} />
+      <div className="slide-body s6-body">
+        <div className="s6-chart">
+          {ROWS.map((r, i) => {
+            const on = !r.cost || step >= 1;
+            return (
+              <m.div
+                key={r.key} className={`s6-row ${r.cost ? "cost" : ""}`} data-row={r.key}
+                initial={false} animate={{ opacity: on ? 1 : 0 }} transition={{ duration: 0.4 }} aria-hidden={!on}
+              >
+                <div className="s6-row-h">
+                  <h3 className="h3">{r.title}</h3>
+                  <span className="label">{r.better}</span>
+                  {r.cost && on && (
+                    <m.span className="tag amber s6-delta" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}>
+                      −{dec(RECALL_COST)} п. п.
+                    </m.span>
+                  )}
+                </div>
+                {on && <>
+                  <Bar label="Правила" kind="rules" v={r.rules.v} sub={r.rules.sub} max={r.max} unit={r.unit} delay={0.2 + i * 0.08} />
+                  <Bar label="NEXORA" kind="nexora" v={r.nexora.v} sub={r.nexora.sub} max={r.max} unit={r.unit} delay={0.35 + i * 0.08} />
+                </>}
+              </m.div>
+            );
+          })}
         </div>
-        <Reveal delay={0.9}><p className="s6-head">От подозрения — к проверяемому расследованию</p></Reveal>
-        <ul className="pillars" aria-label="Три опоры">
-          {PILLARS.map((p, i) => (
-            <m.li key={p} className="glass" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2 + i * 0.18, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
-              <span className="mono">{String(i + 1).padStart(2, "0")}</span>{p}
-            </m.li>
-          ))}
-        </ul>
-        <Reveal delay={1.9}><p className="label s6-note">Прототип на синтетических данных · без интеграции с банком · SYNAPTIC LABS · ITU Hackathon 2026</p></Reveal>
+
+        <aside className="s6-side">
+          <section className="s6-method" aria-label="Методика">
+            <h3 className="label caps">Как измеряли</h3>
+            <dl>
+              <div><dt className="num">{BENCH.datasets}</dt><dd className="small">наборов отложенной выборки</dd></div>
+              <div><dt className="num">{BENCH.suspicious + BENCH.legitimate}</dt><dd className="small">сетей: {BENCH.suspicious} подозрительных, {BENCH.legitimate} легитимных</dd></div>
+            </dl>
+            <p className="label">Против правил мониторинга по счёту. bench-v1, конфигурация v2 (как в демо), коммит <span className="mono">{BENCH.commit}</span>, воспроизводится одной командой.</p>
+          </section>
+          <m.section
+            className="s6-miss" aria-label="Где пропуски" aria-hidden={step < 2}
+            initial={false} animate={{ opacity: step >= 2 ? 1 : 0, y: step >= 2 ? 0 : 12 }} transition={{ duration: 0.5, ease: EASE }}
+          >
+            <h3 className="label caps">Где {MISSED_TOTAL} пропусков NEXORA</h3>
+            <ul>
+              {MISSES.map((f) => (
+                <li key={f.id}>
+                  <span className="num">{f.missed}</span>
+                  <span className="small t-1">{f.label}</span>
+                  {f.abstained > 0 && <span className="label s6-abst">показаны как «недостаточно данных»</span>}
+                </li>
+              ))}
+            </ul>
+          </m.section>
+        </aside>
+      </div>
+      <div className="slide-foot s6-foot">
+        <span className="tag amber">Ограничения</span>
+        <span className="label">Данные синтетические и созданы командой — это не точность на данных банка. Аудит показал, что эту выборку просматривали при разработке версии, поэтому оценка скорее оптимистична.</span>
       </div>
     </section>
   );

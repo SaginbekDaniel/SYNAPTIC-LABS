@@ -374,6 +374,29 @@
   color: var(--text-3);
   font-size: var(--fs-xs);
 }
+/* Related alerts (B-042): links to the other alerts of this network, strongest band first. */
+.inv-head__related {
+  flex-basis: 100%; /* its own row: links run horizontally on wide screens and wrap on phones */
+}
+.related-alerts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1) var(--s-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.related-alerts__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  color: var(--text);
+  text-decoration: none;
+}
+.related-alerts__link:hover span:last-child,
+.related-alerts__link:focus-visible span:last-child {
+  text-decoration: underline;
+}
 .inv-head__side {
   display: flex;
   align-items: flex-end;
@@ -485,6 +508,23 @@
 .graph-stage__canvas {
   position: absolute;
   inset: 0;
+  transition: opacity var(--dur-2) var(--ease);
+}
+/* Centred in the stage while the force layout runs; announced to screen readers as a status. */
+.graph-stage__status {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  pointer-events: none;
+}
+/* While the force layout runs in its worker: nothing to see or click yet (the stage shimmers instead). */
+.graph-stage__canvas[data-layout="pending"] {
+  visibility: hidden;
+  opacity: 0;
 }
 .graph-stage__controls {
   position: absolute;

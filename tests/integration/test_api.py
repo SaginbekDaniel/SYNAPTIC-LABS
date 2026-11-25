@@ -75,7 +75,9 @@ def test_end_to_end_transaction_to_audited_decision(client, settings):  # UI-001
     assert client.get("/api/v1/alerts", params={"dataset_id": ds_id, "status": "in_case"}).json()["total"] == 1
 
 
-def test_big_account_ids_round_trip_exactly(client, settings):  # DATA-001
+def test_big_account_ids_round_trip_exactly(admin_client, settings):  # DATA-001
+    client = admin_client  # CSV import needs the admin role (B-011, decision D-11)
+    settings.allow_csv_import = True  # the import route is off by default (B-010)
     big = "9007199254740993"  # 2^53 + 1
     csv = (
         "source_transaction_id,sender_account_id,receiver_account_id,amount_minor,currency,observed_date\n"
@@ -199,3 +201,201 @@ def test_alert_list_pages_searches_sorts_and_counts_on_the_server(client, settin
         first = client.get("/api/v1/alerts", params={"dataset_id": ds_id, "sort": sort, "limit": 1}).json()
         assert first["items"][0]["id"] == got[0]["id"]
     assert client.get("/api/v1/alerts", params={"sort": "bogus"}).status_code == 422
+
+
+# -- CSV import gate (H-02, backlog B-010) --------------------------------------------------------
+_IMPORT_CSV = (
+    "source_transaction_id,sender_account_id,receiver_account_id,amount_minor,currency,observed_date\n"
+    "g1,A,B,100,KZT,2026-07-01\n"
+)
+
+
+def _row_counts(settings) -> dict[str, int]:
+    from sqlalchemy import create_engine, text
+
+    engine = create_engine(settings.database_url)
+    try:
+        with engine.connect() as c:
+            return {t: c.execute(text(f"SELECT count(*) FROM {t}")).scalar_one() for t in _IMPORTED_TABLES}
+    finally:
+        engine.dispose()
+
+
+_IMPORTED_TABLES = ("datasets", "import_batches", "transactions")
+
+
+def test_csv_import_is_refused_by_default_and_stores_nothing(client, settings):
+    from nexora.settings import Settings
+
+    assert Settings.model_fields["allow_csv_import"].default is False
+    assert settings.allow_csv_import is False
+    before = _row_counts(settings)
+    r = client.post("/api/v1/datasets/import", files={"file": ("x.csv", _IMPORT_CSV.encode())}, data={"name": "real?"})
+    assert r.status_code == 403, r.text
+    assert r.json()["error"]["code"] == "CSV_IMPORT_DISABLED" and r.json()["error"]["request_id"]
+    assert _row_counts(settings) == before
+    # The synthetic lab path is unaffected.
+    assert client.post("/api/v1/lab/datasets", json={"suite": "demo-v1", "seed": 4242}).status_code == 201
+
+
+def test_disabled_csv_import_is_still_authenticated_first(anon_client, client, settings):
+    files, data = {"file": ("x.csv", _IMPORT_CSV.encode())}, {"name": "x"}
+    r = anon_client.post("/api/v1/datasets/import", files=files, data=data)
+    assert r.status_code == 401 and r.json()["error"]["code"] == "AUTH_REQUIRED"  # nothing learnt about the flag
+    csrf = client.headers.pop("X-CSRF-Token")
+    try:
+        r = client.post("/api/v1/datasets/import", files=files, data=data)
+        assert r.status_code == 403 and r.json()["error"]["code"] == "CSRF_FAILED"
+    finally:
+        client.headers["X-CSRF-Token"] = csrf
+
+
+def _asgi_import(app, client) -> tuple[int, list[str]]:
+    """POST a multipart upload straight into the ASGI app and record when the body is pulled."""
+    import anyio
+
+    events: list[str] = []
+    body = (
+        b'--x\r\nContent-Disposition: form-data; name="name"\r\n\r\nasgi\r\n'
+        b'--x\r\nContent-Disposition: form-data; name="file"; filename="x.csv"\r\n'
+        b"Content-Type: text/csv\r\n\r\n" + _IMPORT_CSV.encode() + b"\r\n--x--\r\n"
+    )
+    cookie = "; ".join(f"{k}={v}" for k, v in client.cookies.items())
+    scope = {
+        "type": "http",
+        "asgi": {"version": "3.0"},
+        "http_version": "1.1",
+        "method": "POST",
+        "scheme": "https",
+        "path": "/api/v1/datasets/import",
+        "raw_path": b"/api/v1/datasets/import",
+        "query_string": b"",
+        "root_path": "",
+        "headers": [
+            (b"host", b"testserver"),
+            (b"cookie", cookie.encode()),
+            (b"x-csrf-token", client.headers["X-CSRF-Token"].encode()),
+            (b"content-type", b"multipart/form-data; boundary=x"),
+            (b"content-length", str(len(body)).encode()),
+        ],
+        "client": ("127.0.0.1", 50000),
+        "server": ("testserver", 443),
+    }
+    status: list[int] = []
+    sent_body = False
+
+    async def receive() -> dict:
+        nonlocal sent_body
+        if not sent_body:
+            sent_body = True
+            events.append("body-read")
+            return {"type": "http.request", "body": body, "more_body": False}
+        await anyio.sleep_forever()  # a client that never disconnects
+        raise AssertionError("unreachable")
+
+    async def send(message: dict) -> None:
+        if message["type"] == "http.response.start":
+            status.append(message["status"])
+            events.append("response")
+
+    async def run() -> None:
+        with anyio.move_on_after(10):
+            await app(scope, receive, send)
+
+    anyio.run(run)
+    return status[0], events
+
+
+def test_disabled_csv_import_refuses_before_reading_the_upload(admin_client, settings):
+    from nexora.api.main import create_app
+
+    status, events = _asgi_import(create_app(settings), admin_client)
+    assert status == 403
+    assert "body-read" not in events[: events.index("response")], events
+
+    # Control: with the import enabled the same request is read (and accepted), so the probe detects reads.
+    settings.allow_csv_import = True
+    try:
+        status, events = _asgi_import(create_app(settings), admin_client)
+    finally:
+        settings.allow_csv_import = False
+    assert status == 201
+    assert events.index("body-read") < events.index("response"), events
+
+
+def test_enabled_csv_import_refuses_a_role_below_admin_before_reading_the_upload(client, settings):
+    """B-011: with the import switched on, an analyst is refused by role, also before the upload is read."""
+    from nexora.api.main import create_app
+
+    before = _row_counts(settings)
+    settings.allow_csv_import = True
+    try:
+        status, events = _asgi_import(create_app(settings), client)
+        r = client.post("/api/v1/datasets/import", files={"file": ("x.csv", _IMPORT_CSV.encode())}, data={"name": "x"})
+    finally:
+        settings.allow_csv_import = False
+    assert status == 403
+    assert "body-read" not in events[: events.index("response")], events
+    assert r.status_code == 403 and r.json()["error"]["code"] == "FORBIDDEN_ROLE"
+    assert _row_counts(settings) == before
+
+
+# -- Related-alert groups (H-11, backlog B-042) ----------------------------------------------------
+_BAND_RANK = {"critical": 0, "high": 1, "medium": 2, "insufficient_evidence": 3, "low": 4}
+
+
+def test_related_alerts_are_grouped_on_read_without_touching_any_alert(client, settings):
+    # demo-v1 seed 3 contains three alerts on one network (found offline with the publisher's alert rule).
+    ds_id, _ = _create_and_analyse(client, settings, seed=3)
+    listing = client.get("/api/v1/alerts", params={"dataset_id": ds_id, "limit": 200}).json()
+    items = listing["items"]
+    assert listing["total"] == len(items)  # grouping hides nothing
+
+    # Recompute the components independently from each alert's own accounts (subject, members, exits).
+    details = {a["id"]: client.get(f"/api/v1/alerts/{a['id']}").json() for a in items}
+    accounts = {
+        i: {d["formation"]["subject_account_id"], *d["formation"]["member_ids"], *d["formation"]["exit_ids"]}
+        for i, d in details.items()
+    }
+    parent = {i: i for i in accounts}
+
+    def find(x: str) -> str:
+        while parent[x] != x:
+            x = parent[x]
+        return x
+
+    ids = sorted(accounts)
+    for n, x in enumerate(ids):
+        for y in ids[n + 1 :]:
+            if accounts[x] & accounts[y]:
+                parent[find(y)] = find(x)
+    expected: dict[str, set[str]] = {}
+    for i in ids:
+        expected.setdefault(find(i), set()).add(i)
+    api_groups: dict[str, set[str]] = {}
+    for a in items:
+        api_groups.setdefault(a["group"]["id"], set()).add(a["id"])
+    assert sorted(map(sorted, api_groups.values())) == sorted(map(sorted, expected.values()))
+    assert any(len(members) > 1 for members in api_groups.values()), "fixture must contain related alerts"
+
+    by_id = {a["id"]: a for a in items}
+    for a in items:
+        members = api_groups[a["group"]["id"]]
+        assert a["group"]["size"] == len(members)
+        strongest = min(members, key=lambda m: _BAND_RANK[by_id[m]["risk"]["band"]])
+        assert a["group"]["top_band"] == by_id[strongest]["risk"]["band"]
+        # The detail lists exactly the other members, strongest band first; the alert itself is unchanged.
+        d = details[a["id"]]
+        assert d["group"] == a["group"]
+        related = d["related_alerts"]
+        assert {r["id"] for r in related} == members - {a["id"]}
+        ranks = [(_BAND_RANK[r["band"]], -(r["priority"] or 0)) for r in related]
+        assert ranks == sorted(ranks)
+        assert d["risk"]["band"] == a["risk"]["band"] and d["status"] == a["status"]
+
+    # A group does not depend on the view: the same alert keeps its group under a filter and on any page.
+    some_band = items[0]["risk"]["band"]
+    filtered = client.get("/api/v1/alerts", params={"dataset_id": ds_id, "band": some_band, "limit": 200}).json()
+    assert all(a["group"] == by_id[a["id"]]["group"] for a in filtered["items"])
+    one = client.get("/api/v1/alerts", params={"dataset_id": ds_id, "limit": 1, "offset": len(items) - 1}).json()
+    assert one["items"][0]["group"] == items[-1]["group"]

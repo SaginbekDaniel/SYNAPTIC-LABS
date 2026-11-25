@@ -11,6 +11,8 @@ x-app-env: &app_env
   NEXORA_GATEWAY_TOKEN: ${NEXORA_GATEWAY_TOKEN:-local-only-gateway-token-not-a-secret}
   # Plain HTTP on loopback: the session cookie cannot be Secure here. Railway keeps the default (true).
   NEXORA_SESSION_COOKIE_SECURE: ${NEXORA_SESSION_COOKIE_SECURE:-false}
+  # CSV upload is off, as in the deployment; set NEXORA_ALLOW_CSV_IMPORT=true in .env to try it locally.
+  NEXORA_ALLOW_CSV_IMPORT: ${NEXORA_ALLOW_CSV_IMPORT:-false}
 
 services:
   postgres:

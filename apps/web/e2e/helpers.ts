@@ -4,6 +4,7 @@ import { expect, type Page } from "@playwright/test";
 export const E2E_PASSWORD = process.env.NEXORA_E2E_PASSWORD ?? "e2e-only-password-disposable-db";
 export const E2E_USER = "e2e.analyst";
 export const E2E_SECOND_USER = "e2e.second";
+export const E2E_VIEWER = "e2e.viewer"; // role viewer (B-011)
 export const AUTH_STATE = "e2e/.auth/analyst.json";
 
 /** Sign in through the real form (the page must be on, or redirected to, /login). */

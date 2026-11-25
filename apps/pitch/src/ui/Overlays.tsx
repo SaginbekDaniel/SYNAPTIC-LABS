@@ -1,6 +1,6 @@
 import { type ReactNode, useEffect, useRef } from "react";
 import { SLIDES, TARGET_SECONDS } from "../data/notes";
-import { STEP_COUNTS, type Pos } from "../engine/deck";
+import { SLIDE_COUNT, STEP_COUNTS, type Pos } from "../engine/deck";
 import { Icon } from "./primitives";
 
 const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
@@ -60,7 +60,7 @@ export function Overview({ pos, onPick, onClose, onRestart }: { pos: Pos; onPick
       </ol>
       <div className="modal-foot">
         <button className="btn" onClick={onRestart}><Icon name="restart" /> Начать заново</button>
-        <span className="small">Клавиши 1–6 — переход к слайду. Всего ≈ {fmt(TARGET_SECONDS)}.</span>
+        <span className="small">Клавиши 1–{SLIDE_COUNT} — переход к слайду. Всего ≈ {fmt(TARGET_SECONDS)}.</span>
       </div>
     </Modal>
   );
@@ -70,7 +70,7 @@ const KEYS: [string, string][] = [
   ["→  ↓  Пробел  PgDn", "Следующий шаг"],
   ["←  ↑  PgUp", "Предыдущий шаг"],
   ["Shift + →  /  Shift + ←", "Следующий / предыдущий слайд"],
-  ["1 – 6", "Перейти к слайду"],
+  [`1 – ${SLIDE_COUNT}`, "Перейти к слайду"],
   ["Home  /  End", "Первый / последний слайд"],
   ["O", "Обзор слайдов"],
   ["N", "Заметки докладчика"],

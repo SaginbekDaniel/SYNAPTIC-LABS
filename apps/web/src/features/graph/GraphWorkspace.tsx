@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router";
 import { useDataset } from "../../app/dataset";
 import { GraphCanvas, type GraphEdgeSpec } from "../../components/graph/GraphCanvas";
 import type { GraphController } from "../../components/graph/controller";
@@ -9,7 +9,6 @@ import { formatDateTime, shortId } from "../../lib/format";
 import { t, tDynamic, type MessageKey } from "../../lib/i18n";
 import { FORMATION_KINDS, type AccountSummary, type Band, type FormationKind, type InvestigationEdge, type InvestigationGraph, type TemporalStatus, type TransactionPage } from "../../lib/types";
 import { useApi } from "../../lib/useApi";
-import { useMediaQuery } from "../../lib/useMediaQuery";
 import { GestureLayer, GestureToggle, useGestureSession } from "../gestures/GestureControl";
 import { BAND_ORDER, DEFAULT_FILTERS, edgeId, edgeStatus, formationMembers, mergeExpansion, toCanvas, type ClientFilters } from "./graphModel";
 
@@ -43,10 +42,10 @@ export function GraphWorkspace() {
   const [emphasis, setEmphasis] = useState<string | null>(null);
   const [controller, setController] = useState<GraphController | null>(null);
   const gestures = useGestureSession(controller);
-  const wide = useMediaQuery("(min-width: 1100px)");
   const activeFilters = bands.length + kinds.length + filters.temporal.length + (filters.edgeScope === "evidence" ? 1 : 0) + (filters.currency ? 1 : 0);
-  // Open on wide screens and whenever a filter is active; on phones the graph comes first.
-  const [filtersOpen, setFiltersOpen] = useState(wide || activeFilters > 0);
+  // Closed unless a filter is active, on every screen size: the graph comes first (H-23). The summary shows how
+  // many filters are active, so a filtered view is never mistaken for the whole snapshot.
+  const [filtersOpen, setFiltersOpen] = useState(activeFilters > 0);
 
   useEffect(() => setDraft(account), [account]);
 

@@ -37,6 +37,8 @@ green on GitHub `[CI]`.
 endpoint — H-02, H-09), its fraud numbers are synthetic and come from scenarios written by the same team as
 the detectors (H-14), the camera mode has never seen a real hand (H-17), and the live demo predates all of
 the graph/gesture work and is unverified from here (H-22).
+*Update 2026-11-23*: the CSV import is off by default (B-010) and needs the `admin` role when on; writes need the
+`analyst` role (B-011). Still not safe for real data: every account reads every dataset (H-09 → B-019).
 
 **Most serious engineering risks** (detail in §16): H-01 two open PRs each define migration `0003` (merged
 separately → two Alembic heads; production is reportedly at `0003`); H-02/H-09 no authorization and an open
@@ -218,6 +220,13 @@ The integration branch resolved it by renumbering PR #3's migration to `0004` (`
 **The stranded fixes.** The benchmark-arithmetic and Evaluation-screen fixes (H-08) and the redesigned
 README/pitch live only on branches with no PR. They are not in the integration line.
 
+**Update 2026-11-25 (L-0020)** `[git]`: `graph-workspace-wip` was fast-forwarded from `0c8d21b` to `bd3868f`, so it is again
+identical to `claude/peaceful-darwin-nrquu9` and carries all B-001…B-041 work (54 commits ahead of the default branch at `bd3868f`, 0 behind);
+it is the working branch from this session on. B-003 ported `eloquent-planck`/`sharp-cannon` (their changes are in the line under
+new SHAs). New since the table above: **`feat/transfer-protection`** (2 commits on `ea5ca9c` by a collaborator, CI green on its
+branch, no PR) — not integrated, conflicts in 7 files and adds a second auth mechanism (H-26, B-056, decision D-12). Open PRs now
+also include Dependabot #16 (python minor/patch group).
+
 **Recommended path** (needs the owner, B-002): one PR from `graph-workspace-wip` to the default branch
 superseding #3/#5/#15, then port `eloquent-planck` (B-003) and `great-lovelace`/`admiring-fermat` (B-004);
 treat `peaceful-babbage` as dead. Do not merge, close or delete anything without approval.
@@ -295,7 +304,7 @@ remittance 5/20, payroll-with-spending 4/43 (H-16, `docs/LIMITATIONS.md`).
 * **Verified behaviour** `[local]`: 5 graph-workspace E2E (overview, table fallback, URL filters, determinism,
   light theme/narrow widths) pass, also against the production bundle.
 * **Measured limits** `[probe]`: layout blocks the main thread — 50 nodes 109 ms, 100 → 355 ms, **200 → 1,150 ms,
-  300 → 2,791 ms** (H-04); with a 20,000-peer hub in 200k rows the local view takes 215 ms (depth 1) to 640 ms
+  300 → 2,791 ms** (H-04; flawed probe, corrected in H-04; resolved by B-020); with a 20,000-peer hub in 200k rows the local view takes 215 ms (depth 1) to 640 ms
   (depth 2) but the database returns 40,000 aggregate rows to keep 398 edges, and depth 2 issues one query per
   depth-1 neighbour (H-06). Fixed this project: edge colours (CSS Color 4 tokens were rejected by Cytoscape,
   now `canvasColor.ts`).
@@ -347,19 +356,27 @@ PostgreSQL; the camera never crosses the browser boundary.
 | Uniform failures (no account enumeration), per-name and per-client throttling, gateway rate limits | `auth/service.py`, gateway template | reviewed `[code]` |
 | Gateway token on every non-health request; gateway fails closed | `api/main.py`, `docker/10-nexora-gateway.envsh` | `[CI]` fail-closed checks |
 | CSP (hash-pinned inline script), `X-Frame-Options`, `nosniff`, HSTS over HTTPS, `no-store` on API | `docker/csp.mjs`, API middleware | `[local]` generated headers, `[CI]` smoke |
+| Global roles `viewer` < `analyst` < `admin` (B-011): per-route `requires(...)`, app refuses to build if a write route declares none; role read from the user row per request; CLI-only role changes end the user's sessions and are audited | `auth/roles.py`, `api/deps.py`, migration `0005` | `[local]` matrix test over every OpenAPI operation × role |
+
+**Authorization matrix** (B-011; `tests/integration/test_authorization.py` pins it). Every `GET` under `/api` is open to
+every role. Writes: `POST /auth/logout` viewer · `POST /lab/datasets`, `/analysis/jobs`, `/cases`, `/cases/{id}/decisions`,
+`/cases/{id}/notes` analyst · `POST /datasets/import` admin (and only when `allow_csv_import` is on; decision D-11).
+User and role management: operator CLI only, no HTTP surface. Refusal: `403 FORBIDDEN_ROLE`, the same message for every
+route, after authentication, origin and CSRF checks and — for the import — before the upload is read. Roles are global:
+which datasets an account may see is B-019 (D-3); there is no tenant model to isolate yet.
 
 **Reviewed and found sound** (negative result N-4): constant-work failure paths, session fixation handling, token
 digests, CSRF derivation, route protection by default. No defect found in the authentication primitives.
 
-**Gaps** (§16): no authorization or tenancy (H-09); open CSV import (H-02); two DB sessions per request (H-10);
+**Gaps** (§16): no tenancy — every account reads every dataset (H-09, B-019); CSV import gated by flag and role (H-02); two DB sessions per request (H-10);
 no self-service password change, MFA or session list (H-21); no metrics/error tracking/backup drill/retention
 (H-20); Python dependencies never audited (H-07); no penetration test or threat-model review (`SECURITY.md`).
 
 **Threat model, condensed** — *Asset*: investigation data and case decisions. *Actors*: anonymous internet,
 signed-in analyst (over-privileged today), malicious page (CSRF), supply chain (npm/PyPI/model asset), a user's
 own camera. *Top threats and state*: anonymous access → mitigated (default-deny, gateway token); CSRF → mitigated;
-brute force → mitigated (approximate under bursts, per `SECURITY.md`); privilege abuse by any analyst →
-**unmitigated** (H-09); real data in a demo → **unmitigated** (H-02); open redirect via router → **open** (H-07);
+brute force → mitigated (approximate under bursts, per `SECURITY.md`); writes by read-only reviewers → mitigated
+by roles (B-011); cross-dataset reading by any account → **unmitigated** (H-09, B-019); real data in a demo → **unmitigated** (H-02); open redirect via router → **open** (H-07);
 camera exfiltration → mitigated by two independent layers (guard + CSP), verified by E2E; poisoned model/WASM →
 mitigated by SHA-256 pins; denial of service via large graph/import → bounded by caps (probe: 200k rows in 22.5 s).
 
@@ -486,6 +503,10 @@ returns one. *Impact*: error lines — the ones needed — break log pipelines; 
 the instance; the gesture frame loop shares the thread. *Root cause*: synchronous force layout, no caching. *Impact*: UI
 stalls 1–3 s per filter change/expansion; 400-node extrapolation > 5 s (not measured). *Fix*: B-020. *Test*: long-task
 assertion at 300 nodes. *Cost* M.
+*Correction 2026-11-23 (L-0016)*: the `cose_layout.mjs` figures above came from a probe whose instance had no `layout` option
+and no style — every node started at (0, 0) at 1 px and cose broke the ties with `Math.random()` (89,700 draws at 300 nodes).
+Corrected probe: 200 nodes 779 ms, 300 → 1,948 ms, 400 → 3,138 ms. The conclusion stands (seconds of blocking at the
+workspace's sizes; the browser measurements in L-0011 confirm it); H-04 is resolved by B-020.
 
 **H-05 · P2 · Camera is turned on before the model is loaded.** *Evidence* `[code]` `gestureSession.ts` `start()` awaits
 `camera.start` then `engine.start`; observed status sequence starting → loading → calibrating with the camera live from
@@ -513,15 +534,61 @@ double-rounds; CLAUDE.md forbids quoting unproduced metrics. *Fix*: B-003 (regen
 recompute every summary from counts. *Cost* M.
 
 **H-23 · P3 · Graph stage below the fold at 1440 × 900** (stage starts ≈ y 580 of 900; observed in a screenshot this
-project) → B-022. **H-24 · P3 · `apps/web` has no ESLint** (`apps/pitch` does) `[code]` → B-053.
+project) → B-022 — **fixed** L-0026 (filters closed unless active: stage y 580 → 500, 72 % of it visible). **H-24 · P3 · `apps/web` has no ESLint** (`apps/pitch` does) `[code]` → B-053.
+
+**H-25 · P3 · Ground-truth lists name accounts that never transact** (found 2026-11-23 by the `sealed-gen-v2` data
+checks, L-0015; scope re-measured in L-0017). *Evidence* `[local]`, summed over each split's datasets, accounts absent
+from every row / listed: `sealed-gen-v1` (`sealed`) suspicious 4/1,740 (`SX8_mule_distribution`), legitimate-only
+45/5,099 (mostly `LX2_marketplace_with_refunds`), declared boundary 9/872; development generator (suite `bench-v1`,
+behind `bench-v1.json` and the dev evaluation) holdout suspicious 1/735 (`S3_coordinated_distribution`), legitimate-only
+dev 25/1,809, validation 10/1,202, holdout 17/1,810 (`N2`/`N3`/`N4`/`N7` families), suspicious and boundary 0 elsewhere;
+`sealed-gen-v2` 0 everywhere. *Reproduce*: `tests/unit/test_truth_account_presence.py` (pins these counts).
+*Root cause*: some builders allocate accounts and list them before a random draw decides whether any transfer uses
+them (e.g. `sx_distribution`: each mule pays an exit with probability 0.85); v2's builders were fixed before its lock,
+v1 and the development generator are frozen. *Impact*: only **account-level
+recall** — an absent suspicious account is a positive no method can flag. Published: `bench-v1` holdout account
+recall is understated by at most 0.0013 (B3 686/735 = 0.9333 vs 686/734 = 0.9346; nexora_v2 0.7401 vs 0.7411), the
+method ordering is unchanged, dev and validation are unaffected, and no README or pitch figure uses account metrics.
+`sealed-evaluation.json` (sealed-v1) carries no account-level metrics. Unaffected by construction: network/scenario
+metrics (absent accounts never enter a review item and every scenario keeps ≥ 2 transacting accounts, asserted by the
+same test), false-positive counts and account precision (an absent account is never flagged), sealed-v2 results.
+*Fix*: B-048 — never by editing frozen generators or hand-editing artifacts. *Cost* S + protocol amendment.
+
+**H-26 · P1 · Unintegrated collaborator feature with a second authentication mechanism** (found 2026-11-25, L-0020).
+*Evidence* `[git]`: `origin/feat/transfer-protection` (`1652880`, `43368ff`, author outside the agent sessions, CI run 85
+green on that branch) branches from `ea5ca9c`, not from the integration line; it adds `POST /api/v1/demo/transfer-checks`
+(no authentication) and `POST /api/v1/demo/transfer-checks/evidence` guarded by a static header
+`X-Nexora-Transfer-Analyst-Token` compared with an environment variable. *Reproduce*: `git show origin/feat/transfer-protection:<path>` for
+`src/nexora/api/routes/transfer_checks.py` (new, on that branch only); a trial `git merge --no-commit` onto the
+integration line in a scratch worktree conflicts in 7 files. *Root cause*: parallel development from the default branch
+while the integration line was never merged (see §6, B-002). *Impact*: merging as-is either stops the app at build (B-011's
+deny-by-default check refuses a write route without a role) or, if forced, adds unauthenticated writes and a shared static
+secret beside named-account sessions and CSRF. *Fix*: B-056 after decision D-12. *Cost* M.
+
+**H-27 · P2 · Headline figures describe an older configuration than this branch ships** (found 2026-11-25, L-0021).
+*Evidence* `[code]`: `benchmarks/results/bench-v1.json` records `"policy_version": "risk-policy-v2"` (config sha
+`489b477a…`), while `configs/risk_policy.yaml` is `risk-policy-v3`; the redesigned README and pitch presented the
+`bench-v1` table as "NEXORA" without the version. The live demo runs `f29ae56` (v2), so the pitch matches what is
+deployed, but not this branch. *Fix (partial, B-004)*: every such figure is now labelled v2, the README adds the
+pre-registered `sealed-v2` result of v3, and `tests/unit/test_readme_numbers.py` recomputes every quoted figure from
+its artifact. *Remaining*: B-057 after deployment (B-055). *Cost* S.
+
+**H-28 · P2 · A session that ended while a screen was loading lost the return target** (found 2026-11-25, CI run 88,
+L-0023; **fixed** in `db19947`). *Evidence* `[CI]` `[local]`: `auth.spec.ts` "an ended session…" received
+`/login?reason=expired` instead of `/login?next=%2Flab&reason=expired`. *Reproduce*: hold the `/lab` chunk, clear the cookies,
+click, dispatch `visibilitychange` — fails on every run before the fix. *Root cause*: since B-012 (react-router v7) navigations
+run in a transition; while a lazy screen loads, `useLocation()` still reports the previous location, and the urgent expiry
+update made `RequireAuth` build the return target from it. *Impact*: after expiry the analyst was returned to the previous
+screen, not the one they had opened; an intermittent CI failure. *Fix*: the guard reads `window.location`; regression test
+"a session that ends while the next screen is still loading…" (fails 3/3 without the fix). *Cost* S.
 
 ### 16.2 Design risks
 
 | ID | Sev | Risk and evidence | Impact | Fix / verify |
 |---|---|---|---|---|
-| H-09 | P1 | No authorization or tenancy: `Dataset` and other tables have no owner; no route uses the principal for *authorization* (case and analysis routes use it only to attribute audit events via `actor`) `[code]`; audit F-05 still open | any analyst reads/changes everything; blocks multi-user and real data | B-011 roles, B-019 isolation (decision D-3) |
+| H-09 | P1 | No authorization or tenancy: `Dataset` and other tables have no owner; no route uses the principal for *authorization* (case and analysis routes use it only to attribute audit events via `actor`) `[code]`; audit F-05 still open | any analyst reads/changes everything; blocks multi-user and real data | B-011 roles (done 2026-11-23: writes need `analyst`, import `admin`), B-019 isolation (decision D-3) — reading is still unrestricted |
 | H-10 | P2 | `enforce_authentication` opens its own DB session and `SessionDep` another → up to 2 connections per request, pool 5 + 5 `[code]`, unmeasured | latency cliff under concurrent dashboards | B-017: measure first |
-| H-11 | P1 | No cross-view alert grouping: a funnel and a fan-out on one hub open separate alerts `[code]`; sealed alerts per flagged network 1.232 (candidate) vs 1.667 `[doc]` | repeated review of one hub | B-042 (query-time grouping) |
+| H-11 | P1 | No cross-view alert grouping: a funnel and a fan-out on one hub open separate alerts `[code]`; sealed alerts per flagged network 1.232 (candidate) vs 1.667 `[doc]` | repeated review of one hub | B-042 (query-time grouping) — **addressed** L-0025: groups shown in queue and investigation; bench-v1 dev 1.39 → 1.02 review units per flagged network, validation 1.19 → 1.00, 0 wrong merges (probe `alert_grouping.py`) |
 | H-12 | P1 | No entity-level, PR-curve or calibration metrics (grep: none); priority uncalibrated | cannot compare fairly with account-level baselines or state what a band means | B-041 |
 | H-13 | P2 | `NETWORK_CONTEXT` weight 0.15 is never produced (only a `Literal` and the policy mention it) → priority ceiling 85; `critical` (≥ 80) needs 94 % of it `[code]` | scale whose top is barely reachable | B-046: measure band distribution, decide |
 | H-14 | P1 | Benchmark validity: `sealed-v1` consumed; hypothesis gate designed against archetypes the generator contains; all synthetic; families of tens; abstention alerts ~69 % non-fraud `[doc]` | tuning on it is test-set selection; gains may not transfer | B-040 sealed-v2, B-045 adversarial suite |
@@ -611,6 +678,8 @@ read-only command port; layout is seeded and deterministic; the Railway token is
 | D-8 | Browser support policy for gestures | Chromium-only with explicit messaging (recommended until B-032) · broader | B-032 |
 | D-9 | CSP violation reporting | skip (keeps the public surface at two routes) · add an unauthenticated report endpoint | B-016 |
 | D-10 | Near-real-time requirement | owner states a latency target · otherwise stay batch | B-054 |
+| D-11 | Minimum role for CSV import (when enabled) | `admin` (assumed by B-011: real data enters a system without per-dataset isolation) · `analyst` (one line in `routes/datasets.py` plus the matrix test) | — |
+| D-12 | Authentication model for the transfer-protection demo (H-26) | client check as a signed-in `viewer` route and evidence as `analyst`, both on sessions + CSRF (recommended) · a deliberately public client-check route with rate limiting and its own threat-model entry; never a static shared header | B-056 |
 
 ---
 
@@ -630,6 +699,8 @@ Details, acceptance criteria and tests are in `EXECUTION_BACKLOG.md`.
 `*` human-gated. Fraud-intelligence rule: B-040 (sealed-v2) and B-041 (metrics) come **before** B-043/B-044/B-046.
 
 ## 22. Risks and mitigations
+
+Superseded by the live register [`RISK_REGISTER.md`](RISK_REGISTER.md) (L-0020); the table below is kept for history.
 
 | Risk | Likelihood / impact | Mitigation |
 |---|---|---|

@@ -652,6 +652,7 @@ export interface components {
              */
             first_seen: string;
             formation: components["schemas"]["FormationDetail"];
+            group: components["schemas"]["AlertGroup"];
             hypotheses?: components["schemas"]["HypothesisAssessment"] | null;
             /** Id */
             id: string;
@@ -662,6 +663,8 @@ export interface components {
              * Format: date-time
              */
             last_seen: string;
+            /** Related Alerts */
+            related_alerts?: components["schemas"]["RelatedAlert"][];
             /** Revision */
             revision: number;
             risk: components["schemas"]["RiskDetail"];
@@ -680,6 +683,29 @@ export interface components {
             /** Transaction Count */
             transaction_count: number;
         };
+        /**
+         * AlertGroup
+         * @description Alerts of one snapshot whose formations share an account (B-042). A read-side view: grouping never merges,
+         *     alters or hides an alert; a group of one means no related alert.
+         */
+        AlertGroup: {
+            /**
+             * Id
+             * @description Content-derived id of the group: same alerts, same id
+             */
+            id: string;
+            /**
+             * Size
+             * @description Number of alerts in the group, including this one
+             */
+            size: number;
+            /**
+             * Top Band
+             * @description Strongest risk band among the group's alerts
+             * @enum {string}
+             */
+            top_band: "critical" | "high" | "medium" | "low" | "insufficient_evidence";
+        };
         /** AlertMetrics */
         AlertMetrics: {
             /** Flagged */
@@ -692,6 +718,8 @@ export interface components {
             per_flagged_network?: number | null;
             /** Precision */
             precision: number | null;
+            /** Relevant */
+            relevant?: number | null;
             /** Unmatched */
             unmatched: number;
         };
@@ -738,6 +766,7 @@ export interface components {
              */
             first_seen: string;
             formation: components["schemas"]["FormationSummary"];
+            group: components["schemas"]["AlertGroup"];
             /** Id */
             id: string;
             /** In Latest Snapshot */
@@ -812,8 +841,26 @@ export interface components {
         AuthUser: {
             /** Display Name */
             display_name: string;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "viewer" | "analyst" | "admin";
             /** Username */
             username: string;
+        };
+        /** BandReliability */
+        BandReliability: {
+            /** Band */
+            band: string;
+            /** Items */
+            items: number;
+            /** Planted */
+            planted: number;
+            /** Share */
+            share: number | null;
+            /** Wilson95 */
+            wilson95: number[] | null;
         };
         /** Body_import_csv_api_v1_datasets_import_post */
         Body_import_csv_api_v1_datasets_import_post: {
@@ -1009,6 +1056,64 @@ export interface components {
              * @enum {string}
              */
             to_status: "new" | "investigating" | "escalated" | "dismissed" | "closed" | "reopened";
+        };
+        /** EntityAccounts */
+        EntityAccounts: {
+            /** Flagged */
+            flagged: number;
+            /** Fn */
+            fn: number;
+            /** Fp */
+            fp: number;
+            /** Fp Labelled Legitimate */
+            fp_labelled_legitimate: number;
+            /** Fp Unlabelled */
+            fp_unlabelled: number;
+            /** Positive */
+            positive: number;
+            /** Precision */
+            precision: number | null;
+            /** Recall */
+            recall: number | null;
+            /** Tp */
+            tp: number;
+        };
+        /** EntityBootstrap */
+        EntityBootstrap: {
+            /** Account Precision */
+            account_precision: number[] | null;
+            /** Account Recall */
+            account_recall: number[] | null;
+            /** Average Precision */
+            average_precision: number[] | null;
+            /** Draws */
+            draws: number;
+            /** Seed */
+            seed: number;
+        };
+        /**
+         * EntityMetrics
+         * @description Account-level, ranking and band-reliability metrics (synthetic data; see evaluation/entity_metrics.py).
+         */
+        EntityMetrics: {
+            accounts: components["schemas"]["EntityAccounts"];
+            bootstrap?: components["schemas"]["EntityBootstrap"] | null;
+            ranking: components["schemas"]["EntityRanking"];
+            /** Reliability */
+            reliability: components["schemas"]["BandReliability"][] | null;
+        };
+        /** EntityRanking */
+        EntityRanking: {
+            /** Average Precision */
+            average_precision: number | null;
+            /** Curve */
+            curve: components["schemas"]["RankingPoint"][];
+            /** Networks Reached */
+            networks_reached: number;
+            /** Queued Items */
+            queued_items: number;
+            /** Suspicious Networks */
+            suspicious_networks: number;
         };
         /** ErrorBody */
         ErrorBody: {
@@ -1690,6 +1795,7 @@ export interface components {
             };
             /** Datasets */
             datasets: number;
+            entity?: components["schemas"]["EntityMetrics"] | null;
             integrity?: components["schemas"]["IntegrityMetrics"] | null;
             latency_ms: components["schemas"]["LatencyMs"];
             queue: components["schemas"]["QueueMetrics"];
@@ -1771,6 +1877,13 @@ export interface components {
             /** Recall At 5 */
             recall_at_5: number | null;
         };
+        /** RankingPoint */
+        RankingPoint: {
+            /** Items */
+            items: number;
+            /** Networks */
+            networks: number;
+        };
         /** ReasonCode */
         ReasonCode: {
             /** Code */
@@ -1779,6 +1892,30 @@ export interface components {
             params?: {
                 [key: string]: unknown;
             };
+        };
+        /** RelatedAlert */
+        RelatedAlert: {
+            /**
+             * Band
+             * @enum {string}
+             */
+            band: "critical" | "high" | "medium" | "low" | "insufficient_evidence";
+            /** Id */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "funnel" | "chain" | "fan_out" | "cycle";
+            /** Priority */
+            priority: number | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "open" | "in_case" | "closed";
+            /** Subject Account Id */
+            subject_account_id: string;
         };
         /** Risk */
         Risk: {
@@ -1836,6 +1973,8 @@ export interface components {
             fnr: number | null;
             /** Fp */
             fp: number;
+            /** Fp High */
+            fp_high?: number | null;
             /** Fpr */
             fpr: number | null;
             /** High Band Fpr */
@@ -1856,6 +1995,8 @@ export interface components {
             tn: number;
             /** Tp */
             tp: number;
+            /** Tp High */
+            tp_high?: number | null;
         };
         /** Sensitivity */
         Sensitivity: {

@@ -190,6 +190,24 @@ class RiskDetail(Risk):
     policy_sha256: str
 
 
+class AlertGroup(Model):
+    """Alerts of one snapshot whose formations share an account (B-042). A read-side view: grouping never merges,
+    alters or hides an alert; a group of one means no related alert."""
+
+    id: str = Field(description="Content-derived id of the group: same alerts, same id")
+    size: int = Field(ge=1, description="Number of alerts in the group, including this one")
+    top_band: Band = Field(description="Strongest risk band among the group's alerts")
+
+
+class RelatedAlert(Model):
+    id: str
+    status: Literal["open", "in_case", "closed"]
+    kind: FormationKind
+    subject_account_id: str
+    band: Band
+    priority: int | None
+
+
 class AlertSummary(Model):
     id: str
     dataset_id: str
@@ -207,6 +225,7 @@ class AlertSummary(Model):
     transaction_count: int
     case_id: str | None
     case_status: str | None
+    group: AlertGroup
 
 
 class AlertPage(Page):
@@ -302,6 +321,8 @@ class AlertDetail(AlertSummary):
     snapshot: Snapshot
     # Additive (hypotheses-v1): null for chain/cycle formations and for snapshots analysed before v3.
     hypotheses: HypothesisAssessment | None = None
+    # B-042: the other alerts of this alert's group, strongest band first.
+    related_alerts: list[RelatedAlert] = Field(default_factory=list)
 
 
 class EvidenceChain(Model):
@@ -541,6 +562,10 @@ class ScenarioMetrics(Model):
     fpr: float | None
     fnr: float | None
     surfaced_recall: float | None
+    # Numerators of the high-band ratios; None for unbanded methods and for artifacts
+    # produced before these counts were emitted.
+    tp_high: int | None = None
+    fp_high: int | None = None
     high_band_recall: float | None
     high_band_fpr: float | None
 
@@ -548,6 +573,8 @@ class ScenarioMetrics(Model):
 class AlertMetrics(Model):
     flagged: int
     per_dataset: float | None
+    # Flagged items matching a suspicious scenario (numerator of precision); absent in older artifacts.
+    relevant: int | None = None
     precision: float | None
     unmatched: int
     # Audit additions (optional so artifacts written before them still validate).
@@ -587,6 +614,56 @@ class LatencyMs(Model):
     max: float | None
 
 
+class EntityAccounts(Model):
+    positive: int
+    flagged: int
+    tp: int
+    fp: int
+    fn: int
+    fp_labelled_legitimate: int
+    fp_unlabelled: int
+    recall: float | None
+    precision: float | None
+
+
+class RankingPoint(Model):
+    items: int
+    networks: int
+
+
+class EntityRanking(Model):
+    suspicious_networks: int
+    queued_items: int
+    networks_reached: int
+    average_precision: float | None
+    curve: list[RankingPoint]
+
+
+class BandReliability(Model):
+    band: str
+    items: int
+    planted: int
+    share: float | None
+    wilson95: list[float] | None
+
+
+class EntityBootstrap(Model):
+    draws: int
+    seed: int
+    account_recall: list[float] | None
+    account_precision: list[float] | None
+    average_precision: list[float] | None
+
+
+class EntityMetrics(Model):
+    """Account-level, ranking and band-reliability metrics (synthetic data; see evaluation/entity_metrics.py)."""
+
+    accounts: EntityAccounts
+    ranking: EntityRanking
+    reliability: list[BandReliability] | None
+    bootstrap: EntityBootstrap | None = None
+
+
 class MethodSummary(Model):
     datasets: int
     scenario: ScenarioMetrics
@@ -596,6 +673,8 @@ class MethodSummary(Model):
     latency_ms: LatencyMs
     abstention: AbstentionMetrics | None = None
     integrity: IntegrityMetrics | None = None
+    # Added by B-041; absent in artifacts written before it.
+    entity: EntityMetrics | None = None
 
 
 class EvaluationMethod(Model):
@@ -707,6 +786,9 @@ class LoginRequest(Model):
 class AuthUser(Model):
     username: str
     display_name: str
+    # viewer < analyst < admin (nexora.auth.roles). The client hides actions the role cannot take;
+    # the server enforces them regardless.
+    role: Literal["viewer", "analyst", "admin"]
 
 
 class AuthSession(Model):

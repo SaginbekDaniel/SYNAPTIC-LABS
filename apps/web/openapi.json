@@ -289,6 +289,9 @@
           "formation": {
             "$ref": "#/components/schemas/FormationDetail"
           },
+          "group": {
+            "$ref": "#/components/schemas/AlertGroup"
+          },
           "hypotheses": {
             "anyOf": [
               {
@@ -311,6 +314,13 @@
             "format": "date-time",
             "title": "Last Seen",
             "type": "string"
+          },
+          "related_alerts": {
+            "items": {
+              "$ref": "#/components/schemas/RelatedAlert"
+            },
+            "title": "Related Alerts",
+            "type": "array"
           },
           "revision": {
             "title": "Revision",
@@ -375,12 +385,49 @@
           "transaction_count",
           "case_id",
           "case_status",
+          "group",
           "coverage",
           "signals",
           "evidence",
           "snapshot"
         ],
         "title": "AlertDetail",
+        "type": "object"
+      },
+      "AlertGroup": {
+        "additionalProperties": false,
+        "description": "Alerts of one snapshot whose formations share an account (B-042). A read-side view: grouping never merges,\nalters or hides an alert; a group of one means no related alert.",
+        "properties": {
+          "id": {
+            "description": "Content-derived id of the group: same alerts, same id",
+            "title": "Id",
+            "type": "string"
+          },
+          "size": {
+            "description": "Number of alerts in the group, including this one",
+            "minimum": 1.0,
+            "title": "Size",
+            "type": "integer"
+          },
+          "top_band": {
+            "description": "Strongest risk band among the group's alerts",
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low",
+              "insufficient_evidence"
+            ],
+            "title": "Top Band",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "size",
+          "top_band"
+        ],
+        "title": "AlertGroup",
         "type": "object"
       },
       "AlertMetrics": {
@@ -433,6 +480,17 @@
               }
             ],
             "title": "Precision"
+          },
+          "relevant": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relevant"
           },
           "unmatched": {
             "title": "Unmatched",
@@ -544,6 +602,9 @@
           "formation": {
             "$ref": "#/components/schemas/FormationSummary"
           },
+          "group": {
+            "$ref": "#/components/schemas/AlertGroup"
+          },
           "id": {
             "title": "Id",
             "type": "string"
@@ -609,7 +670,8 @@
           "evidence_count",
           "transaction_count",
           "case_id",
-          "case_status"
+          "case_status",
+          "group"
         ],
         "title": "AlertSummary",
         "type": "object"
@@ -756,6 +818,15 @@
             "title": "Display Name",
             "type": "string"
           },
+          "role": {
+            "enum": [
+              "viewer",
+              "analyst",
+              "admin"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
           "username": {
             "title": "Username",
             "type": "string"
@@ -763,9 +834,61 @@
         },
         "required": [
           "username",
-          "display_name"
+          "display_name",
+          "role"
         ],
         "title": "AuthUser",
+        "type": "object"
+      },
+      "BandReliability": {
+        "additionalProperties": false,
+        "properties": {
+          "band": {
+            "title": "Band",
+            "type": "string"
+          },
+          "items": {
+            "title": "Items",
+            "type": "integer"
+          },
+          "planted": {
+            "title": "Planted",
+            "type": "integer"
+          },
+          "share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Share"
+          },
+          "wilson95": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wilson95"
+          }
+        },
+        "required": [
+          "band",
+          "items",
+          "planted",
+          "share",
+          "wilson95"
+        ],
+        "title": "BandReliability",
         "type": "object"
       },
       "Body_import_csv_api_v1_datasets_import_post": {
@@ -1396,6 +1519,225 @@
           "expected_version"
         ],
         "title": "DecisionRequest",
+        "type": "object"
+      },
+      "EntityAccounts": {
+        "additionalProperties": false,
+        "properties": {
+          "flagged": {
+            "title": "Flagged",
+            "type": "integer"
+          },
+          "fn": {
+            "title": "Fn",
+            "type": "integer"
+          },
+          "fp": {
+            "title": "Fp",
+            "type": "integer"
+          },
+          "fp_labelled_legitimate": {
+            "title": "Fp Labelled Legitimate",
+            "type": "integer"
+          },
+          "fp_unlabelled": {
+            "title": "Fp Unlabelled",
+            "type": "integer"
+          },
+          "positive": {
+            "title": "Positive",
+            "type": "integer"
+          },
+          "precision": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Precision"
+          },
+          "recall": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recall"
+          },
+          "tp": {
+            "title": "Tp",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "positive",
+          "flagged",
+          "tp",
+          "fp",
+          "fn",
+          "fp_labelled_legitimate",
+          "fp_unlabelled",
+          "recall",
+          "precision"
+        ],
+        "title": "EntityAccounts",
+        "type": "object"
+      },
+      "EntityBootstrap": {
+        "additionalProperties": false,
+        "properties": {
+          "account_precision": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Precision"
+          },
+          "account_recall": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Recall"
+          },
+          "average_precision": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Average Precision"
+          },
+          "draws": {
+            "title": "Draws",
+            "type": "integer"
+          },
+          "seed": {
+            "title": "Seed",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "draws",
+          "seed",
+          "account_recall",
+          "account_precision",
+          "average_precision"
+        ],
+        "title": "EntityBootstrap",
+        "type": "object"
+      },
+      "EntityMetrics": {
+        "additionalProperties": false,
+        "description": "Account-level, ranking and band-reliability metrics (synthetic data; see evaluation/entity_metrics.py).",
+        "properties": {
+          "accounts": {
+            "$ref": "#/components/schemas/EntityAccounts"
+          },
+          "bootstrap": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EntityBootstrap"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ranking": {
+            "$ref": "#/components/schemas/EntityRanking"
+          },
+          "reliability": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/BandReliability"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reliability"
+          }
+        },
+        "required": [
+          "accounts",
+          "ranking",
+          "reliability"
+        ],
+        "title": "EntityMetrics",
+        "type": "object"
+      },
+      "EntityRanking": {
+        "additionalProperties": false,
+        "properties": {
+          "average_precision": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Average Precision"
+          },
+          "curve": {
+            "items": {
+              "$ref": "#/components/schemas/RankingPoint"
+            },
+            "title": "Curve",
+            "type": "array"
+          },
+          "networks_reached": {
+            "title": "Networks Reached",
+            "type": "integer"
+          },
+          "queued_items": {
+            "title": "Queued Items",
+            "type": "integer"
+          },
+          "suspicious_networks": {
+            "title": "Suspicious Networks",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "suspicious_networks",
+          "queued_items",
+          "networks_reached",
+          "average_precision",
+          "curve"
+        ],
+        "title": "EntityRanking",
         "type": "object"
       },
       "ErrorBody": {
@@ -3230,6 +3572,16 @@
             "title": "Datasets",
             "type": "integer"
           },
+          "entity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EntityMetrics"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "integrity": {
             "anyOf": [
               {
@@ -3501,6 +3853,25 @@
         "title": "QueueMetrics",
         "type": "object"
       },
+      "RankingPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "title": "Items",
+            "type": "integer"
+          },
+          "networks": {
+            "title": "Networks",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "networks"
+        ],
+        "title": "RankingPoint",
+        "type": "object"
+      },
       "ReasonCode": {
         "additionalProperties": false,
         "properties": {
@@ -3518,6 +3889,70 @@
           "code"
         ],
         "title": "ReasonCode",
+        "type": "object"
+      },
+      "RelatedAlert": {
+        "additionalProperties": false,
+        "properties": {
+          "band": {
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low",
+              "insufficient_evidence"
+            ],
+            "title": "Band",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "funnel",
+              "chain",
+              "fan_out",
+              "cycle"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "priority": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priority"
+          },
+          "status": {
+            "enum": [
+              "open",
+              "in_case",
+              "closed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "subject_account_id": {
+            "title": "Subject Account Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "kind",
+          "subject_account_id",
+          "band",
+          "priority"
+        ],
+        "title": "RelatedAlert",
         "type": "object"
       },
       "Risk": {
@@ -3708,6 +4143,17 @@
             "title": "Fp",
             "type": "integer"
           },
+          "fp_high": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fp High"
+          },
           "fpr": {
             "anyOf": [
               {
@@ -3789,6 +4235,17 @@
           "tp": {
             "title": "Tp",
             "type": "integer"
+          },
+          "tp_high": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tp High"
           }
         },
         "required": [

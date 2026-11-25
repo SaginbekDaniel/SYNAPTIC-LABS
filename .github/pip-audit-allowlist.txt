@@ -1,0 +1,3 @@
+# Python advisories the production audit may ignore. Read by scripts/audit_allowlist.py.
+# One entry per line:  <advisory id>  <expiry YYYY-MM-DD>  <reason: why not fixable yet, what will fix it>
+# An expired, malformed or unexplained entry fails the audit. Keep this list empty whenever possible.

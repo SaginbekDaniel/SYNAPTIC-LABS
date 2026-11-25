@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router";
+import { useCan } from "../../app/auth";
 import { SegmentedMeter } from "../../components/charts/Progress";
 import { GraphCanvas, GraphLegend, type GraphEdgeSpec, type NodeRole } from "../../components/graph/GraphCanvas";
 import { AccountId, BandBadge, CaseStatusBadge, Disclosure, ErrorState, EvidenceBadge, Icon, Loading, Panel, TxTable } from "../../components/ui";
@@ -9,7 +10,7 @@ import { t } from "../../lib/i18n";
 import type { AlertDetail, EvidenceChain, ReasonCode } from "../../lib/types";
 import { useMediaQuery } from "../../lib/useMediaQuery";
 import { useApi } from "../../lib/useApi";
-import { alertTitle } from "../alerts/alertText";
+import { alertTitle, formationTitle } from "../alerts/alertText";
 import { CasePanel, useOpenCase } from "./CasePanel";
 import { AccountView, EdgeView, SummaryView, type Highlight, type Selection } from "./ContextPanel";
 import { evidenceForReason, evidenceOfFamily } from "./evidence";
@@ -50,6 +51,7 @@ function Workspace({
   const [selection, setSelection] = useState<Selection>(null);
   const [openedCase, setOpenedCase] = useState<string | null>(null);
   const caseId = a.case_id ?? openedCase;
+  const canAct = useCan("analyst");
   const opener = useOpenCase(a.id, (id) => {
     setOpenedCase(id);
     reloadAlert();
@@ -118,6 +120,23 @@ function Workspace({
                   {formatDate(f.window_start)} — {formatDate(f.window_end)}
                 </dd>
               </div>
+              {a.related_alerts && a.related_alerts.length > 0 && (
+                <div className="inv-head__related">
+                  <dt title={t("alert.relatedHint")}>{t("alert.related")}</dt>
+                  <dd>
+                    <ul className="related-alerts" data-testid="related-alerts">
+                      {a.related_alerts.map((r) => (
+                        <li key={r.id}>
+                          <Link to={`/alerts/${r.id}`} className="related-alerts__link">
+                            <BandBadge band={r.band} size="sm" />
+                            <span>{formationTitle(r.kind, r.subject_account_id)}</span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </dd>
+                </div>
+              )}
             </dl>
           </div>
           <div className="inv-head__side">
@@ -140,12 +159,12 @@ function Workspace({
                 <Icon name="cases" size={16} />
                 {t("case.toDecision")}
               </a>
-            ) : (
+            ) : canAct ? (
               <button type="button" className="btn btn--primary" disabled={opener.opening} data-testid="open-case" onClick={() => void opener.open()}>
                 <Icon name="cases" size={16} />
                 {opener.opening ? t("case.opening") : t("case.open")}
               </button>
-            )}
+            ) : null}
           </div>
         </div>
         {opener.error && <ErrorState error={opener.error} />}

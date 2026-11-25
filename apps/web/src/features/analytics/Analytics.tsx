@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useDataset } from "../../app/dataset";
 import { Donut } from "../../components/charts/Donut";
 import { BarList, ColumnChart } from "../../components/charts/Progress";

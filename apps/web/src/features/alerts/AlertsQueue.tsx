@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import { useDataset } from "../../app/dataset";
 import { AccountId, BandBadge, bandIcon, CaseStatusBadge, Empty, ErrorState, EvidenceBadge, Icon, Loading, NoDataset, PageHeader, Segmented } from "../../components/ui";
 import { api } from "../../lib/api";
@@ -304,6 +304,7 @@ function AlertRow({ alert, selected, onClick }: { alert: AlertSummary; selected:
           </span>
           {alert.coverage_limitations.includes("boundary_limited") && <span>{tDynamic("lim.", "boundary_limited")}</span>}
           {!alert.in_latest_snapshot && <span>{t("alerts.notInLatest")}</span>}
+          {alert.group.size > 1 && <span data-testid="alert-related">{t("alerts.related", { count: alert.group.size - 1 })}</span>}
         </span>
       </span>
       <span className="alert-row__status">

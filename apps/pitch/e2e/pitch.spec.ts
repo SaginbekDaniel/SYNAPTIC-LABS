@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const STEPS = [4, 6, 8, 5, 4, 1];
+const STEPS = [1, 2, 3, 2, 3, 3, 2];
 const go = async (page: Page, slide: number, step = 1) => {
   await page.goto(`/#/${slide}/${step}`);
   await page.reload();
@@ -11,22 +11,25 @@ const announce = (page: Page) => page.getByTestId("announce");
 test.describe("navigation engine", () => {
   test("keyboard: arrows, space, shift+arrows, numbers, home/end, restart", async ({ page }) => {
     await page.goto("/");
-    await expect(announce(page)).toContainText("Слайд 1 из 6");
-    await page.keyboard.press("ArrowRight");
+    await expect(announce(page)).toContainText("Слайд 1 из 7");
+    await page.keyboard.press("ArrowRight"); // slide 1 has one state
+    await expect(page).toHaveURL(/#\/2\/1$/);
     await page.keyboard.press("Space");
-    await expect(page).toHaveURL(/#\/1\/3$/);
-    for (let i = 0; i < 2; i++) await page.keyboard.press("ArrowRight"); // 1/4 then slide 2
-    await expect(page).toHaveURL(/#\/2\/1$/);
-    await page.keyboard.press("ArrowLeft"); // back lands on the finished state of slide 1
-    await expect(page).toHaveURL(/#\/1\/4$/);
+    await expect(page).toHaveURL(/#\/2\/2$/);
+    await page.keyboard.press("ArrowRight");
+    await expect(page).toHaveURL(/#\/3\/1$/);
+    await page.keyboard.press("ArrowLeft"); // back lands on the finished state of slide 2
+    await expect(page).toHaveURL(/#\/2\/2$/);
     await page.keyboard.press("Shift+ArrowRight");
-    await expect(page).toHaveURL(/#\/2\/1$/);
+    await expect(page).toHaveURL(/#\/3\/1$/);
     await page.keyboard.press("4");
-    await expect(announce(page)).toContainText("Слайд 4 из 6");
+    await expect(announce(page)).toContainText("Слайд 4 из 7");
     await page.keyboard.press("End");
-    await expect(page).toHaveURL(/#\/6\/1$/);
+    await expect(page).toHaveURL(/#\/7\/1$/);
+    await page.keyboard.press("ArrowRight");
+    await expect(page).toHaveURL(/#\/7\/2$/);
     await page.keyboard.press("ArrowRight"); // no-op at the end
-    await expect(page).toHaveURL(/#\/6\/1$/);
+    await expect(page).toHaveURL(/#\/7\/2$/);
     await page.keyboard.press("Home");
     await expect(page).toHaveURL(/#\/1\/1$/);
     await page.keyboard.press("5");
@@ -35,11 +38,11 @@ test.describe("navigation engine", () => {
   });
 
   test("deep links restore exact state and the hash follows navigation", async ({ page }) => {
-    await go(page, 3, 7);
-    await expect(announce(page)).toContainText("Слайд 3 из 6");
-    await expect(page.getByRole("button", { name: "Легитимное", exact: true })).toBeVisible();
+    await go(page, 6, 2);
+    await expect(announce(page)).toContainText("Слайд 6 из 7");
+    await expect(announce(page)).toContainText("Шаг 2 из 3");
     await page.keyboard.press("ArrowRight");
-    await expect(page).toHaveURL(/#\/3\/8$/);
+    await expect(page).toHaveURL(/#\/6\/3$/);
   });
 
   test("overview dialog: quick navigation, Escape, focus restore", async ({ page }) => {
@@ -48,29 +51,29 @@ test.describe("navigation engine", () => {
     await page.keyboard.press("Enter");
     const dlg = page.getByRole("dialog", { name: "Обзор слайдов" });
     await expect(dlg).toBeVisible();
-    await expect(dlg.locator(".ov-card")).toHaveCount(6);
+    await expect(dlg.locator(".ov-card")).toHaveCount(7);
     await page.keyboard.press("Escape");
     await expect(dlg).toBeHidden();
     await expect(page.getByRole("button", { name: /Обзор слайдов/ })).toBeFocused();
     await page.keyboard.press("o");
     await dlg.locator(".ov-card").nth(4).click();
     await expect(dlg).toBeHidden();
-    await expect(announce(page)).toContainText("Слайд 5 из 6");
+    await expect(announce(page)).toContainText("Слайд 5 из 7");
   });
 
   test("progress segments jump to slides", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: /Слайд 3: /, includeHidden: false }).click();
-    await expect(announce(page)).toContainText("Слайд 3 из 6");
+    await expect(announce(page)).toContainText("Слайд 3 из 7");
   });
 
   test("presenter notes show the current step, a timer and the next slide", async ({ page }) => {
-    await go(page, 2, 3);
+    await go(page, 3, 2);
     await page.keyboard.press("n");
     const notes = page.getByRole("complementary", { name: "Заметки докладчика" });
     await expect(notes).toBeVisible();
-    await expect(notes.locator("li.on")).toContainText("Детекторы ищут воронку");
-    await expect(notes).toContainText("Не просто обнаруживаем");
+    await expect(notes.locator("li.on")).toContainText("Дальше — время");
+    await expect(notes).toContainText("Каждый вывод прослеживается");
     await notes.getByRole("button", { name: "Запустить таймер" }).click();
     await expect(notes.getByRole("button", { name: "Пауза таймера" })).toBeVisible();
     await expect(notes.locator(".t")).toContainText("/ 3:00");
@@ -95,7 +98,7 @@ test.describe("navigation engine", () => {
         fire("pointerup", b);
       }, [from, to]);
     await swipe(900, 400);
-    await expect(page).toHaveURL(/#\/1\/2$/);
+    await expect(page).toHaveURL(/#\/2\/1$/);
     await swipe(400, 900);
     await expect(page).toHaveURL(/#\/1\/1$/);
   });
@@ -110,94 +113,109 @@ test.describe("navigation engine", () => {
   });
 });
 
-test.describe("slide interactions", () => {
-  test("01: the lens switch flips between per-transfer and network views", async ({ page }) => {
-    await go(page, 1, 4);
-    const tx = page.getByRole("button", { name: "По одному переводу" });
-    const net = page.getByRole("button", { name: "По сети" });
-    await expect(tx).toHaveAttribute("aria-pressed", "true");
-    await net.click();
-    await expect(net).toHaveAttribute("aria-pressed", "true");
-    await expect(page.getByText("Воронка сбора")).toBeVisible();
-  });
-
-  test("02: stages are clickable and Hypothesis Testing is labelled as not merged", async ({ page }) => {
-    await go(page, 2, 1);
-    await page.getByRole("button", { name: "Шаг 4: Проверка гипотез" }).click();
-    await expect(page).toHaveURL(/#\/2\/4$/);
-    await expect(page.getByText("В PR №3 · не в main")).toBeVisible();
-    await page.getByRole("button", { name: "Шаг 6: Решение аналитика" }).click();
-    await expect(page.getByText("Система не блокирует счета и ничего не отправляет", { exact: false }).first()).toBeVisible();
-  });
-
-  test("03: temporal scenarios, peer toggle, hypotheses and evidence respond", async ({ page }) => {
-    await go(page, 3, 5);
-    await page.getByRole("button", { name: "Неоднозначна" }).click();
-    await expect(page.getByText("порядок внутри дня неизвестен")).toBeVisible();
-    await page.getByRole("button", { name: "Противоречит" }).click();
-    await expect(page.getByText("Вывод раньше поступления")).toBeVisible();
-
-    await page.keyboard.press("ArrowRight");
-    await page.getByRole("button", { name: "Выброс" }).click();
-    await expect(page.getByText("порога выброса среди счетов похожей активности")).toBeVisible();
-
-    await page.keyboard.press("ArrowRight"); // hypotheses
-    await expect(page.getByText("Перевес: подозрительное объяснение")).toBeVisible();
-    await page.getByRole("button", { name: "Наблюдения B" }).click();
-    await expect(page.getByText("Перевес: легитимное объяснение")).toBeVisible();
-    await expect(page.getByText("Приоритет ограничен до «Низкий»")).toBeVisible();
-    await page.getByRole("button", { name: "Легитимное", exact: true }).click();
-    await expect(page.getByText("Контрагенты платят в разные дни").first()).toBeVisible();
-    await expect(page.getByText(/\d\d\s?%/).first()).toHaveCount(0); // no confidence percentages in the panel
-
-    await page.keyboard.press("ArrowRight"); // evidence
-    const row = page.getByRole("button", { name: /5 счетов направили/ });
-    await row.click();
-    await expect(row).toHaveAttribute("aria-pressed", "true");
-  });
-
-  test("04: real screenshots load, hotspots zoom, repository link is real", async ({ page }) => {
-    await go(page, 4, 1);
-    const img = page.locator(".vimg img");
-    await expect(img).toBeVisible();
-    expect(await img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
-    const before = await page.locator(".vimg").evaluate((el) => getComputedStyle(el).transform);
-    await page.getByRole("button", { name: "2 Генерация и анализ" }).click();
-    await page.waitForTimeout(1000);
-    const after = await page.locator(".vimg").evaluate((el) => getComputedStyle(el).transform);
-    expect(after).not.toBe(before);
-    await page.getByRole("button", { name: "Весь экран" }).click();
-    await expect(page.getByRole("link", { name: /Репозиторий на GitHub/ })).toHaveAttribute("href", "https://github.com/SaginbekDaniel/SYNAPTIC-LABS");
-    for (let s = 2; s <= 5; s++) {
-      await page.keyboard.press("ArrowRight");
-      await expect(page).toHaveURL(new RegExp(`#/4/${s}$`));
-      await page.waitForTimeout(500);
-      expect(await img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
+test.describe("slide content", () => {
+  test("every slide states one idea as its h2", async ({ page }) => {
+    const heads = [
+      "Расследование сетей подозрительных переводов",
+      "Правило видит счёт и не отличает схему от бизнеса",
+      "Форма сети — лишь повод. Решают время и контекст",
+      "Каждый вывод прослеживается до исходных транзакций",
+      "Аналитик получает не алерт, а дело с доказательствами",
+      "Очередь в 4,5 раза короче, чем у правил, — ценой полноты",
+      "Первый шаг пилота — офлайн-реплей на истории банка",
+    ];
+    for (let i = 0; i < heads.length; i++) {
+      await go(page, i + 1, 1);
+      await expect(page.locator(".slide-layer h2")).toContainText(heads[i]);
     }
   });
 
-  test("05: verified figures, mandatory disclaimer and provenance chips", async ({ page }) => {
-    await go(page, 5, 4);
+  test("02: two identical alerts, then the networks behind them", async ({ page }) => {
+    await go(page, 2, 1);
     const slide = page.locator(".slide-layer");
-    await expect(slide.getByText("Синтетический benchmark, 60 датасетов. Не оценка точности на реальных данных банка")).toBeVisible();
-    await page.waitForTimeout(2200);
-    for (const v of ["50,7 %", "15,9 %", "73,3 %", "74,8 %", "46,5 %", "59,3 %", "17,8 %", "9,8 %"]) await expect(slide).toContainText(v);
-    await expect(slide.getByText("Артефакт в PR №3 · ещё не в main")).toBeVisible();
-    await slide.getByRole("button", { name: "Что не решено" }).click();
-    await expect(slide.getByText("22 из 23")).toBeVisible();
+    await expect(slide.getByText("Правило «веерный приток»: 5 отправителей за 3 дня")).toHaveCount(2);
+    await expect(slide.locator(".s2-truth").first()).toHaveAttribute("aria-hidden", "true");
+    await page.keyboard.press("ArrowRight");
+    await expect(slide.locator(".s2-truth").first()).toHaveAttribute("aria-hidden", "false");
+    await expect(slide.getByText("Воронка сбора", { exact: true })).toBeVisible();
+    await expect(slide.getByText("Расчёты с мерчантом", { exact: true })).toBeVisible();
   });
 
-  test("06: finale content", async ({ page }) => {
+  test("03: the three tests appear one per step, with product figures", async ({ page }) => {
+    await go(page, 3, 1);
+    const slide = page.locator(".slide-layer");
+    await expect(slide.getByRole("heading", { name: "Структура" })).toBeVisible();
+    await expect(slide.locator(".s3-tests > li").nth(1)).toHaveAttribute("aria-hidden", "true");
+    await page.keyboard.press("ArrowRight");
+    await expect(slide.getByRole("heading", { name: "Хронология" })).toBeVisible();
+    await expect(slide).toContainText("81,9 %");
+    await page.keyboard.press("ArrowRight");
+    await expect(slide.getByRole("heading", { name: "Похожие счета" })).toBeVisible();
+    await expect(slide).toContainText("приоритет 55 из 100");
+    await expect(slide).toContainText("не вероятность мошенничества");
+  });
+
+  test("04: six real pipeline stages, then the three principles", async ({ page }) => {
+    await go(page, 4, 1);
+    const slide = page.locator(".slide-layer");
+    await expect(slide.getByRole("list", { name: "Этапы обработки" }).getByRole("listitem")).toHaveCount(6);
+    await expect(slide.locator(".s4-rules")).toHaveAttribute("aria-hidden", "true");
+    await page.keyboard.press("ArrowRight");
+    await expect(slide.getByRole("heading", { name: "Без генеративного ИИ" })).toBeVisible();
+  });
+
+  test("05: real screenshots at native size, tabs switch views", async ({ page }) => {
+    await go(page, 5, 1);
+    const imgs = page.locator(".s5-frame img");
+    await expect(imgs).toHaveCount(2);
+    for (const i of [0, 1]) {
+      const ok = await imgs.nth(i).evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth === 1440);
+      expect(ok).toBe(true);
+      // never upscaled: rendered width ≤ natural width in canvas px
+      const w = await imgs.nth(i).evaluate((el: HTMLImageElement) => el.offsetWidth);
+      expect(w).toBeLessThanOrEqual(1440);
+    }
+    await page.getByRole("button", { name: "Решение" }).click();
+    await expect(page).toHaveURL(/#\/5\/3$/);
+    await expect(page.locator(".slide-layer")).toContainText("Журнал аудита только на добавление");
+    await page.getByRole("button", { name: "Очередь" }).click();
+    await expect(page).toHaveURL(/#\/5\/1$/);
+  });
+
+  test("06: gain, then cost, then misses — numbers from the artifact, caveats always on", async ({ page }) => {
     await go(page, 6, 1);
-    await expect(page.getByRole("heading", { name: "NEXORA AI", exact: true })).toBeVisible();
-    await expect(page.locator(".s6-head")).toHaveText("От подозрения — к проверяемому расследованию");
-    for (const p of ["Объяснимость", "Доказательства", "Решение аналитика"]) await expect(page.locator(".pillars")).toContainText(p);
+    const slide = page.locator(".slide-layer");
+    for (const v of ["42,6", "9,5", "80,5 %", "37,5 %", "103 из 128", "48 из 128"]) await expect(slide).toContainText(v);
+    await expect(slide.locator("[data-row=recall]")).toHaveAttribute("aria-hidden", "true");
+    await expect(slide).toContainText("это не точность на данных банка");
+    await expect(slide).toContainText("просматривали при разработке");
+    await page.keyboard.press("ArrowRight");
+    await expect(slide.locator("[data-row=recall]")).toContainText("95,7 %");
+    await expect(slide.locator("[data-row=recall]")).toContainText("79,3 %");
+    await expect(slide.locator("[data-row=recall]")).toContainText("−16,4 п. п.");
+    await page.keyboard.press("ArrowRight");
+    const miss = slide.getByRole("region", { name: "Где пропуски" });
+    await expect(miss).toContainText("Где 19 пропусков");
+    await expect(miss).toContainText("«недостаточно данных»");
+    // metrics withdrawn after the audit must not appear
+    for (const v of ["88,0", "48,3", "32,7", "79,4"]) await expect(slide).not.toContainText(v);
+  });
+
+  test("07: pilot path, the ask, then QR and live links", async ({ page }) => {
+    await go(page, 7, 1);
+    const slide = page.locator(".slide-layer");
+    await expect(slide.getByRole("list", { name: "Этапы пилота" }).getByRole("listitem")).toHaveCount(3);
+    await expect(slide).toContainText("Что нужно от банка");
+    await page.keyboard.press("ArrowRight");
+    await expect(page.getByRole("img", { name: /QR-код/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: "github.com/SaginbekDaniel/SYNAPTIC-LABS" })).toHaveAttribute("href", "https://github.com/SaginbekDaniel/SYNAPTIC-LABS");
+    await expect(page.getByRole("link", { name: "web-production-4593b103.up.railway.app" })).toHaveAttribute("href", "https://web-production-4593b103.up.railway.app");
   });
 });
 
 test.describe("layout integrity", () => {
   /** Every visible element of every reveal state must sit inside the 80px safe area (canvas coordinates). */
-  for (let slide = 1; slide <= 6; slide++) {
+  for (let slide = 1; slide <= 7; slide++) {
     test(`safe area: slide ${slide}, all ${STEPS[slide - 1]} states`, async ({ page }) => {
       test.setTimeout(90_000);
       await page.setViewportSize({ width: 1920, height: 1080 });
@@ -209,12 +227,11 @@ test.describe("layout integrity", () => {
           const canvas = document.querySelector(".canvas")!.getBoundingClientRect();
           const scale = canvas.width / 1920;
           const out: string[] = [];
-          const skip = ".s6-bg, .s6-bg *, .wm-glow, .vimg, .vimg *, .halo";
           document.querySelectorAll(".slide-layer *").forEach((el) => {
-            if (el.matches(skip) || el.closest(".s6-bg, .vimg, .vport") && !el.classList.contains("vport")) return;
+            if (el.closest(".s5-frame") && !el.classList.contains("s5-frame")) return; // screenshot pans inside its clipped frame
             const cs = getComputedStyle(el);
             if (cs.display === "none" || cs.visibility === "hidden" || Number(cs.opacity) === 0) return;
-            if (el.closest("[aria-hidden='true']") && !el.closest(".vport")) return;
+            if (el.closest("[aria-hidden='true']")) return;
             if (el.children.length > 0 && !(el instanceof SVGElement)) return; // leaves only
             const r = el.getBoundingClientRect();
             if (r.width === 0 && r.height === 0) return;
@@ -230,12 +247,12 @@ test.describe("layout integrity", () => {
   }
 
   test("no text smaller than 22 canvas px on any slide state", async ({ page }) => {
-    test.setTimeout(90_000);
+    test.setTimeout(120_000);
     await page.setViewportSize({ width: 1920, height: 1080 });
     const small: string[] = [];
-    for (let slide = 1; slide <= 6; slide++) {
-      await go(page, slide, 1);
-      await page.waitForTimeout(2500);
+    for (let slide = 1; slide <= 7; slide++) for (let step = 1; step <= STEPS[slide - 1]; step++) {
+      await go(page, slide, step);
+      await page.waitForTimeout(1500);
       const found = await page.evaluate(() => {
         const out: string[] = [];
         document.querySelectorAll(".slide-layer *").forEach((el) => {
@@ -246,7 +263,7 @@ test.describe("layout integrity", () => {
         });
         return out;
       });
-      small.push(...found.map((f) => `slide ${slide}: ${f}`));
+      small.push(...found.map((f) => `slide ${slide}/${step}: ${f}`));
     }
     expect(small).toEqual([]);
   });
@@ -276,7 +293,7 @@ test.describe("accessibility and safety", () => {
     await page.waitForTimeout(1500);
     const running = await page.evaluate(() => document.getAnimations().filter((a) => a instanceof CSSAnimation).map((a) => (a as CSSAnimation).animationName));
     expect(running).toEqual([]);
-    await go(page, 6, 1);
+    await go(page, 4, 1);
     await page.waitForTimeout(1500);
     const running6 = await page.evaluate(() => document.getAnimations().filter((a) => a instanceof CSSAnimation).map((a) => (a as CSSAnimation).animationName));
     expect(running6).toEqual([]);
@@ -291,7 +308,7 @@ test.describe("accessibility and safety", () => {
       if (!r.url().startsWith(baseURL!) && !r.url().startsWith("data:")) external.push(r.url());
     });
     await page.goto("/");
-    for (let i = 0; i < 27; i++) {
+    for (let i = 0; i < 16; i++) {
       await page.keyboard.press("ArrowRight");
       await page.waitForTimeout(120);
     }
@@ -311,7 +328,7 @@ test.describe("accessibility and safety", () => {
   test("the deck never claims a bank integration or production readiness", async ({ page }) => {
     const text: string[] = [];
     await page.goto("/");
-    for (let i = 0; i < 28; i++) {
+    for (let i = 0; i < 16; i++) {
       text.push(await page.locator(".slide-layer").last().innerText());
       await page.keyboard.press("ArrowRight");
       await page.waitForTimeout(100);

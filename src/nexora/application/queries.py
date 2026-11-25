@@ -10,6 +10,7 @@ from sqlalchemy import case as sql_case
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
+from nexora.analytics.alert_groups import Group, Groupable, group_items
 from nexora.application import graph_view
 from nexora.application.case_service import TRANSITIONS
 from nexora.application.errors import Invalid, NotFound
@@ -189,6 +190,63 @@ def _alert_summary(
     }
 
 
+def snapshot_alert_groups(session: Session, snapshot_id: uuid.UUID) -> dict[str, dict[str, Any]]:
+    """Related-alert groups of one snapshot (B-042), keyed by alert id.
+
+    Alerts are related when their formations share any account (subject, members, exits) - the rule measured
+    in ``docs/handoff/probes/alert_grouping.py``. Computed over *every* alert of the snapshot, independent of
+    the caller's filters and page, so a group's size and strongest band do not change with the view. Read-only:
+    no alert or assessment is merged, altered or hidden.
+    """
+    rows = session.execute(
+        select(
+            orm.Alert.id,
+            orm.Alert.status,
+            orm.Formation.kind,
+            orm.Formation.subject_account_id,
+            orm.Formation.member_ids,
+            orm.Formation.exit_ids,
+            orm.RiskAssessmentRow.band,
+            orm.RiskAssessmentRow.priority,
+        )
+        .join(orm.Formation, orm.Formation.id == orm.Alert.formation_id)
+        .join(orm.RiskAssessmentRow, orm.RiskAssessmentRow.id == orm.Alert.risk_assessment_id)
+        .where(orm.Alert.snapshot_id == snapshot_id)
+    ).all()
+    info = {
+        str(r.id): {
+            "id": str(r.id),
+            "status": r.status,
+            "kind": r.kind,
+            "subject_account_id": r.subject_account_id,
+            "band": r.band,
+            "priority": r.priority,
+        }
+        for r in rows
+    }
+    by_item: dict[str, Group] = group_items(
+        (Groupable(str(r.id), r.subject_account_id, frozenset((*r.member_ids, *r.exit_ids))) for r in rows),
+        rule="members",
+    )
+    out: dict[str, dict[str, Any]] = {}
+    for alert_id, group in by_item.items():
+        members = sorted(
+            (info[i] for i in group.item_ids),
+            key=lambda m: (BAND_RANK.get(m["band"], 9), -(m["priority"] or 0), m["id"]),
+        )
+        out[alert_id] = {
+            "id": group.group_id,
+            "size": group.size,
+            "top_band": members[0]["band"],
+            "members": members,
+        }
+    return out
+
+
+def _group_summary(group: dict[str, Any]) -> dict[str, Any]:
+    return {"id": group["id"], "size": group["size"], "top_band": group["top_band"]}
+
+
 ALERT_SORTS = ("priority", "accounts", "transfers", "recent")
 
 
@@ -266,12 +324,17 @@ def list_alerts(
         order = priority_order
     rows = session.execute(q_all.order_by(*order, *tie_break).limit(limit).offset(offset)).all()
     latest_by_ds: dict[uuid.UUID, uuid.UUID | None] = {}
+    groups_by_snapshot: dict[uuid.UUID, dict[str, dict[str, Any]]] = {}
     items = []
     for a, f, r in rows:
         if a.dataset_id not in latest_by_ds:
             snap = latest_snapshot(session, a.dataset_id)
             latest_by_ds[a.dataset_id] = snap.id if snap else None
-        items.append(_alert_summary(session, a, f, r, latest_by_ds[a.dataset_id]))
+        if a.snapshot_id not in groups_by_snapshot:
+            groups_by_snapshot[a.snapshot_id] = snapshot_alert_groups(session, a.snapshot_id)
+        item = _alert_summary(session, a, f, r, latest_by_ds[a.dataset_id])
+        item["group"] = _group_summary(groups_by_snapshot[a.snapshot_id][str(a.id)])
+        items.append(item)
     return {
         "items": items,
         "total": int(total),
@@ -359,6 +422,9 @@ def alert_detail(session: Session, alert_id: uuid.UUID) -> dict[str, Any]:
     ]
     out["evidence"] = evidence_list(session, f.id)
     out["snapshot"] = snapshot_dict(snap)
+    group = snapshot_alert_groups(session, a.snapshot_id)[str(a.id)]
+    out["group"] = _group_summary(group)
+    out["related_alerts"] = [m for m in group["members"] if m["id"] != str(a.id)]
     h = session.execute(
         select(orm.HypothesisAssessmentRow).where(orm.HypothesisAssessmentRow.formation_id == f.id)
     ).scalar_one_or_none()

@@ -1,6 +1,7 @@
-"""Run the locked evaluation protocol (docs/evaluation/EXPERIMENT_PROTOCOL.md).
+"""Run a locked evaluation protocol.
 
-    uv run python scripts/run_sealed_evaluation.py --split sealed
+    uv run python scripts/run_sealed_evaluation.py --split sealed      # sealed-v1 (EXPERIMENT_PROTOCOL.md), consumed
+    uv run python scripts/run_sealed_evaluation.py --split sealed_v2   # sealed-v2 (EXPERIMENT_PROTOCOL_SEALED_V2.md)
     uv run python scripts/run_sealed_evaluation.py --split dev --out /tmp/dev.json   # development only
 
 Compares the candidate (current configuration) with the exact baseline merged at 4c01a7a
@@ -28,6 +29,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from nexora.analytics.config import default_config  # noqa: E402
 from nexora.evaluation import benchmark as b  # noqa: E402
+from nexora.evaluation import entity_metrics as em  # noqa: E402
 
 BOOTSTRAP_DRAWS = 2000
 BOOTSTRAP_SEED = 20261117
@@ -113,7 +115,26 @@ def git_state() -> dict[str, Any]:
     def run(*args: str) -> str:
         return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, check=False).stdout.strip()
 
-    return {"commit": run("rev-parse", "HEAD"), "dirty_paths": run("status", "--porcelain").splitlines()[:20]}
+    # Porcelain lines are "XY path"; X may be a space, so the output must not be stripped first.
+    porcelain = subprocess.run(
+        ["git", "status", "--porcelain"], cwd=ROOT, capture_output=True, text=True, check=False
+    ).stdout
+    return {"commit": run("rev-parse", "HEAD"), "dirty_paths": [ln for ln in porcelain.splitlines() if ln][:20]}
+
+
+# Per split: the protocol that governs it, the generator file that produces it, and the default artifact name.
+SPLIT_PROTOCOL = {
+    "sealed_v2": (
+        "docs/evaluation/EXPERIMENT_PROTOCOL_SEALED_V2.md",
+        "src/nexora/evaluation/sealed_generator_v2.py",
+        "sealed-v2-evaluation.json",
+    ),
+}
+DEFAULT_PROTOCOL = (
+    "docs/evaluation/EXPERIMENT_PROTOCOL.md",
+    "src/nexora/evaluation/sealed_generator.py",
+    None,
+)
 
 
 def sha(path: str) -> str:
@@ -126,6 +147,8 @@ def run(split: str) -> dict[str, Any]:
     datasets = b.load_split(split)
     res = b.run_experiments(datasets, experiments(cfg))
     summaries = {name: b.summarize(evals) for name, evals in res.items()}
+    # Entity-level, ranking and band-reliability metrics (B-041) for every method; not part of the decision rule.
+    entity = {name: em.entity_summary(evals) for name, evals in res.items()}
     boot = {
         "fpr": paired_bootstrap(res["baseline_v2"], res["candidate"], lambda e: _scen(e, "fpr")),
         "recall": paired_bootstrap(res["baseline_v2"], res["candidate"], lambda e: _scen(e, "recall")),
@@ -134,7 +157,7 @@ def run(split: str) -> dict[str, Any]:
     }
     return {
         "schema_version": 1,
-        "protocol": "docs/evaluation/EXPERIMENT_PROTOCOL.md",
+        "protocol": SPLIT_PROTOCOL.get(split, DEFAULT_PROTOCOL)[0],
         "split": split,
         "seeds": [b.SPLITS[split][0], b.SPLITS[split][-1]],
         "datasets": len(datasets),
@@ -143,13 +166,15 @@ def run(split: str) -> dict[str, Any]:
         "synthetic": True,
         "code": git_state(),
         "hashes": {
-            "sealed_generator": sha("src/nexora/evaluation/sealed_generator.py"),
+            "sealed_generator": sha(SPLIT_PROTOCOL.get(split, DEFAULT_PROTOCOL)[1]),
             "harness": sha("src/nexora/evaluation/benchmark.py"),
+            "entity_metrics": sha("src/nexora/evaluation/entity_metrics.py"),
+            "runner": sha("scripts/run_sealed_evaluation.py"),
             "candidate_config_sha256": cfg.config_sha256,
             "baseline_config_sha256": b.config_variant(cfg, b.VARIANTS["v2_shipped"]).config_sha256,
         },
         "environment": {"python": platform.python_version()},
-        "results": summaries,
+        "results": {name: {**summary, "entity": entity[name]} for name, summary in summaries.items()},
         "bootstrap": {"draws": BOOTSTRAP_DRAWS, "seed": BOOTSTRAP_SEED, **boot},
         "decision": decide(summaries["baseline_v2"], summaries["candidate"], boot),
         "examples": b.examples(res["candidate"], limit=40),
@@ -162,7 +187,8 @@ def main() -> None:
     parser.add_argument("--split", default="sealed", choices=sorted(b.SPLITS))
     parser.add_argument("--out", default=None)
     args = parser.parse_args()
-    out = Path(args.out or ROOT / "benchmarks" / "results" / f"{args.split}-evaluation.json")
+    default_name = SPLIT_PROTOCOL.get(args.split, DEFAULT_PROTOCOL)[2] or f"{args.split}-evaluation.json"
+    out = Path(args.out or ROOT / "benchmarks" / "results" / default_name)
     artifact = run(args.split)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(artifact, indent=1) + "\n", encoding="utf-8")

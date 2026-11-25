@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router";
 import { signOut, useAuth } from "../../app/auth";
 import { useDataset } from "../../app/dataset";
 import { formatDate, formatDateTime } from "../../lib/format";
@@ -106,6 +106,9 @@ function Account() {
       <span className="account__text">
         <span className="account__name">{user.display_name}</span>
         <span className="account__id">{user.username}</span>
+        <span className="account__id" data-testid="account-role">
+          {t(`role.${user.role}`)}
+        </span>
       </span>
       <button type="button" className="icon-btn account__out" onClick={out} disabled={busy} title={t("account.signOut")} aria-label={t("account.signOut")} data-testid="sign-out">
         <Icon name="signOut" size={18} />

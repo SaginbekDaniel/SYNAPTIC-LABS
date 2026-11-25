@@ -11,7 +11,9 @@ uv run python scripts/reset_disposable_db.py >/dev/null
 for user in e2e.analyst e2e.second; do
   printf '%s\n' "$NEXORA_E2E_PASSWORD" | uv run python -m nexora.auth.cli create-user "$user" --display-name "E2E ${user#e2e.}" --password-stdin >/dev/null
 done
+# A read-only account (B-011): the browser tests check that its UI offers no write actions.
+printf '%s\n' "$NEXORA_E2E_PASSWORD" | uv run python -m nexora.auth.cli create-user e2e.viewer --display-name "E2E viewer" --role viewer --password-stdin >/dev/null
 uv run python -m nexora.worker.runner &
 WORKER=$!
 trap 'kill "$WORKER" 2>/dev/null || true' EXIT INT TERM
-uv run uvicorn nexora.api.main:app --host 127.0.0.1 --port "$PORT"
+uv run uvicorn nexora.api.main:app --host 127.0.0.1 --port "$PORT" --log-config configs/logging.json
