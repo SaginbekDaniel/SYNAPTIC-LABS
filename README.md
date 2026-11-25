@@ -2,14 +2,25 @@
 
 # NEXORA AI
 
-**Explainable financial-network intelligence for fraud and AML investigation**
+### Don't hunt suspicious transfers. Uncover the whole scheme.
 
-Turns raw transfers into evidence-backed, time-consistent, coverage-aware network investigations —
-and leaves the decision to a human analyst.
+**Explainable financial-network intelligence for fraud and AML investigation** — it turns raw
+transfers into evidence-backed, time-consistent, coverage-aware network investigations, and leaves
+the decision to a human analyst.
 
 [![ci](https://github.com/SaginbekDaniel/SYNAPTIC-LABS/actions/workflows/ci.yml/badge.svg)](https://github.com/SaginbekDaniel/SYNAPTIC-LABS/actions/workflows/ci.yml)
-![Python 3.12–3.13](https://img.shields.io/badge/python-3.12%20%7C%203.13-3776AB)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6)
+![Python 3.12–3.13](https://img.shields.io/badge/python-3.12%20%7C%203.13-3776AB?logo=python&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-18-149ECA?logo=react&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-Pydantic%20v2-009688?logo=fastapi&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
+![No LLM in evidence](https://img.shields.io/badge/LLM%20in%20evidence%20pipeline-none-success)
+
+**[▶ Live demo](https://web-production-4593b103.up.railway.app)** ·
+**[🎤 3-minute interactive pitch](https://pitch-production-1554324d.up.railway.app)** ·
+**[📐 Architecture](docs/architecture/system.md)** ·
+**[📊 Evaluation](docs/EVALUATION.md)** ·
+**[🇷🇺 По-русски](#по-русски)**
 
 SYNAPTIC LABS · ITU Hackathon 2026 (Bank CenterCredit case) · prototype
 
@@ -23,6 +34,31 @@ SYNAPTIC LABS · ITU Hackathon 2026 (Bank CenterCredit case) · prototype
 **Interactive 3-minute pitch (React, static, synthetic data only): https://pitch-production-1554324d.up.railway.app** — source in [`apps/pitch/`](apps/pitch/README.md).
 
 ![Investigation of a collection funnel: formation graph, priority and the reasons behind it](docs/assets/screenshots/investigation.webp)
+
+## Why NEXORA stands out
+
+Most fraud demos show a graph and a score. NEXORA is built around the question an investigator
+actually asks — *"can I defend this in front of a reviewer?"* — and that shapes everything:
+
+|  | What makes it different | Why it matters |
+|---|---|---|
+| 🕸️ | **Schemes, not transactions.** Funnels, fan-out, layering chains and cycles are detected over a directed transfer graph. | Mule networks pass per-transfer rules by design; they only look wrong together. |
+| ⏱️ | **Chronology is checked, not assumed.** A capacity-constrained max-flow over dated transfers returns *supported*, *ambiguous* or *contradicted*. | Cuts the false alarms where money "moves" before it ever arrived. |
+| 🧾 | **Every claim recomputes from source rows.** Evidence that does not recompute is quarantined, never shown. | The analyst verifies instead of trusting a black box. |
+| 🙈 | **It knows what it cannot see.** At data boundaries it abstains with `insufficient_evidence` and names the data that would decide it. | Honest uncertainty beats a confident wrong score. |
+| ⚖️ | **Legitimate hubs are capped, not silently cleared.** Payroll, merchant settlement and treasury sweeps share the shapes of fraud. | Fewer false positives without hiding anything from the reviewer. |
+| 🧑‍⚖️ | **A human decides.** No LLM in the evidence pipeline, no automatic action against customers, append-only audit trail enforced in PostgreSQL. | Safe to put in front of a compliance team. |
+| 🔁 | **Reproducible end to end.** Deterministic, content-derived analysis ids; a frozen synthetic benchmark with baselines, ablations and published negative results. | Re-running changes nothing — and the limits are written down in [LIMITATIONS.md](docs/LIMITATIONS.md). |
+
+Engineering depth to match: exact integer money (no floats, ids beyond 2⁵³ preserved), a
+lease-based PostgreSQL worker with idempotent publish, an OpenAPI-generated typed client, named
+analyst accounts with server-side sessions, a fail-closed gateway, and a Russian UI that works on a
+390 px phone.
+
+> [!NOTE]
+> We say "strong" about the design and the engineering, not about accuracy on real bank data — there
+> is none in this repository. Benchmark figures below are from synthetic data and carry their own
+> caveats.
 
 ## Why NEXORA exists
 
@@ -232,6 +268,21 @@ integer minor units, ids are opaque strings, no synthetic labels in the runtime 
 
 No license has been chosen yet, so default copyright applies: the code is published for review,
 not licensed for reuse. The maintainers will add a `LICENSE` file when they decide.
+
+## По-русски
+
+**NEXORA AI** — платформа для расследования мошеннических сетей. Она показывает не отдельные
+подозрительные переводы, а целые схемы: кто, через какие счета и в каком порядке двигал деньги.
+
+* **Графовый анализ** выявляет воронки сбора, веерные выплаты, цепочки прокладки и циклы.
+* **Проверка хронологии** отсекает схемы, где деньги «уходят» раньше, чем поступили.
+* **Сравнение со схожими счетами** подтверждает или опровергает подозрение.
+* **Каждый вывод подкреплён транзакциями-источниками** — аналитик проверяет, а не верит на слово.
+* **Решение остаётся за человеком**: LLM в цепочке доказательств нет, автоматических действий
+  против клиентов нет.
+
+Цель — помогать банкам сокращать потери, снижать число ложных тревог и быстрее проводить
+расследования. Данные в проекте только синтетические; это прототип, а не банковская система.
 
 ## Acknowledgements
 
