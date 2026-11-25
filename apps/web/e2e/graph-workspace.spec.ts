@@ -84,13 +84,31 @@ test("table fallback: every edge opens its exact source transactions", async ({ 
 test("filters live in the URL and only select stored formations", async ({ page }) => {
   await seedAndAnalyse(page, "3103");
   await page.goto("/network");
+  // Closed on arrival (the graph comes first, H-23); the analyst opens them.
+  const filters = page.locator("details.graph-filters");
+  await expect(filters).not.toHaveAttribute("open", "");
+  await filters.locator("summary").click();
   await page.getByRole("group", { name: "Приоритет" }).getByRole("button", { name: "Средний" }).click();
   await expect(page).toHaveURL(/band=medium/);
   const list = page.locator("#graph-formations");
   await expect(list).toBeVisible();
   await expect(list.locator(".badge--high, .badge--critical, .badge--low")).toHaveCount(0);
   await page.reload();
+  // An active filter opens them by itself and is counted in the summary, so a filtered view is never hidden.
+  await expect(filters).toHaveAttribute("open", "");
+  await expect(filters.locator(".graph-filters__count")).toHaveText("1");
   await expect(page.getByRole("group", { name: "Приоритет" }).getByRole("button", { name: "Средний" })).toHaveAttribute("aria-pressed", "true");
+});
+
+test("the graph is on screen on arrival at 1440 × 900 (H-23)", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await seedAndAnalyse(page, "3107");
+  await page.goto("/network");
+  await stageSettled(page);
+  const stage = (await page.getByTestId("graph-canvas").boundingBox())!;
+  // Before the fix the stage began at y ≈ 580 and 57 % of it was visible; now most of the drawing is in view.
+  expect(stage.y).toBeLessThanOrEqual(520);
+  expect((900 - stage.y) / stage.height).toBeGreaterThanOrEqual(0.7);
 });
 
 test("the same snapshot draws the same picture on every load", async ({ page }) => {

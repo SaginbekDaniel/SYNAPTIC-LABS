@@ -534,7 +534,7 @@ double-rounds; CLAUDE.md forbids quoting unproduced metrics. *Fix*: B-003 (regen
 recompute every summary from counts. *Cost* M.
 
 **H-23 · P3 · Graph stage below the fold at 1440 × 900** (stage starts ≈ y 580 of 900; observed in a screenshot this
-project) → B-022. **H-24 · P3 · `apps/web` has no ESLint** (`apps/pitch` does) `[code]` → B-053.
+project) → B-022 — **fixed** L-0026 (filters closed unless active: stage y 580 → 500, 72 % of it visible). **H-24 · P3 · `apps/web` has no ESLint** (`apps/pitch` does) `[code]` → B-053.
 
 **H-25 · P3 · Ground-truth lists name accounts that never transact** (found 2026-11-23 by the `sealed-gen-v2` data
 checks, L-0015; scope re-measured in L-0017). *Evidence* `[local]`, summed over each split's datasets, accounts absent

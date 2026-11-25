@@ -538,3 +538,19 @@ Entry template:
 * State file updated: yes.
 * B-013 CI evidence (recorded here, L-0025): ci run 91 and audit run 3 on `053cb5e` success — the gateway image was built with
   Vite 8 and passed the 7 smoke tests, including the camera path.
+
+### L-0026 · 2026-11-25 · B-022; session end · status: B-022 verified locally (DONE after CI); session handoff
+* B-042 CI evidence: ci run 92 on `3e43bd8` success (all jobs).
+* B-022 measured first (scratch spec, deleted; demo-v1 seed 8101, 1440 × 900): canvas top y = 579.7, height 558, visible
+  320 px (57 %). Root cause: `GraphWorkspace` opened the filter panel on every wide screen (`useState(wide || active)`).
+  Fix: filters start closed unless a filter is active (the summary already shows the active count); the now-unused media
+  query is removed. After: y = 499.7, visible 400 px (72 %), all five clusters of that snapshot in view.
+* Tests: new "the graph is on screen on arrival at 1440 × 900 (H-23)" (y ≤ 520 and ≥ 70 % visible) — fails on the old code
+  ("Expected: <= 520, Received: 579.6875"); the filter test now opens the panel like an analyst and additionally asserts
+  that an active URL filter re-opens it with the count "1" (deliberate behaviour change, stated here).
+* Verification: tsc clean; vitest 135; Playwright cold cache **40 passed**. Visual: 1440 × 900 light and dark.
+* Session summary (L-0020…L-0026): consolidated the working line; computed-progress system; B-004, B-013, B-014, B-042, B-050
+  DONE, B-022 verified; defect H-28 fixed; findings H-26, H-27, H-28; tasks B-056, B-057; decision D-12.
+* Next session: B-025 first (stage stays drawn during relayout; it is the remaining graph-stage UX gap), then B-016, B-021,
+  B-045. Owner questions (unchanged): B-002 / D-1 / D-2, B-005, B-030, B-055, D-3, D-5, D-6, D-10, **D-12 (new)**.
+* State file updated: yes.

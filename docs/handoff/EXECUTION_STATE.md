@@ -13,7 +13,7 @@ other session is working on this branch (two sessions collided once, L-0016) —
 
 | Item | Value |
 |---|---|
-| Working branch | **`graph-workspace-wip`** — fast-forwarded `0c8d21b` → `bd3868f` in L-0020, so it again equals `claude/peaceful-darwin-nrquu9` plus this session's commits. `peaceful-darwin` is no longer written to. |
+| Working branch | **`graph-workspace-wip`** — fast-forwarded `0c8d21b` → `bd3868f` in L-0020, then L-0020…L-0026 on top (see the ledger; `git log bd3868f..origin/graph-workspace-wip`). `peaceful-darwin` is no longer written to. |
 | Base | `bd3868f` (B-011 + handoff, CI runs 80–82 success) |
 | Default branch | `claude/brave-dirac-c80nwq` at `ea5ca9c` (no `main`); the working branch is 54 commits ahead of it at `bd3868f`, 0 behind |
 | Open PRs | #15, #5, #3 (superseded in effect by the working branch — owner decides, B-002) and Dependabot #6–#14, #16 |
@@ -21,16 +21,16 @@ other session is working on this branch (two sessions collided once, L-0016) —
 | Migration head | `0005` (production reportedly `0003`; `0005` makes existing accounts analysts) |
 | Handoff checks | `python3 docs/handoff/probes/check_handoff_docs.py` → OK · `python3 docs/handoff/probes/progress.py` → exit 0 |
 
-## Computed progress (`python3 docs/handoff/probes/progress.py --markdown`, 2026-11-25, after L-0025)
+## Computed progress (`python3 docs/handoff/probes/progress.py --markdown`, 2026-11-25, after L-0026)
 
 | Measure | Value |
 |---|---|
-| Verified completion (weighted) | 45.1 % |
+| Verified completion (weighted) | 47.8 % |
 | Critical-path progress (weighted) | 61.2 % |
-| Tasks: total / done / remaining | 42 / 14 / 28 |
-| Done by priority (P0, P1, P2, P3) | P0 4/6, P1 10/16, P2 0/17, P3 0/3 |
+| Tasks: total / done / remaining | 42 / 15 / 27 |
+| Done by priority (P0, P1, P2, P3) | P0 4/6, P1 11/16, P2 0/17, P3 0/3 |
 | Blocked | B-002, B-005, B-019, B-030, B-048, B-051, B-054, B-055, B-056 |
-| In progress / implemented / verified | B-042 |
+| In progress / implemented / verified | B-022 |
 | Critical path still open | B-002, B-005, B-030, B-052, B-055 |
 | Open P0 tasks (release-blocking) | B-002, B-030 |
 
@@ -47,15 +47,15 @@ Railway state. Playwright against the production bundle with the generated CSP: 
 
 ## Tasks
 
-* **Completed backlog tasks** (status lines carry commit + ledger): B-001, B-003, B-004, B-010, B-011, B-012, B-013, B-014, B-015, B-020, B-031, B-040, B-041, B-050.
+* **Completed backlog tasks** (status lines carry commit + ledger): B-001, B-003, B-004, B-010, B-011, B-012, B-013, B-014, B-015, B-020, B-031, B-040, B-041, B-042, B-050.
   Defect fixed outside the backlog: H-28 (`db19947`, L-0023).
   L-0020 (outside the backlog): branch consolidation, computed progress, dependency map, risk register, test matrix, release checklist,
   H-26 / B-056 / D-12.
-* **Active**: B-042 — verified locally (L-0025); DONE once CI is green on its commit. Next recommended: B-022 and B-025 (graph stage), B-016, B-021, B-045.
-* **Ready (autonomous)**: B-016, B-017, B-018, B-021, B-022, B-025, B-032, B-043, B-044, B-045, B-046, B-047,
-  B-053. Recommended order: B-022, B-025, B-016, B-021, B-045 (adversarial dev suite before tuning anything on
+* **Active**: none (session ended at L-0026). B-022 is VERIFIED — mark DONE once CI is green on its commit (`git log -1 --format=%h -- apps/web/e2e/graph-workspace.spec.ts`). Next recommended: **B-025**, then B-016, B-021, B-045.
+* **Ready (autonomous)**: B-016, B-017, B-018, B-021, B-025, B-032, B-043, B-044, B-045, B-046, B-047,
+  B-053. Recommended order: B-025, B-016, B-021, B-045 (adversarial dev suite before tuning anything on
   sealed-v2 findings). Every autonomous critical-path task is done; the rest of the critical path (B-002, B-005, B-030, B-052, B-055) is owner- or hardware-gated.
-* **Pending (waiting on dependencies)**: B-023 (B-022), B-024 (B-021), B-033 (B-030), B-052 (B-002), B-057 (B-055).
+* **Pending (waiting on dependencies)**: B-023 (B-022 DONE first), B-024 (B-021), B-033 (B-030), B-052 (B-002), B-057 (B-055).
 * **Blocked (human or decision)**: B-002 (merge approval, D-1/D-2), B-005 (Railway access), B-019 (D-3), B-030 (webcam), B-048 (owner),
   B-051 (B-005, D-5), B-054 (D-10, B-047), B-055 (deployment approval), B-056 (D-12).
 * **Evaluation state**: `sealed-v1` consumed; `sealed-v2` pre-registered run done (L-0015), 0 of 3 later candidate uses spent. Never tune on either.
@@ -76,7 +76,7 @@ service postgresql start && pg_lsclusters      # fresh container: create role + 
 export UV_SYSTEM_CERTS=1 && unset UV_NATIVE_TLS && uv sync --frozen && (cd apps/web && npm ci)
 python3 docs/handoff/probes/check_handoff_docs.py && python3 docs/handoff/probes/progress.py   # expect OK and exit 0
 uv run pytest -p no:cacheprovider -rs                         # expect 338 passed, 0 skipped (L-0025)
-(cd apps/web && npx tsc -b && npx vitest run)                 # expect 135 passed; Playwright 39
+(cd apps/web && npx tsc -b && npx vitest run)                 # expect 135 passed; Playwright 40
 ```
 
 ## Open these files first

@@ -372,7 +372,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: query rewrite; keep the old code path in the test as the oracle.
 
 ### B-022 · P2 · Graph stage above the fold at 1440 × 900
-* **Status**: TODO
+* **Status**: VERIFIED
 * **Rationale**: H-23. The filter panel pushes the stage to y ≈ 580 of 900 (screenshot taken this project).
 * **Modules**: `apps/web/src/features/graph/GraphWorkspace.tsx`, `apps/web/src/styles/features.css`,
   `apps/web/src/styles/layout.css`, `apps/web/e2e/graph-workspace.spec.ts`.
@@ -547,7 +547,7 @@ T6→B-012, T7→B-013, T8→B-022, T9→B-053 (+B-014), T10→B-004, T11→B-05
 * **Risk / rollback**: additive metrics.
 
 ### B-042 · P1 · Group related alerts
-* **Status**: VERIFIED
+* **Status**: DONE · commit `3e43bd8` · L-0025
 * **Rationale**: H-11. A funnel and a fan-out on the same hub open separate alerts (fingerprints are per
   pattern kind); sealed candidate has 1.232 alerts per flagged network (baseline 1.667).
 * **Modules**: `src/nexora/application/queries.py`, `src/nexora/api/routes/alerts.py`, `src/nexora/api/schemas.py`,
