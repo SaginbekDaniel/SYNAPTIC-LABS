@@ -29,3 +29,19 @@ class Invalid(AppError):
 
 class PayloadTooLarge(AppError):
     status_code = 413
+
+
+JOB_FAILURE_MESSAGES = {
+    "ANALYSIS_FAILED": "analysis failed",
+    "ATTEMPTS_EXHAUSTED": "analysis retry budget exhausted",
+    "DATASET_NOT_FOUND": "analysis dataset is unavailable",
+    "ANALYSIS_CONFIG_INVALID": "stored analysis configuration is invalid",
+    "SNAPSHOT_IDENTITY_CONFLICT": "analysis snapshot could not be published",
+}
+
+
+def public_job_error(code: str | None) -> tuple[str | None, str | None]:
+    if code is None:
+        return None, None
+    public_code = code if code in JOB_FAILURE_MESSAGES else "ANALYSIS_FAILED"
+    return public_code, JOB_FAILURE_MESSAGES[public_code]

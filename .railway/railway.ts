@@ -15,6 +15,7 @@
  * Secrets are never written here. They are set once with `railway variable set KEY --stdin`
  * (scripts/railway/bootstrap.sh) and kept by preserve():
  *   api  NEXORA_GATEWAY_TOKEN              gateway ↔ API secret; web references the api's value
+ *   api  NEXORA_TRANSFER_ANALYST_TOKEN     separate demo evidence authorization
  *   web  NEXORA_GATEWAY_USER / _PASSWORD   demo access credentials
  */
 import { defineRailway, group, postgres, preserve, project, service } from "railway/iac";
@@ -40,6 +41,8 @@ export default defineRailway(() => {
     env: {
       ...appEnv,
       NEXORA_GATEWAY_TOKEN: preserve(),
+      NEXORA_TRANSFER_ANALYST_TOKEN: preserve(),
+      NEXORA_EXECUTION_PROFILE: "deployed_demo",
       PORT: "8000",
       // IPv4. Verified on the first deploy: with "::" Railway's health probe never reached uvicorn (no
       // request in the access log) and the deploy failed. This environment resolves private names to

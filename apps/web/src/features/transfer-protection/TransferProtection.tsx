@@ -16,7 +16,8 @@ export function TransferProtection() {
   const scenario = options.data?.find((item) => item.scenario_id === scenarioId) ?? options.data?.[0];
   return (
     <div className="page">
-      <PageHeader title={t("transfer.title")} description={t("transfer.subtitle")} />
+      <PageHeader title={t("transfer.title")} description={t("transfer.subtitle")}
+        actions={<Link className="btn" to={`${TRANSFER_ROUTE}/sandbox`}>{t("sandbox.title")}</Link>} />
       {options.error ? <ErrorState error={options.error} onRetry={options.reload} /> : null}
       {options.loading ? <Loading /> : null}
       {scenario && options.data ? (
@@ -140,7 +141,10 @@ function TransferForm({ scenario, options, selectScenario }: {
           {decision ? (
             <div className="transfer-result" data-decision={decision}>
               <strong>{t(`transfer.decision.${decision}`)}</strong>
-              <p>{t(`transfer.message.${decision}`)}</p>
+              <p>{response?.customer_message ?? t(`transfer.message.${decision}`)}</p>
+              {response && <p data-testid="transfer-risk-band" data-band={response.risk_band}>
+                {t("transfer.riskBand", { band: t(`transfer.risk.${response.risk_band}`) })}
+              </p>}
               {response?.reason_codes.length || failure ? (
                 <ul className="transfer-reasons">
                   {(response?.reason_codes ?? (failure ? [failure] : [])).map((code) => <li key={code}>{t(`transfer.reason.${code}`)}</li>)}

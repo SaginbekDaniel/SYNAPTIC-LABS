@@ -119,13 +119,15 @@ def test_expired_lease_is_reclaimed(factory):  # JOB-001
         assert s.execute(select(func.count()).where(orm.GraphSnapshot.dataset_id == ds_id)).scalar_one() == 1
 
 
-def test_failed_job_retries_then_fails_visibly(factory, monkeypatch):
+def test_failed_job_retries_then_fails_visibly(factory, monkeypatch, client, caplog):
     ds_id, _ = _synthetic(factory, seed=33)
     with session_scope(factory) as s:
         job_id = analysis_service.request_analysis(s, dataset_id=ds_id, requested_by="t", config=CFG).id
 
+    synthetic_secret = "postgresql://demo:synthetic-private-123@private.invalid/ledger"
+
     def boom(*a, **k):
-        raise RuntimeError("synthetic failure")
+        raise RuntimeError(synthetic_secret)
 
     monkeypatch.setattr(analysis_service, "compute", boom)
     for _ in range(3):
@@ -134,6 +136,15 @@ def test_failed_job_retries_then_fails_visibly(factory, monkeypatch):
         job = s.get(orm.AnalysisJob, job_id)
         assert job.status == "failed" and job.error_code == "ANALYSIS_FAILED" and job.attempt_count == 3
     assert run_once(factory, config=CFG) is None
+    assert synthetic_secret not in caplog.text
+    response = client.get(f"/api/v1/analysis/jobs/{job_id}")
+    assert response.status_code == 200
+    assert response.json()["error_code"] == "ANALYSIS_FAILED"
+    assert synthetic_secret not in response.text
+    # Jobs stored by older releases may still have untrusted summaries in the database.
+    with session_scope(factory) as s:
+        s.get(orm.AnalysisJob, job_id).error_summary = synthetic_secret
+    assert synthetic_secret not in client.get(f"/api/v1/analysis/jobs/{job_id}").text
 
 
 def _first_alert(factory, ds_id):

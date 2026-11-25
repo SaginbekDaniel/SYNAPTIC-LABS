@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import os
+from uuid import uuid4
 
 import pytest
 from sqlalchemy import create_engine, text
+from sqlalchemy.engine import make_url
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.schema import CreateSchema, DropSchema
 
 from scripts import reset_disposable_db
 
@@ -50,3 +53,22 @@ def client(settings):
 
     with TestClient(create_app(settings)) as c:
         yield c
+
+
+@pytest.fixture()
+def isolated_schema(db_url):
+    """Give migration checks a private schema inside the disposable test database."""
+    schema = f"migration_{uuid4().hex}"
+    engine = create_engine(db_url)
+    with engine.begin() as conn:
+        conn.execute(CreateSchema(schema))
+    try:
+        yield (
+            make_url(db_url)
+            .update_query_dict({"options": f"-csearch_path={schema}"})
+            .render_as_string(hide_password=False)
+        )
+    finally:
+        with engine.begin() as conn:
+            conn.execute(DropSchema(schema, cascade=True))
+        engine.dispose()

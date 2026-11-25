@@ -1,5 +1,9 @@
 # Test report
 
+## Ремедиация 25 ноября 2026
+
+Текущий локальный прогон и его ограничения описаны в [FINAL_TEST_REPORT](../audit/remediation/FINAL_TEST_REPORT.md). Все 195 исходных штатных проверок представлены. Результаты 206 Python с audit pytest, 26 Vitest, 18 Playwright вместе с browser audit и 5 native gateway smoke. Контейнерные и Railway строки исторических сессий ниже относятся к указанным датам и коммитам. [Машиночитаемый release preflight](../audit/remediation/evidence/release-preflight.json)
+
 ## Session 3 — deployment readiness, gateway hardening, repository
 
 - Date (UTC): 2026-11-18 · Python 3.13 · Node 22.23 · PostgreSQL 16 (local) · Docker 29.10 · Railway CLI 5.75.0

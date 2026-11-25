@@ -1,0 +1,31 @@
+{
+  "upstream_repo": "https://github.com/IBM/AMLSim",
+  "upstream_commit": "7338a4bcb1af9bcfea2201ad7daccfe2a4d569ca",
+  "source_hashes": {
+    "tx.csv": "d119a5b009a99958a23054ba8b403a6f410cf79d62c60e3104240d927d821ce8",
+    "alerts.csv": "e8033b6fe9ea87ba8cdfb1d77d559c21706fc7cb9fe22cda93c3f5b7fec56ae2"
+  },
+  "rows": 45,
+  "accounts": 27,
+  "labelled_alert_accounts": [
+    "24",
+    "25"
+  ],
+  "labelled_accounts_present": [
+    "24",
+    "25"
+  ],
+  "flagged_account_subjects": [],
+  "labelled_alert_subject_hit_rate": 0.0,
+  "formations": 0,
+  "min_amount_minor": 1117,
+  "max_amount_minor": 19827,
+  "day_precision": true,
+  "assumed_currency_for_units": "USD",
+  "notes": [
+    "Toy sample, account alert labels only. Other accounts are unlabeled.",
+    "Sample records are interpreted as directed edges from account to counterparty.",
+    "No rescaling, synthetic day index anchored to an arbitrary date, no invented timestamps.",
+    "Cash rows lack a counterparty account and are excluded."
+  ]
+}

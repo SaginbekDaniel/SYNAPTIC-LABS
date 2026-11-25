@@ -1,0 +1,60 @@
+Name                                            Stmts   Miss Branch BrPart  Cover   Missing
+-------------------------------------------------------------------------------------------
+src/nexora/__init__.py                              1      0      0      0   100%
+src/nexora/analytics/__init__.py                    0      0      0      0   100%
+src/nexora/analytics/config.py                     32      1      0      0    97%   24
+src/nexora/analytics/coverage.py                   35      0     16      1    98%   43->55
+src/nexora/analytics/evidence_validation.py        38      5     18      3    86%   22, 25-26, 40, 46
+src/nexora/analytics/graph_builder.py             112      2     20      2    97%   107, 148
+src/nexora/analytics/pipeline.py                  242      5     58      3    97%   248->255, 387-389, 582, 651
+src/nexora/analytics/risk.py                       61      1     32      2    97%   49, 71->77
+src/nexora/analytics/statistical/__init__.py        0      0      0      0   100%
+src/nexora/analytics/statistical/peer.py           98      0     30      1    99%   90->93
+src/nexora/analytics/structural/__init__.py         0      0      0      0   100%
+src/nexora/analytics/structural/chain.py           85      1     38      1    98%   77
+src/nexora/analytics/structural/cycle.py           57      0     12      0   100%
+src/nexora/analytics/structural/fan_out.py         60      2     14      2    95%   69, 95
+src/nexora/analytics/structural/funnel.py          57      3     16      3    92%   63, 67, 89
+src/nexora/analytics/temporal/__init__.py           0      0      0      0   100%
+src/nexora/analytics/temporal/flow.py             115      2     48      2    98%   109, 117
+src/nexora/api/__init__.py                          0      0      0      0   100%
+src/nexora/api/deps.py                             27      0      0      0   100%
+src/nexora/api/main.py                             91      9      6      0    91%   63-65, 127-128, 137-138, 155-156
+src/nexora/api/routes/__init__.py                   0      0      0      0   100%
+src/nexora/api/routes/alerts.py                    16      0      0      0   100%
+src/nexora/api/routes/analysis.py                  40      3      2      1    90%   40, 89, 96
+src/nexora/api/routes/cases.py                     36      2      2      0    95%   37, 48
+src/nexora/api/routes/datasets.py                  47      4      4      1    90%   29, 43, 46-47
+src/nexora/api/routes/evaluation.py                 9      0      0      0   100%
+src/nexora/api/routes/transfer_checks.py           85      0      6      0   100%
+src/nexora/api/schemas.py                         420      0      0      0   100%
+src/nexora/application/__init__.py                  0      0      0      0   100%
+src/nexora/application/analysis_service.py         90      7     32      8    88%   42, 45, 63, 95, 181, 232->234, 319, 321
+src/nexora/application/case_service.py             81      9     30      8    85%   69, 80-82, 110, 131, 148, 151->153, 170, 173, 175
+src/nexora/application/errors.py                   17      0      0      0   100%
+src/nexora/application/evaluation.py               28      2      4      0    94%   38-39
+src/nexora/application/ingest_service.py           66      4     16      1    91%   141-151
+src/nexora/application/queries.py                 251     50     70      9    75%   130, 137, 221->223, 375-378, 416->421, 460, 524-525, 531-532, 566-594, 620, 627-644, 649, 671-704
+src/nexora/application/transfer_demo.py            52      3      4      0    95%   62-64
+src/nexora/application/transfer_protection.py     143      4     34      4    95%   113, 120, 126, 128
+src/nexora/application/transfer_snapshot.py        28      0      6      0   100%
+src/nexora/domain/__init__.py                       0      0      0      0   100%
+src/nexora/domain/analysis.py                      91      0      0      0   100%
+src/nexora/domain/ids.py                           15      0      0      0   100%
+src/nexora/domain/money.py                         35      2     18      2    92%   48, 61
+src/nexora/domain/transfers.py                     55      4     22      4    90%   37, 40, 42, 44
+src/nexora/evaluation/__init__.py                   0      0      0      0   100%
+src/nexora/evaluation/benchmark.py                386    125    100      5    63%   170-186, 190, 198-204, 209-220, 227-244, 259-297, 342, 368->374, 376->378, 446-480, 504, 530, 563->562, 570-573, 577-578, 582-583, 587, 591, 625, 629-633, 637-638, 642-646, 672, 692-695
+src/nexora/evaluation/generator.py                349      1    104      3    99%   77->69, 84->82, 600
+src/nexora/evaluation/transfer_protection.py      157      1     48      0    99%   274
+src/nexora/ingest/__init__.py                       0      0      0      0   100%
+src/nexora/ingest/csv_adapter.py                   40      4     10      2    88%   35-36, 43, 49
+src/nexora/ingest/validation.py                   137     11     40      9    88%   83->exit, 110, 116, 138, 144, 148-149, 165->170, 171-173, 178, 230
+src/nexora/persistence/__init__.py                  0      0      0      0   100%
+src/nexora/persistence/db.py                       24      0      0      0   100%
+src/nexora/persistence/orm.py                     211      0      0      0   100%
+src/nexora/settings.py                             39      0      2      0   100%
+src/nexora/worker/__init__.py                       0      0      0      0   100%
+src/nexora/worker/runner.py                       112     26     18      3    75%   63-74, 108-109, 155-160, 187-202, 206
+-------------------------------------------------------------------------------------------
+TOTAL                                            4171    293    880     80    91%

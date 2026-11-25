@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import datetime as dt
 from typing import Any, Literal
+from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -110,6 +111,15 @@ class ImportResult(Model):
     report: ImportReport
 
 
+class CsvImportJob(Model):
+    id: UUID
+    status: Literal["accepted", "processing", "completed", "failed", "cancelled"]
+    attempt_count: int
+    result: ImportResult | None
+    error_code: str | None
+    created_at: dt.datetime
+
+
 class SyntheticDatasetRequest(Model):
     suite: str = Field(min_length=1, max_length=64)
     seed: int = Field(ge=0, le=2**31 - 1)
@@ -124,6 +134,7 @@ class LabSuite(Model):
 
 class AnalysisJobRequest(Model):
     dataset_id: str
+    profile: Literal["stable", "experimental_context"] = "stable"
     idempotency_key: str | None = Field(default=None, max_length=200)
 
 
@@ -388,6 +399,27 @@ class NoteRequest(Model):
     body: str = Field(min_length=1, max_length=4000)
 
 
+class FeedbackReview(Model):
+    expected_case_version: int = Field(ge=1)
+    expected_alert_revision: int = Field(ge=1)
+    expected_review_id: int | None = Field(default=None, ge=1)
+    outcome: Literal["confirmed_fraud", "confirmed_legitimate", "insufficient_evidence"]
+    reason: str = Field(min_length=1, max_length=2000)
+
+
+class FeedbackReceipt(Model):
+    review_id: int
+    created_at: dt.datetime
+
+
+class FeedbackLabel(Model):
+    version: Literal["feedback-v1"]
+    sample_ref: str
+    label: Literal["confirmed_fraud", "confirmed_legitimate"]
+    quality: Literal["independently_reviewed"]
+    policy_version: str
+
+
 class AuditEvent(Model):
     id: int
     actor: str
@@ -410,7 +442,9 @@ class Overview(Model):
 class Health(Model):
     status: Literal["ok", "degraded"]
     database: bool
+    schema_status: Literal["unavailable", "missing", "incompatible", "compatible"] = Field(alias="schema")
     migration: str | None
+    expected_migrations: list[str]
     queue: dict[str, int]
     demo_mode: bool
     actor: str

@@ -12,12 +12,14 @@ from sqlalchemy.orm import Session
 
 from nexora.analytics import risk as risk_engine
 from nexora.analytics.config import AnalysisConfig
+from nexora.analytics.context import VerifiedContext
 from nexora.analytics.pipeline import AnalysisOutput, run_analysis
-from nexora.application.errors import Invalid, NotFound
+from nexora.application.errors import Conflict, Invalid, NotFound
 from nexora.domain.analysis import Formation, RiskAssessment
 from nexora.domain.ids import canonical_json, sha256_hex
 from nexora.domain.transfers import ObservedTransfer
 from nexora.persistence import orm
+from nexora.persistence.access import dataset_filter
 
 
 def dataset_watermark(session: Session, dataset_id: uuid.UUID) -> int:
@@ -37,13 +39,25 @@ def request_analysis(
     requested_by: str,
     config: AnalysisConfig,
     idempotency_key: str | None = None,
+    context: VerifiedContext | None = None,
 ) -> orm.AnalysisJob:
-    if session.get(orm.Dataset, dataset_id) is None:
+    if session.scalar(select(orm.Dataset.id).where(orm.Dataset.id == dataset_id, dataset_filter(session))) is None:
         raise NotFound("DATASET_NOT_FOUND", "dataset does not exist")
     watermark = dataset_watermark(session, dataset_id)
     if watermark == 0:
         raise Invalid("DATASET_EMPTY", "dataset has no transactions to analyse")
+    configuration = {
+        "detectors": config.detectors,
+        "risk_policy": config.risk_policy,
+        "config_sha256": config.config_sha256,
+        "context": context.model_dump(mode="json") if context else None,
+        "context_sha256": context.manifest() if context else None,
+    }
     key = idempotency_key or f"analysis:{dataset_id}:{watermark}:{config.config_sha256}"
+    if idempotency_key is None and configuration["context_sha256"] is not None:
+        key += f":{configuration['context_sha256']}"
+    if (tenant := session.info.get("tenant")) is not None:
+        key = "tenant:" + sha256_hex(canonical_json([tenant, key]))
     stmt = (
         insert(orm.AnalysisJob)
         .values(
@@ -54,6 +68,7 @@ def request_analysis(
             idempotency_key=key,
             requested_by=requested_by,
             max_ingest_seq=watermark,
+            analysis_configuration=configuration,
         )
         .on_conflict_do_nothing(index_elements=["idempotency_key"])
     )
@@ -61,6 +76,10 @@ def request_analysis(
     job = session.execute(select(orm.AnalysisJob).where(orm.AnalysisJob.idempotency_key == key)).scalar_one()
     if job.dataset_id != dataset_id:
         raise Invalid("IDEMPOTENCY_KEY_REUSED", "idempotency key belongs to another dataset")
+    if job.analysis_configuration is not None and any(
+        job.analysis_configuration.get(field) != configuration[field] for field in ("config_sha256", "context_sha256")
+    ):
+        raise Conflict("ANALYSIS_IDEMPOTENCY_CONFLICT", "idempotency key belongs to a different configuration")
     return job
 
 
@@ -100,7 +119,11 @@ def compute(
     dataset_id: uuid.UUID, transfers: list[ObservedTransfer], contract: dict[str, Any], config: AnalysisConfig
 ) -> AnalysisOutput:
     """Pure computation; callers must not hold a database transaction open around it."""
-    return run_analysis(dataset_id=str(dataset_id), transfers=transfers, contract=contract, config=config)
+    payload = contract.get("_verified_context")
+    context = VerifiedContext.model_validate(payload) if payload is not None else None
+    return run_analysis(
+        dataset_id=str(dataset_id), transfers=transfers, contract=contract, config=config, context=context
+    )
 
 
 def alert_fingerprint(dataset_id: uuid.UUID, formation: Formation) -> str:

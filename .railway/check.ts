@@ -50,6 +50,8 @@ check(
   webToken?.type === "reference" && webToken.resource === "service.api" && webToken.output === "NEXORA_GATEWAY_TOKEN",
   "gateway forwards the API's own gateway token (reference, not a copy)",
 );
+check(literal("api", "NEXORA_EXECUTION_PROFILE") === "deployed_demo", "deployed API validates its secrets");
+check(env("api").NEXORA_TRANSFER_ANALYST_TOKEN?.type === "preserve", "analyst evidence secret is independently managed");
 check(!("NEXORA_GATEWAY_TOKEN" in env("worker")), "worker does not receive the gateway token");
 check(services.get("worker")?.deploy?.startCommand === "python -m nexora.worker.runner", "worker start command");
 check(services.get("api")?.deploy?.healthcheckPath === "/health/ready", "api readiness health check");

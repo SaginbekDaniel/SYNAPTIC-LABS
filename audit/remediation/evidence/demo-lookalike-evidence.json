@@ -1,0 +1,126 @@
+[
+  {
+    "dataset": "suspicious-network",
+    "alerts": 1,
+    "accepted_ms": 27.79904100316344,
+    "snapshot_id": "c227b624-0106-5db1-b06f-f9a8d379bb5a",
+    "case_audit_events": 2,
+    "risk": [
+      {
+        "band": "high",
+        "priority": 51,
+        "policy_version": "risk-policy-v3-experimental",
+        "reason_codes": [
+          {
+            "code": "STRUCT_CHAIN_PATH",
+            "params": {
+              "hops": 3,
+              "currency": "KZT"
+            }
+          },
+          {
+            "code": "TEMPORAL_PATH_SUPPORTED",
+            "params": {
+              "precision": "timestamp",
+              "entry_minor": "8000000",
+              "fraction_bp": 10000,
+              "lag_days_max": 1,
+              "lag_days_min": 1,
+              "compatible_minor": "8000000"
+            }
+          },
+          {
+            "code": "PRIORITY_CONTRIBUTIONS",
+            "params": {
+              "points": {
+                "TEMPORAL": 30.0,
+                "STRUCTURE": 21.0,
+                "NETWORK_CONTEXT": 0,
+                "PEER_STATISTICS": 0
+              },
+              "policy_ceiling": 100,
+              "available_ceiling": 65
+            }
+          }
+        ]
+      }
+    ],
+    "trusted_context": []
+  },
+  {
+    "dataset": "verified-settlement",
+    "alerts": 0,
+    "accepted_ms": 2.4837500022840686,
+    "snapshot_id": "1e818374-7039-5ba4-ba3d-ca7549ce7e2f",
+    "risk": [
+      {
+        "band": "low",
+        "priority": 51,
+        "policy_version": "risk-policy-v3-experimental",
+        "reason_codes": [
+          {
+            "code": "STRUCT_CHAIN_PATH",
+            "params": {
+              "hops": 3,
+              "currency": "KZT"
+            }
+          },
+          {
+            "code": "TEMPORAL_PATH_SUPPORTED",
+            "params": {
+              "precision": "timestamp",
+              "entry_minor": "8000000",
+              "fraction_bp": 10000,
+              "lag_days_max": 1,
+              "lag_days_min": 1,
+              "compatible_minor": "8000000"
+            }
+          },
+          {
+            "code": "CONTEXT_VERIFIED_BUSINESS_ACTIVITY",
+            "params": {
+              "source_ref": "synthetic-settlement-verified-0001",
+              "covered_transfers": 3
+            }
+          },
+          {
+            "code": "PRIORITY_CONTRIBUTIONS",
+            "params": {
+              "points": {
+                "TEMPORAL": 30.0,
+                "STRUCTURE": 21.0,
+                "NETWORK_CONTEXT": 0.0,
+                "PEER_STATISTICS": 0
+              },
+              "policy_ceiling": 100,
+              "available_ceiling": 80
+            }
+          },
+          {
+            "code": "BAND_CAPPED_BY_EVIDENCE",
+            "params": {
+              "to": "low",
+              "from": "high",
+              "gates": [
+                "verified_business_activity"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "trusted_context": [
+      {
+        "reason_code": "CONTEXT_VERIFIED_BUSINESS_ACTIVITY",
+        "observations": {
+          "as_of": "2026-11-05T11:00:00+00:00",
+          "known_at": "2026-11-04T09:00:00+00:00",
+          "source_ref": "synthetic-settlement-verified-0001",
+          "observed_at": "2026-11-03T12:30:00+00:00",
+          "valid_until": "2026-11-28T00:00:00+00:00"
+        },
+        "provenance_hash": "935879b27ab9d5d6d42e3897985d39275a4dd19120e36dda312c1ea2efd9cd2a"
+      }
+    ]
+  }
+]

@@ -15,9 +15,11 @@ from sqlalchemy import (
     DateTime,
     Float,
     ForeignKey,
+    ForeignKeyConstraint,
     Identity,
     Index,
     Integer,
+    LargeBinary,
     Numeric,
     String,
     Text,
@@ -44,6 +46,7 @@ class Dataset(Base):
     __tablename__ = "datasets"
     id: Mapped[uuid.UUID] = _uuid()
     name: Mapped[str] = mapped_column(Text, nullable=False)
+    tenant: Mapped[str | None] = mapped_column(Text, index=True)
     source_kind: Mapped[str] = mapped_column(Text, nullable=False)
     description: Mapped[str | None] = mapped_column(Text)
     time_precision: Mapped[str] = mapped_column(Text, nullable=False)
@@ -72,6 +75,43 @@ class ImportBatch(Base):
     status: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[dt.datetime] = _now()
     completed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    __table_args__ = (UniqueConstraint("id", "dataset_id", name="uq_import_batch_dataset"),)
+
+
+class CsvImportRequest(Base):
+    __tablename__ = "csv_import_requests"
+    scope: Mapped[str] = mapped_column(Text, primary_key=True)
+    request_key: Mapped[str] = mapped_column(String(160), primary_key=True)
+    payload_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    result: Mapped[dict[str, Any] | None] = mapped_column(JSONB(none_as_null=True))
+    created_at: Mapped[dt.datetime] = _now()
+
+
+class CsvImportJob(Base):
+    __tablename__ = "csv_import_jobs"
+    id: Mapped[uuid.UUID] = _uuid()
+    scope: Mapped[str] = mapped_column(Text, nullable=False)
+    tenant: Mapped[str | None] = mapped_column(Text)
+    request_key: Mapped[str] = mapped_column(String(160), nullable=False)
+    payload_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    file_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    content: Mapped[bytes | None] = mapped_column(LargeBinary, deferred=True)
+    name: Mapped[str] = mapped_column(Text, nullable=False)
+    boundary: Mapped[list[str]] = mapped_column(JSONB, nullable=False)
+    max_rows: Mapped[int] = mapped_column(Integer, nullable=False)
+    status: Mapped[str] = mapped_column(Text, nullable=False)
+    attempt_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    lease_until: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    result: Mapped[dict[str, Any] | None] = mapped_column(JSONB(none_as_null=True))
+    error_code: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[dt.datetime] = _now()
+    __table_args__ = (
+        UniqueConstraint("scope", "request_key", name="uq_csv_import_job_request"),
+        CheckConstraint(
+            "status IN ('accepted','processing','completed','failed','cancelled')", name="ck_csv_job_status"
+        ),
+        Index("ix_csv_import_jobs_claim", "status", "created_at"),
+    )
 
 
 class Transaction(Base):
@@ -79,9 +119,7 @@ class Transaction(Base):
     id: Mapped[uuid.UUID] = _uuid()
     ingest_seq: Mapped[int] = mapped_column(BigInteger, Identity(always=True), nullable=False, unique=True)
     dataset_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("datasets.id", ondelete="RESTRICT"), nullable=False)
-    import_batch_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("import_batches.id", ondelete="RESTRICT"), nullable=False
-    )
+    import_batch_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
     source_id: Mapped[str] = mapped_column(Text, nullable=False)
     source_transaction_id: Mapped[str] = mapped_column(Text, nullable=False)
     sender_account_id: Mapped[str] = mapped_column(Text, nullable=False)
@@ -97,6 +135,12 @@ class Transaction(Base):
     ingested_at: Mapped[dt.datetime] = _now()
     __table_args__ = (
         UniqueConstraint("dataset_id", "source_id", "source_transaction_id", name="uq_transactions_source"),
+        ForeignKeyConstraint(
+            ("import_batch_id", "dataset_id"),
+            ("import_batches.id", "import_batches.dataset_id"),
+            name="fk_transactions_batch_dataset",
+            ondelete="RESTRICT",
+        ),
         CheckConstraint("amount_minor > 0", name="ck_transactions_amount_positive"),
         CheckConstraint("time_precision IN ('day','timestamp')", name="ck_transactions_precision"),
         CheckConstraint("status IN ('posted','reversed','cancelled')", name="ck_transactions_status"),
@@ -329,6 +373,7 @@ class AnalysisJob(Base):
     idempotency_key: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
     requested_by: Mapped[str] = mapped_column(Text, nullable=False)
     max_ingest_seq: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    analysis_configuration: Mapped[dict[str, Any] | None] = mapped_column(JSONB(none_as_null=True))
     attempt_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
     lease_owner: Mapped[str | None] = mapped_column(Text)
     lease_until: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
@@ -342,3 +387,31 @@ class AnalysisJob(Base):
         CheckConstraint("attempt_count >= 0", name="ck_jobs_attempts"),
         Index("ix_analysis_jobs_claim", "status", "created_at"),
     )
+
+
+class TransferAssessment(Base):
+    __tablename__ = "transfer_assessments"
+    id: Mapped[uuid.UUID] = _uuid()
+    tenant: Mapped[str] = mapped_column(Text, nullable=False)
+    owner: Mapped[str] = mapped_column(Text, nullable=False)
+    intent_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
+    request_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    intent: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    assessment: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    evidence: Mapped[dict[str, Any] | None] = mapped_column(JSONB(none_as_null=True))
+    status: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[dt.datetime] = _now()
+    __table_args__ = (UniqueConstraint("tenant", "owner", "intent_id", name="uq_transfer_intent_scope"),)
+
+
+class TransferActionEvent(Base):
+    __tablename__ = "transfer_action_events"
+    assessment_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("transfer_assessments.id", ondelete="RESTRICT"), primary_key=True
+    )
+    action_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True)
+    actor: Mapped[str] = mapped_column(Text, nullable=False)
+    action: Mapped[str] = mapped_column(Text, nullable=False)
+    from_status: Mapped[str] = mapped_column(Text, nullable=False)
+    to_status: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[dt.datetime] = _now()

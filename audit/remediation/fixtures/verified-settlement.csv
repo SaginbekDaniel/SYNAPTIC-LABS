@@ -1,0 +1,4 @@
+source_transaction_id,sender_account_id,receiver_account_id,amount_minor,currency,occurred_at
+b-01,origin,bridge-a,8000000,KZT,2026-11-01T12:00:00Z
+b-02,bridge-a,bridge-b,8000000,KZT,2026-11-02T12:00:00Z
+b-03,bridge-b,beneficiary,8000000,KZT,2026-11-03T12:00:00Z

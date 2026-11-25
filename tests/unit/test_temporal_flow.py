@@ -79,3 +79,20 @@ def test_budget_exceeded_is_explicit():  # spec §10.6 case 10
     many = [tx(f"i{i}", f"S{i}", "B", 10, 0) for i in range(20)]
     r = layered_flow([many, [tx("o", "B", "C", 100, 1)]], **{**KW, "max_transfers": 5})
     assert r.status == "unavailable" and r.limitations == ("flow_budget_exceeded",)
+
+
+def test_temporal_index_keeps_boundary_and_reports_effective_coverage():
+    incoming = [tx("in", "A", "B", 100, 0)]
+    outgoing = [
+        *[tx(f"noise-{i}", f"W{i}", "C", 100, 4) for i in range(150)],
+        tx("exact-window", "B", "C", 80, 7),
+        tx("outside-window", "B", "C", 100, 8),
+    ]
+    result = layered_flow([incoming, outgoing], **KW)
+    assert result.strict_compatible_minor == 80
+    assert result.supporting_transaction_ids == ("exact-window", "in")
+    assert result.eligible_transfers == result.processed_transfers == 153
+
+    result = layered_flow([incoming, outgoing], **{**KW, "max_transfers": 152})
+    assert result.eligible_transfers == 153 and result.processed_transfers == 0
+    assert result.limitations == ("flow_budget_exceeded",)

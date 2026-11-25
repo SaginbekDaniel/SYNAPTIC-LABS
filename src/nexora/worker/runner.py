@@ -17,20 +17,38 @@ import os
 import signal
 import socket
 import threading
-import traceback
 import uuid
 from typing import Any
 
-from sqlalchemy import select, text, update
+from sqlalchemy import func, select, text, update
 from sqlalchemy.orm import Session, sessionmaker
 
 from nexora.analytics.config import AnalysisConfig, default_config
+from nexora.analytics.context import VerifiedContext
 from nexora.application import analysis_service
+from nexora.application.csv_imports import run_import_once
+from nexora.application.errors import AppError, Invalid, public_job_error
 from nexora.persistence import orm
 from nexora.persistence.db import session_factory, session_scope
 from nexora.settings import get_settings
 
 log = logging.getLogger("nexora.worker")
+
+REAP_EXHAUSTED_SQL = text(
+    """
+    UPDATE analysis_jobs SET status = 'failed', lease_owner = NULL, lease_until = NULL,
+        error_code = 'ATTEMPTS_EXHAUSTED', error_summary = 'analysis retry budget exhausted',
+        updated_at = now()
+    WHERE id IN (
+        SELECT id FROM analysis_jobs
+        WHERE attempt_count >= :max_attempts
+          AND (status = 'queued' OR (status = 'running' AND lease_until <= now()))
+        ORDER BY created_at, id
+        FOR UPDATE SKIP LOCKED
+        LIMIT 100
+    )
+    """
+)
 
 CLAIM_SQL = text(
     """
@@ -39,12 +57,13 @@ CLAIM_SQL = text(
         updated_at = now()
     WHERE id = (
         SELECT id FROM analysis_jobs
-        WHERE (status = 'queued') OR (status = 'running' AND lease_until < now())
+        WHERE attempt_count < :max_attempts
+          AND (status = 'queued' OR (status = 'running' AND lease_until <= now()))
         ORDER BY created_at, id
         FOR UPDATE SKIP LOCKED
         LIMIT 1
     )
-    RETURNING id, dataset_id, max_ingest_seq, attempt_count
+    RETURNING id, dataset_id, max_ingest_seq, attempt_count, analysis_configuration
     """
 )
 
@@ -54,24 +73,25 @@ def worker_identity() -> str:
 
 
 class _Heartbeat:
-    def __init__(self, factory: sessionmaker[Session], job_id: uuid.UUID, owner: str, lease: int) -> None:
+    def __init__(self, factory: sessionmaker[Session], job_id: uuid.UUID, owner: str, lease: int, attempt: int) -> None:
         self._stop = threading.Event()
-        self._thread = threading.Thread(target=self._run, args=(factory, job_id, owner, lease), daemon=True)
+        self._thread = threading.Thread(target=self._run, args=(factory, job_id, owner, lease, attempt), daemon=True)
 
-    def _run(self, factory: sessionmaker[Session], job_id: uuid.UUID, owner: str, lease: int) -> None:
-        while not self._stop.wait(max(1.0, lease / 3)):
+    def _run(self, factory: sessionmaker[Session], job_id: uuid.UUID, owner: str, lease: int, attempt: int) -> None:
+        while not self._stop.wait(lease / 3):
             try:
                 with session_scope(factory) as s:
                     s.execute(
                         text(
                             "UPDATE analysis_jobs SET lease_until = now() + make_interval(secs => :lease), "
                             "updated_at = now() "
-                            "WHERE id = :id AND lease_owner = :owner AND status = 'running'"
+                            "WHERE id = :id AND lease_owner = :owner AND status = 'running' "
+                            "AND attempt_count = :attempt AND lease_until > now()"
                         ),
-                        {"lease": lease, "id": job_id, "owner": owner},
+                        {"lease": lease, "id": job_id, "owner": owner, "attempt": attempt},
                     )
             except Exception:  # heartbeat failure must not crash computation; lease expiry handles it
-                log.exception("heartbeat failed for job %s", job_id)
+                log.warning("heartbeat failed for job %s", job_id)
 
     def __enter__(self) -> _Heartbeat:
         self._thread.start()
@@ -90,21 +110,44 @@ def run_once(
     cfg = config or default_config()
     owner = owner or worker_identity()
     with session_scope(factory) as s:
-        claimed = s.execute(CLAIM_SQL, {"owner": owner, "lease": settings.job_lease_seconds}).first()
+        s.execute(REAP_EXHAUSTED_SQL, {"max_attempts": settings.job_max_attempts})
+        claimed = s.execute(
+            CLAIM_SQL,
+            {"owner": owner, "lease": settings.job_lease_seconds, "max_attempts": settings.job_max_attempts},
+        ).first()
     if claimed is None:
-        return None
-    job_id, dataset_id, max_seq, attempts = claimed
+        return run_import_once(factory)
+    job_id, dataset_id, max_seq, attempts, configuration = claimed
     log.info("claimed job %s (attempt %s) for dataset %s", job_id, attempts, dataset_id)
+    job_is_owned = (
+        orm.AnalysisJob.id == job_id,
+        orm.AnalysisJob.lease_owner == owner,
+        orm.AnalysisJob.status == "running",
+        orm.AnalysisJob.attempt_count == attempts,
+        orm.AnalysisJob.lease_until > func.now(),
+    )
     try:
-        with _Heartbeat(factory, job_id, owner, settings.job_lease_seconds):
+        with _Heartbeat(factory, job_id, owner, settings.job_lease_seconds, attempts):
+            context = None
+            if configuration is not None:
+                try:
+                    cfg = AnalysisConfig(configuration["detectors"], configuration["risk_policy"])
+                    raw_context = configuration["context"]
+                    context = VerifiedContext.model_validate(raw_context) if raw_context is not None else None
+                    if cfg.config_sha256 != configuration["config_sha256"] or (
+                        (context.manifest() if context else None) != configuration["context_sha256"]
+                    ):
+                        raise ValueError("configuration hash mismatch")
+                except (KeyError, TypeError, ValueError):
+                    raise Invalid("ANALYSIS_CONFIG_INVALID", "stored analysis configuration is invalid") from None
             with session_scope(factory) as s:
                 transfers, contract = analysis_service.load_inputs(s, dataset_id, max_seq)
+            if context is not None:
+                contract["_verified_context"] = context.model_dump(mode="json")
             output = analysis_service.compute(dataset_id, transfers, contract, cfg)
             with session_scope(factory) as s:
-                job = s.execute(
-                    select(orm.AnalysisJob).where(orm.AnalysisJob.id == job_id).with_for_update()
-                ).scalar_one()
-                if job.lease_owner != owner or job.status != "running":
+                job = s.execute(select(orm.AnalysisJob).where(*job_is_owned).with_for_update()).scalar_one_or_none()
+                if job is None:
                     log.warning("lost lease on job %s; result discarded (another worker owns it)", job_id)
                     return job_id
                 snapshot_id = analysis_service.publish(
@@ -119,18 +162,19 @@ def run_once(
                 s.execute(update(orm.AnalysisJob).where(orm.AnalysisJob.id == job_id).values(updated_at=text("now()")))
         log.info("job %s published snapshot %s", job_id, snapshot_id)
     except Exception as exc:
-        log.error("job %s failed: %s\n%s", job_id, exc, traceback.format_exc())
+        code, summary = public_job_error(exc.code if isinstance(exc, AppError) else "ANALYSIS_FAILED")
+        log.error("job %s failed with public code %s", job_id, code)
         with session_scope(factory) as s:
             terminal = attempts >= settings.job_max_attempts
             s.execute(
                 update(orm.AnalysisJob)
-                .where(orm.AnalysisJob.id == job_id, orm.AnalysisJob.lease_owner == owner)
+                .where(*job_is_owned)
                 .values(
                     status="failed" if terminal else "queued",
                     lease_owner=None,
                     lease_until=None,
-                    error_code=getattr(exc, "code", "ANALYSIS_FAILED"),
-                    error_summary=str(exc)[:500],
+                    error_code=code,
+                    error_summary=summary,
                     updated_at=text("now()"),
                 )
             )
@@ -177,7 +221,7 @@ def serve(
             else:
                 processed += 1
         except Exception:
-            log.exception("worker loop error; backing off")
+            log.error("worker loop error; backing off")
             stop.wait(poll * 5)
     log.info("worker %s stopped after %s jobs", owner, processed)
     return processed

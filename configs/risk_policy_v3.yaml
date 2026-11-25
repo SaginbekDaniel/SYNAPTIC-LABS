@@ -1,0 +1,5 @@
+# Experimental point-in-time context policy. The stable v2 file and weights remain intact.
+version: risk-policy-v3-experimental
+verified_context: true
+caps:
+  verified_business_activity: low

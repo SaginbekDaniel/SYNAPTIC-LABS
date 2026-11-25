@@ -1,0 +1,86 @@
+[
+  {
+    "dataset": "audit-perf-100",
+    "route": "depth_1",
+    "sql_statements": 3,
+    "sql_wall_ms": 1.330001003225334,
+    "result_size": 51
+  },
+  {
+    "dataset": "audit-perf-100",
+    "route": "depth_2",
+    "sql_statements": 53,
+    "sql_wall_ms": 5.531626942683943,
+    "result_size": 101
+  },
+  {
+    "dataset": "audit-perf-100",
+    "route": "alerts",
+    "sql_statements": 8,
+    "sql_wall_ms": 2.308625007572118,
+    "result_size": 1
+  },
+  {
+    "dataset": "audit-perf-1000",
+    "route": "depth_1",
+    "sql_statements": 3,
+    "sql_wall_ms": 0.6124990031821653,
+    "result_size": 150
+  },
+  {
+    "dataset": "audit-perf-1000",
+    "route": "depth_2",
+    "sql_statements": 152,
+    "sql_wall_ms": 16.446286957943812,
+    "result_size": 150
+  },
+  {
+    "dataset": "audit-perf-1000",
+    "route": "alerts",
+    "sql_statements": 11,
+    "sql_wall_ms": 1.5045000109239481,
+    "result_size": 2
+  },
+  {
+    "dataset": "audit-perf-10000",
+    "route": "depth_1",
+    "sql_statements": 3,
+    "sql_wall_ms": 0.48700100160203874,
+    "result_size": 150
+  },
+  {
+    "dataset": "audit-perf-10000",
+    "route": "depth_2",
+    "sql_statements": 152,
+    "sql_wall_ms": 12.948091985890642,
+    "result_size": 150
+  },
+  {
+    "dataset": "audit-perf-10000",
+    "route": "alerts",
+    "sql_statements": 65,
+    "sql_wall_ms": 4.069629030709621,
+    "result_size": 20
+  },
+  {
+    "dataset": "audit-perf-100000",
+    "route": "depth_1",
+    "sql_statements": 3,
+    "sql_wall_ms": 0.42316599865444005,
+    "result_size": 150
+  },
+  {
+    "dataset": "audit-perf-100000",
+    "route": "depth_2",
+    "sql_statements": 152,
+    "sql_wall_ms": 8.168242064130027,
+    "result_size": 150
+  },
+  {
+    "dataset": "audit-perf-100000",
+    "route": "alerts",
+    "sql_statements": 155,
+    "sql_wall_ms": 7.135634012229275,
+    "result_size": 50
+  }
+]

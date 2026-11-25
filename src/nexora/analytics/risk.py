@@ -87,6 +87,27 @@ def assess(
     if peer is not None and peer.status == "contradicted" and "peer_contradicted" in caps:
         # Counter-evidence: the subject's turnover is no more time-concentrated than its peers'.
         gates.append("peer_contradicted")
+    context = by_family.get("NETWORK_CONTEXT")
+    if context is not None and context.status == "contradicted" and "verified_business_activity" in caps:
+        gates.append("verified_business_activity")
+    if policy.get("verified_context"):
+        reason_list.append(
+            ReasonCode(
+                "PRIORITY_CONTRIBUTIONS",
+                {
+                    "points": {
+                        family: round(100 * weight * (by_family[family].strength or 0.0), 2)
+                        if family in by_family
+                        else 0
+                        for family, weight in sorted(weights.items())
+                    },
+                    "available_ceiling": round(
+                        100 * sum(weight for family, weight in weights.items() if family not in missing)
+                    ),
+                    "policy_ceiling": round(100 * sum(weights.values())),
+                },
+            )
+        )
     capped = band
     applied: list[str] = []
     for gate in gates:

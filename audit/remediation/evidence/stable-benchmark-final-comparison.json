@@ -1,0 +1,22 @@
+{
+  "ignored_metadata_keys": [
+    "code",
+    "environment",
+    "generated_at",
+    "git_commit",
+    "git_worktree_dirty",
+    "latency_ms",
+    "runtime_seconds"
+  ],
+  "results": {
+    "bench_v1": {
+      "matches": true
+    },
+    "transfer_holdout": {
+      "matches": true
+    },
+    "context_experiment": {
+      "seed_and_classification_results_match": true
+    }
+  }
+}

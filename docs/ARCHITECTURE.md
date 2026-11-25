@@ -1,5 +1,9 @@
 # Architecture
 
+## Ремедиация после аудита 25 ноября 2026
+
+Актуальная [схема сервисов и потоков](../audit/remediation/ARCHITECTURE_V3.md) описывает миграции 0003–0007, scoped CSV replay, очередь COPY, lease fencing, точную проверку Alembic head, закрепление контекста job и durable transfer state machine. Stable risk-policy-v2 остаётся стандартом. Для новых случаев безопасного сравнения можно выбрать experimental_context.
+
 Modular monolith + PostgreSQL + durable DB-backed worker + one React/TypeScript app (ADR-001).
 
 ```

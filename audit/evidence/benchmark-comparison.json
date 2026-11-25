@@ -1,0 +1,25 @@
+{
+  "ignored_metadata_keys": [
+    "code",
+    "environment",
+    "generated_at",
+    "git_commit",
+    "git_worktree_dirty",
+    "latency_ms",
+    "runtime_seconds"
+  ],
+  "results": {
+    "bench_v1": {
+      "matches": true,
+      "mismatched_top_level_fields": [],
+      "published_commit": "58440cc19285b039e020a36c9bb1ec5b0c48c633",
+      "rerun_commit": "43368ff46b788568d34ceee5ac8ae9135728c373"
+    },
+    "transfer_holdout": {
+      "matches": true,
+      "mismatched_top_level_fields": [],
+      "published_commit": "1652880ccfb0917819f78f263265a521c6fffc56",
+      "rerun_commit": "43368ff46b788568d34ceee5ac8ae9135728c373"
+    }
+  }
+}

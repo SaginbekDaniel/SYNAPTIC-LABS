@@ -1,5 +1,9 @@
 # Security policy
 
+## Ремедиация 25 ноября 2026
+
+Есть отдельный защищённый режим аналитики и transfer sandbox с проверенными индивидуальными субъектами. На локальном PostgreSQL проверены раздельные runtime grants и неизменяемость истории. Public Basic gateway остаётся режимом общего демо-доступа. Подключение внешнего OIDC, тестирование production ingress и cloud роли не подтверждены. [Security remediation](audit/remediation/SECURITY_REMEDIATION_REPORT.md)
+
 NEXORA AI is a **hackathon prototype on synthetic data**. It is not connected to any bank, holds no
 real customer data, and is **not** hardened, tested or reviewed to the standard of a banking system.
 
@@ -36,8 +40,7 @@ What is in place (see [docs/deployment/railway.md](docs/deployment/railway.md#se
 
 What is **not** in place — and why this must not hold real data:
 
-* **Shared demo identity.** Everyone who passes the gateway acts as `NEXORA_DEMO_ANALYST`; audit
-  records cannot distinguish people. There is no SSO, no per-user accounts, no RBAC.
+* **Shared Basic demo identity.** Shared gateway sessions use the configured demo actor. Verified individual roles and tenant rules apply when secured analytics is enabled.
 * Basic access control is a single shared credential, not an identity provider (Cloudflare Access,
   OIDC) with MFA, revocation and per-user audit.
 * No penetration test, threat-model review, data-retention policy, encryption-key management,

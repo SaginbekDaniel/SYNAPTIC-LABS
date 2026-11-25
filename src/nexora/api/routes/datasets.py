@@ -2,14 +2,13 @@ from __future__ import annotations
 
 from typing import Annotated, Any
 
-from fastapi import APIRouter, File, Form, Query, Request, UploadFile
+from fastapi import APIRouter, Depends, File, Form, Header, Query, Request, Response, UploadFile
 
 from nexora.api import schemas
-from nexora.api.deps import SessionDep, parse_uuid
-from nexora.application import ingest_service, queries
+from nexora.api.deps import SessionDep, parse_uuid, source_scope
+from nexora.application import csv_imports, ingest_service, queries
 from nexora.application.errors import Invalid, PayloadTooLarge
 from nexora.evaluation.generator import SUITES, suite_families
-from nexora.ingest.csv_adapter import CsvSchemaError, read_csv_rows
 
 router = APIRouter(prefix="/api/v1", tags=["datasets"])
 
@@ -17,6 +16,60 @@ router = APIRouter(prefix="/api/v1", tags=["datasets"])
 @router.get("/datasets", response_model=schemas.DatasetPage)
 def list_datasets(session: SessionDep, limit: int = Query(20, ge=1, le=100), offset: int = Query(0, ge=0)) -> Any:
     return queries.list_datasets(session, limit, offset)
+
+
+def upload_payload(
+    request: Request,
+    file: Annotated[UploadFile, File()],
+    name: Annotated[str, Form(min_length=1, max_length=120)],
+    boundary_account_ids: Annotated[str, Form(max_length=20000)] = "",
+    idempotency_key: Annotated[
+        str | None, Header(alias="Idempotency-Key", min_length=1, max_length=128, pattern=r"^[!-~]+$")
+    ] = None,
+) -> csv_imports.CsvPayload:
+    maximum = request.app.state.settings.max_upload_bytes
+    content = file.file.read(maximum + 1)
+    if len(content) > maximum:
+        raise PayloadTooLarge("UPLOAD_TOO_LARGE", f"file exceeds {maximum} bytes")
+    return csv_imports.CsvPayload.prepare(content, name, boundary_account_ids, idempotency_key)
+
+
+UploadDep = Annotated[csv_imports.CsvPayload, Depends(upload_payload)]
+SourceDep = Annotated[str, Depends(source_scope)]
+
+
+@router.post(
+    "/datasets/import",
+    response_model=schemas.ImportResult,
+    status_code=201,
+    responses={409: {"model": schemas.ErrorEnvelope}},
+)
+def import_csv(request: Request, session: SessionDep, who: SourceDep, payload: UploadDep) -> Any:
+    return csv_imports.persist_csv(session, payload, scope=who, max_rows=request.app.state.settings.max_csv_rows)
+
+
+@router.post(
+    "/datasets/import-jobs",
+    response_model=schemas.CsvImportJob,
+    status_code=202,
+    responses={409: {"model": schemas.ErrorEnvelope}},
+)
+def queue_csv_import(
+    request: Request, response: Response, session: SessionDep, who: SourceDep, payload: UploadDep
+) -> Any:
+    job = csv_imports.enqueue_csv(session, payload, scope=who, max_rows=request.app.state.settings.max_csv_rows)
+    response.headers["Location"] = f"/api/v1/datasets/import-jobs/{job.id}"
+    return job
+
+
+@router.get("/datasets/import-jobs/{job_id}", response_model=schemas.CsvImportJob)
+def csv_import_status(job_id: str, session: SessionDep, who: SourceDep) -> Any:
+    return csv_imports.get_csv_job(session, parse_uuid(job_id, "job_id"), who)
+
+
+@router.post("/datasets/import-jobs/{job_id}/cancel", response_model=schemas.CsvImportJob)
+def cancel_csv_import(job_id: str, session: SessionDep, who: SourceDep) -> Any:
+    return csv_imports.cancel_csv_job(session, parse_uuid(job_id, "job_id"), who)
 
 
 @router.get("/datasets/{dataset_id}", response_model=schemas.Dataset)
@@ -27,58 +80,6 @@ def get_dataset(dataset_id: str, session: SessionDep) -> Any:
 @router.get("/datasets/{dataset_id}/overview", response_model=schemas.Overview)
 def overview(dataset_id: str, session: SessionDep) -> Any:
     return queries.overview(session, parse_uuid(dataset_id, "dataset_id"))
-
-
-@router.post("/datasets/import", response_model=schemas.ImportResult, status_code=201)
-async def import_csv(
-    request: Request,
-    session: SessionDep,
-    file: Annotated[UploadFile, File()],
-    name: Annotated[str, Form(min_length=1, max_length=120)],
-    boundary_account_ids: Annotated[str, Form(max_length=20000)] = "",
-) -> Any:
-    settings = request.app.state.settings
-    content = await file.read(settings.max_upload_bytes + 1)
-    if len(content) > settings.max_upload_bytes:
-        raise PayloadTooLarge("UPLOAD_TOO_LARGE", f"file exceeds {settings.max_upload_bytes} bytes")
-    try:
-        rows, digest = read_csv_rows(content, max_rows=settings.max_csv_rows)
-    except CsvSchemaError as exc:
-        raise Invalid(exc.code, str(exc)) from exc
-    boundary = sorted({b.strip() for b in boundary_account_ids.replace("\n", ",").split(",") if b.strip()})
-    has_ts = any(isinstance(r.get("occurred_at"), str) and str(r.get("occurred_at")).strip() for _, r in rows)
-    has_day = any(not (isinstance(r.get("occurred_at"), str) and str(r.get("occurred_at")).strip()) for _, r in rows)
-    precision = "mixed" if has_ts and has_day else ("timestamp" if has_ts else "day")
-    ds = ingest_service.create_dataset(
-        session,
-        name=name,
-        source_kind="csv",
-        time_precision=precision,
-        coverage_contract={
-            "source": "csv",
-            "boundary_account_ids": boundary,
-            "upstream_observed": None,
-            "declared_complete": False,
-        },
-        description=None,
-        authorized_use_note="Uploaded by operator; operator is responsible for authorised use.",
-        manifest_sha256=digest,
-    )
-    batch, report = ingest_service.ingest_rows(
-        session,
-        dataset=ds,
-        rows=rows,
-        source_id=f"csv:{digest[:16]}",
-        content_sha256=digest,
-        file_name=None,
-        is_synthetic=False,
-    )
-    session.flush()
-    return {
-        "dataset": queries.dataset_dict(session, ds),
-        "batch_id": str(batch.id),
-        "report": report.as_dict(),
-    }
 
 
 @router.get("/lab/suites", response_model=list[schemas.LabSuite], tags=["lab"])

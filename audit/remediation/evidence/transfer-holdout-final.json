@@ -1,0 +1,174 @@
+{
+  "dataset_version": "transfer-protection-holdout-v1",
+  "dataset_sha256": "a6b12866745ece122e7dcc2badbe7897e527837d3666573400017ed0811e618e",
+  "snapshot_manifest_sha256": "69f7cbc40a4b3a7f8f914b5f9c6edc36188d5b5820556fbc7f64e9bb43297011",
+  "git_commit": "43368ff46b788568d34ceee5ac8ae9135728c373",
+  "git_worktree_dirty": true,
+  "policy_version": "transfer-protection-v1",
+  "analysis_config_sha256": "489b477a3da5ac1bac8ae3a7e3c1f5f22d9aac2a826e966d04d700347f194153",
+  "graph_policy_version": "risk-policy-v2",
+  "scenario_count": 112,
+  "legitimate_count": 67,
+  "fraud_count": 45,
+  "amount_baseline_minor": "20000000",
+  "graph_only_alert_min_band": "medium",
+  "latency_scope": "in-process decision on prepared inputs; excludes graph preparation, HTTP and queueing",
+  "results": {
+    "amount_only": {
+      "tp": 15,
+      "fp": 36,
+      "tn": 31,
+      "fn": 30,
+      "precision": 0.29411764705882354,
+      "recall": 0.3333333333333333,
+      "false_positive_rate": 0.5373134328358209,
+      "false_warnings_per_1000_legitimate": 537.3134328358209,
+      "limited_signal_rate": 0.0,
+      "unavailable_rate": 0.0,
+      "decisions": {
+        "ALLOW": 61,
+        "WARN": 51
+      },
+      "latency_ms": {
+        "p50": 0.000208,
+        "p95": 0.00025,
+        "p99": 0.000334
+      }
+    },
+    "first_time_recipient": {
+      "tp": 32,
+      "fp": 39,
+      "tn": 28,
+      "fn": 13,
+      "precision": 0.4507042253521127,
+      "recall": 0.7111111111111111,
+      "false_positive_rate": 0.582089552238806,
+      "false_warnings_per_1000_legitimate": 582.0895522388059,
+      "limited_signal_rate": 0.0,
+      "unavailable_rate": 0.0,
+      "decisions": {
+        "ALLOW": 41,
+        "WARN": 71
+      },
+      "latency_ms": {
+        "p50": 0.000125,
+        "p95": 0.000167,
+        "p99": 0.000167
+      }
+    },
+    "graph_only": {
+      "tp": 31,
+      "fp": 32,
+      "tn": 35,
+      "fn": 14,
+      "precision": 0.49206349206349204,
+      "recall": 0.6888888888888889,
+      "false_positive_rate": 0.47761194029850745,
+      "false_warnings_per_1000_legitimate": 477.6119402985075,
+      "limited_signal_rate": 0.07142857142857142,
+      "unavailable_rate": 0.03571428571428571,
+      "decisions": {
+        "ALLOW": 37,
+        "LIMITED_SIGNAL": 8,
+        "UNAVAILABLE": 4,
+        "WARN": 63
+      },
+      "latency_ms": {
+        "p50": 0.000875,
+        "p95": 0.001208,
+        "p99": 0.001666
+      }
+    },
+    "transfer_protection": {
+      "tp": 29,
+      "fp": 5,
+      "tn": 62,
+      "fn": 16,
+      "precision": 0.8529411764705882,
+      "recall": 0.6444444444444445,
+      "false_positive_rate": 0.07462686567164178,
+      "false_warnings_per_1000_legitimate": 74.6268656716418,
+      "limited_signal_rate": 0.125,
+      "unavailable_rate": 0.03571428571428571,
+      "decisions": {
+        "ALLOW": 60,
+        "LIMITED_SIGNAL": 14,
+        "STEP_UP": 8,
+        "UNAVAILABLE": 4,
+        "WARN": 26
+      },
+      "latency_ms": {
+        "p50": 0.007,
+        "p95": 0.008792,
+        "p99": 0.011125
+      }
+    }
+  },
+  "policy_decisions_by_stratum": {
+    "ambiguous_collection:fraud": {
+      "LIMITED_SIGNAL": 4
+    },
+    "chain:fraud": {
+      "WARN": 5
+    },
+    "dependency_failure:fraud": {
+      "UNAVAILABLE": 2
+    },
+    "family:legitimate": {
+      "ALLOW": 6
+    },
+    "first_recipient:legitimate": {
+      "ALLOW": 10
+    },
+    "large_invoice:legitimate": {
+      "ALLOW": 8
+    },
+    "missing:legitimate": {
+      "LIMITED_SIGNAL": 2
+    },
+    "partial:fraud": {
+      "LIMITED_SIGNAL": 3
+    },
+    "partial:legitimate": {
+      "LIMITED_SIGNAL": 3
+    },
+    "payroll:legitimate": {
+      "ALLOW": 6
+    },
+    "refund:legitimate": {
+      "ALLOW": 6
+    },
+    "regular:legitimate": {
+      "ALLOW": 10
+    },
+    "report_only:fraud": {
+      "WARN": 4
+    },
+    "settlement:legitimate": {
+      "ALLOW": 9
+    },
+    "slow_collection:fraud": {
+      "ALLOW": 5
+    },
+    "stale:fraud": {
+      "LIMITED_SIGNAL": 2
+    },
+    "timed_collection:fraud": {
+      "WARN": 12
+    },
+    "timed_with_report:fraud": {
+      "STEP_UP": 8
+    },
+    "timeout:legitimate": {
+      "UNAVAILABLE": 2
+    },
+    "unexplained_collection:legitimate": {
+      "WARN": 5
+    }
+  },
+  "limitations": [
+    "One synthetic holdout with recurring generator recipes; effective sample size is lower than row count.",
+    "Corroboration, business context, missing coverage and outages are synthetic observations.",
+    "Metrics include abstentions as no intervention. They do not estimate real banking performance."
+  ]
+}

@@ -92,16 +92,26 @@ def test_evaluation_serves_artifact_and_hides_manifests(client, settings, tmp_pa
     assert r.status_code == 500 and r.json()["error"]["code"] == "BENCHMARK_ARTIFACT_INVALID"
 
 
-def test_downgrade_refuses_to_discard_published_v2_analyses(client, settings, db_url):
+def test_downgrade_refuses_to_discard_published_v2_analyses(settings, isolated_schema):
     from alembic import command
     from alembic.config import Config
+    from fastapi.testclient import TestClient
     from sqlalchemy import create_engine, text
 
-    _create_and_analyse(client, settings, seed=1001, suite="bench-v1")
+    from nexora.api.main import create_app
+    from nexora.persistence.health import release_heads
+
     cfg = Config("alembic.ini")
-    cfg.set_main_option("sqlalchemy.url", db_url)
+    cfg.set_main_option("sqlalchemy.url", isolated_schema.replace("%", "%%"))
+    command.upgrade(cfg, "head")
+    scoped = settings.model_copy(update={"database_url": isolated_schema})
+    with TestClient(create_app(scoped)) as client:
+        _create_and_analyse(client, scoped, seed=1001, suite="bench-v1")
     with pytest.raises(Exception, match="ck_formations_kind"):
         command.downgrade(cfg, "0001")
-    with create_engine(db_url).connect() as conn:  # transactional DDL: still at head, rows intact
-        assert conn.execute(text("SELECT version_num FROM alembic_version")).scalar_one() == "0002"
+    with create_engine(isolated_schema).connect() as conn:  # transactional DDL: still at head, rows intact
+        assert (
+            tuple(conn.execute(text("SELECT version_num FROM alembic_version ORDER BY version_num")).scalars())
+            == release_heads()
+        )
         assert conn.execute(text("SELECT count(*) FROM formations WHERE kind = 'fan_out'")).scalar_one() > 0

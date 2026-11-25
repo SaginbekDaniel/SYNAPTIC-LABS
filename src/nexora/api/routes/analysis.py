@@ -3,12 +3,15 @@ from __future__ import annotations
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Query, Request, Response
+from sqlalchemy import select
 
+from nexora.analytics.config import experimental_config
 from nexora.api import schemas
 from nexora.api.deps import SessionDep, actor, parse_uuid
 from nexora.application import analysis_service, queries
 from nexora.application.errors import NotFound
 from nexora.persistence import orm
+from nexora.persistence.access import dataset_filter
 
 router = APIRouter(prefix="/api/v1", tags=["analysis"])
 
@@ -21,12 +24,21 @@ def create_job(
     session: SessionDep,
     who: Annotated[str, Depends(actor)],
 ) -> Any:
+    dataset_id = parse_uuid(body.dataset_id, "dataset_id")
+    config = request.app.state.analysis_config
+    context = None
+    if body.profile == "experimental_context":
+        config = experimental_config()
+        dataset = queries.get_dataset(session, dataset_id)
+        catalog_key = f"{dataset.tenant or 'demo'}:{dataset.raw_manifest_sha256}"
+        context = request.app.state.verified_context_catalog.get(catalog_key)
     job = analysis_service.request_analysis(
         session,
-        dataset_id=parse_uuid(body.dataset_id, "dataset_id"),
+        dataset_id=dataset_id,
         requested_by=who,
-        config=request.app.state.analysis_config,
+        config=config,
         idempotency_key=body.idempotency_key,
+        context=context,
     )
     session.flush()
     response.headers["Location"] = f"/api/v1/analysis/jobs/{job.id}"
@@ -35,7 +47,11 @@ def create_job(
 
 @router.get("/analysis/jobs/{job_id}", response_model=schemas.Job)
 def get_job(job_id: str, session: SessionDep) -> Any:
-    job = session.get(orm.AnalysisJob, parse_uuid(job_id, "job_id"))
+    job = session.scalar(
+        select(orm.AnalysisJob).where(
+            orm.AnalysisJob.id == parse_uuid(job_id, "job_id"), dataset_filter(session, orm.AnalysisJob.dataset_id)
+        )
+    )
     if job is None:
         raise NotFound("JOB_NOT_FOUND", "analysis job does not exist")
     return queries.job_dict(job)

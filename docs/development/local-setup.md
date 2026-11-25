@@ -1,5 +1,9 @@
 # Local setup
 
+## Текущий стенд ремедиации
+
+Для новых сценариев нужен PostgreSQL, обновлённый через Alembic до 0007. Для фронтенд toolchain используйте Node 22.12+ в ветке 22 или поддерживаемую ветку Node 24. В [локальном сценарии](../../audit/remediation/HACKATHON_DEMO_GUIDE.md) приведены команды подготовки отдельной синтетической БД, временные роли customer/reviewer и release preflight. Интеграционные тесты требуют выделенные disposable БД и управляют их схемами.
+
 Two ways to run NEXORA locally. Both use synthetic data only.
 
 ## A. Production-like stack (Docker Compose) — quickest

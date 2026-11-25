@@ -8,6 +8,7 @@ external banking action — decisions are recorded analyst judgements only.
 from __future__ import annotations
 
 import datetime as dt
+import hmac
 import uuid
 from typing import Any
 
@@ -17,6 +18,7 @@ from sqlalchemy.orm import Session
 
 from nexora.application.errors import Conflict, Invalid, NotFound
 from nexora.persistence import orm
+from nexora.persistence.access import case_filter, dataset_filter
 
 TRANSITIONS: dict[str, frozenset[str]] = {
     "new": frozenset({"investigating"}),
@@ -64,7 +66,9 @@ def _state(c: orm.Case) -> dict[str, Any]:
 
 def open_case(session: Session, *, alert_id: uuid.UUID, actor: str, request_id: str | None) -> tuple[orm.Case, bool]:
     """Open a case for an alert. Idempotent: returns ``(case, created)``."""
-    alert = session.get(orm.Alert, alert_id)
+    alert = session.scalar(
+        select(orm.Alert).where(orm.Alert.id == alert_id, dataset_filter(session, orm.Alert.dataset_id))
+    )
     if alert is None:
         raise NotFound("ALERT_NOT_FOUND", "alert does not exist")
     existing = session.execute(select(orm.Case).where(orm.Case.alert_id == alert_id)).scalar_one_or_none()
@@ -105,7 +109,9 @@ def transition(
     actor: str,
     request_id: str | None,
 ) -> orm.Case:
-    case = session.execute(select(orm.Case).where(orm.Case.id == case_id).with_for_update()).scalar_one_or_none()
+    case = session.execute(
+        select(orm.Case).where(orm.Case.id == case_id, case_filter(session)).with_for_update()
+    ).scalar_one_or_none()
     if case is None:
         raise NotFound("CASE_NOT_FOUND", "case does not exist")
     if case.version != expected_version:
@@ -165,7 +171,7 @@ def transition(
 
 
 def add_note(session: Session, *, case_id: uuid.UUID, body: str, actor: str, request_id: str | None) -> orm.CaseNote:
-    case = session.get(orm.Case, case_id)
+    case = session.scalar(select(orm.Case).where(orm.Case.id == case_id, case_filter(session)))
     if case is None:
         raise NotFound("CASE_NOT_FOUND", "case does not exist")
     text_body = body.strip()
@@ -188,3 +194,118 @@ def add_note(session: Session, *, case_id: uuid.UUID, body: str, actor: str, req
         request_id=request_id,
     )
     return note
+
+
+FEEDBACK_ACTION = "case.feedback_reviewed"
+
+
+def _feedback_target(session: Session, case_id: uuid.UUID, *, lock: bool = False) -> tuple[orm.Case, orm.Alert]:
+    stmt = (
+        select(orm.Case, orm.Alert)
+        .join(orm.Alert, orm.Alert.id == orm.Case.alert_id)
+        .where(orm.Case.id == case_id, case_filter(session))
+    )
+    if lock:
+        stmt = stmt.with_for_update(of=(orm.Case, orm.Alert))
+    row = session.execute(stmt).one_or_none()
+    if row is None:
+        raise NotFound("CASE_NOT_FOUND", "case does not exist")
+    return row[0], row[1]
+
+
+def _latest_feedback(session: Session, case_id: uuid.UUID) -> orm.AuditEvent | None:
+    return session.scalar(
+        select(orm.AuditEvent)
+        .where(
+            orm.AuditEvent.entity_type == "case",
+            orm.AuditEvent.entity_id == str(case_id),
+            orm.AuditEvent.action == FEEDBACK_ACTION,
+        )
+        .order_by(orm.AuditEvent.id.desc())
+        .limit(1)
+    )
+
+
+def review_feedback(
+    session: Session,
+    *,
+    case_id: uuid.UUID,
+    expected_case_version: int,
+    expected_alert_revision: int,
+    expected_review_id: int | None,
+    outcome: str,
+    reason: str,
+    reviewer: str,
+    request_id: str,
+) -> orm.AuditEvent:
+    case, alert = _feedback_target(session, case_id, lock=True)
+    previous = _latest_feedback(session, case.id)
+    previous_id = previous.id if previous else None
+    if (case.version, alert.revision, previous_id) != (
+        expected_case_version,
+        expected_alert_revision,
+        expected_review_id,
+    ):
+        raise Conflict("FEEDBACK_VERSION_CONFLICT", "case, alert or review changed; reload the evidence")
+    if case.status not in {"escalated", "dismissed", "closed"} or case.decision not in DECISIONS:
+        raise Conflict("FEEDBACK_DISPOSITION_REQUIRED", "a completed case disposition is required")
+    author = session.scalar(
+        select(orm.AuditEvent.actor)
+        .where(
+            orm.AuditEvent.entity_type == "case",
+            orm.AuditEvent.entity_id == str(case_id),
+            orm.AuditEvent.action == f"case.{case.decision}",
+        )
+        .order_by(orm.AuditEvent.id.desc())
+        .limit(1)
+    )
+    if author is None or author == reviewer:
+        raise Conflict("FEEDBACK_INDEPENDENT_REVIEW_REQUIRED", "feedback requires an independent reviewer")
+    if not reason.strip():
+        raise Invalid("FEEDBACK_REASON_REQUIRED", "feedback requires a review reason")
+    snapshot = session.get(orm.GraphSnapshot, alert.snapshot_id)
+    assert snapshot is not None
+    _audit(
+        session,
+        actor=reviewer,
+        action=FEEDBACK_ACTION,
+        entity_type="case",
+        entity_id=str(case_id),
+        before={"supersedes_review_id": previous_id},
+        after={
+            "case_version": case.version,
+            "alert_revision": alert.revision,
+            "snapshot_id": str(snapshot.id),
+            "evidence_digest": alert.evidence_digest,
+            "policy_version": snapshot.policy_version,
+            "outcome": outcome,
+        },
+        reason=reason.strip(),
+        request_id=request_id,
+    )
+    session.flush()
+    event = _latest_feedback(session, case.id)
+    assert event is not None
+    return event
+
+
+def feedback_label(session: Session, case_id: uuid.UUID, secret: str) -> dict[str, Any]:
+    case, alert = _feedback_target(session, case_id)
+    event = _latest_feedback(session, case.id)
+    if event is None or not event.after_json:
+        raise NotFound("FEEDBACK_NOT_REVIEWED", "case has no reviewed feedback")
+    review = event.after_json
+    if (review["case_version"], review["alert_revision"]) != (case.version, alert.revision):
+        raise Conflict("FEEDBACK_OUTDATED", "the review no longer matches the case and alert")
+    if review["outcome"] == "insufficient_evidence":
+        raise Conflict("FEEDBACK_INSUFFICIENT", "the reviewed outcome is inconclusive")
+    opaque = hmac.digest(
+        secret.encode(), f"nexora-feedback-v1:{session.info['tenant']}:{case.id}".encode(), "sha256"
+    ).hex()
+    return {
+        "version": "feedback-v1",
+        "sample_ref": opaque,
+        "label": review["outcome"],
+        "quality": "independently_reviewed",
+        "policy_version": review["policy_version"],
+    }

@@ -5,24 +5,28 @@ from __future__ import annotations
 import hmac
 import logging
 import uuid
+from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from sqlalchemy import func, select, text
+from pydantic import TypeAdapter
 from sqlalchemy.exc import OperationalError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from nexora import __version__
 from nexora.analytics.config import AnalysisConfig, default_config
+from nexora.analytics.context import VerifiedContext
 from nexora.api import schemas
-from nexora.api.routes import alerts, analysis, cases, datasets, evaluation, transfer_checks
+from nexora.api.identity import IdentityVerifier, LocalTokenVerifier
+from nexora.api.routes import alerts, analysis, cases, datasets, evaluation, sandbox, transfer_checks
 from nexora.application.errors import AppError
 from nexora.application.transfer_demo import PROFILE_PATH, TransferDemo, load_policy, load_profiles
-from nexora.persistence import orm
+from nexora.application.transfer_sandbox import BeneficiaryAdapter, FixtureBeneficiaryAdapter, SandboxPaymentAdapter
 from nexora.persistence.db import session_factory
+from nexora.persistence.health import database_readiness, release_heads
 from nexora.settings import Settings, get_settings
 
 log = logging.getLogger("nexora.api")
@@ -42,7 +46,13 @@ def _envelope(
     )
 
 
-def create_app(settings: Settings | None = None, config: AnalysisConfig | None = None) -> FastAPI:
+def create_app(
+    settings: Settings | None = None,
+    config: AnalysisConfig | None = None,
+    *,
+    identity_verifier: IdentityVerifier | None = None,
+    beneficiary_adapter: BeneficiaryAdapter | None = None,
+) -> FastAPI:
     settings = settings or get_settings()
     app = FastAPI(
         title="NEXORA AI API",
@@ -57,7 +67,33 @@ def create_app(settings: Settings | None = None, config: AnalysisConfig | None =
     app.state.settings = settings
     app.state.session_factory = session_factory(settings.database_url)
     app.state.analysis_config = config or default_config()
+    try:
+        app.state.verified_context_catalog = (
+            TypeAdapter(dict[str, VerifiedContext]).validate_json(Path(settings.verified_context_catalog).read_bytes())
+            if settings.verified_context_catalog
+            else {}
+        )
+    except (OSError, ValueError):
+        raise ValueError("verified context catalog is invalid or unavailable") from None
+    provisioned = settings.local_identity_provisioning.get_secret_value()
+    if settings.execution_profile != "development":
+        if len(settings.gateway_token) < 32 or settings.expose_api_docs or "*" in settings.cors_origins:
+            raise ValueError("deployed API requires gateway authentication, private docs and explicit origins")
+        if settings.execution_profile == "deployed_demo" and (
+            settings.transfer_protection_enabled and len(settings.transfer_analyst_token.get_secret_value()) < 32
+        ):
+            raise ValueError("deployed transfer demo requires analyst evidence provisioning")
+    if settings.execution_profile == "production" and (
+        identity_verifier is None or provisioned or isinstance(identity_verifier, LocalTokenVerifier)
+    ):
+        raise ValueError("production requires an external identity verifier")
+    app.state.authenticated_analytics = settings.authenticated_analytics or settings.execution_profile == "production"
+    app.state.identity_verifier = identity_verifier or (
+        LocalTokenVerifier.from_json(provisioned) if provisioned else None
+    )
 
+    if app.state.authenticated_analytics and app.state.identity_verifier is None:
+        raise ValueError("authenticated analytics requires an identity verifier")
     try:
         transfer_policy = load_policy()
     except (OSError, ValueError):
@@ -70,13 +106,27 @@ def create_app(settings: Settings | None = None, config: AnalysisConfig | None =
         app.state.analysis_config.config_sha256,
     )
 
+    demo = app.state.transfer_demo
+    app.state.beneficiary_adapter = beneficiary_adapter or FixtureBeneficiaryAdapter.from_profiles(
+        (demo.profiles or {}).values(),
+        graph_config_sha256=demo.graph_config_sha256,
+        available=demo.enabled and demo.profiles is not None,
+    )
+    app.state.payment_adapter = SandboxPaymentAdapter()
+
     gateway_token = settings.gateway_token
 
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[o.strip() for o in settings.cors_origins.split(",") if o.strip()],
         allow_methods=["GET", "POST"],
-        allow_headers=["Content-Type", "X-Request-ID", "X-Nexora-Transfer-Analyst-Token"],
+        allow_headers=[
+            "Authorization",
+            "Content-Type",
+            "Idempotency-Key",
+            "X-Request-ID",
+            "X-Nexora-Transfer-Analyst-Token",
+        ],
         expose_headers=["X-Request-ID", "Location"],
     )
 
@@ -89,7 +139,15 @@ def create_app(settings: Settings | None = None, config: AnalysisConfig | None =
             presented = request.headers.get(GATEWAY_TOKEN_HEADER, "")
             if not hmac.compare_digest(presented.encode(), gateway_token.encode()):
                 return _envelope(401, "GATEWAY_TOKEN_REQUIRED", "request did not arrive through the gateway", rid)
-        response = await call_next(request)
+        if settings.execution_profile == "production" and request.url.path.startswith(
+            ("/api/v1/demo/", "/api/v1/sandbox/")
+        ):
+            return _envelope(404, "NOT_FOUND", "demo endpoints are unavailable in production", rid)
+        try:
+            response = await call_next(request)
+        except Exception:
+            log.error("unhandled request failure; request_id=%s", rid)
+            return _envelope(500, "INTERNAL_ERROR", "unexpected internal error", rid)
         response.headers["X-Request-ID"] = rid
         return response
 
@@ -120,11 +178,16 @@ def create_app(settings: Settings | None = None, config: AnalysisConfig | None =
             if exc.status_code == 404
             else ("METHOD_NOT_ALLOWED" if exc.status_code == 405 else "HTTP_ERROR")
         )
-        return _envelope(exc.status_code, code, str(exc.detail), getattr(request.state, "request_id", None))
+        response = _envelope(exc.status_code, code, str(exc.detail), getattr(request.state, "request_id", None))
+        safe_headers = {405: {"allow"}, 401: {"www-authenticate"}, 429: {"retry-after"}, 503: {"retry-after"}}
+        for name, value in (exc.headers or {}).items():
+            if name.lower() in safe_headers.get(exc.status_code, set()):
+                response.headers[name] = value
+        return response
 
     @app.exception_handler(OperationalError)
     async def db_unavailable(request: Request, exc: OperationalError) -> JSONResponse:
-        log.error("database unavailable: %s", exc)
+        log.error("database unavailable; request_id=%s", getattr(request.state, "request_id", None))
         return _envelope(
             503,
             "DATABASE_UNAVAILABLE",
@@ -134,37 +197,30 @@ def create_app(settings: Settings | None = None, config: AnalysisConfig | None =
 
     @app.exception_handler(Exception)
     async def unexpected(request: Request, exc: Exception) -> JSONResponse:
-        log.exception("unhandled error")
+        log.error("unhandled request failure; request_id=%s", getattr(request.state, "request_id", None))
         return _envelope(500, "INTERNAL_ERROR", "unexpected internal error", getattr(request.state, "request_id", None))
 
     @app.get("/health/live", tags=["health"])
     def live() -> dict[str, str]:
         return {"status": "ok"}
 
+    expected_migrations = release_heads()
+
     @app.get("/health/ready", response_model=schemas.Health, tags=["health"])
     def ready() -> Any:
-        factory = app.state.session_factory
-        try:
-            with factory() as s:
-                s.execute(text("SELECT 1"))
-                migration = s.execute(text("SELECT version_num FROM alembic_version")).scalar_one_or_none()
-                queue = dict(
-                    s.execute(select(orm.AnalysisJob.status, func.count()).group_by(orm.AnalysisJob.status)).all()
-                )
-            db_ok = True
-        except Exception:
-            db_ok, migration, queue = False, None, {}
+        checks = database_readiness(app.state.session_factory, expected_migrations)
+        healthy = checks["schema"] == "compatible"
+        if settings.execution_profile == "production":
+            checks["queue"] = {}
         body = {
-            "status": "ok" if db_ok and migration else "degraded",
-            "database": db_ok,
-            "migration": migration,
-            "queue": {k: int(v) for k, v in queue.items()},
-            "demo_mode": True,
-            "actor": settings.demo_analyst,
+            "status": "ok" if healthy else "degraded",
+            "demo_mode": settings.execution_profile != "production",
+            "actor": settings.demo_analyst if settings.execution_profile == "development" else "service",
+            **checks,
         }
-        return JSONResponse(status_code=200 if body["status"] == "ok" else 503, content=body)
+        return JSONResponse(status_code=200 if healthy else 503, content=body)
 
-    for module in (datasets, analysis, alerts, cases, evaluation, transfer_checks):
+    for module in (datasets, analysis, alerts, cases, evaluation, transfer_checks, sandbox):
         app.include_router(module.router)
     return app
 

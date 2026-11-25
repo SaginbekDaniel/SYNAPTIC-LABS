@@ -7,16 +7,36 @@ import uuid
 from collections.abc import Mapping, Sequence
 from typing import Any
 
+from psycopg import Connection, sql
 from sqlalchemy import select, tuple_
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
+from nexora.application.errors import Conflict
 from nexora.domain.ids import transaction_uuid
 from nexora.evaluation.generator import generate
 from nexora.ingest.validation import CanonicalRecord, ImportReport, RowIssue, prepare_batch
 from nexora.persistence import orm
 
 CHUNK = 1000
+
+
+def reserve_csv_import(
+    session: Session, *, scope: str, key: str, payload_sha256: str
+) -> tuple[orm.CsvImportRequest, bool]:
+    """Reserve a request in the same transaction that writes its dataset and response."""
+    statement = (
+        insert(orm.CsvImportRequest)
+        .values(scope=scope, request_key=key, payload_sha256=payload_sha256)
+        .on_conflict_do_nothing(index_elements=["scope", "request_key"])
+        .returning(orm.CsvImportRequest)
+    )
+    if record := session.execute(statement).scalar_one_or_none():
+        return record, True
+    existing = session.get_one(orm.CsvImportRequest, (scope, key))
+    if existing.payload_sha256 != payload_sha256:
+        raise Conflict("IMPORT_IDEMPOTENCY_CONFLICT", "idempotency key belongs to another import payload")
+    return existing, False
 
 
 def create_dataset(
@@ -33,6 +53,7 @@ def create_dataset(
     ds = orm.Dataset(
         id=uuid.uuid4(),
         name=name,
+        tenant=session.info.get("tenant"),
         source_kind=source_kind,
         description=description,
         time_precision=time_precision,
@@ -65,6 +86,22 @@ def _row_values(dataset_id: uuid.UUID, batch_id: uuid.UUID, r: CanonicalRecord) 
     }
 
 
+def _copy_new_transactions(
+    session: Session, dataset_id: uuid.UUID, batch_id: uuid.UUID, records: Sequence[CanonicalRecord]
+) -> None:
+    if not records:
+        return
+    columns = tuple(_row_values(dataset_id, batch_id, records[0]))
+    statement = sql.SQL("COPY transactions ({}) FROM STDIN").format(sql.SQL(", ").join(map(sql.Identifier, columns)))
+    # This is the same psycopg connection and open transaction as the dataset, batch and replay row.
+    driver = session.connection().connection.driver_connection
+    if not isinstance(driver, Connection):
+        raise RuntimeError("CSV COPY requires the psycopg connection")
+    with driver.cursor() as cursor, cursor.copy(statement) as copy:
+        for record in records:
+            copy.write_row(tuple(_row_values(dataset_id, batch_id, record).values()))
+
+
 def ingest_rows(
     session: Session,
     *,
@@ -74,6 +111,7 @@ def ingest_rows(
     content_sha256: str,
     file_name: str | None,
     is_synthetic: bool,
+    fresh_dataset: bool = False,
 ) -> tuple[orm.ImportBatch, ImportReport]:
     records, report = prepare_batch(rows, source_id=source_id, is_synthetic=is_synthetic)
     report.content_sha256 = content_sha256
@@ -93,59 +131,32 @@ def ingest_rows(
     session.flush()
 
     accepted = 0
-    for start in range(0, len(records), CHUNK):
-        chunk = records[start : start + CHUNK]
-        keys = [(r.source_id, r.source_transaction_id) for r in chunk]
-        existing = {
-            (sid, stid): h
-            for sid, stid, h in session.execute(
-                select(
-                    orm.Transaction.source_id,
-                    orm.Transaction.source_transaction_id,
-                    orm.Transaction.raw_record_hash,
-                ).where(
-                    orm.Transaction.dataset_id == dataset.id,
-                    tuple_(orm.Transaction.source_id, orm.Transaction.source_transaction_id).in_(keys),
-                )
-            )
-        }
-        fresh: list[CanonicalRecord] = []
-        for r in chunk:
-            prior = existing.get((r.source_id, r.source_transaction_id))
-            if prior is None:
-                fresh.append(r)
-            elif prior == r.content_hash():
-                report.duplicated_identical += 1
-            else:
-                report.quarantine(
-                    RowIssue(
-                        0,
-                        "CONFLICTING_TRANSACTION_DUPLICATE",
-                        "source_transaction_id",
-                        "transaction id already stored with different content",
-                    )
-                )
-        if not fresh:
-            continue
-        stmt = (
-            insert(orm.Transaction)
-            .values([_row_values(dataset.id, batch.id, r) for r in fresh])
-            .on_conflict_do_nothing(constraint="uq_transactions_source")
-            .returning(orm.Transaction.source_transaction_id)
-        )
-        inserted = {row[0] for row in session.execute(stmt)}
-        accepted += len(inserted)
-        # Rows lost to a concurrent import of the same key are re-classified, never double counted.
-        for r in fresh:
-            if r.source_transaction_id not in inserted:
-                stored = session.execute(
-                    select(orm.Transaction.raw_record_hash).where(
+    if fresh_dataset:
+        _copy_new_transactions(session, dataset.id, batch.id, records)
+        accepted = len(records)
+    else:
+        for start in range(0, len(records), CHUNK):
+            chunk = records[start : start + CHUNK]
+            keys = [(r.source_id, r.source_transaction_id) for r in chunk]
+            existing = {
+                (sid, stid): h
+                for sid, stid, h in session.execute(
+                    select(
+                        orm.Transaction.source_id,
+                        orm.Transaction.source_transaction_id,
+                        orm.Transaction.raw_record_hash,
+                    ).where(
                         orm.Transaction.dataset_id == dataset.id,
-                        orm.Transaction.source_id == r.source_id,
-                        orm.Transaction.source_transaction_id == r.source_transaction_id,
+                        tuple_(orm.Transaction.source_id, orm.Transaction.source_transaction_id).in_(keys),
                     )
-                ).scalar_one()
-                if stored == r.content_hash():
+                )
+            }
+            fresh: list[CanonicalRecord] = []
+            for r in chunk:
+                prior = existing.get((r.source_id, r.source_transaction_id))
+                if prior is None:
+                    fresh.append(r)
+                elif prior == r.content_hash():
                     report.duplicated_identical += 1
                 else:
                     report.quarantine(
@@ -156,6 +167,37 @@ def ingest_rows(
                             "transaction id already stored with different content",
                         )
                     )
+            if not fresh:
+                continue
+            stmt = (
+                insert(orm.Transaction)
+                .values([_row_values(dataset.id, batch.id, r) for r in fresh])
+                .on_conflict_do_nothing(constraint="uq_transactions_source")
+                .returning(orm.Transaction.source_transaction_id)
+            )
+            inserted = {row[0] for row in session.execute(stmt)}
+            accepted += len(inserted)
+            # Rows lost to a concurrent import of the same key are re-classified, never double counted.
+            for r in fresh:
+                if r.source_transaction_id not in inserted:
+                    stored = session.execute(
+                        select(orm.Transaction.raw_record_hash).where(
+                            orm.Transaction.dataset_id == dataset.id,
+                            orm.Transaction.source_id == r.source_id,
+                            orm.Transaction.source_transaction_id == r.source_transaction_id,
+                        )
+                    ).scalar_one()
+                    if stored == r.content_hash():
+                        report.duplicated_identical += 1
+                    else:
+                        report.quarantine(
+                            RowIssue(
+                                0,
+                                "CONFLICTING_TRANSACTION_DUPLICATE",
+                                "source_transaction_id",
+                                "transaction id already stored with different content",
+                            )
+                        )
     report.accepted = accepted
     batch.accepted = accepted
     batch.duplicate = report.duplicated_identical

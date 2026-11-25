@@ -189,6 +189,10 @@ make check
 [docs/development/testing.md](docs/development/testing.md). Contribution rules:
 [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Обновление после аудита 25 ноября 2026
+
+Ветка ремедиации добавляет идемпотентный и асинхронный CSV import, защищённый режим аналитики, версионирование job, опциональный Fraud V3 и постоянный Transfer Sandbox. Для локального показа подготовлены [точные команды запуска и preflight](audit/remediation/HACKATHON_DEMO_GUIDE.md). Итоговые метрики, границы sandbox и проверенный рабочий код описаны в [сводке](audit/remediation/IMPLEMENTATION_SUMMARY.md).
+
 ## Documentation
 
 | | |
@@ -201,10 +205,7 @@ make check
 
 ## Security
 
-The demo uses a **shared demo identity**: every audit event is attributed to one configured analyst,
-and there is no SSO or role model. The cloud deployment is protected by a fail-closed gateway, but it
-is a hackathon deployment, not a bank-grade system. See [SECURITY.md](SECURITY.md) for the controls
-in place, the known gaps, and how to report a vulnerability privately.
+Публичный Basic demo использует общую роль. В защищённом локальном режиме доступны проверенные индивидуальные principals, роли и tenant scope. Условия production и порядок сообщения об уязвимости описаны в [SECURITY.md](SECURITY.md).
 
 ## Roadmap
 

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useDataset } from "../../app/dataset";
 import { BandBadge, Disclosure, Empty, ErrorState, Icon, Loading, PageHeader, Panel } from "../../components/ui";
 import { api, ApiError } from "../../lib/api";
+import type { components } from "../../lib/api-types";
 import { formatDateTime } from "../../lib/format";
 import { precisionLabel, t, tDynamic, type MessageKey } from "../../lib/i18n";
 import type { AlertPage, AlertSummary, ImportResult, Job, LabSuite } from "../../lib/types";
@@ -10,6 +11,7 @@ import { useApi } from "../../lib/useApi";
 import { alertTitle, alertWhy } from "../alerts/alertText";
 
 const POLL_MS = 1000;
+type CsvImportJob = components["schemas"]["CsvImportJob"];
 type StepState = "done" | "current" | "todo";
 
 function Stepper({ steps }: { steps: { key: MessageKey; state: StepState }[] }) {
@@ -41,14 +43,19 @@ export function FraudLab() {
   const [result, setResult] = useState<ImportResult | null>(null);
   const [job, setJob] = useState<Job | null>(null);
   const [top, setTop] = useState<{ total: number; items: AlertSummary[] } | null>(null);
-  const [busy, setBusy] = useState<"generate" | "analyse" | null>(null);
+  const [busy, setBusy] = useState<"generate" | "analyse" | "upload" | null>(null);
   const [error, setError] = useState<ApiError | null>(null);
+  const [csvJob, setCsvJob] = useState<CsvImportJob | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [fileName, setFileName] = useState("");
+  const [contextPolicy, setContextPolicy] = useState(false);
 
   const seedNum = Number.parseInt(seed, 10);
   const seedValid = /^\d{1,9}$/.test(seed) && Number.isSafeInteger(seedNum);
 
   async function generate() {
     setBusy("generate");
+    setCsvJob(null);
     setError(null);
     setJob(null);
     setTop(null);
@@ -64,12 +71,70 @@ export function FraudLab() {
     }
   }
 
+  async function upload() {
+    if (!file || busy || !fileName.trim()) return;
+    setBusy("upload");
+    setCsvJob(null);
+    setError(null);
+    setResult(null);
+    setJob(null);
+    setTop(null);
+    const form = new FormData();
+    form.append("file", file);
+    form.append("name", fileName.trim());
+    try {
+      setCsvJob(await api.post<CsvImportJob>("/api/v1/datasets/import-jobs", form));
+    } catch (e) {
+      setError(e as ApiError);
+      setBusy(null);
+    }
+  }
+
+  useEffect(() => {
+    if (!csvJob) return;
+    if (csvJob.result) {
+      setResult(csvJob.result);
+      setActiveId(csvJob.result.dataset.id);
+      refresh();
+      setBusy(null);
+      return;
+    }
+    if (csvJob.status === "cancelled" || csvJob.status === "failed") {
+      setBusy(null);
+      return;
+    }
+    const controller = new AbortController();
+    const timer = window.setTimeout(async () => {
+      try {
+        setCsvJob(await api.get<CsvImportJob>(`/api/v1/datasets/import-jobs/${csvJob.id}`, undefined, controller.signal));
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          setError(error as ApiError);
+          setBusy(null);
+        }
+      }
+    }, POLL_MS);
+    return () => { window.clearTimeout(timer); controller.abort(); };
+  }, [csvJob, refresh, setActiveId]);
+
+  async function cancelImport() {
+    if (!csvJob) return;
+    try {
+      setCsvJob(await api.post<CsvImportJob>(`/api/v1/datasets/import-jobs/${csvJob.id}/cancel`));
+    } catch (error) {
+      setError(error as ApiError);
+    }
+  }
+
   async function analyse() {
     if (!result) return;
     setBusy("analyse");
     setError(null);
     try {
-      setJob(await api.post<Job>("/api/v1/analysis/jobs", { dataset_id: result.dataset.id }));
+      setJob(await api.post<Job>("/api/v1/analysis/jobs", {
+        dataset_id: result.dataset.id,
+        profile: contextPolicy && result.dataset.source_kind === "csv" ? "experimental_context" : "stable",
+      }));
     } catch (e) {
       setError(e as ApiError);
       setBusy(null);
@@ -189,12 +254,47 @@ export function FraudLab() {
               </div>
             </form>
           )}
+          <Disclosure summary={t("lab.csvTitle")}>
+            <form className="lab-form" aria-busy={busy === "upload"} onSubmit={(event) => {
+              event.preventDefault();
+              void upload();
+            }}>
+              <label className="field">
+                {t("lab.csvFile")}
+                <input className="input" type="file" accept=".csv,text/csv" required disabled={busy !== null}
+                  onChange={(event) => {
+                    const chosen = event.target.files?.[0] ?? null;
+                    setFile(chosen);
+                    setFileName(chosen?.name.slice(0, 120) ?? "");
+                  }} />
+              </label>
+              <label className="field">
+                {t("lab.csvName")}
+                <input className="input" value={fileName} maxLength={120} required disabled={busy !== null}
+                  onChange={(event) => setFileName(event.target.value)} />
+              </label>
+              <label>
+                <input type="checkbox" checked={contextPolicy} disabled={busy !== null}
+                  onChange={(event) => setContextPolicy(event.target.checked)} /> {t("lab.csvContext")}
+              </label>
+              <div className="lab-actions">
+                <button type="submit" className="btn btn--primary" disabled={!file || !fileName.trim() || busy !== null}>
+                  {t(busy === "upload" ? "lab.csvUploading" : "lab.csvSubmit")}
+                </button>
+              </div>
+            </form>
+          </Disclosure>
         </Panel>
 
         <Panel title={t("lab.resultTitle")} id="lab-steps" className="lab-result">
           <div className="lab-result__body">
             {error && <ErrorState error={error} />}
-            {!result && !error && (
+            {csvJob && <div role="status" aria-live="polite" className="lab-block" data-testid="csv-import-status">
+              <p>{tDynamic("lab.csvStatus.", csvJob.status)} {csvJob.error_code ?? ""}</p>
+              {csvJob.status === "accepted" &&
+                <button type="button" className="btn" onClick={() => void cancelImport()}>{t("lab.csvCancel")}</button>}
+            </div>}
+            {!result && !error && !csvJob && (
               <Empty title={t("lab.resultEmpty")} icon="lab">
                 <p>{t("lab.resultEmptyHint")}</p>
               </Empty>
@@ -220,6 +320,15 @@ export function FraudLab() {
                     <dd className="num">{result.report.warning_count}</dd>
                   </div>
                 </dl>
+                {result.report.examples.length > 0 && (
+                  <ul className="family-list">
+                    {result.report.examples.map((issue) => (
+                      <li key={`${issue.row_number}:${issue.code}:${issue.field}`}>
+                        {t("lab.csvIssue", { row: issue.row_number, code: issue.code })}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </section>
             )}
             {job && (

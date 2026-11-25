@@ -46,3 +46,11 @@ def load_config(config_dir: Path | None = None) -> AnalysisConfig:
 @lru_cache(maxsize=1)
 def default_config() -> AnalysisConfig:
     return load_config()
+
+
+@lru_cache(maxsize=1)
+def experimental_config() -> AnalysisConfig:
+    stable = default_config()
+    overrides = yaml.safe_load((CONFIG_DIR / "risk_policy_v3.yaml").read_text(encoding="utf-8"))
+    policy = {**stable.risk_policy, **overrides, "caps": {**stable.risk_policy["caps"], **overrides["caps"]}}
+    return AnalysisConfig(detectors=stable.detectors, risk_policy=policy)

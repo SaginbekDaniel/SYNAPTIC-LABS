@@ -19,6 +19,8 @@ It does not identify the source of funds: intermediary balances are unobserved.
 
 from __future__ import annotations
 
+from bisect import bisect_left, bisect_right
+from collections import defaultdict
 from collections.abc import Sequence
 from dataclasses import dataclass
 from fractions import Fraction
@@ -49,6 +51,8 @@ class FlowResult:
     precision: Literal["day", "timestamp", "mixed"]
     limitations: tuple[str, ...]
     method: str = METHOD
+    eligible_transfers: int = 0
+    processed_transfers: int = 0
 
     @property
     def chosen_compatible_minor(self) -> int:
@@ -65,7 +69,11 @@ def _sort_key(t: ObservedTransfer) -> tuple[str, str, str]:
     return (t.observed_date.isoformat(), t.occurred_at.isoformat() if t.occurred_at else "", t.transaction_id)
 
 
-def _unavailable(entry: int, precision: Literal["day", "timestamp", "mixed"], reason: str) -> FlowResult:
+def _day_number(transfer: ObservedTransfer) -> int:
+    return transfer.observed_date.toordinal()
+
+
+def _unavailable(entry: int, precision: Literal["day", "timestamp", "mixed"], reason: str, eligible: int) -> FlowResult:
     return FlowResult(
         status="unavailable",
         entry_minor=entry,
@@ -79,6 +87,7 @@ def _unavailable(entry: int, precision: Literal["day", "timestamp", "mixed"], re
         lag_seconds_max=None,
         precision=precision,
         limitations=(reason,),
+        eligible_transfers=eligible,
     )
 
 
@@ -97,29 +106,30 @@ def layered_flow(
     )
     entry = sum(t.amount_minor for t in ordered[0]) if ordered else 0
     if len(ordered) < 2 or any(not layer for layer in ordered):
-        return _unavailable(entry, precision, "missing_leg")
+        return _unavailable(entry, precision, "missing_leg", len(all_tx))
     if len({t.currency for t in all_tx}) > 1:
-        return _unavailable(entry, precision, "currency_mix")
+        return _unavailable(entry, precision, "currency_mix", len(all_tx))
     if len(all_tx) > max_transfers:
-        return _unavailable(entry, precision, "flow_budget_exceeded")
+        return _unavailable(entry, precision, "flow_budget_exceeded", len(all_tx))
     seen: set[str] = set()
     for t in all_tx:
         if t.transaction_id in seen:
             # A transfer may not occupy two layers: that would double its capacity.
-            return _unavailable(entry, precision, "transfer_reused_across_layers")
+            return _unavailable(entry, precision, "transfer_reused_across_layers", len(all_tx))
         seen.add(t.transaction_id)
 
     links: list[tuple[int, ObservedTransfer, ObservedTransfer, bool]] = []
     for i in range(len(ordered) - 1):
+        by_sender: dict[str, list[ObservedTransfer]] = defaultdict(list)
+        for transfer in ordered[i + 1]:
+            by_sender[transfer.sender].append(transfer)
         for x in ordered[i]:
-            for y in ordered[i + 1]:
-                if x.receiver != y.sender:
-                    continue
+            candidates = by_sender.get(x.receiver, ())
+            start = bisect_left(candidates, x.observed_date.toordinal(), key=_day_number)
+            end = bisect_right(candidates, x.observed_date.toordinal() + max_lag_days, key=_day_number)
+            for y in candidates[start:end]:
                 order = chronological_order(x, y)
                 if order == "after":
-                    continue
-                lag = lag_days(x, y)
-                if lag < 0 or lag > max_lag_days:
                     continue
                 links.append((i, x, y, order == "ambiguous"))
 
@@ -194,4 +204,6 @@ def layered_flow(
         lag_seconds_max=max(sec_lags) if exact_seconds else None,
         precision=precision,
         limitations=tuple(limitations),
+        eligible_transfers=len(all_tx),
+        processed_transfers=len(all_tx),
     )

@@ -1,0 +1,36 @@
+{
+  "n": 100000,
+  "dense": false,
+  "counts": {
+    "accounts": 25898,
+    "edges": 13447,
+    "formations": 200,
+    "assessments": 200,
+    "warnings": []
+  },
+  "csv_bytes": 5814656,
+  "csv_parse_ms": 126.33345899666892,
+  "csv_validate_ms": 174.65495799842756,
+  "graph": {
+    "n": 2,
+    "p50_ms": 297.07608349781367,
+    "min_ms": 284.9101249958039,
+    "max_ms": 309.2420419998234,
+    "mean_ms": 297.07608349781367,
+    "p95_ms": null,
+    "p99_ms": null
+  },
+  "pipeline_including_graph": {
+    "n": 2,
+    "p50_ms": 488.2052919965645,
+    "min_ms": 479.8607499978971,
+    "max_ms": 496.5498339952319,
+    "mean_ms": 488.2052919965645,
+    "p95_ms": null,
+    "p99_ms": null
+  },
+  "pipeline_txs_per_second": 204831.86405259962,
+  "process_cpu_seconds": 2.160647,
+  "process_cpu_percent_of_one_core": 99.99513095482102,
+  "process_peak_rss_mib": 258.3125
+}

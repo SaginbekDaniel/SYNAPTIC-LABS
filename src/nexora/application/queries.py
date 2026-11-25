@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import datetime as dt
 import uuid
-from collections import deque
+from collections import defaultdict
+from dataclasses import dataclass
 from typing import Any
 
 from sqlalchemy import case as sql_case
@@ -12,8 +13,9 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
 from nexora.application.case_service import TRANSITIONS
-from nexora.application.errors import Invalid, NotFound
+from nexora.application.errors import Invalid, NotFound, public_job_error
 from nexora.persistence import orm
+from nexora.persistence.access import case_filter, dataset_filter
 
 BAND_RANK = {"critical": 0, "high": 1, "medium": 2, "insufficient_evidence": 3, "low": 4}
 
@@ -59,6 +61,7 @@ def snapshot_dict(s: orm.GraphSnapshot) -> dict[str, Any]:
 
 
 def job_dict(j: orm.AnalysisJob) -> dict[str, Any]:
+    error_code, error_summary = public_job_error(j.error_code)
     return {
         "id": str(j.id),
         "dataset_id": str(j.dataset_id),
@@ -66,8 +69,8 @@ def job_dict(j: orm.AnalysisJob) -> dict[str, Any]:
         "attempt_count": j.attempt_count,
         "max_ingest_seq": j.max_ingest_seq,
         "snapshot_id": str(j.snapshot_id) if j.snapshot_id else None,
-        "error_code": j.error_code,
-        "error_summary": j.error_summary,
+        "error_code": error_code,
+        "error_summary": error_summary,
         "created_at": j.created_at,
         "updated_at": j.updated_at,
     }
@@ -112,9 +115,13 @@ def dataset_dict(session: Session, d: orm.Dataset) -> dict[str, Any]:
 
 
 def list_datasets(session: Session, limit: int, offset: int) -> dict[str, Any]:
-    total = session.execute(select(func.count()).select_from(orm.Dataset)).scalar_one()
+    total = session.execute(select(func.count()).select_from(orm.Dataset).where(dataset_filter(session))).scalar_one()
     rows = session.execute(
-        select(orm.Dataset).order_by(orm.Dataset.created_at.desc()).limit(limit).offset(offset)
+        select(orm.Dataset)
+        .where(dataset_filter(session))
+        .order_by(orm.Dataset.created_at.desc(), orm.Dataset.id)
+        .limit(limit)
+        .offset(offset)
     ).scalars()
     return {
         "items": [dataset_dict(session, d) for d in rows],
@@ -125,14 +132,18 @@ def list_datasets(session: Session, limit: int, offset: int) -> dict[str, Any]:
 
 
 def get_dataset(session: Session, dataset_id: uuid.UUID) -> orm.Dataset:
-    d = session.get(orm.Dataset, dataset_id)
+    d = session.scalar(select(orm.Dataset).where(orm.Dataset.id == dataset_id, dataset_filter(session)))
     if d is None:
         raise NotFound("DATASET_NOT_FOUND", "dataset does not exist")
     return d
 
 
 def get_snapshot(session: Session, snapshot_id: uuid.UUID) -> orm.GraphSnapshot:
-    s = session.get(orm.GraphSnapshot, snapshot_id)
+    s = session.scalar(
+        select(orm.GraphSnapshot).where(
+            orm.GraphSnapshot.id == snapshot_id, dataset_filter(session, orm.GraphSnapshot.dataset_id)
+        )
+    )
     if s is None:
         raise NotFound("SNAPSHOT_NOT_FOUND", "snapshot does not exist")
     return s
@@ -143,16 +154,35 @@ def _temporal_status(f: orm.Formation) -> str | None:
     return str(value) if value is not None else None
 
 
+@dataclass(frozen=True)
+class AlertCounts:
+    case: orm.Case | None
+    evidence: int
+    transactions: int
+
+
 def _alert_summary(
-    session: Session, a: orm.Alert, f: orm.Formation, r: orm.RiskAssessmentRow, latest_id: uuid.UUID | None
+    session: Session,
+    a: orm.Alert,
+    f: orm.Formation,
+    r: orm.RiskAssessmentRow,
+    latest_id: uuid.UUID | None,
+    counts: AlertCounts | None = None,
 ) -> dict[str, Any]:
-    c = session.execute(select(orm.Case).where(orm.Case.alert_id == a.id)).scalar_one_or_none()
-    evidence_count = session.execute(select(func.count()).where(orm.Evidence.formation_id == f.id)).scalar_one()
-    tx_count = session.execute(
-        select(func.count(func.distinct(orm.EvidenceTransaction.transaction_id)))
-        .join(orm.Evidence, orm.Evidence.id == orm.EvidenceTransaction.evidence_id)
-        .where(orm.Evidence.formation_id == f.id)
-    ).scalar_one()
+    if counts is None:
+        case = session.scalar(select(orm.Case).where(orm.Case.alert_id == a.id))
+        evidence_count, tx_count = session.execute(
+            select(
+                func.count(func.distinct(orm.Evidence.id)),
+                func.count(func.distinct(orm.EvidenceTransaction.transaction_id)),
+            )
+            .select_from(orm.Evidence)
+            .outerjoin(orm.EvidenceTransaction, orm.EvidenceTransaction.evidence_id == orm.Evidence.id)
+            .where(orm.Evidence.formation_id == f.id)
+        ).one()
+        counts = AlertCounts(case, evidence_count, tx_count)
+    c = counts.case
+    evidence_count, tx_count = counts.evidence, counts.transactions
     return {
         "id": str(a.id),
         "dataset_id": str(a.dataset_id),
@@ -217,6 +247,7 @@ def list_alerts(
         select(orm.Alert, orm.Formation, orm.RiskAssessmentRow)
         .join(orm.Formation, orm.Formation.id == orm.Alert.formation_id)
         .join(orm.RiskAssessmentRow, orm.RiskAssessmentRow.id == orm.Alert.risk_assessment_id)
+        .where(dataset_filter(session, orm.Alert.dataset_id))
     )
     if dataset_id is not None:
         base = base.where(orm.Alert.dataset_id == dataset_id)
@@ -265,13 +296,46 @@ def list_alerts(
     else:
         order = priority_order
     rows = session.execute(q_all.order_by(*order, *tie_break).limit(limit).offset(offset)).all()
-    latest_by_ds: dict[uuid.UUID, uuid.UUID | None] = {}
     items = []
-    for a, f, r in rows:
-        if a.dataset_id not in latest_by_ds:
-            snap = latest_snapshot(session, a.dataset_id)
-            latest_by_ds[a.dataset_id] = snap.id if snap else None
-        items.append(_alert_summary(session, a, f, r, latest_by_ds[a.dataset_id]))
+    if rows:
+        alerts = [a.id for a, _, _ in rows]
+        formations = [f.id for _, f, _ in rows]
+        datasets = {a.dataset_id for a, _, _ in rows}
+        case_by_alert = {c.alert_id: c for c in session.scalars(select(orm.Case).where(orm.Case.alert_id.in_(alerts)))}
+        counts_by_formation = {
+            fid: (evidence_count, tx_count)
+            for fid, evidence_count, tx_count in session.execute(
+                select(
+                    orm.Evidence.formation_id,
+                    func.count(func.distinct(orm.Evidence.id)),
+                    func.count(func.distinct(orm.EvidenceTransaction.transaction_id)),
+                )
+                .outerjoin(orm.EvidenceTransaction, orm.EvidenceTransaction.evidence_id == orm.Evidence.id)
+                .where(orm.Evidence.formation_id.in_(formations))
+                .group_by(orm.Evidence.formation_id)
+            )
+        }
+        ranked = (
+            select(
+                orm.GraphSnapshot.dataset_id,
+                orm.GraphSnapshot.id,
+                func.row_number()
+                .over(
+                    partition_by=orm.GraphSnapshot.dataset_id,
+                    order_by=(orm.GraphSnapshot.max_ingest_seq.desc(), orm.GraphSnapshot.computed_at.desc()),
+                )
+                .label("rank"),
+            )
+            .where(orm.GraphSnapshot.dataset_id.in_(datasets))
+            .subquery()
+        )
+        latest_by_ds = {
+            dataset_id: sid
+            for dataset_id, sid in session.execute(select(ranked.c.dataset_id, ranked.c.id).where(ranked.c.rank == 1))
+        }
+        for a, f, r in rows:
+            counts = AlertCounts(case_by_alert.get(a.id), *counts_by_formation.get(f.id, (0, 0)))
+            items.append(_alert_summary(session, a, f, r, latest_by_ds.get(a.dataset_id), counts))
     return {
         "items": items,
         "total": int(total),
@@ -283,7 +347,7 @@ def list_alerts(
 
 
 def _alert_rows(session: Session, alert_id: uuid.UUID) -> tuple[orm.Alert, orm.Formation, orm.RiskAssessmentRow]:
-    a = session.get(orm.Alert, alert_id)
+    a = session.scalar(select(orm.Alert).where(orm.Alert.id == alert_id, dataset_filter(session, orm.Alert.dataset_id)))
     if a is None:
         raise NotFound("ALERT_NOT_FOUND", "alert does not exist")
     f = session.get(orm.Formation, a.formation_id)
@@ -363,16 +427,26 @@ def alert_detail(session: Session, alert_id: uuid.UUID) -> dict[str, Any]:
 
 
 def alert_evidence_chain(session: Session, alert_id: uuid.UUID) -> dict[str, Any]:
-    _, f, _ = _alert_rows(session, alert_id)
+    a, f, _ = _alert_rows(session, alert_id)
     evidence = evidence_list(session, f.id)
     ids = sorted({uuid.UUID(t) for e in evidence for t in e["transaction_ids"]})
-    txs = session.execute(select(orm.Transaction).where(orm.Transaction.id.in_(ids))).scalars().all() if ids else []
+    txs = (
+        session.execute(
+            select(orm.Transaction).where(orm.Transaction.id.in_(ids), orm.Transaction.dataset_id == a.dataset_id)
+        )
+        .scalars()
+        .all()
+        if ids
+        else []
+    )
     txs = sorted(txs, key=lambda t: (t.observed_date, t.occurred_at or t.ingested_at, t.source_transaction_id))
     return {"formation_id": str(f.id), "evidence": evidence, "transactions": [tx_dict(t) for t in txs]}
 
 
 def get_transaction(session: Session, tx_id: uuid.UUID) -> dict[str, Any]:
-    t = session.get(orm.Transaction, tx_id)
+    t = session.scalar(
+        select(orm.Transaction).where(orm.Transaction.id == tx_id, dataset_filter(session, orm.Transaction.dataset_id))
+    )
     if t is None:
         raise NotFound("TRANSACTION_NOT_FOUND", "transaction does not exist")
     return tx_dict(t)
@@ -506,39 +580,54 @@ def neighborhood(
         .group_by(orm.Transaction.sender_account_id, orm.Transaction.receiver_account_id, orm.Transaction.currency)
     )
     seen = {account_id: 0}
-    queue: deque[str] = deque([account_id])
+    frontier = [account_id]
     edges: dict[tuple[str, str, str], dict[str, Any]] = {}
     truncated = False
-    while queue:
-        node = queue.popleft()
-        d = seen[node]
-        if d >= depth:
-            continue
+    for distance in range(depth):
+        if not frontier:
+            break
         rows = session.execute(
-            agg.where(or_(orm.Transaction.sender_account_id == node, orm.Transaction.receiver_account_id == node))
-        ).all()
-        for snd, rcv, cur, total, n, first, last in sorted(rows, key=lambda r: (-int(r[3]), r[0], r[1])):
-            other = rcv if snd == node else snd
-            if other not in seen:
-                if len(seen) >= max_nodes:
-                    truncated = True
-                    continue
-                seen[other] = d + 1
-                queue.append(other)
-            key = (snd, rcv, cur)
-            if key not in edges:
-                if len(edges) >= max_edges:
-                    truncated = True
-                    continue
-                edges[key] = {
-                    "sender": snd,
-                    "receiver": rcv,
-                    "currency": cur,
-                    "amount_minor": str(int(total)),
-                    "n_transactions": int(n),
-                    "first_date": first,
-                    "last_date": last,
-                }
+            agg.where(
+                or_(
+                    orm.Transaction.sender_account_id.in_(frontier),
+                    orm.Transaction.receiver_account_id.in_(frontier),
+                )
+            )
+        )
+        frontier_set = set(frontier)
+        adjacent: dict[str, list[Any]] = defaultdict(list)
+        for row in rows:
+            if row[0] in frontier_set:
+                adjacent[row[0]].append(row)
+            if row[1] in frontier_set:
+                adjacent[row[1]].append(row)
+        next_frontier = []
+        for node in frontier:
+            for snd, rcv, cur, total, n, first, last in sorted(
+                adjacent[node], key=lambda row: (-int(row[3]), row[0], row[1], row[2])
+            ):
+                other = rcv if snd == node else snd
+                if other not in seen:
+                    if len(seen) >= max_nodes:
+                        truncated = True
+                        continue
+                    seen[other] = distance + 1
+                    next_frontier.append(other)
+                key = (snd, rcv, cur)
+                if key not in edges:
+                    if len(edges) >= max_edges:
+                        truncated = True
+                        continue
+                    edges[key] = {
+                        "sender": snd,
+                        "receiver": rcv,
+                        "currency": cur,
+                        "amount_minor": str(int(total)),
+                        "n_transactions": int(n),
+                        "first_date": first,
+                        "last_date": last,
+                    }
+        frontier = next_frontier
     found = len(seen) > 1 or bool(edges)
     return {
         "snapshot_id": str(snapshot_id),
@@ -615,7 +704,7 @@ def case_dict(session: Session, c: orm.Case) -> dict[str, Any]:
 
 
 def get_case(session: Session, case_id: uuid.UUID) -> dict[str, Any]:
-    c = session.get(orm.Case, case_id)
+    c = session.scalar(select(orm.Case).where(orm.Case.id == case_id, case_filter(session)))
     if c is None:
         raise NotFound("CASE_NOT_FOUND", "case does not exist")
     return case_dict(session, c)
@@ -628,6 +717,7 @@ def list_cases(
         select(orm.Case, orm.Alert, orm.RiskAssessmentRow)
         .join(orm.Alert, orm.Alert.id == orm.Case.alert_id)
         .join(orm.RiskAssessmentRow, orm.RiskAssessmentRow.id == orm.Alert.risk_assessment_id)
+        .where(dataset_filter(session, orm.Alert.dataset_id))
     )
     if dataset_id:
         q = q.where(orm.Alert.dataset_id == dataset_id)
@@ -645,7 +735,7 @@ def list_cases(
 
 
 def case_audit(session: Session, case_id: uuid.UUID) -> list[dict[str, Any]]:
-    if session.get(orm.Case, case_id) is None:
+    if session.scalar(select(orm.Case.id).where(orm.Case.id == case_id, case_filter(session))) is None:
         raise NotFound("CASE_NOT_FOUND", "case does not exist")
     rows = session.execute(
         select(orm.AuditEvent)

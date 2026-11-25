@@ -1,0 +1,39 @@
+{
+  "n": 10000,
+  "dense": true,
+  "counts": {
+    "accounts": 10001,
+    "edges": 10000,
+    "formations": 500,
+    "assessments": 500,
+    "warnings": [
+      "cycle_budget_exceeded:KZT"
+    ]
+  },
+  "csv_bytes": 554296,
+  "csv_parse_ms": 10.181208002904896,
+  "csv_rejection": null,
+  "csv_validate_ms": 16.694083999027498,
+  "graph": {
+    "n": 2,
+    "p50_ms": 60.68737500390853,
+    "min_ms": 58.825833002629224,
+    "max_ms": 62.54891700518783,
+    "mean_ms": 60.68737500390853,
+    "p95_ms": null,
+    "p99_ms": null
+  },
+  "pipeline_including_graph": {
+    "n": 2,
+    "p50_ms": 247.3335835020407,
+    "min_ms": 241.22441700455965,
+    "max_ms": 253.44274999952177,
+    "mean_ms": 247.3335835020407,
+    "p95_ms": null,
+    "p99_ms": null
+  },
+  "pipeline_txs_per_second": 40431.2259516407,
+  "process_cpu_seconds": 0.6767409999999999,
+  "process_cpu_percent_of_one_core": 99.97934141559114,
+  "process_peak_rss_mib": 100.890625
+}

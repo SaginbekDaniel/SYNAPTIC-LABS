@@ -1,0 +1,88 @@
+[
+  {
+    "case": "no_migrations",
+    "live": 200,
+    "ready": 503,
+    "observed": {
+      "status": "degraded",
+      "demo_mode": true,
+      "actor": "demo-analyst",
+      "database": true,
+      "schema": "missing",
+      "migration": null,
+      "expected_migrations": [
+        "0003"
+      ],
+      "queue": {}
+    },
+    "expected_ready": 503
+  },
+  {
+    "case": "outdated_migration",
+    "ready": 503,
+    "observed": {
+      "status": "degraded",
+      "demo_mode": true,
+      "actor": "demo-analyst",
+      "database": true,
+      "schema": "incompatible",
+      "migration": "0001",
+      "expected_migrations": [
+        "0003"
+      ],
+      "queue": {}
+    },
+    "expected_ready": 503
+  },
+  {
+    "case": "migrated_to_head",
+    "ready": 200,
+    "observed": {
+      "status": "ok",
+      "demo_mode": true,
+      "actor": "demo-analyst",
+      "database": true,
+      "schema": "compatible",
+      "migration": "0003",
+      "expected_migrations": [
+        "0003"
+      ],
+      "queue": {}
+    },
+    "expected_ready": 200
+  },
+  {
+    "case": "worker_hard_stop_three_times",
+    "final_status": "failed",
+    "attempt_count": 3,
+    "configured_max": 3,
+    "expected_terminal_after_max": "failed"
+  },
+  {
+    "case": "early_worker_crash",
+    "status": "succeeded",
+    "attempt_count": 2
+  },
+  {
+    "case": "database_constraints_rollback",
+    "observed": {
+      "positive_amount": "23514",
+      "dataset_foreign_key": "23503"
+    }
+  },
+  {
+    "case": "database_outage",
+    "live": 200,
+    "ready": 503,
+    "data": 503,
+    "data_error": "DATABASE_UNAVAILABLE"
+  },
+  {
+    "case": "postgres_and_api_restart",
+    "ready": 200,
+    "saved_transactions": 3,
+    "same_job": true,
+    "published_snapshot_count": 1,
+    "same_csv_import": true
+  }
+]

@@ -15,6 +15,7 @@ const Evaluation = lazy(() => import("../features/evaluation/Evaluation").then((
 const FraudLab = lazy(() => import("../features/fraud-lab/FraudLab").then((m) => ({ default: m.FraudLab })));
 
 const TransferProtection = lazy(() => import("../features/transfer-protection/TransferProtection").then((m) => ({ default: m.TransferProtection })));
+const SandboxTransfer = lazy(() => import("../features/transfer-protection/SandboxTransfer").then((m) => ({ default: m.SandboxTransfer })));
 const TransferInvestigation = lazy(() => import("../features/transfer-protection/TransferInvestigation").then((m) => ({ default: m.TransferInvestigation })));
 
 export function App() {
@@ -40,6 +41,7 @@ export function App() {
               <Route path="network" element={<NetworkExplorer />} />
               <Route path="lab" element={<FraudLab />} />
               <Route path="lab/transfer-protection" element={<TransferProtection />} />
+              <Route path="lab/transfer-protection/sandbox/:assessmentId?" element={<SandboxTransfer />} />
               <Route path="lab/transfer-protection/investigation" element={<TransferInvestigation />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>

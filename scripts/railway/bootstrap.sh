@@ -47,6 +47,9 @@ fi
 if ! has_variable api NEXORA_GATEWAY_TOKEN; then
   set_secret api NEXORA_GATEWAY_TOKEN "$(openssl rand -hex 32)"
 fi
+if ! has_variable api NEXORA_TRANSFER_ANALYST_TOKEN; then
+  set_secret api NEXORA_TRANSFER_ANALYST_TOKEN "$(openssl rand -hex 32)"
+fi
 set_secret web NEXORA_GATEWAY_USER "$NEXORA_GATEWAY_USER"
 set_secret web NEXORA_GATEWAY_PASSWORD "$NEXORA_GATEWAY_PASSWORD"
 echo "    gateway credentials: $CREDENTIALS (keep it private; share through a password manager)"

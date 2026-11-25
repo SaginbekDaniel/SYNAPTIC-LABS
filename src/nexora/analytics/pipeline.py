@@ -17,6 +17,7 @@ from typing import Any
 
 from nexora.analytics import risk as risk_engine
 from nexora.analytics.config import AnalysisConfig
+from nexora.analytics.context import VerifiedContext, corroboration, observable
 from nexora.analytics.coverage import assess_coverage
 from nexora.analytics.evidence_validation import EvidenceIntegrityError, validate_evidence
 from nexora.analytics.graph_builder import GRAPH_VERSION, CurrencyGraph, GraphSnapshotData, build_snapshot
@@ -36,7 +37,7 @@ from nexora.domain.analysis import (
     RiskAssessment,
     Signal,
 )
-from nexora.domain.ids import stable_uuid
+from nexora.domain.ids import canonical_json, sha256_hex, stable_uuid
 from nexora.domain.money import amount_to_str
 from nexora.domain.transfers import ObservedTransfer
 
@@ -137,10 +138,18 @@ class _Structure:
 
 
 class _Builder:
-    def __init__(self, dataset_id: str, snapshot: GraphSnapshotData, config: AnalysisConfig, contract: dict[str, Any]):
+    def __init__(
+        self,
+        dataset_id: str,
+        snapshot: GraphSnapshotData,
+        config: AnalysisConfig,
+        contract: dict[str, Any],
+        context: VerifiedContext | None,
+    ):
         self.snapshot = snapshot
         self.config = config
         self.contract = contract
+        self.context = context
         self.snapshot_id = snapshot_identity(dataset_id, snapshot.input_manifest_sha256, config.config_sha256)
         self.out = AnalysisOutput(
             snapshot_id=self.snapshot_id,
@@ -153,6 +162,12 @@ class _Builder:
         self._peer_index: dict[str, peer_mod.PeerIndex] = {}
 
     # -- helpers -----------------------------------------------------------------
+    def _detector_config(self, name: str, currency: str) -> dict[str, Any]:
+        config = self.config.detectors[name]
+        defaults = self.config.detectors.get("currency_thresholds", {})
+        overrides = defaults.get(currency, {}).get(name, {})
+        return {**config, **overrides} if overrides else config
+
     def _transfers(self, ids: tuple[str, ...] | list[str]) -> list[ObservedTransfer]:
         return [self.snapshot.transfers[i] for i in ids]
 
@@ -166,6 +181,15 @@ class _Builder:
         tcfg = self.config.detectors["temporal"]
         kind: EvidenceKind = "counterevidence" if result.status == "contradicted" else "temporal_fact"
         code = _flow_reason(result, supported_code).code
+        coverage = {}
+        if self.config.risk_policy.get("verified_context"):
+            eligible, processed = result.eligible_transfers, result.processed_transfers
+            coverage = {
+                "eligible_transfers": eligible,
+                "processed_transfers": processed,
+                "skipped_transfers": eligible - processed,
+                "coverage_bp": processed * 10_000 // eligible if eligible else None,
+            }
         return Evidence(
             id=stable_uuid("evidence", formation_id, "temporal"),
             kind=kind,
@@ -186,6 +210,7 @@ class _Builder:
                 "lag_seconds_min": result.lag_seconds_min,
                 "lag_seconds_max": result.lag_seconds_max,
                 "time_precision": result.precision,
+                **coverage,
             },
             thresholds={
                 "max_hop_lag_days": int(tcfg["max_hop_lag_days"]),
@@ -364,6 +389,13 @@ class _Builder:
             signals.append(peer_sig)
             reasons.append(peer_reason)
             features["peer_status"] = peer_sig.status
+        if self.context is not None:
+            context_bundle = corroboration(self.context, st.fid, st.subject, cg.currency, self._transfers(all_tx))
+            if context_bundle is not None:
+                context_ev, context_signal, context_reason = context_bundle
+                evidence.append(context_ev)
+                signals.append(context_signal)
+                reasons.append(context_reason)
         reasons.extend(self._coverage_reasons(coverage, st.subject))
         formation = Formation(
             id=st.fid,
@@ -402,7 +434,7 @@ class _Builder:
 
     # -- detectors ---------------------------------------------------------------
     def funnels(self, cg: CurrencyGraph) -> None:
-        fcfg = self.config.detectors["funnel"]
+        fcfg = self._detector_config("funnel", cg.currency)
         for cand in funnel_mod.detect_funnels(cg, fcfg):
             feeders = tuple(f.account_id for f in cand.feeders)
             members = (*feeders, cand.center)
@@ -489,6 +521,7 @@ class _Builder:
         if not _enabled(ocfg):
             return
         assert ocfg is not None
+        ocfg = self._detector_config("fan_out", cg.currency)
         for cand in fan_out_mod.detect_fan_outs(cg, ocfg):
             dist = cand.distributor
             recipients = tuple(r.account_id for r in cand.recipients)
@@ -577,6 +610,7 @@ class _Builder:
         if not _enabled(ycfg):
             return []
         assert ycfg is not None
+        ycfg = self._detector_config("cycle", cg.currency)
         detection = cycle_mod.detect_cycles(cg, ycfg)
         if detection.budget_exceeded:
             self.out.partial_reasons.append(f"cycle_budget_exceeded:{cg.currency}")
@@ -645,7 +679,7 @@ class _Builder:
         return loops
 
     def chains(self, cg: CurrencyGraph, loops: list[frozenset[str]]) -> None:
-        ccfg = self.config.detectors["chain"]
+        ccfg = self._detector_config("chain", cg.currency)
         detection = chain_mod.detect_chains(cg, ccfg)
         if detection.budget_exceeded:
             self.out.partial_reasons.append(f"path_budget_exceeded:{cg.currency}")
@@ -713,10 +747,22 @@ class _Builder:
 
 
 def run_analysis(
-    *, dataset_id: str, transfers: list[ObservedTransfer], contract: dict[str, Any], config: AnalysisConfig
+    *,
+    dataset_id: str,
+    transfers: list[ObservedTransfer],
+    contract: dict[str, Any],
+    config: AnalysisConfig,
+    context: VerifiedContext | None = None,
 ) -> AnalysisOutput:
-    snapshot = build_snapshot(transfers)
-    builder = _Builder(dataset_id, snapshot, config, contract)
+    active_context = context if config.risk_policy.get("verified_context") else None
+    snapshot = build_snapshot(
+        [row for row in transfers if observable(row, active_context.as_of)] if active_context is not None else transfers
+    )
+    if active_context is not None:
+        snapshot.input_manifest_sha256 = sha256_hex(
+            canonical_json([snapshot.input_manifest_sha256, active_context.manifest()])
+        )
+    builder = _Builder(dataset_id, snapshot, config, contract, active_context)
     for currency in snapshot.currencies:
         cg = snapshot.by_currency[currency]
         builder.funnels(cg)

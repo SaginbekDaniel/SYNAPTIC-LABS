@@ -27,13 +27,14 @@ function withQuery(path: string, query?: Query): string {
 }
 
 async function request<T>(method: string, path: string, init?: { query?: Query; body?: unknown; signal?: AbortSignal; headers?: Record<string, string> }): Promise<T> {
+  const multipart = init?.body instanceof FormData ? init.body : undefined;
   let res: Response;
   try {
     res = await fetch(withQuery(path, init?.query), {
       method,
       signal: init?.signal,
-      headers: init?.body !== undefined ? { ...init.headers, "Content-Type": "application/json" } : init?.headers,
-      body: init?.body !== undefined ? JSON.stringify(init.body) : undefined,
+      headers: init?.body !== undefined && !multipart ? { ...init.headers, "Content-Type": "application/json" } : init?.headers,
+      body: multipart ?? (init?.body !== undefined ? JSON.stringify(init.body) : undefined),
     });
   } catch (err) {
     if (init?.signal?.aborted) throw init.signal.reason;
@@ -56,7 +57,8 @@ async function request<T>(method: string, path: string, init?: { query?: Query; 
 }
 
 export const api = {
-  get: <T>(path: string, query?: Query, signal?: AbortSignal) => request<T>("GET", path, { query, signal }),
+  get: <T>(path: string, query?: Query, signal?: AbortSignal, headers?: Record<string, string>) =>
+    request<T>("GET", path, { query, signal, headers }),
   post: <T>(path: string, body?: unknown, options?: { signal?: AbortSignal; headers?: Record<string, string> }) =>
     request<T>("POST", path, { ...options, body: body ?? {} }),
 };

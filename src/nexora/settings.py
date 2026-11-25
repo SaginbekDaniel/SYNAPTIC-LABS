@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from functools import lru_cache
+from typing import Annotated, Literal
 
-from pydantic import SecretStr, field_validator
+from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # The only SQLAlchemy dialect+driver NEXORA installs (psycopg 3). Hosted PostgreSQL providers
@@ -29,7 +30,7 @@ def normalize_database_url(url: str) -> str:
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="NEXORA_", env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_prefix="NEXORA_", env_file=".env", extra="ignore", hide_input_in_errors=True)
 
     database_url: str = "postgresql+psycopg://nexora:nexora@localhost:5432/nexora"
     # Connection pool per process. The API and the worker each hold one pool; keep
@@ -44,6 +45,11 @@ class Settings(BaseSettings):
     # rejects requests without it, so the API stays closed even if it is accidentally given a public
     # domain. Empty disables the check (local development, tests).
     gateway_token: str = ""
+    execution_profile: Literal["development", "deployed_demo", "production"] = "development"
+    authenticated_analytics: bool = False
+    verified_context_catalog: str = ""
+    local_identity_provisioning: SecretStr = SecretStr("")
+    feedback_export_key: SecretStr = SecretStr("")
     transfer_protection_enabled: bool = True
     transfer_analyst_token: SecretStr = SecretStr("")
     max_upload_bytes: int = 20 * 1024 * 1024
@@ -51,8 +57,8 @@ class Settings(BaseSettings):
     graph_max_depth: int = 3
     graph_max_nodes: int = 300
     graph_max_edges: int = 1500
-    job_lease_seconds: int = 120
-    job_max_attempts: int = 3
+    job_lease_seconds: Annotated[int, Field(ge=1)] = 120
+    job_max_attempts: Annotated[int, Field(ge=1)] = 3
     worker_poll_seconds: float = 1.0
     # Benchmark artifact written by scripts/run_benchmark.py; relative paths resolve from the repository root.
     benchmark_artifact: str = "benchmarks/results/bench-v1.json"

@@ -35,7 +35,10 @@ def read_csv_rows(
     except UnicodeDecodeError as exc:
         raise CsvSchemaError("CSV_ENCODING_INVALID", "file must be UTF-8 encoded") from exc
     reader = csv.DictReader(io.StringIO(text, newline=""))
-    header = [h.strip() for h in (reader.fieldnames or [])]
+    header = [name.strip().casefold() for name in (reader.fieldnames or [])]
+    if len(header) != len(set(header)):
+        raise CsvSchemaError("CSV_SCHEMA_INVALID", "duplicate normalized column header")
+    reader.fieldnames = header
     missing = [c for c in REQUIRED_COLUMNS if c not in header]
     if missing:
         raise CsvSchemaError("CSV_SCHEMA_INVALID", f"missing required columns: {', '.join(missing)}")
@@ -47,9 +50,7 @@ def read_csv_rows(
     for index, raw in enumerate(reader, start=1):
         if index > max_rows:
             raise CsvSchemaError("CSV_TOO_MANY_ROWS", f"file exceeds {max_rows} rows")
-        row: dict[str, object] = {
-            (k or "").strip(): v for k, v in raw.items() if k is not None and (k or "").strip() in header
-        }
+        row: dict[str, object] = {column: value for column, value in raw.items() if column is not None}
         if derive_ids:
             tuple_key = "|".join(
                 str(row.get(c) or "").strip() for c in (*REQUIRED_COLUMNS, "observed_date", "occurred_at")

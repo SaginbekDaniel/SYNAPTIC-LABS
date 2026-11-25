@@ -1,0 +1,51 @@
+[
+  {
+    "role": "nexora_api_runtime",
+    "sql": "CREATE TABLE public.forbidden(test int)",
+    "sqlstate": "42501"
+  },
+  {
+    "role": "nexora_api_runtime",
+    "sql": "DELETE FROM public.transactions",
+    "sqlstate": "42501"
+  },
+  {
+    "role": "nexora_api_runtime",
+    "sql": "UPDATE public.audit_events SET id=DEFAULT",
+    "sqlstate": "42501"
+  },
+  {
+    "role": "nexora_api_runtime",
+    "sql": "TRUNCATE public.transfer_action_events",
+    "sqlstate": "42501"
+  },
+  {
+    "role": "nexora_worker_runtime",
+    "sql": "CREATE TABLE public.forbidden(test int)",
+    "sqlstate": "42501"
+  },
+  {
+    "role": "nexora_worker_runtime",
+    "sql": "UPDATE public.audit_events SET id=DEFAULT",
+    "sqlstate": "42501"
+  },
+  {
+    "role": "nexora_worker_runtime",
+    "sql": "SELECT * FROM public.transfer_assessments",
+    "sqlstate": "42501"
+  },
+  {
+    "role": "nexora_reporting",
+    "sql": "SELECT * FROM public.transactions",
+    "sqlstate": "42501"
+  },
+  {
+    "role": "nexora_reporting",
+    "sql": "SELECT * FROM public.audit_events",
+    "sqlstate": "42501"
+  },
+  {
+    "role": "nexora_reporting",
+    "aggregate_view": "allowed"
+  }
+]

@@ -1,11 +1,15 @@
 # Known limitations (honest scope)
 
+## Дополнения 25 ноября 2026
+
+Новый sandbox моделирует оценку и подтверждаемое действие, а защищённый режим имеет индивидуальные principals, роли и tenant scope. Локальный стенд не подтверждает обнаружение на банковских данных, внешний IdP, денежное исполнение, HA/DR или cloud release. [Актуальный реестр ограничений](../audit/remediation/REMAINING_LIMITATIONS.md)
+
 ## What NEXORA is not
 
 * Not connected to Bank CenterCredit or any bank. All data is **synthetic**.
 * Not a real-time authorisation/blocking system. It is batch snapshot analysis triggered by jobs.
 * Not proof of fraud or money laundering: outputs are review candidates for a human analyst.
-* Authentication is **demo mode**: every request acts as `NEXORA_DEMO_ANALYST`. No SSO, no RBAC.
+* Public demo атрибутирует операции общей роли NEXORA_DEMO_ANALYST. Для индивидуального доступа используется защищённый профиль с tenant scope.
 
 ## Evaluation limits
 

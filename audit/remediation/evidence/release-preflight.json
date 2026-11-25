@@ -1,0 +1,56 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "check": "git_head",
+      "commit": "43368ff46b788568d34ceee5ac8ae9135728c373"
+    },
+    {
+      "check": "dependencies",
+      "python": {
+        "fastapi": "0.163.1",
+        "sqlalchemy": "2.1.9",
+        "psycopg": "3.3.9",
+        "alembic": "1.20.1"
+      },
+      "web": "npm ls passed"
+    },
+    {
+      "check": "health_gateway_frontend",
+      "schema": "0007"
+    },
+    {
+      "check": "csv_worker_context_cases",
+      "fixtures": [
+        {
+          "dataset": "suspicious-network",
+          "alerts": 1,
+          "accepted_ms": 8.83899999462301,
+          "snapshot_id": "4edbde31-d507-5701-94ed-5d4e7f962a0a",
+          "case_audit_events": 2
+        },
+        {
+          "dataset": "verified-settlement",
+          "alerts": 0,
+          "accepted_ms": 2.9272500032675453,
+          "snapshot_id": "18d4ad83-391e-54cf-a401-ea0368d2dd49"
+        }
+      ]
+    },
+    {
+      "check": "demo_analyst_scope",
+      "authorized": 200,
+      "unauthorized": 403
+    },
+    {
+      "check": "sandbox_persistence_and_failure",
+      "decisions": [
+        "ALLOW",
+        "STEP_UP",
+        "UNAVAILABLE"
+      ],
+      "acknowledgement": "SIMULATED_COMPLETED",
+      "replay_idempotent": true
+    }
+  ]
+}

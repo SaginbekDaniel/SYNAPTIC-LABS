@@ -1,5 +1,9 @@
 # Deploying NEXORA to Railway
 
+## Статус ремедиации 25 ноября 2026
+
+Текущий IaC объявляет управляемые NEXORA_TRANSFER_ANALYST_TOKEN и NEXORA_GATEWAY_TOKEN. Deployed demo profile требует значение длиной от 32 символов и private API docs. Для нового sandbox установите секреты через Railway secret configuration, выполните npm run check в .railway, на отдельной БД проверьте Alembic head и локальный preflight. SQL-шаблон для разных database principals и тесты ограничений приведены в [security report](../../audit/remediation/SECURITY_REMEDIATION_REPORT.md). Статический IaC и native Nginx проверены. Live Railway и Docker runtime текущей ветки не проверены. Записи ниже описывают предыдущий выпуск.
+
 > **Status (2026-11-18): deployed** to Railway project `nexora-ai-demo` (environment `production`)
 > at commit `dd4ab58`. What was verified on the live URL, and what was not, is in the
 > [deployment record](#deployment-record).

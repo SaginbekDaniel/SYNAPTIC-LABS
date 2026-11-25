@@ -567,6 +567,15 @@
               }
             ],
             "title": "Idempotency Key"
+          },
+          "profile": {
+            "default": "stable",
+            "enum": [
+              "stable",
+              "experimental_context"
+            ],
+            "title": "Profile",
+            "type": "string"
           }
         },
         "required": [
@@ -680,6 +689,33 @@
           "name"
         ],
         "title": "Body_import_csv_api_v1_datasets_import_post",
+        "type": "object"
+      },
+      "Body_queue_csv_import_api_v1_datasets_import_jobs_post": {
+        "properties": {
+          "boundary_account_ids": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Boundary Account Ids",
+            "type": "string"
+          },
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file",
+          "name"
+        ],
+        "title": "Body_queue_csv_import_api_v1_datasets_import_jobs_post",
         "type": "object"
       },
       "Case": {
@@ -1097,6 +1133,67 @@
           "data_requests"
         ],
         "title": "Coverage",
+        "type": "object"
+      },
+      "CsvImportJob": {
+        "additionalProperties": false,
+        "properties": {
+          "attempt_count": {
+            "title": "Attempt Count",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ImportResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "enum": [
+              "accepted",
+              "processing",
+              "completed",
+              "failed",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "attempt_count",
+          "result",
+          "error_code",
+          "created_at"
+        ],
+        "title": "CsvImportJob",
         "type": "object"
       },
       "DataRequest": {
@@ -1918,6 +2015,116 @@
         "title": "FamilyCount",
         "type": "object"
       },
+      "FeedbackLabel": {
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "enum": [
+              "confirmed_fraud",
+              "confirmed_legitimate"
+            ],
+            "title": "Label",
+            "type": "string"
+          },
+          "policy_version": {
+            "title": "Policy Version",
+            "type": "string"
+          },
+          "quality": {
+            "const": "independently_reviewed",
+            "title": "Quality",
+            "type": "string"
+          },
+          "sample_ref": {
+            "title": "Sample Ref",
+            "type": "string"
+          },
+          "version": {
+            "const": "feedback-v1",
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "version",
+          "sample_ref",
+          "label",
+          "quality",
+          "policy_version"
+        ],
+        "title": "FeedbackLabel",
+        "type": "object"
+      },
+      "FeedbackReceipt": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "review_id": {
+            "title": "Review Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "review_id",
+          "created_at"
+        ],
+        "title": "FeedbackReceipt",
+        "type": "object"
+      },
+      "FeedbackReview": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_alert_revision": {
+            "minimum": 1.0,
+            "title": "Expected Alert Revision",
+            "type": "integer"
+          },
+          "expected_case_version": {
+            "minimum": 1.0,
+            "title": "Expected Case Version",
+            "type": "integer"
+          },
+          "expected_review_id": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Review Id"
+          },
+          "outcome": {
+            "enum": [
+              "confirmed_fraud",
+              "confirmed_legitimate",
+              "insufficient_evidence"
+            ],
+            "title": "Outcome",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "expected_case_version",
+          "expected_alert_revision",
+          "outcome",
+          "reason"
+        ],
+        "title": "FeedbackReview",
+        "type": "object"
+      },
       "FormationDetail": {
         "additionalProperties": false,
         "properties": {
@@ -2227,6 +2434,13 @@
             "title": "Demo Mode",
             "type": "boolean"
           },
+          "expected_migrations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Expected Migrations",
+            "type": "array"
+          },
           "migration": {
             "anyOf": [
               {
@@ -2245,6 +2459,16 @@
             "title": "Queue",
             "type": "object"
           },
+          "schema": {
+            "enum": [
+              "unavailable",
+              "missing",
+              "incompatible",
+              "compatible"
+            ],
+            "title": "Schema",
+            "type": "string"
+          },
           "status": {
             "enum": [
               "ok",
@@ -2257,7 +2481,9 @@
         "required": [
           "status",
           "database",
+          "schema",
           "migration",
+          "expected_migrations",
           "queue",
           "demo_mode",
           "actor"
@@ -2720,6 +2946,83 @@
         "title": "NoteRequest",
         "type": "object"
       },
+      "ObservedTransfer": {
+        "additionalProperties": false,
+        "properties": {
+          "amount_minor": {
+            "title": "Amount Minor",
+            "type": "integer"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "observed_date": {
+            "format": "date",
+            "title": "Observed Date",
+            "type": "string"
+          },
+          "occurred_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occurred At"
+          },
+          "precision": {
+            "enum": [
+              "day",
+              "timestamp"
+            ],
+            "title": "Precision",
+            "type": "string"
+          },
+          "receiver": {
+            "title": "Receiver",
+            "type": "string"
+          },
+          "sender": {
+            "title": "Sender",
+            "type": "string"
+          },
+          "source_transaction_id": {
+            "title": "Source Transaction Id",
+            "type": "string"
+          },
+          "status": {
+            "default": "posted",
+            "enum": [
+              "posted",
+              "reversed",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "transaction_id": {
+            "title": "Transaction Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "transaction_id",
+          "source_transaction_id",
+          "sender",
+          "receiver",
+          "amount_minor",
+          "currency",
+          "observed_date",
+          "occurred_at",
+          "precision"
+        ],
+        "title": "ObservedTransfer",
+        "type": "object"
+      },
       "OpenCaseRequest": {
         "additionalProperties": false,
         "properties": {
@@ -2883,6 +3186,113 @@
         "title": "ReasonCode",
         "type": "object"
       },
+      "RecipientProfile": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "format": "date-time",
+            "title": "As Of",
+            "type": "string"
+          },
+          "context": {
+            "items": {
+              "$ref": "#/components/schemas/ContextFact"
+            },
+            "title": "Context",
+            "type": "array"
+          },
+          "currency": {
+            "const": "KZT",
+            "default": "KZT",
+            "title": "Currency",
+            "type": "string"
+          },
+          "formations": {
+            "items": {
+              "$ref": "#/components/schemas/FormationProfile"
+            },
+            "title": "Formations",
+            "type": "array"
+          },
+          "graph_config_sha256": {
+            "title": "Graph Config Sha256",
+            "type": "string"
+          },
+          "graph_policy_version": {
+            "title": "Graph Policy Version",
+            "type": "string"
+          },
+          "graph_snapshot_id": {
+            "title": "Graph Snapshot Id",
+            "type": "string"
+          },
+          "is_repeat_recipient": {
+            "title": "Is Repeat Recipient",
+            "type": "boolean"
+          },
+          "limitations": {
+            "items": {
+              "enum": [
+                "INSUFFICIENT_HISTORY",
+                "INCOMPLETE_GRAPH",
+                "AMBIGUOUS_TIMESTAMPS",
+                "STALE_PROFILE",
+                "MISSING_PROFILE"
+              ],
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "recipient": {
+            "title": "Recipient",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": 1,
+            "default": 1,
+            "title": "Schema Version",
+            "type": "integer"
+          },
+          "sender": {
+            "title": "Sender",
+            "type": "string"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          },
+          "transactions": {
+            "items": {
+              "$ref": "#/components/schemas/TimedTransfer"
+            },
+            "title": "Transactions",
+            "type": "array"
+          },
+          "valid_until": {
+            "format": "date-time",
+            "title": "Valid Until",
+            "type": "string"
+          }
+        },
+        "required": [
+          "snapshot_id",
+          "recipient",
+          "sender",
+          "as_of",
+          "valid_until",
+          "graph_snapshot_id",
+          "graph_config_sha256",
+          "graph_policy_version",
+          "limitations",
+          "is_repeat_recipient",
+          "formations",
+          "transactions",
+          "context"
+        ],
+        "title": "RecipientProfile",
+        "type": "object"
+      },
       "Risk": {
         "additionalProperties": false,
         "properties": {
@@ -3036,6 +3446,332 @@
           "perturbations"
         ],
         "title": "Robustness",
+        "type": "object"
+      },
+      "SandboxAcknowledgement": {
+        "additionalProperties": false,
+        "properties": {
+          "acknowledged_at": {
+            "format": "date-time",
+            "title": "Acknowledged At",
+            "type": "string"
+          },
+          "action": {
+            "enum": [
+              "CONFIRM",
+              "CANCEL",
+              "VERIFY_STEP_UP",
+              "HOLD_FOR_REVIEW",
+              "APPROVE_REVIEW"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "action_id": {
+            "format": "uuid",
+            "title": "Action Id",
+            "type": "string"
+          },
+          "assessment_id": {
+            "format": "uuid",
+            "title": "Assessment Id",
+            "type": "string"
+          },
+          "from_status": {
+            "enum": [
+              "READY",
+              "AWAITING_CONFIRMATION",
+              "STEP_UP_REQUIRED",
+              "IN_REVIEW",
+              "UNAVAILABLE",
+              "SIMULATED_COMPLETED",
+              "CANCELLED"
+            ],
+            "title": "From Status",
+            "type": "string"
+          },
+          "simulation": {
+            "const": true,
+            "default": true,
+            "title": "Simulation",
+            "type": "boolean"
+          },
+          "to_status": {
+            "enum": [
+              "READY",
+              "AWAITING_CONFIRMATION",
+              "STEP_UP_REQUIRED",
+              "IN_REVIEW",
+              "UNAVAILABLE",
+              "SIMULATED_COMPLETED",
+              "CANCELLED"
+            ],
+            "title": "To Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "assessment_id",
+          "action_id",
+          "action",
+          "from_status",
+          "to_status",
+          "acknowledged_at"
+        ],
+        "title": "SandboxAcknowledgement",
+        "type": "object"
+      },
+      "SandboxActionRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "CONFIRM",
+              "CANCEL",
+              "VERIFY_STEP_UP",
+              "HOLD_FOR_REVIEW",
+              "APPROVE_REVIEW"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "action_id": {
+            "format": "uuid",
+            "title": "Action Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "action_id",
+          "action"
+        ],
+        "title": "SandboxActionRequest",
+        "type": "object"
+      },
+      "SandboxAssessmentResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "assessed_at": {
+            "format": "date-time",
+            "title": "Assessed At",
+            "type": "string"
+          },
+          "assessment_id": {
+            "format": "uuid",
+            "title": "Assessment Id",
+            "type": "string"
+          },
+          "coverage": {
+            "enum": [
+              "SUFFICIENT",
+              "LIMITED",
+              "UNAVAILABLE"
+            ],
+            "title": "Coverage",
+            "type": "string"
+          },
+          "customer_message": {
+            "title": "Customer Message",
+            "type": "string"
+          },
+          "decision": {
+            "enum": [
+              "ALLOW",
+              "WARN",
+              "STEP_UP",
+              "LIMITED_SIGNAL",
+              "UNAVAILABLE"
+            ],
+            "title": "Decision",
+            "type": "string"
+          },
+          "intent_id": {
+            "format": "uuid",
+            "title": "Intent Id",
+            "type": "string"
+          },
+          "policy_version": {
+            "title": "Policy Version",
+            "type": "string"
+          },
+          "reason_codes": {
+            "items": {
+              "enum": [
+                "INSUFFICIENT_HISTORY",
+                "INCOMPLETE_GRAPH",
+                "AMBIGUOUS_TIMESTAMPS",
+                "STALE_PROFILE",
+                "MISSING_PROFILE",
+                "DEPENDENCY_FAILURE",
+                "TIMEOUT",
+                "FEATURE_DISABLED",
+                "NO_SUPPORTED_CONCERN",
+                "SUSPICIOUS_NETWORK_LINK",
+                "TEMPORAL_FLOW_CONFIRMED",
+                "INDEPENDENT_REPORT",
+                "EXPLAINED_ACTIVITY",
+                "ESTABLISHED_RELATIONSHIP"
+              ],
+              "type": "string"
+            },
+            "title": "Reason Codes",
+            "type": "array"
+          },
+          "recommended_actions": {
+            "items": {
+              "enum": [
+                "CONTINUE_SIMULATION",
+                "CANCEL",
+                "REVIEW_DETAILS",
+                "CONTACT_OFFICIAL_SUPPORT",
+                "RETRY"
+              ],
+              "type": "string"
+            },
+            "title": "Recommended Actions",
+            "type": "array"
+          },
+          "risk_band": {
+            "enum": [
+              "LOW",
+              "ELEVATED",
+              "HIGH",
+              "UNKNOWN"
+            ],
+            "title": "Risk Band",
+            "type": "string"
+          },
+          "simulation": {
+            "const": true,
+            "default": true,
+            "title": "Simulation",
+            "type": "boolean"
+          },
+          "snapshot_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Snapshot Id"
+          },
+          "status": {
+            "enum": [
+              "READY",
+              "AWAITING_CONFIRMATION",
+              "STEP_UP_REQUIRED",
+              "IN_REVIEW",
+              "UNAVAILABLE",
+              "SIMULATED_COMPLETED",
+              "CANCELLED"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "assessment_id",
+          "intent_id",
+          "decision",
+          "risk_band",
+          "coverage",
+          "reason_codes",
+          "recommended_actions",
+          "policy_version",
+          "snapshot_id",
+          "customer_message",
+          "status",
+          "assessed_at"
+        ],
+        "title": "SandboxAssessmentResponse",
+        "type": "object"
+      },
+      "SandboxEvidenceResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "assessment": {
+            "$ref": "#/components/schemas/SandboxAssessmentResponse"
+          },
+          "profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecipientProfile"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "assessment",
+          "profile"
+        ],
+        "title": "SandboxEvidenceResponse",
+        "type": "object"
+      },
+      "SandboxIntentRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "amount_minor": {
+            "pattern": "^[1-9][0-9]{0,37}$",
+            "title": "Amount Minor",
+            "type": "string"
+          },
+          "beneficiary": {
+            "pattern": "^[A-Za-z0-9_.:@-]{1,128}$",
+            "title": "Beneficiary",
+            "type": "string"
+          },
+          "channel": {
+            "default": "web",
+            "enum": [
+              "web",
+              "mobile",
+              "service"
+            ],
+            "title": "Channel",
+            "type": "string"
+          },
+          "currency": {
+            "pattern": "^[A-Z]{3}$",
+            "title": "Currency",
+            "type": "string"
+          },
+          "intent_id": {
+            "format": "uuid",
+            "title": "Intent Id",
+            "type": "string"
+          },
+          "requested_at": {
+            "format": "date-time",
+            "title": "Requested At",
+            "type": "string"
+          },
+          "supersedes_assessment_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supersedes Assessment Id"
+          }
+        },
+        "required": [
+          "intent_id",
+          "beneficiary",
+          "amount_minor",
+          "currency",
+          "requested_at"
+        ],
+        "title": "SandboxIntentRequest",
         "type": "object"
       },
       "ScenarioMetrics": {
@@ -3460,6 +4196,25 @@
           "seed"
         ],
         "title": "SyntheticDatasetRequest",
+        "type": "object"
+      },
+      "TimedTransfer": {
+        "additionalProperties": false,
+        "properties": {
+          "known_at": {
+            "format": "date-time",
+            "title": "Known At",
+            "type": "string"
+          },
+          "observed": {
+            "$ref": "#/components/schemas/ObservedTransfer"
+          }
+        },
+        "required": [
+          "observed",
+          "known_at"
+        ],
+        "title": "TimedTransfer",
         "type": "object"
       },
       "Transaction": {
@@ -4570,6 +5325,100 @@
         ]
       }
     },
+    "/api/v1/cases/{case_id}/feedback": {
+      "post": {
+        "operationId": "review_feedback_api_v1_cases__case_id__feedback_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "case_id",
+            "required": true,
+            "schema": {
+              "title": "Case Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedbackReview"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackReceipt"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Review Feedback",
+        "tags": [
+          "cases"
+        ]
+      }
+    },
+    "/api/v1/cases/{case_id}/feedback-label": {
+      "get": {
+        "operationId": "feedback_label_api_v1_cases__case_id__feedback_label_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "case_id",
+            "required": true,
+            "schema": {
+              "title": "Case Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackLabel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Feedback Label",
+        "tags": [
+          "cases"
+        ]
+      }
+    },
     "/api/v1/cases/{case_id}/notes": {
       "post": {
         "operationId": "add_note_api_v1_cases__case_id__notes_post",
@@ -4681,6 +5530,27 @@
     "/api/v1/datasets/import": {
       "post": {
         "operationId": "import_csv_api_v1_datasets_import_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 128,
+                  "minLength": 1,
+                  "pattern": "^[!-~]+$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "multipart/form-data": {
@@ -4702,6 +5572,16 @@
             },
             "description": "Successful Response"
           },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
           "422": {
             "content": {
               "application/json": {
@@ -4714,6 +5594,162 @@
           }
         },
         "summary": "Import Csv",
+        "tags": [
+          "datasets"
+        ]
+      }
+    },
+    "/api/v1/datasets/import-jobs": {
+      "post": {
+        "operationId": "queue_csv_import_api_v1_datasets_import_jobs_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 128,
+                  "minLength": 1,
+                  "pattern": "^[!-~]+$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_queue_csv_import_api_v1_datasets_import_jobs_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CsvImportJob"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Queue Csv Import",
+        "tags": [
+          "datasets"
+        ]
+      }
+    },
+    "/api/v1/datasets/import-jobs/{job_id}": {
+      "get": {
+        "operationId": "csv_import_status_api_v1_datasets_import_jobs__job_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CsvImportJob"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Csv Import Status",
+        "tags": [
+          "datasets"
+        ]
+      }
+    },
+    "/api/v1/datasets/import-jobs/{job_id}/cancel": {
+      "post": {
+        "operationId": "cancel_csv_import_api_v1_datasets_import_jobs__job_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CsvImportJob"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel Csv Import",
         "tags": [
           "datasets"
         ]
@@ -5035,6 +6071,313 @@
         "tags": [
           "datasets",
           "lab"
+        ]
+      }
+    },
+    "/api/v1/sandbox/transfers": {
+      "post": {
+        "operationId": "submit_api_v1_sandbox_transfers_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SandboxIntentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SandboxAssessmentResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Submit",
+        "tags": [
+          "transfer sandbox"
+        ]
+      }
+    },
+    "/api/v1/sandbox/transfers/{assessment_id}": {
+      "get": {
+        "operationId": "get_assessment_api_v1_sandbox_transfers__assessment_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assessment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assessment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SandboxAssessmentResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Assessment",
+        "tags": [
+          "transfer sandbox"
+        ]
+      }
+    },
+    "/api/v1/sandbox/transfers/{assessment_id}/actions": {
+      "get": {
+        "operationId": "list_actions_api_v1_sandbox_transfers__assessment_id__actions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assessment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assessment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SandboxAcknowledgement"
+                  },
+                  "title": "Response List Actions Api V1 Sandbox Transfers  Assessment Id  Actions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Actions",
+        "tags": [
+          "transfer sandbox"
+        ]
+      },
+      "post": {
+        "operationId": "perform_action_api_v1_sandbox_transfers__assessment_id__actions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assessment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assessment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SandboxActionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SandboxAcknowledgement"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Perform Action",
+        "tags": [
+          "transfer sandbox"
+        ]
+      }
+    },
+    "/api/v1/sandbox/transfers/{assessment_id}/evidence": {
+      "get": {
+        "operationId": "get_evidence_api_v1_sandbox_transfers__assessment_id__evidence_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assessment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assessment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SandboxEvidenceResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Evidence",
+        "tags": [
+          "transfer sandbox"
         ]
       }
     },

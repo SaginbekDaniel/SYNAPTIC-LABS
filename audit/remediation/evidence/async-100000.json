@@ -1,0 +1,24 @@
+{
+  "rows": 100000,
+  "file_bytes": 5814656,
+  "upload_accepted_ms": 47.04700000002049,
+  "end_to_end_ms": 2018.2788340025581,
+  "states": [
+    "accepted",
+    "processing",
+    "completed"
+  ],
+  "report": {
+    "processed": 100000,
+    "accepted": 100000,
+    "duplicated_identical": 0,
+    "quarantined": 0,
+    "rejected": 0,
+    "warning_count": 0,
+    "error_codes": {},
+    "warning_codes": {},
+    "examples": [],
+    "content_sha256": "792db73247790832f514b40538e2b83b7690136120e10b403f0c4490da381864"
+  },
+  "release_rev": "0007"
+}

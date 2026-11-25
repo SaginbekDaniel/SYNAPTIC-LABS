@@ -1,0 +1,70 @@
+[
+  {
+    "case": "no_migrations",
+    "live": 200,
+    "ready": 503,
+    "observed": {
+      "status": "degraded",
+      "database": false,
+      "migration": null,
+      "queue": {},
+      "demo_mode": true,
+      "actor": "demo-analyst"
+    },
+    "expected_ready": 503
+  },
+  {
+    "case": "outdated_migration",
+    "ready": 200,
+    "observed": {
+      "status": "ok",
+      "database": true,
+      "migration": "0001",
+      "queue": {},
+      "demo_mode": true,
+      "actor": "demo-analyst"
+    },
+    "expected_ready": 503
+  },
+  {
+    "case": "migrated_to_head",
+    "ready": 200,
+    "observed": {
+      "status": "ok",
+      "database": true,
+      "migration": "0002",
+      "queue": {},
+      "demo_mode": true,
+      "actor": "demo-analyst"
+    },
+    "expected_ready": 200
+  },
+  {
+    "case": "worker_hard_stop_three_times",
+    "final_status": "succeeded",
+    "attempt_count": 4,
+    "configured_max": 3,
+    "expected_terminal_after_max": "failed"
+  },
+  {
+    "case": "database_constraints_rollback",
+    "observed": {
+      "positive_amount": "23514",
+      "dataset_foreign_key": "23503"
+    }
+  },
+  {
+    "case": "database_outage",
+    "live": 200,
+    "ready": 503,
+    "data": 503,
+    "data_error": "DATABASE_UNAVAILABLE"
+  },
+  {
+    "case": "postgres_and_api_restart",
+    "ready": 200,
+    "saved_transactions": 3,
+    "same_job": true,
+    "published_snapshot_count": 1
+  }
+]
