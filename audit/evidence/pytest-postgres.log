@@ -1,0 +1,26 @@
+........................................................................ [ 48%]
+........................................................................ [ 96%]
+......                                                                   [100%]
+=============================== warnings summary ===============================
+../../../Users/ajbartorehanov/Documents/ChatGPT/ITU FINTECH/SYNAPTIC-LABS/.venv/lib/python3.13/site-packages/fastapi/testclient.py:1
+  /Users/ajbartorehanov/Documents/ChatGPT/ITU FINTECH/SYNAPTIC-LABS/.venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+============================= slowest 12 durations =============================
+0.30s call     tests/unit/test_benchmark.py::test_harness_is_deterministic_and_v1_variant_disables_new_parts
+0.23s call     tests/integration/test_api.py::test_alert_list_pages_searches_sorts_and_counts_on_the_server
+0.21s call     tests/integration/test_api.py::test_end_to_end_transaction_to_audited_decision
+0.20s call     tests/integration/test_persistence.py::test_analysis_publishes_once_and_evidence_resolves
+0.19s call     tests/integration/test_api.py::test_activity_counts_match_source_transfers
+0.18s call     tests/integration/test_v2_and_evaluation.py::test_v2_formations_publish_and_render_through_the_api
+0.15s call     tests/integration/test_v2_and_evaluation.py::test_downgrade_refuses_to_discard_published_v2_analyses
+0.13s call     tests/unit/test_transfer_evaluation.py::test_holdout_replays_the_same_inputs_and_predictions
+0.13s call     tests/integration/test_persistence.py::test_case_lifecycle_conflict_and_audit
+0.12s call     tests/integration/test_persistence.py::test_expired_lease_is_reclaimed
+0.12s call     tests/integration/test_api.py::test_graph_limits_are_clamped
+0.08s call     tests/integration/test_persistence.py::test_reimport_is_idempotent_and_conflicts_quarantined
+150 passed, 1 warning in 3.76s
+real 4.21
+user 3.51
+sys 0.19

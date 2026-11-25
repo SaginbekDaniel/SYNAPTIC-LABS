@@ -1,0 +1,37 @@
+....................F.F...F....                                          [100%]
+=================================== FAILURES ===================================
+__________________ test_http_method_error_keeps_allow_header ___________________
+audit/tests/test_audit.py:112: in test_http_method_error_keeps_allow_header
+    assert "GET" in response.headers.get("allow", "").split(", ")
+E   AssertionError: assert 'GET' in ['']
+E    +  where [''] = <built-in method split of str object at 0x105602a50>(', ')
+E    +    where <built-in method split of str object at 0x105602a50> = ''.split
+E    +      where '' = get('allow', '')
+E    +        where get = Headers({'x-request-id': 'req-67d8988fdb2b4a07', 'content-length': '119', 'content-type': 'application/json', 'vary': 'Origin'}).get
+E    +          where Headers({'x-request-id': 'req-67d8988fdb2b4a07', 'content-length': '119', 'content-type': 'application/json', 'vary': 'Origin'}) = <Response [405 Method Not Allowed]>.headers
+____________________ test_same_csv_submission_is_idempotent ____________________
+audit/tests/test_audit.py:127: in test_same_csv_submission_is_idempotent
+    assert first.json()["dataset"]["id"] == second.json()["dataset"]["id"]
+E   AssertionError: assert '36d03b66-738...-736cfd4d3454' == '610edb24-fea...-3cab874b4b2e'
+E     
+E     - 610edb24-fea1-40ee-acd4-3cab874b4b2e
+E     + 36d03b66-738a-482e-887c-736cfd4d3454
+______________________ test_csv_rejects_duplicate_headers ______________________
+audit/tests/test_audit.py:156: in test_csv_rejects_duplicate_headers
+    with pytest.raises(CsvSchemaError, match="column"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE CsvSchemaError
+=============================== warnings summary ===============================
+locked-venv/lib/python3.13/site-packages/fastapi/testclient.py:1
+  /private/tmp/nexora-audit.WsJhTP/locked-venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED audit/tests/test_audit.py::test_http_method_error_keeps_allow_header
+FAILED audit/tests/test_audit.py::test_same_csv_submission_is_idempotent - As...
+FAILED audit/tests/test_audit.py::test_csv_rejects_duplicate_headers - Failed...
+3 failed, 28 passed, 1 warning in 0.85s
+real 1.18
+user 0.84
+sys 0.10

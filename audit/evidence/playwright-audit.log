@@ -1,0 +1,26 @@
+[WebServer] INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+[WebServer] INFO  [alembic.runtime.migration] Will assume transactional DDL.
+[WebServer] INFO  [alembic.runtime.migration] Running upgrade  -> 0001, initial schema
+[WebServer] INFO  [alembic.runtime.migration] Running upgrade 0001 -> 0002, formation kinds fan_out and cycle (detectors-v2)
+[WebServer] {"ts":"2026-11-25 11:40:35,633","level":"INFO","logger":"nexora.worker","msg":"worker MacBook-Air-Ajbar.local:21030:1c98c23c started"}
+[WebServer] INFO:     Started server process [21031]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:8100 (Press CTRL+C to quit)
+[WebServer] (node:21034) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:21058) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:21060) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [desktop] › e2e/audit-transfer-browser.spec.ts:6:1 › connection interruption cannot present a successful transfer result and retry recovers (264ms)
+{"navigation":"/lab/transfer-protection","timing":{"domContentLoadedMs":41.5,"loadMs":42,"transferBytes":1549,"paintMs":{"first-paint":44,"first-contentful-paint":72}}}
+  ✓  2 [desktop] › e2e/audit-transfer-browser.spec.ts:24:1 › keyboard form and alert feed expose accessible names and roles (165ms)
+
+  2 passed (2.0s)
+real 2.41
+user 1.53
+sys 0.33

@@ -1,0 +1,17 @@
+
+> nexora-web@0.1.0 test
+> vitest run
+
+
+ RUN  v2.1.9 /private/tmp/nexora-audit.WsJhTP/apps/web
+
+ ✓ src/lib/format.test.ts (7 tests) 3ms
+ ✓ src/features/evaluation/evaluationView.test.ts (3 tests) 13ms
+ ✓ src/lib/i18n.test.ts (6 tests) 2ms
+ ✓ src/features/redesign.test.ts (10 tests) 3ms
+
+ Test Files  4 passed (4)
+      Tests  26 passed (26)
+   Start at  11:33:00
+   Duration  200ms (transform 103ms, setup 0ms, collect 187ms, tests 21ms, environment 0ms, prepare 109ms)
+

@@ -1,0 +1,5 @@
+
+> check
+> tsc -p . && node check.ts
+
+railway.ts: 3 services + database, all deployment invariants hold

@@ -1,0 +1,6 @@
+All checks passed!
+5 files already formatted
+Success: no issues found in 63 source files
+wrote /private/tmp/nexora-audit.cwl72F/final-openapi.json
+✨ openapi-typescript 7.13.0
+🚀 /private/tmp/nexora-audit.cwl72F/final-openapi.json → /private/tmp/nexora-audit.cwl72F/final-api-types.ts [51.7ms]

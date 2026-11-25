@@ -1,0 +1,59 @@
+[WebServer] INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+[WebServer] INFO  [alembic.runtime.migration] Will assume transactional DDL.
+[WebServer] INFO  [alembic.runtime.migration] Running upgrade  -> 0001, initial schema
+[WebServer] INFO  [alembic.runtime.migration] Running upgrade 0001 -> 0002, formation kinds fan_out and cycle (detectors-v2)
+[WebServer] {"ts":"2026-11-25 11:40:07,321","level":"INFO","logger":"nexora.worker","msg":"worker MacBook-Air-Ajbar.local:20943:172745b0 started"}
+[WebServer] INFO:     Started server process [20944]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:8100 (Press CTRL+C to quit)
+[WebServer] (node:20948) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:20972) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 14 tests using 1 worker
+
+(node:20974) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] {"ts":"2026-11-25 11:40:09,341","level":"INFO","logger":"nexora.worker","msg":"claimed job 37859958-12ae-4c83-93af-8d80bdb7bf09 (attempt 1) for dataset 199a1b8b-879f-4fc1-ac0f-d38a620b9c83"}
+[WebServer] {"ts":"2026-11-25 11:40:09,435","level":"INFO","logger":"nexora.worker","msg":"job 37859958-12ae-4c83-93af-8d80bdb7bf09 published snapshot 0d02d174-5ab6-5f79-9d7c-2ca361fc9301"}
+[WebServer] {"ts":"2026-11-25 11:40:10,445","level":"INFO","logger":"nexora.worker","msg":"claimed job d11ef974-7024-4540-8849-7e38b799f065 (attempt 1) for dataset e35b1020-d93a-42e3-925a-a394917ee16a"}
+[WebServer] {"ts":"2026-11-25 11:40:10,550","level":"INFO","logger":"nexora.worker","msg":"job d11ef974-7024-4540-8849-7e38b799f065 published snapshot f2c22b33-86a7-5e51-a66b-4ad489010d39"}
+  ✓   1 [desktop] › e2e/dataset-selection.spec.ts:7:1 › a newly generated dataset becomes and stays the active dataset (3.3s)
+  ✓   2 [desktop] › e2e/evaluation.spec.ts:9:1 › evaluation screen renders the persisted benchmark run, labelled synthetic (194ms)
+[WebServer] {"ts":"2026-11-25 11:40:12,560","level":"INFO","logger":"nexora.worker","msg":"claimed job 72796c96-256c-429d-adf9-edf3151a2405 (attempt 1) for dataset 2cf67df6-95dc-462b-96c9-fdbdb375def1"}
+[WebServer] {"ts":"2026-11-25 11:40:12,680","level":"INFO","logger":"nexora.worker","msg":"job 72796c96-256c-429d-adf9-edf3151a2405 published snapshot 19c7dc1d-70da-549f-a33c-a6598c16e2f3"}
+  ✓   3 [desktop] › e2e/journey.spec.ts:4:1 › transaction → alert → evidence → case decision → audit survives reload (UI-001) (2.8s)
+[WebServer] {"ts":"2026-11-25 11:40:15,698","level":"INFO","logger":"nexora.worker","msg":"claimed job 754ed713-a814-47b1-a4c9-d3b0f97a0bc9 (attempt 1) for dataset cc54ef84-459f-419b-bd3e-338effd28a55"}
+[WebServer] {"ts":"2026-11-25 11:40:15,787","level":"INFO","logger":"nexora.worker","msg":"job 754ed713-a814-47b1-a4c9-d3b0f97a0bc9 published snapshot 73435acc-decb-56e1-b40b-0a189b45d282"}
+  ✓   4 [desktop] › e2e/journey.spec.ts:55:1 › arbitrary account lookup is exact or honestly empty (UI-002) (1.9s)
+[WebServer] {"ts":"2026-11-25 11:40:17,802","level":"INFO","logger":"nexora.worker","msg":"claimed job 69d321f4-c0b3-4028-9143-8b65a9cbec98 (attempt 1) for dataset 56975fb1-14fe-4312-aa75-a8913034ca77"}
+[WebServer] {"ts":"2026-11-25 11:40:17,884","level":"INFO","logger":"nexora.worker","msg":"job 69d321f4-c0b3-4028-9143-8b65a9cbec98 published snapshot 13900dd7-0071-5dbf-81ad-cb76f90dca0d"}
+  ✓   5 [desktop] › e2e/journey.spec.ts:68:1 › legitimate lookalikes are not escalated by default (2.7s)
+  ✓   6 [desktop] › e2e/journey.spec.ts:77:1 › API failure is shown truthfully, not as stale success (UI-004) (135ms)
+[WebServer] {"ts":"2026-11-25 11:40:19,896","level":"INFO","logger":"nexora.worker","msg":"claimed job 7cc31b93-b748-42ab-9f7c-f37087114f49 (attempt 1) for dataset e59d3b94-842c-4d54-81ad-f376502439b2"}
+[WebServer] {"ts":"2026-11-25 11:40:19,982","level":"INFO","logger":"nexora.worker","msg":"job 7cc31b93-b748-42ab-9f7c-f37087114f49 published snapshot 3a7c9ec0-27f8-55da-87d9-a96a566fff56"}
+  ✓   7 [desktop] › e2e/redesign.spec.ts:4:1 › overview answers what needs attention and leads into the top investigation (1.8s)
+[WebServer] {"ts":"2026-11-25 11:40:21,995","level":"INFO","logger":"nexora.worker","msg":"claimed job 4bff3dbb-492f-44e1-9097-0ded4ddda606 (attempt 1) for dataset 4d86f3bd-147e-48a8-a373-bc8ea575f848"}
+[WebServer] {"ts":"2026-11-25 11:40:22,086","level":"INFO","logger":"nexora.worker","msg":"job 4bff3dbb-492f-44e1-9097-0ded4ddda606 published snapshot aa916f88-d295-5187-ad7a-e9839865fbf1"}
+  ✓   8 [desktop] › e2e/redesign.spec.ts:20:1 › queue filters persist in the URL and survive reload (2.1s)
+[WebServer] {"ts":"2026-11-25 11:40:24,101","level":"INFO","logger":"nexora.worker","msg":"claimed job 306c6535-0db3-4e6e-8e15-dc176347c1e0 (attempt 1) for dataset bdfb1533-6f09-40b8-9c35-0347af73a080"}
+[WebServer] {"ts":"2026-11-25 11:40:24,192","level":"INFO","logger":"nexora.worker","msg":"job 306c6535-0db3-4e6e-8e15-dc176347c1e0 published snapshot 22f90859-fdca-5e9e-b2c7-d3d113f4d641"}
+  ✓   9 [desktop] › e2e/redesign.spec.ts:36:1 › investigation: select an account, then end the case with an explicit confirmation (2.2s)
+  ✓  10 [desktop] › e2e/redesign.spec.ts:67:1 › theme choice applies immediately and persists (189ms)
+[WebServer] {"ts":"2026-11-25 11:40:26,203","level":"INFO","logger":"nexora.worker","msg":"claimed job 9686faeb-fdbf-4761-9107-a516c06eb480 (attempt 1) for dataset 6a67c917-6c8b-41bf-bf6d-ebcb6b7daeb5"}
+[WebServer] {"ts":"2026-11-25 11:40:26,301","level":"INFO","logger":"nexora.worker","msg":"job 9686faeb-fdbf-4761-9107-a516c06eb480 published snapshot ce8cb796-2544-5ad8-acfb-893436263e9c"}
+  ✓  11 [desktop] › e2e/redesign.spec.ts:76:1 › queue search runs on the server and finds alerts by any member account (2.0s)
+  ✓  12 [desktop] › e2e/transfer-protection.spec.ts:6:1 › transfer recommendations, simulation and analyst authorization (1.0s)
+(node:20996) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] {"ts":"2026-11-25 11:40:29,320","level":"INFO","logger":"nexora.worker","msg":"claimed job ff756910-81e8-4716-8353-07cb2f8054e5 (attempt 1) for dataset 1c21c2af-547e-446c-b68d-174f1d63ffcb"}
+[WebServer] {"ts":"2026-11-25 11:40:29,369","level":"INFO","logger":"nexora.worker","msg":"job ff756910-81e8-4716-8353-07cb2f8054e5 published snapshot 3d93fbdf-ecff-58fa-b359-17267994797e"}
+  ✓  13 [mobile] › e2e/mobile.spec.ts:4:1 › 390px: no horizontal page overflow and primary actions reachable (UI-003) (5.3s)
+  ✓  14 [mobile] › e2e/transfer-protection.mobile.spec.ts:3:1 › mobile transfer simulator is reachable and fits the viewport (264ms)
+
+  14 passed (27.8s)
+real 28.22
+user 12.44
+sys 2.45

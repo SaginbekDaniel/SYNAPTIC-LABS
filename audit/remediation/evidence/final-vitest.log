@@ -1,0 +1,13 @@
+
+> nexora-web@0.1.0 test
+> vitest run
+
+
+ RUN  v5.1.2 /Users/ajbartorehanov/Documents/ChatGPT/ITU FINTECH/SYNAPTIC-LABS/apps/web
+
+
+ Test Files  4 passed (4)
+      Tests  26 passed (26)
+   Start at  19:14:27
+   Duration  120ms (import 44%, transform 31%, tests 20%, worker 5%)
+

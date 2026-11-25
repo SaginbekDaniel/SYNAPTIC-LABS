@@ -1,0 +1,32 @@
+docs enabled True {'/docs': 200, '/redoc': 200, '/openapi.json': 200}
+generated schema equality True
+GET /health/live 200
+GET /health/ready 200
+GET /api/v1/datasets 200,422
+GET /api/v1/datasets/{dataset_id} 200,422
+GET /api/v1/datasets/{dataset_id}/overview 200,422
+POST /api/v1/datasets/import 201,422
+GET /api/v1/lab/suites 200
+POST /api/v1/lab/datasets 201,422
+POST /api/v1/analysis/jobs 202,422
+GET /api/v1/analysis/jobs/{job_id} 200,422
+GET /api/v1/analysis/snapshots/{snapshot_id} 200,422
+GET /api/v1/snapshots/{snapshot_id}/neighborhood 200,422
+GET /api/v1/snapshots/{snapshot_id}/activity 200,422
+GET /api/v1/snapshots/{snapshot_id}/accounts/{account_id} 200,422
+GET /api/v1/snapshots/{snapshot_id}/transactions 200,422
+GET /api/v1/transactions/{transaction_id} 200,422
+GET /api/v1/alerts 200,422
+GET /api/v1/alerts/{alert_id} 200,422
+GET /api/v1/alerts/{alert_id}/evidence 200,422
+POST /api/v1/cases 201,200,422
+GET /api/v1/cases 200,422
+GET /api/v1/cases/{case_id} 200,422
+POST /api/v1/cases/{case_id}/decisions 200,422
+POST /api/v1/cases/{case_id}/notes 201,422
+GET /api/v1/cases/{case_id}/audit 200,422
+GET /api/v1/evaluation 200,404,500
+GET /api/v1/demo/transfer-checks/scenarios 200
+POST /api/v1/demo/transfer-checks 200,422
+POST /api/v1/demo/transfer-checks/evidence 200,422
+docs enabled False {'/docs': 404, '/redoc': 404, '/openapi.json': 404}

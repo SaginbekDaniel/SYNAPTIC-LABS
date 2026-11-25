@@ -1,0 +1,26 @@
+nginx: [alert] could not open error log file: open() "/private/tmp/nexora-audit.WsJhTP/gateway/logs/error.log" failed (2: No such file or directory)
+nginx: the configuration file /private/tmp/nexora-audit.WsJhTP/gateway/nginx.conf syntax is ok
+nginx: configuration file /private/tmp/nexora-audit.WsJhTP/gateway/nginx.conf test is successful
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001, initial schema
+INFO  [alembic.runtime.migration] Running upgrade 0001 -> 0002, formation kinds fan_out and cycle (detectors-v2)
+{"status":"ok","database":true,"migration":"0002","queue":{},"demo_mode":true,"actor":"demo-analyst"}ok
+
+Running 5 tests using 1 worker
+
+(node:20554) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [desktop] › smoke/deployed.spec.ts:11:1 › gateway: health is public, everything else needs credentials (15ms)
+  ✓  2 [desktop] › smoke/deployed.spec.ts:31:1 › readiness: database reachable and migrated (11ms)
+  ✓  3 [desktop] › smoke/deployed.spec.ts:39:1 › journey: lab → worker analysis → queue → investigation → case decision → audit survives reload (5.4s)
+  ✓  4 [desktop] › smoke/deployed.spec.ts:97:1 › light theme renders without errors (673ms)
+(node:20566) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  5 [mobile] › smoke/mobile.spec.ts:4:1 › 390px: core screens fit the viewport (2.4s)
+
+  5 passed (10.1s)
+real 10.62
+user 3.83
+sys 0.85
+run-native-smoke.sh: line 67: 20447 Terminated: 15          locked-venv/bin/uvicorn nexora.api.main:app --host 127.0.0.1 --port 18100 > "$audit_out/smoke-api.log" 2>&1  (wd: /private/tmp/nexora-audit.WsJhTP)

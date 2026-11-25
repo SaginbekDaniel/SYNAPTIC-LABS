@@ -1,0 +1,49 @@
+ssssssssssssssssss.....................ssss............................. [ 48%]
+........................................................................ [ 96%]
+......                                                                   [100%]
+=============================== warnings summary ===============================
+../../../Users/ajbartorehanov/Documents/ChatGPT/ITU FINTECH/SYNAPTIC-LABS/.venv/lib/python3.13/site-packages/fastapi/testclient.py:1
+  /Users/ajbartorehanov/Documents/ChatGPT/ITU FINTECH/SYNAPTIC-LABS/.venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+============================= slowest 12 durations =============================
+0.39s call     tests/unit/test_benchmark.py::test_harness_is_deterministic_and_v1_variant_disables_new_parts
+0.14s call     tests/unit/test_transfer_evaluation.py::test_holdout_replays_the_same_inputs_and_predictions
+0.09s call     tests/unit/test_risk_and_pipeline.py::test_pipeline_is_deterministic_under_row_reordering
+0.07s call     tests/unit/test_v2_detectors.py::test_v2_outputs_are_deterministic_under_row_order
+0.06s call     tests/unit/test_risk_and_pipeline.py::test_all_published_evidence_resolves_and_recomputes
+0.05s call     tests/unit/test_risk_and_pipeline.py::test_demo_suite_behaviour[2026]
+0.04s call     tests/unit/test_risk_and_pipeline.py::test_demo_suite_behaviour[11]
+0.04s call     tests/unit/test_risk_and_pipeline.py::test_demo_suite_behaviour[404]
+0.03s call     tests/unit/test_v2_detectors.py::test_peer_evidence_recomputes_and_tampering_is_rejected
+0.03s call     tests/unit/test_v2_detectors.py::test_peer_counter_evidence_caps_band_with_named_gate
+0.03s call     tests/unit/test_benchmark.py::test_order_and_exact_duplicates_do_not_change_results[shuffled_rows]
+0.03s call     tests/unit/test_benchmark.py::test_order_and_exact_duplicates_do_not_change_results[duplicate_rows_5pct]
+=========================== short test summary info ============================
+SKIPPED [1] tests/integration/test_api.py:25: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_api.py:78: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_api.py:102: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_api.py:115: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_api.py:127: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_api.py:152: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_commit_before_response.py:24: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_gateway.py:17: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_gateway.py:28: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_gateway.py:34: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_gateway.py:40: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_gateway.py:48: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_persistence.py:35: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_persistence.py:73: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_persistence.py:99: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_persistence.py:122: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_persistence.py:144: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_persistence.py:241: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_v2_and_evaluation.py:14: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_v2_and_evaluation.py:42: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_v2_and_evaluation.py:47: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+SKIPPED [1] tests/integration/test_v2_and_evaluation.py:95: PostgreSQL not reachable at postgresql+psycopg://auditor@127.0.0.1:49571/test_db
+128 passed, 22 skipped, 1 warning in 2.05s
+real 2.57
+user 2.19
+sys 0.14

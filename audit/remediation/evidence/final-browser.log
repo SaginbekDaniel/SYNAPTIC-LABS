@@ -1,0 +1,172 @@
+[WebServer] INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+[WebServer] INFO  [alembic.runtime.migration] Will assume transactional DDL.
+[WebServer] INFO  [alembic.runtime.migration] Running upgrade  -> 0001, initial schema
+[WebServer] INFO  [alembic.runtime.migration] Running upgrade 0001 -> 0002, formation kinds fan_out and cycle (detectors-v2)
+[WebServer] INFO  [alembic.runtime.migration] Running upgrade 0002 -> 0003, Persist CSV replay reservations and enforce batch/dataset consistency.
+[WebServer] INFO  [alembic.runtime.migration] Running upgrade 0003 -> 0004, Persist immutable risk assessments and append-only sandbox acknowledgements.
+[WebServer] INFO  [alembic.runtime.migration] Running upgrade 0004 -> 0005, Attach datasets to verified tenants; keep legacy demo data unassigned.
+[WebServer] INFO  [alembic.runtime.migration] Running upgrade 0005 -> 0006, Pin detector configuration and authorized context with each new analysis job.
+[WebServer] INFO  [alembic.runtime.migration] Running upgrade 0006 -> 0007, Durable CSV upload queue. Terminal jobs release staged file bytes.
+[WebServer] {"ts":"2026-11-25 19:14:31,089","level":"INFO","logger":"nexora.worker","msg":"worker MacBook-Air-Ajbar.local:30842:15d2951e started"}
+[WebServer] INFO:     Started server process [30843]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:8100 (Press CTRL+C to quit)
+[WebServer] (node:30852) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:30882) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 18 tests using 1 worker
+
+(node:30883) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [desktop] › e2e/audit-transfer-browser.spec.ts:6:1 › connection interruption cannot present a successful transfer result and retry recovers (503ms)
+{"navigation":"/lab/transfer-protection","timing":{"domContentLoadedMs":54.5,"loadMs":54.899999998509884,"transferBytes":1549,"paintMs":{"first-paint":56,"first-contentful-paint":88}}}
+  ✓   2 [desktop] › e2e/audit-transfer-browser.spec.ts:24:1 › keyboard form and alert feed expose accessible names and roles (171ms)
+[WebServer] {"ts":"2026-11-25 19:14:34,124","level":"INFO","logger":"nexora.worker","msg":"claimed job 1e9d920b-c25e-49c1-bb50-e2f0eca62c2c (attempt 1) for dataset 1955e077-c364-44fd-bfc9-2cedb06dcbeb"}
+[WebServer] {"ts":"2026-11-25 19:14:34,199","level":"INFO","logger":"nexora.worker","msg":"job 1e9d920b-c25e-49c1-bb50-e2f0eca62c2c published snapshot 54a68507-3220-5427-8657-57441a2d88cc"}
+[WebServer] {"ts":"2026-11-25 19:14:36,228","level":"INFO","logger":"nexora.worker","msg":"claimed job ff066d73-c935-4e33-845e-d95da74dfb47 (attempt 1) for dataset 4ff6ee7e-ab5c-4728-b4cc-31c2ad82ebab"}
+[WebServer] {"ts":"2026-11-25 19:14:36,333","level":"INFO","logger":"nexora.worker","msg":"job ff066d73-c935-4e33-845e-d95da74dfb47 published snapshot a16cb867-ff38-5e33-a53d-2d4892126b25"}
+  ✓   3 [desktop] › e2e/dataset-selection.spec.ts:7:1 › a newly generated dataset becomes and stays the active dataset (3.3s)
+  ✓   4 [desktop] › e2e/evaluation.spec.ts:9:1 › evaluation screen renders the persisted benchmark run, labelled synthetic (194ms)
+[WebServer] {"ts":"2026-11-25 19:14:38,359","level":"INFO","logger":"nexora.worker","msg":"claimed job f7720fbd-d14d-496e-bace-33dd083af9fa (attempt 1) for dataset abf3bb03-deae-459b-b879-0504f444b160"}
+[WebServer] {"ts":"2026-11-25 19:14:38,481","level":"INFO","logger":"nexora.worker","msg":"job f7720fbd-d14d-496e-bace-33dd083af9fa published snapshot a4c7e528-3bb1-5fc5-9779-2e8fccbfa9ec"}
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:39 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:40 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:40 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:40 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:40 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:40 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:40 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:40 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+  ✓   5 [desktop] › e2e/journey.spec.ts:4:1 › transaction → alert → evidence → case decision → audit survives reload (UI-001) (2.9s)
+[WebServer] {"ts":"2026-11-25 19:14:40,500","level":"INFO","logger":"nexora.worker","msg":"claimed job 457c7778-8bdf-4523-b5d3-79d0b0b3c69e (attempt 1) for dataset 5e4061d0-ae48-4624-addf-ded8b7a52702"}
+[WebServer] {"ts":"2026-11-25 19:14:40,568","level":"INFO","logger":"nexora.worker","msg":"job 457c7778-8bdf-4523-b5d3-79d0b0b3c69e published snapshot 93e7f119-ed4c-5239-a0ca-8276b9ffde8e"}
+[WebServer] 7:14:41 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:41 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:41 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:41 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:41 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:41 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:41 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:41 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:41 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:41 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+  ✓   6 [desktop] › e2e/journey.spec.ts:55:1 › arbitrary account lookup is exact or honestly empty (UI-002) (1.9s)
+[WebServer] {"ts":"2026-11-25 19:14:42,596","level":"INFO","logger":"nexora.worker","msg":"claimed job ca8fd5b6-1039-44ff-bbce-e0a93202e42a (attempt 1) for dataset 5ebaef65-310a-4b2a-b4e4-e317f32764af"}
+[WebServer] {"ts":"2026-11-25 19:14:42,680","level":"INFO","logger":"nexora.worker","msg":"job ca8fd5b6-1039-44ff-bbce-e0a93202e42a published snapshot 7525d3c7-9dca-5edf-b547-6604fe7ee7b5"}
+  ✓   7 [desktop] › e2e/journey.spec.ts:68:1 › legitimate lookalikes are not escalated by default (1.7s)
+  ✓   8 [desktop] › e2e/journey.spec.ts:77:1 › API failure is shown truthfully, not as stale success (UI-004) (153ms)
+[WebServer] {"ts":"2026-11-25 19:14:44,698","level":"INFO","logger":"nexora.worker","msg":"claimed job 7e6ddb1b-803d-4cb2-921f-3e1c1e44f728 (attempt 1) for dataset 4a83fa64-d5ed-4cd4-8351-8af5383b4132"}
+[WebServer] {"ts":"2026-11-25 19:14:44,787","level":"INFO","logger":"nexora.worker","msg":"job 7e6ddb1b-803d-4cb2-921f-3e1c1e44f728 published snapshot cbf22dae-4c5e-5540-9e87-d19753a6071c"}
+[WebServer] 7:14:45 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:45 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:45 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:45 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:45 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:45 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:45 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:45 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:45 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:45 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+  ✓   9 [desktop] › e2e/redesign.spec.ts:4:1 › overview answers what needs attention and leads into the top investigation (1.9s)
+[WebServer] {"ts":"2026-11-25 19:14:46,812","level":"INFO","logger":"nexora.worker","msg":"claimed job a4c3147b-5d2a-4122-a5ee-1b1af4b40704 (attempt 1) for dataset 865b1ed6-e9ba-4220-9a6f-551fbcb6a207"}
+[WebServer] {"ts":"2026-11-25 19:14:46,900","level":"INFO","logger":"nexora.worker","msg":"job a4c3147b-5d2a-4122-a5ee-1b1af4b40704 published snapshot e98ee46a-3ab6-5bbb-b8ab-758f1bfda43c"}
+  ✓  10 [desktop] › e2e/redesign.spec.ts:20:1 › queue filters persist in the URL and survive reload (2.1s)
+[WebServer] {"ts":"2026-11-25 19:14:48,921","level":"INFO","logger":"nexora.worker","msg":"claimed job 790bd473-e670-4634-9634-957bcdaf98d2 (attempt 1) for dataset 07f79f21-fe5c-472a-8f51-a150d8512bd6"}
+[WebServer] {"ts":"2026-11-25 19:14:49,013","level":"INFO","logger":"nexora.worker","msg":"job 790bd473-e670-4634-9634-957bcdaf98d2 published snapshot b648addb-d2cc-56e0-860a-373602240d84"}
+[WebServer] 7:14:49 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:49 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:49 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:49 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:49 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:49 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:49 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:49 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:49 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:49 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:49 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:49 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:49 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:49 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:49 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:49 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:50 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:50 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:50 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+  ✓  11 [desktop] › e2e/redesign.spec.ts:36:1 › investigation: select an account, then end the case with an explicit confirmation (2.3s)
+  ✓  12 [desktop] › e2e/redesign.spec.ts:67:1 › theme choice applies immediately and persists (205ms)
+[WebServer] {"ts":"2026-11-25 19:14:51,039","level":"INFO","logger":"nexora.worker","msg":"claimed job 32244f6a-6b32-4662-8dd4-a67101aa9b59 (attempt 1) for dataset a6b1d1e1-681f-4594-a7c9-6614a1eb8f85"}
+[WebServer] {"ts":"2026-11-25 19:14:51,150","level":"INFO","logger":"nexora.worker","msg":"job 32244f6a-6b32-4662-8dd4-a67101aa9b59 published snapshot a893809e-6e21-5627-9c18-2a302491efb0"}
+  ✓  13 [desktop] › e2e/redesign.spec.ts:76:1 › queue search runs on the server and finds alerts by any member account (2.0s)
+[WebServer] {"ts":"2026-11-25 19:14:54,208","level":"INFO","logger":"nexora.worker","msg":"claimed job 40d26c49-eedc-4074-aa7b-b47d8bf1e6cc (attempt 1) for dataset 8576b192-1148-4bd1-b92c-d2861cd03b80"}
+[WebServer] {"ts":"2026-11-25 19:14:54,228","level":"INFO","logger":"nexora.worker","msg":"job 40d26c49-eedc-4074-aa7b-b47d8bf1e6cc published snapshot f4bd6d56-d03f-5a91-979c-b815e3ec2803"}
+[WebServer] 7:14:55 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:55 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:55 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:55 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:55 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:55 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:55 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:55 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:55 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:55 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:55 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:55 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:55 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+  ✓  14 [desktop] › e2e/remediation.spec.ts:11:1 › CSV upload reports quarantine, analyses the records, and opens an audited case (3.5s)
+  ✓  15 [desktop] › e2e/remediation.spec.ts:35:1 › durable sandbox step-up, protected evidence and saved result survive reload (514ms)
+[WebServer] 7:14:57 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:57 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:57 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:57 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:57 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:57 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:14:57 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:57 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:57 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:14:57 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+  ✓  16 [desktop] › e2e/transfer-protection.spec.ts:6:1 › transfer recommendations, simulation and analyst authorization (1.0s)
+(node:30920) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] {"ts":"2026-11-25 19:14:58,279","level":"INFO","logger":"nexora.worker","msg":"claimed job 96198779-2ecc-4932-b4a7-29fd06db49b7 (attempt 1) for dataset 539d7daa-2fef-4b41-97d8-5e37a0eed6b3"}
+[WebServer] {"ts":"2026-11-25 19:14:58,358","level":"INFO","logger":"nexora.worker","msg":"job 96198779-2ecc-4932-b4a7-29fd06db49b7 published snapshot 06efa85d-03b4-58d1-b3f6-4812f0c310ef"}
+[WebServer] 7:15:03 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:15:03 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:15:03 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:15:03 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:15:03 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:15:03 PM [vite] (client) [console.warn] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine.
+[WebServer] 7:15:03 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:15:03 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:15:03 PM [vite] (client) [console.warn] The style property `line-color: rgb(163 167 200 / 0.38)` is invalid
+[WebServer] 7:15:03 PM [vite] (client) [console.warn] The style property `target-arrow-color: rgb(163 167 200 / 0.38)` is invalid
+  ✓  17 [mobile] › e2e/mobile.spec.ts:4:1 › 390px: no horizontal page overflow and primary actions reachable (UI-003) (5.3s)
+  ✓  18 [mobile] › e2e/transfer-protection.mobile.spec.ts:3:1 › mobile transfer simulator is reachable and fits the viewport (284ms)
+
+  18 passed (33.1s)

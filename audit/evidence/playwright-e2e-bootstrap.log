@@ -1,0 +1,274 @@
+[WebServer] INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+[WebServer] INFO  [alembic.runtime.migration] Will assume transactional DDL.
+[WebServer] INFO  [alembic.runtime.migration] Running upgrade  -> 0001, initial schema
+[WebServer] INFO  [alembic.runtime.migration] Running upgrade 0001 -> 0002, formation kinds fan_out and cycle (detectors-v2)
+[WebServer] {"ts":"2026-11-25 11:35:41,223","level":"INFO","logger":"nexora.worker","msg":"worker MacBook-Air-Ajbar.local:20301:e9e137a4 started"}
+[WebServer] INFO:     Started server process [20300]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:8100 (Press CTRL+C to quit)
+[WebServer] (node:20304) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:20328) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 14 tests using 1 worker
+
+(node:20330) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   1 [desktop] › e2e/dataset-selection.spec.ts:7:1 › a newly generated dataset becomes and stays the active dataset (1ms)
+(node:20331) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   2 [desktop] › e2e/evaluation.spec.ts:9:1 › evaluation screen renders the persisted benchmark run, labelled synthetic (0ms)
+(node:20332) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   3 [desktop] › e2e/journey.spec.ts:4:1 › transaction → alert → evidence → case decision → audit survives reload (UI-001) (0ms)
+(node:20333) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   4 [desktop] › e2e/journey.spec.ts:55:1 › arbitrary account lookup is exact or honestly empty (UI-002) (0ms)
+(node:20334) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   5 [desktop] › e2e/journey.spec.ts:68:1 › legitimate lookalikes are not escalated by default (0ms)
+(node:20335) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   6 [desktop] › e2e/journey.spec.ts:77:1 › API failure is shown truthfully, not as stale success (UI-004) (0ms)
+(node:20336) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   7 [desktop] › e2e/redesign.spec.ts:4:1 › overview answers what needs attention and leads into the top investigation (0ms)
+(node:20337) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   8 [desktop] › e2e/redesign.spec.ts:20:1 › queue filters persist in the URL and survive reload (0ms)
+(node:20338) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   9 [desktop] › e2e/redesign.spec.ts:36:1 › investigation: select an account, then end the case with an explicit confirmation (0ms)
+(node:20339) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  10 [desktop] › e2e/redesign.spec.ts:67:1 › theme choice applies immediately and persists (0ms)
+(node:20340) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  11 [desktop] › e2e/redesign.spec.ts:76:1 › queue search runs on the server and finds alerts by any member account (0ms)
+(node:20341) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  12 [desktop] › e2e/transfer-protection.spec.ts:6:1 › transfer recommendations, simulation and analyst authorization (0ms)
+(node:20342) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  13 [mobile] › e2e/mobile.spec.ts:4:1 › 390px: no horizontal page overflow and primary actions reachable (UI-003) (0ms)
+(node:20343) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  14 [mobile] › e2e/transfer-protection.mobile.spec.ts:3:1 › mobile transfer simulator is reachable and fits the viewport (0ms)
+
+
+  1) [desktop] › e2e/dataset-selection.spec.ts:7:1 › a newly generated dataset becomes and stays the active dataset 
+
+    Error: browserType.launch: Executable doesn't exist at /private/tmp/nexora-audit.WsJhTP/browsers/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/dataset-selection-a-newly--dc11f-nd-stays-the-active-dataset-desktop/error-context.md
+
+  2) [desktop] › e2e/evaluation.spec.ts:9:1 › evaluation screen renders the persisted benchmark run, labelled synthetic 
+
+    Error: browserType.launch: Executable doesn't exist at /private/tmp/nexora-audit.WsJhTP/browsers/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/evaluation-evaluation-scre-fd02e-mark-run-labelled-synthetic-desktop/error-context.md
+
+  3) [desktop] › e2e/journey.spec.ts:4:1 › transaction → alert → evidence → case decision → audit survives reload (UI-001) 
+
+    Error: browserType.launch: Executable doesn't exist at /private/tmp/nexora-audit.WsJhTP/browsers/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/journey-transaction-→-aler-61638-dit-survives-reload-UI-001--desktop/error-context.md
+
+  4) [desktop] › e2e/journey.spec.ts:55:1 › arbitrary account lookup is exact or honestly empty (UI-002) 
+
+    Error: browserType.launch: Executable doesn't exist at /private/tmp/nexora-audit.WsJhTP/browsers/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/journey-arbitrary-account--002f7-t-or-honestly-empty-UI-002--desktop/error-context.md
+
+  5) [desktop] › e2e/journey.spec.ts:68:1 › legitimate lookalikes are not escalated by default ─────
+
+    Error: browserType.launch: Executable doesn't exist at /private/tmp/nexora-audit.WsJhTP/browsers/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/journey-legitimate-lookalikes-are-not-escalated-by-default-desktop/error-context.md
+
+  6) [desktop] › e2e/journey.spec.ts:77:1 › API failure is shown truthfully, not as stale success (UI-004) 
+
+    Error: browserType.launch: Executable doesn't exist at /private/tmp/nexora-audit.WsJhTP/browsers/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/journey-API-failure-is-sho-1e63c-ot-as-stale-success-UI-004--desktop/error-context.md
+
+  7) [desktop] › e2e/redesign.spec.ts:4:1 › overview answers what needs attention and leads into the top investigation 
+
+    Error: browserType.launch: Executable doesn't exist at /private/tmp/nexora-audit.WsJhTP/browsers/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/redesign-overview-answers--02432--into-the-top-investigation-desktop/error-context.md
+
+  8) [desktop] › e2e/redesign.spec.ts:20:1 › queue filters persist in the URL and survive reload ───
+
+    Error: browserType.launch: Executable doesn't exist at /private/tmp/nexora-audit.WsJhTP/browsers/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/redesign-queue-filters-persist-in-the-URL-and-survive-reload-desktop/error-context.md
+
+  9) [desktop] › e2e/redesign.spec.ts:36:1 › investigation: select an account, then end the case with an explicit confirmation 
+
+    Error: browserType.launch: Executable doesn't exist at /private/tmp/nexora-audit.WsJhTP/browsers/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/redesign-investigation-sel-62030-th-an-explicit-confirmation-desktop/error-context.md
+
+  10) [desktop] › e2e/redesign.spec.ts:67:1 › theme choice applies immediately and persists ────────
+
+    Error: browserType.launch: Executable doesn't exist at /private/tmp/nexora-audit.WsJhTP/browsers/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/redesign-theme-choice-applies-immediately-and-persists-desktop/error-context.md
+
+  11) [desktop] › e2e/redesign.spec.ts:76:1 › queue search runs on the server and finds alerts by any member account 
+
+    Error: browserType.launch: Executable doesn't exist at /private/tmp/nexora-audit.WsJhTP/browsers/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/redesign-queue-search-runs-8eaee-lerts-by-any-member-account-desktop/error-context.md
+
+  12) [desktop] › e2e/transfer-protection.spec.ts:6:1 › transfer recommendations, simulation and analyst authorization 
+
+    Error: browserType.launch: Executable doesn't exist at /private/tmp/nexora-audit.WsJhTP/browsers/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/transfer-protection-transf-bf919-n-and-analyst-authorization-desktop/error-context.md
+
+  13) [mobile] › e2e/mobile.spec.ts:4:1 › 390px: no horizontal page overflow and primary actions reachable (UI-003) 
+
+    Error: browserType.launch: Executable doesn't exist at /private/tmp/nexora-audit.WsJhTP/browsers/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/mobile-390px-no-horizontal-8f31f-y-actions-reachable-UI-003--mobile/error-context.md
+
+  14) [mobile] › e2e/transfer-protection.mobile.spec.ts:3:1 › mobile transfer simulator is reachable and fits the viewport 
+
+    Error: browserType.launch: Executable doesn't exist at /private/tmp/nexora-audit.WsJhTP/browsers/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/transfer-protection.mobile-38148-hable-and-fits-the-viewport-mobile/error-context.md
+
+  14 failed
+    [desktop] › e2e/dataset-selection.spec.ts:7:1 › a newly generated dataset becomes and stays the active dataset 
+    [desktop] › e2e/evaluation.spec.ts:9:1 › evaluation screen renders the persisted benchmark run, labelled synthetic 
+    [desktop] › e2e/journey.spec.ts:4:1 › transaction → alert → evidence → case decision → audit survives reload (UI-001) 
+    [desktop] › e2e/journey.spec.ts:55:1 › arbitrary account lookup is exact or honestly empty (UI-002) 
+    [desktop] › e2e/journey.spec.ts:68:1 › legitimate lookalikes are not escalated by default ──────
+    [desktop] › e2e/journey.spec.ts:77:1 › API failure is shown truthfully, not as stale success (UI-004) 
+    [desktop] › e2e/redesign.spec.ts:4:1 › overview answers what needs attention and leads into the top investigation 
+    [desktop] › e2e/redesign.spec.ts:20:1 › queue filters persist in the URL and survive reload ────
+    [desktop] › e2e/redesign.spec.ts:36:1 › investigation: select an account, then end the case with an explicit confirmation 
+    [desktop] › e2e/redesign.spec.ts:67:1 › theme choice applies immediately and persists ──────────
+    [desktop] › e2e/redesign.spec.ts:76:1 › queue search runs on the server and finds alerts by any member account 
+    [desktop] › e2e/transfer-protection.spec.ts:6:1 › transfer recommendations, simulation and analyst authorization 
+    [mobile] › e2e/mobile.spec.ts:4:1 › 390px: no horizontal page overflow and primary actions reachable (UI-003) 
+    [mobile] › e2e/transfer-protection.mobile.spec.ts:3:1 › mobile transfer simulator is reachable and fits the viewport 
+real 12.68
+user 4.71
+sys 0.59

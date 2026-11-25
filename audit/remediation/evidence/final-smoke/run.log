@@ -1,0 +1,23 @@
+nginx: the configuration file /private/tmp/nexora-audit.cwl72F/remediated/gateway/nginx.conf syntax is ok
+nginx: configuration file /private/tmp/nexora-audit.cwl72F/remediated/gateway/nginx.conf test is successful
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+{"status":"ok","demo_mode":true,"actor":"demo-analyst","database":true,"schema":"compatible","migration":"0007","expected_migrations":["0007"],"queue":{"succeeded":2}}ok
+
+Running 5 tests using 1 worker
+
+(node:31102) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [desktop] › smoke/deployed.spec.ts:11:1 › gateway: health is public, everything else needs credentials (15ms)
+  ✓  2 [desktop] › smoke/deployed.spec.ts:31:1 › readiness: database reachable and migrated (12ms)
+  ✓  3 [desktop] › smoke/deployed.spec.ts:39:1 › journey: lab → worker analysis → queue → investigation → case decision → audit survives reload (4.2s)
+  ✓  4 [desktop] › smoke/deployed.spec.ts:97:1 › light theme renders without errors (671ms)
+(node:31118) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  5 [mobile] › smoke/mobile.spec.ts:4:1 › 390px: core screens fit the viewport (2.3s)
+
+  5 passed (7.8s)
+real 8.18
+user 3.67
+sys 0.72
+audit/tests/run-native-smoke.sh: line 67: 31059 Terminated: 15          locked-venv/bin/uvicorn nexora.api.main:app --host 127.0.0.1 --port 18100 > "$audit_out/smoke-api.log" 2>&1  (wd: /private/tmp/nexora-audit.cwl72F/remediated)
