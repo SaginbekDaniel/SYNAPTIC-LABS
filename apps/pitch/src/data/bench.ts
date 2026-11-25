@@ -8,7 +8,7 @@ import excerpt from "./bench-excerpt.json";
  * ratios: 73/92 = 79.35 % is 79,3 %, whereas rounding the stored 0.7935 again would give 79,4 %.
  *
  * Deliberately NOT exported (see docs, PR #3 audit): surfaced recall (boundary abstentions leak labels in bench-v1,
- * L-01) and P@K (counts duplicate alerts on one network, L-02).
+ * L-01) and P@K (counts duplicate alerts on one network, L-02). "Found" below counts only networks actually flagged.
  */
 const nx = excerpt.results.nexora_v2;
 const rules = excerpt.results.B1_rules;
@@ -42,27 +42,3 @@ export const BENCH = {
 
 /** How many times shorter NEXORA's queue is than the rules' queue, one decimal. */
 export const WORKLOAD_RATIO = Math.round((BENCH.alertsPerDataset.rules / BENCH.alertsPerDataset.nexora) * 10) / 10;
-
-/** Recall given up, in percentage points (positive number). */
-export const RECALL_COST = Math.round((BENCH.recall.rules.pct - BENCH.recall.nexora.pct) * 10) / 10;
-
-export interface Miss { id: string; label: string; missed: number; total: number; abstained: number }
-
-const MISS_LABELS: Record<string, string> = {
-  S1_collection_funnel: "Воронка сбора",
-  S1_collection_funnel_boundary: "Воронка на границе выгрузки",
-  S2_layering_chain: "Цепочка транзитных счетов",
-  H_same_day_chain: "Цепочка в пределах одного дня",
-};
-
-/**
- * Where NEXORA's misses are: every suspicious family with at least one planted network not flagged.
- * `abstained` = shown to the analyst as "insufficient evidence" (not counted as found).
- */
-export const MISSES: Miss[] = Object.entries(nx.by_family)
-  .filter(([id]) => /^(S|H)/.test(id))
-  .map(([id, f]) => ({ id, label: MISS_LABELS[id] ?? id, total: f.total, missed: f.total - f.flagged, abstained: f.surfaced - f.flagged }))
-  .filter((f) => f.missed > 0)
-  .sort((a, b) => b.missed - a.missed || a.id.localeCompare(b.id));
-
-export const MISSED_TOTAL = MISSES.reduce((a, f) => a + f.missed, 0);

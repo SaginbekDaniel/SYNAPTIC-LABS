@@ -1,6 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const STEPS = [1, 2, 3, 2, 3, 3, 2];
+const STEPS = [1, 2, 3, 2, 3, 3, 2, 2];
+const TOTAL = STEPS.reduce((a, b) => a + b, 0);
 const go = async (page: Page, slide: number, step = 1) => {
   await page.goto(`/#/${slide}/${step}`);
   await page.reload();
@@ -11,7 +12,7 @@ const announce = (page: Page) => page.getByTestId("announce");
 test.describe("navigation engine", () => {
   test("keyboard: arrows, space, shift+arrows, numbers, home/end, restart", async ({ page }) => {
     await page.goto("/");
-    await expect(announce(page)).toContainText("Слайд 1 из 7");
+    await expect(announce(page)).toContainText("Слайд 1 из 8");
     await page.keyboard.press("ArrowRight"); // slide 1 has one state
     await expect(page).toHaveURL(/#\/2\/1$/);
     await page.keyboard.press("Space");
@@ -23,13 +24,13 @@ test.describe("navigation engine", () => {
     await page.keyboard.press("Shift+ArrowRight");
     await expect(page).toHaveURL(/#\/3\/1$/);
     await page.keyboard.press("4");
-    await expect(announce(page)).toContainText("Слайд 4 из 7");
+    await expect(announce(page)).toContainText("Слайд 4 из 8");
     await page.keyboard.press("End");
-    await expect(page).toHaveURL(/#\/7\/1$/);
+    await expect(page).toHaveURL(/#\/8\/1$/);
     await page.keyboard.press("ArrowRight");
-    await expect(page).toHaveURL(/#\/7\/2$/);
+    await expect(page).toHaveURL(/#\/8\/2$/);
     await page.keyboard.press("ArrowRight"); // no-op at the end
-    await expect(page).toHaveURL(/#\/7\/2$/);
+    await expect(page).toHaveURL(/#\/8\/2$/);
     await page.keyboard.press("Home");
     await expect(page).toHaveURL(/#\/1\/1$/);
     await page.keyboard.press("5");
@@ -39,7 +40,7 @@ test.describe("navigation engine", () => {
 
   test("deep links restore exact state and the hash follows navigation", async ({ page }) => {
     await go(page, 6, 2);
-    await expect(announce(page)).toContainText("Слайд 6 из 7");
+    await expect(announce(page)).toContainText("Слайд 6 из 8");
     await expect(announce(page)).toContainText("Шаг 2 из 3");
     await page.keyboard.press("ArrowRight");
     await expect(page).toHaveURL(/#\/6\/3$/);
@@ -51,20 +52,20 @@ test.describe("navigation engine", () => {
     await page.keyboard.press("Enter");
     const dlg = page.getByRole("dialog", { name: "Обзор слайдов" });
     await expect(dlg).toBeVisible();
-    await expect(dlg.locator(".ov-card")).toHaveCount(7);
+    await expect(dlg.locator(".ov-card")).toHaveCount(8);
     await page.keyboard.press("Escape");
     await expect(dlg).toBeHidden();
     await expect(page.getByRole("button", { name: /Обзор слайдов/ })).toBeFocused();
     await page.keyboard.press("o");
     await dlg.locator(".ov-card").nth(4).click();
     await expect(dlg).toBeHidden();
-    await expect(announce(page)).toContainText("Слайд 5 из 7");
+    await expect(announce(page)).toContainText("Слайд 5 из 8");
   });
 
   test("progress segments jump to slides", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: /Слайд 3: /, includeHidden: false }).click();
-    await expect(announce(page)).toContainText("Слайд 3 из 7");
+    await expect(announce(page)).toContainText("Слайд 3 из 8");
   });
 
   test("presenter notes show the current step, a timer and the next slide", async ({ page }) => {
@@ -72,8 +73,8 @@ test.describe("navigation engine", () => {
     await page.keyboard.press("n");
     const notes = page.getByRole("complementary", { name: "Заметки докладчика" });
     await expect(notes).toBeVisible();
-    await expect(notes.locator("li.on")).toContainText("Дальше — время");
-    await expect(notes).toContainText("Каждый вывод прослеживается");
+    await expect(notes.locator("li.on")).toContainText("Дальше — то, чего нет у правил");
+    await expect(notes).toContainText("От перевода до решения");
     await notes.getByRole("button", { name: "Запустить таймер" }).click();
     await expect(notes.getByRole("button", { name: "Пауза таймера" })).toBeVisible();
     await expect(notes.locator(".t")).toContainText("/ 3:00");
@@ -116,12 +117,13 @@ test.describe("navigation engine", () => {
 test.describe("slide content", () => {
   test("every slide states one idea as its h2", async ({ page }) => {
     const heads = [
-      "Расследование сетей подозрительных переводов",
+      "Находим не подозрительные переводы, а мошеннические схемы целиком",
       "Правило видит счёт и не отличает схему от бизнеса",
       "Форма сети — лишь повод. Решают время и контекст",
-      "Каждый вывод прослеживается до исходных транзакций",
+      "От перевода до решения — шесть проверяемых этапов",
       "Аналитик получает не алерт, а дело с доказательствами",
-      "Очередь в 4,5 раза короче, чем у правил, — ценой полноты",
+      "Очередь в 4,5 раза короче, ложных тревог — вдвое меньше",
+      "Банк получает короткую очередь и дело, готовое к аудиту",
       "Первый шаг пилота — офлайн-реплей на истории банка",
     ];
     for (let i = 0; i < heads.length; i++) {
@@ -155,13 +157,18 @@ test.describe("slide content", () => {
     await expect(slide).toContainText("не вероятность мошенничества");
   });
 
-  test("04: six real pipeline stages, then the three principles", async ({ page }) => {
+  test("04: six real pipeline stages, the stack, then what already works", async ({ page }) => {
     await go(page, 4, 1);
     const slide = page.locator(".slide-layer");
     await expect(slide.getByRole("list", { name: "Этапы обработки" }).getByRole("listitem")).toHaveCount(6);
-    await expect(slide.locator(".s4-rules")).toHaveAttribute("aria-hidden", "true");
+    await expect(slide.locator(".s4-works")).toHaveAttribute("aria-hidden", "true");
+    for (const t of ["Python", "FastAPI", "NetworkX", "PostgreSQL", "SQLAlchemy", "Alembic", "React", "TypeScript", "Vite", "Cytoscape.js", "Docker", "Pytest", "Playwright"]) {
+      await expect(slide.getByRole("list", { name: "Технологии" })).toContainText(t);
+    }
     await page.keyboard.press("ArrowRight");
-    await expect(slide.getByRole("heading", { name: "Без генеративного ИИ" })).toBeVisible();
+    await expect(slide.locator(".s4-stack")).toHaveAttribute("aria-hidden", "true");
+    await expect(slide.getByRole("heading", { name: "Живое демо" })).toBeVisible();
+    await expect(slide.getByRole("heading", { name: "Тесты и CI" })).toBeVisible();
   });
 
   test("05: real screenshots at native size, tabs switch views", async ({ page }) => {
@@ -182,27 +189,39 @@ test.describe("slide content", () => {
     await expect(page).toHaveURL(/#\/5\/1$/);
   });
 
-  test("06: gain, then cost, then misses — numbers from the artifact, caveats always on", async ({ page }) => {
+  test("06: queue, false alarms, then what was found — numbers from the artifact, scope always on", async ({ page }) => {
     await go(page, 6, 1);
     const slide = page.locator(".slide-layer");
-    for (const v of ["42,6", "9,5", "80,5 %", "37,5 %", "103 из 128", "48 из 128"]) await expect(slide).toContainText(v);
-    await expect(slide.locator("[data-row=recall]")).toHaveAttribute("aria-hidden", "true");
-    await expect(slide).toContainText("это не точность на данных банка");
-    await expect(slide).toContainText("просматривали при разработке");
+    for (const v of ["42,6", "9,5"]) await expect(slide).toContainText(v);
+    await expect(slide.locator("[data-row=legit]")).toHaveAttribute("aria-hidden", "true");
+    await expect(slide).toContainText("Синтетические данные");
     await page.keyboard.press("ArrowRight");
-    await expect(slide.locator("[data-row=recall]")).toContainText("95,7 %");
-    await expect(slide.locator("[data-row=recall]")).toContainText("79,3 %");
-    await expect(slide.locator("[data-row=recall]")).toContainText("−16,4 п. п.");
+    for (const v of ["80,5 %", "37,5 %", "103 из 128", "48 из 128"]) await expect(slide.locator("[data-row=legit]")).toContainText(v);
+    await expect(slide.locator(".s6-found")).toHaveAttribute("aria-hidden", "true");
     await page.keyboard.press("ArrowRight");
-    const miss = slide.getByRole("region", { name: "Где пропуски" });
-    await expect(miss).toContainText("Где 19 пропусков");
-    await expect(miss).toContainText("«недостаточно данных»");
+    const found = slide.locator(".s6-found");
+    await expect(found).toContainText("73 из 92");
+    await expect(found).toHaveAttribute("aria-hidden", "false");
+    await expect(slide.getByRole("region", { name: "Методика" })).toContainText("220");
     // metrics withdrawn after the audit must not appear
     for (const v of ["88,0", "48,3", "32,7", "79,4"]) await expect(slide).not.toContainText(v);
   });
 
-  test("07: pilot path, the ask, then QR and live links", async ({ page }) => {
+  test("07: value for the bank's three stakeholders, then why a pilot is easy to start", async ({ page }) => {
     await go(page, 7, 1);
+    const slide = page.locator(".slide-layer");
+    const cards = slide.getByRole("list", { name: "Ценность для банка" }).getByRole("listitem");
+    await expect(cards).toHaveCount(3);
+    await expect(slide).toContainText("4,5×");
+    await expect(slide.getByRole("heading", { name: "Комплаенсу и аудиту" })).toBeVisible();
+    await expect(slide.locator(".s7-easy")).toHaveAttribute("aria-hidden", "true");
+    await page.keyboard.press("ArrowRight");
+    await expect(slide.locator(".s7-easy")).toHaveAttribute("aria-hidden", "false");
+    await expect(slide.locator(".s7-easy")).toContainText("CSV");
+  });
+
+  test("08: pilot path, the ask, then QR and live links", async ({ page }) => {
+    await go(page, 8, 1);
     const slide = page.locator(".slide-layer");
     await expect(slide.getByRole("list", { name: "Этапы пилота" }).getByRole("listitem")).toHaveCount(3);
     await expect(slide).toContainText("Что нужно от банка");
@@ -215,7 +234,7 @@ test.describe("slide content", () => {
 
 test.describe("layout integrity", () => {
   /** Every visible element of every reveal state must sit inside the 80px safe area (canvas coordinates). */
-  for (let slide = 1; slide <= 7; slide++) {
+  for (let slide = 1; slide <= STEPS.length; slide++) {
     test(`safe area: slide ${slide}, all ${STEPS[slide - 1]} states`, async ({ page }) => {
       test.setTimeout(90_000);
       await page.setViewportSize({ width: 1920, height: 1080 });
@@ -250,7 +269,7 @@ test.describe("layout integrity", () => {
     test.setTimeout(120_000);
     await page.setViewportSize({ width: 1920, height: 1080 });
     const small: string[] = [];
-    for (let slide = 1; slide <= 7; slide++) for (let step = 1; step <= STEPS[slide - 1]; step++) {
+    for (let slide = 1; slide <= STEPS.length; slide++) for (let step = 1; step <= STEPS[slide - 1]; step++) {
       await go(page, slide, step);
       await page.waitForTimeout(1500);
       const found = await page.evaluate(() => {
@@ -308,7 +327,7 @@ test.describe("accessibility and safety", () => {
       if (!r.url().startsWith(baseURL!) && !r.url().startsWith("data:")) external.push(r.url());
     });
     await page.goto("/");
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < TOTAL; i++) {
       await page.keyboard.press("ArrowRight");
       await page.waitForTimeout(120);
     }
@@ -328,7 +347,7 @@ test.describe("accessibility and safety", () => {
   test("the deck never claims a bank integration or production readiness", async ({ page }) => {
     const text: string[] = [];
     await page.goto("/");
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < TOTAL; i++) {
       text.push(await page.locator(".slide-layer").last().innerText());
       await page.keyboard.press("ArrowRight");
       await page.waitForTimeout(100);

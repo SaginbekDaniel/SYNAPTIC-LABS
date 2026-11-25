@@ -12,13 +12,24 @@ const STAGES = [
   { t: "Решение", d: "Очередь по приоритету, решение аналитика, журнал аудита" },
 ];
 
-const RULES = [
-  { t: "Без генеративного ИИ", d: "Доказательства строят детерминированные алгоритмы, не языковая модель" },
-  { t: "Воспроизводимо", d: "Повторный анализ тех же данных даёт тот же результат и те же идентификаторы" },
-  { t: "Решает человек", d: "Система не блокирует счета и ничего не отправляет клиентам" },
+/** Stack as used in the repository (pyproject.toml, apps/web/package.json, Dockerfiles, CI). */
+const STACK = [
+  { t: "Анализ и API", d: ["Python", "FastAPI", "NetworkX"] },
+  { t: "Данные", d: ["PostgreSQL", "SQLAlchemy", "Alembic"] },
+  { t: "Интерфейс", d: ["React", "TypeScript", "Vite", "Cytoscape.js"] },
+  { t: "Доставка и тесты", d: ["Docker", "Pytest", "Playwright"] },
+];
+
+/** What exists today — every item is verifiable in the repository or the live demo. */
+const WORKS = [
+  { t: "Живое демо", d: "Развёрнуто в облаке, вход по именным аккаунтам" },
+  { t: "Мобильный интерфейс", d: "На русском, работает и на экране телефона" },
+  { t: "Тесты и CI", d: "Pytest, Vitest и Playwright на каждом коммите" },
+  { t: "Воспроизводимый бенчмарк", d: "30 наборов, 220 сетей, запуск одной командой" },
 ];
 
 export function Slide4({ step }: SlideProps) {
+  const works = step >= 1;
   return (
     <section className="slide s4" aria-labelledby="h-4">
       <Head index={4} />
@@ -33,21 +44,36 @@ export function Slide4({ step }: SlideProps) {
             </m.li>
           ))}
         </ol>
-        <m.ul
-          className="s4-rules" aria-label="Принципы"
-          initial={false} animate={{ opacity: step >= 1 ? 1 : 0, y: step >= 1 ? 0 : 16 }}
-          transition={{ duration: 0.5, ease: EASE }} aria-hidden={step < 1}
-        >
-          {RULES.map((r) => (
-            <li key={r.t}>
-              <h3 className="h3">{r.t}</h3>
-              <p className="small">{r.d}</p>
-            </li>
-          ))}
-        </m.ul>
+        <div className="s4-low">
+          <m.ul
+            className="s4-stack" aria-label="Технологии"
+            initial={{ opacity: 0, y: 16 }} animate={{ opacity: works ? 0 : 1, y: works ? -8 : 0 }}
+            transition={{ duration: 0.45, delay: works ? 0 : 0.7, ease: EASE }} aria-hidden={works}
+          >
+            {STACK.map((g) => (
+              <li key={g.t}>
+                <h3 className="label caps">{g.t}</h3>
+                <ul className="s4-chips">{g.d.map((x) => <li key={x} className="chip">{x}</li>)}</ul>
+              </li>
+            ))}
+          </m.ul>
+          <m.ul
+            className="s4-works" aria-label="Что уже работает"
+            initial={false} animate={{ opacity: works ? 1 : 0, y: works ? 0 : 16 }}
+            transition={{ duration: 0.5, delay: works ? 0.15 : 0, ease: EASE }} aria-hidden={!works}
+          >
+            {WORKS.map((w) => (
+              <li key={w.t}>
+                <span className="s4-ok" aria-hidden="true" />
+                <h3 className="h3">{w.t}</h3>
+                <p className="small">{w.d}</p>
+              </li>
+            ))}
+          </m.ul>
+        </div>
       </div>
       <div className="slide-foot">
-        <span className="label">Python · FastAPI · PostgreSQL · фоновый воркер · React. Развёрнуто в облаке на синтетических данных.</span>
+        <span className="label">{works ? "Всё перечисленное можно проверить в репозитории и в живом демо. Данные синтетические." : "Модульный монолит с очередью задач на PostgreSQL — минимум движущихся частей."}</span>
       </div>
     </section>
   );

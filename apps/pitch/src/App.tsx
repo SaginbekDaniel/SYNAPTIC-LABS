@@ -13,8 +13,9 @@ import { Slide4 } from "./slides/Slide4";
 import { Slide5 } from "./slides/Slide5";
 import { Slide6 } from "./slides/Slide6";
 import { Slide7 } from "./slides/Slide7";
+import { Slide8 } from "./slides/Slide8";
 
-const SLIDE_VIEWS = [Slide1, Slide2, Slide3, Slide4, Slide5, Slide6, Slide7];
+const SLIDE_VIEWS = [Slide1, Slide2, Slide3, Slide4, Slide5, Slide6, Slide7, Slide8];
 const isInteractive = (t: EventTarget | null) => t instanceof HTMLElement && !!t.closest("button, a, input, textarea, select, [role=button], [role=dialog]");
 
 export function App() {

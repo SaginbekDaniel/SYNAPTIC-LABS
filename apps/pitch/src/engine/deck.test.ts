@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { STEP_COUNTS, SLIDE_COUNT, clampPos, globalIndex, next, nextSlide, parseHash, prev, prevSlide, toHash } from "./deck";
 
 describe("deck navigation", () => {
-  it("has exactly seven slides", () => expect(SLIDE_COUNT).toBe(7));
+  it("has exactly eight slides", () => expect(SLIDE_COUNT).toBe(8));
 
   it("walks every step forward and ends on the last state", () => {
     let p = { slide: 0, step: 0 };
